@@ -1,0 +1,32 @@
+输入框输入单个文字后的，自动提示公司的HTTP流
+
+Hypertext Transfer Protocol
+    GET /suggest/%E4%B8%87.json HTTP/1.1\r\n
+        [Expert Info (Chat/Sequence): GET /suggest/%E4%B8%87.json HTTP/1.1\r\n]
+            [GET /suggest/%E4%B8%87.json HTTP/1.1\r\n]
+            [Severity level: Chat]
+            [Group: Sequence]
+        Request Method: GET
+        Request URI: /suggest/%E4%B8%87.json
+        Request Version: HTTP/1.1
+    Host: www.tianyancha.com\r\n
+    User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0\r\n
+    Accept: application/json, text/plain, */*\r\n
+    Accept-Language: en-US,en;q=0.5\r\n
+    Accept-Encoding: gzip, deflate\r\n
+    Referer: http://www.tianyancha.com/search/%E6%B7%B1%E5%9C%B3%E5%B8%82%E7%BD%91%E4%BF%A1%E6%95%B0%E7%A0%81%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8\r\n
+     [truncated]Cookie: Hm_lvt_e92c8d65d92d534b0fc290df538b4758=1469427569,1469439255,1469506664,1469512414; _pk_id.1.e431=863809254384a244.1467435377.29.1469512453.1469512412.; _pk_ref.1.e431=%5B%22%22%2C%22%22%2C1469512412%2C%22https%3A%2F%2
+        Cookie pair: Hm_lvt_e92c8d65d92d534b0fc290df538b4758=1469427569,1469439255,1469506664,1469512414
+        Cookie pair: _pk_id.1.e431=863809254384a244.1467435377.29.1469512453.1469512412.
+        Cookie pair: _pk_ref.1.e431=%5B%22%22%2C%22%22%2C1469512412%2C%22https%3A%2F%2Fwww.baidu.com%2Flink%3Furl%3Dt2D8fWXV1QwGNAimXHDrZLKqzX1J56U0wkVckzP3399l49oYsZsOsy3_XDB0e0m3%26wd%3D%26eqid%3Df30266ac00105ebd0000000657917df7%22%5D
+        Cookie pair: TYCID=916dc3f703c945878e32063857efd342
+        Cookie pair: tnet=58.60.231.2
+        Cookie pair: Hm_lpvt_e92c8d65d92d534b0fc290df538b4758=1469512454
+        Cookie pair: token=9207023e26b94080a6b992f469200f0b
+        Cookie pair: _utm=7e0c37047c274321918545054191bf1e
+    Connection: keep-alive\r\n
+    \r\n
+    [Full request URI: http://www.tianyancha.com/suggest/%E4%B8%87.json]
+    [HTTP request 4/4]
+    [Prev request in frame: 337]
+    [Response in frame: 431]

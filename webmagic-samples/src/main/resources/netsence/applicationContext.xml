@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <bean id="propertyConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>netsence/db_config.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="jdbcDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName">
+            <value>${db.driver}</value>
+        </property>
+        <property name="url">
+            <value>${db.url}</value>
+        </property>
+        <property name="username">
+            <value>${db.user}</value>
+        </property>
+        <property name="password">
+            <value>${db.password}</value>
+        </property>
+        <property name="validationQuery">
+            <value>SELECT 1</value>
+        </property>
+        <property name="testWhileIdle">
+            <value>true</value>
+        </property>
+        <property name="timeBetweenEvictionRunsMillis">
+            <value>3600000</value>
+        </property>
+        <property name="minEvictableIdleTimeMillis">
+            <value>18000000</value>
+        </property>
+        <property name="testOnBorrow">
+            <value>true</value>
+        </property>
+    </bean>
+
+    <bean id="jdbcTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource">
+            <ref local="jdbcDataSource"/>
+        </property>
+    </bean>
+    <bean id="jdbcDAOProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+          abstract="true">
+        <property name="transactionManager">
+            <ref bean="jdbcTransactionManager"/>
+        </property>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="create*">PROPAGATION_REQUIRED</prop>
+                <prop key="update*">PROPAGATION_REQUIRED</prop>
+                <prop key="delete*">PROPAGATION_REQUIRED</prop>
+                <prop key="insert*">PROPAGATION_REQUIRED</prop>
+                <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="companyDao" class="us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao">
+        <constructor-arg ref="jdbcDataSource"/>
+    </bean>
+
+    <bean id="relationShipDao" class="us.codecraft.webmagic.netsense.tianyan.dao.RelationShipDao">
+        <constructor-arg ref="jdbcDataSource"/>
+    </bean>
+
+    <bean id="companyNameDao" class="us.codecraft.webmagic.netsense.tianyan.dao.CompanyNameDao">
+        <constructor-arg ref="jdbcDataSource"/>
+    </bean>
+
+    <!-- bean id="abstractDAO" class="com.yf.app.common.dao.AbstractBaseJdbcDAO" abstract="true">
+        <constructor-arg ref="jdbcDataSource" />
+    </bean -->
+
+    <context:component-scan base-package="us.codecraft.webmagic"/>
+
+</beans>

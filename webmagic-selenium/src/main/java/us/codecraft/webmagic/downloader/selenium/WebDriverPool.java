@@ -45,7 +45,7 @@ class WebDriverPool {
 	private WebDriver mDriver = null;
 	private boolean mAutoQuitDriver = true;
 
-	private static final String CONFIG_FILE = "/Users/Bingo/Documents/workspace/webmagic/webmagic-selenium/config.ini";
+	private static final String CONFIG_FILE = "/home/hihi/opt/env/IdeaProjects/webmagic/webmagic-selenium/config.ini";
 	private static final String DRIVER_FIREFOX = "firefox";
 	private static final String DRIVER_CHROME = "chrome";
 	private static final String DRIVER_PHANTOMJS = "phantomjs";
