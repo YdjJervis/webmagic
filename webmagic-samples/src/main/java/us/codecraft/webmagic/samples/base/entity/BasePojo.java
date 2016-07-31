@@ -1,9 +1,12 @@
 package us.codecraft.webmagic.samples.base.entity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class BasePojo {
 
-    private String updatetime;
-    private String url="";
+    private String url = "";
+    private String updatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
     public String getUpdatetime() {
         return updatetime;
@@ -13,19 +16,19 @@ public class BasePojo {
         this.updatetime = updatetime;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     @Override
     public String toString() {
         return "BasePojo{" +
-                "updatetime='" + updatetime + '\'' +
-                ", url='" + url + '\'' +
+                "url='" + url + '\'' +
+                ", updatetime='" + updatetime + '\'' +
                 '}';
     }
 }

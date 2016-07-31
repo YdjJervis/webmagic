@@ -1,24 +1,18 @@
 package us.codecraft.webmagic.samples.ttmeiju.pojo;
 
-import java.util.UUID;
+import us.codecraft.webmagic.samples.base.entity.BasePojo;
 
 /**
  * 排行榜实体
  */
-public class Summary {
+public class Summary extends BasePojo {
 
-    private String id;//剧名ID，唯一索引
     private String seri;//排行榜位置
     private String name;//名字
     private String status;//状态
-    private String updateTime;//更新时间
+    private String updateDate;//更新时间
     private String backTime;//回归时间
     private String leftTime;//倒计时
-    private String url;
-
-    public String getId() {
-        return String.valueOf(UUID.randomUUID());
-    }
 
     public String getSeri() {
         return seri;
@@ -44,14 +38,6 @@ public class Summary {
         this.status = status;
     }
 
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
-    }
-
     public String getBackTime() {
         return backTime;
     }
@@ -68,25 +54,23 @@ public class Summary {
         this.leftTime = leftTime;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUpdateDate(String updateDate) {
+        this.updateDate = updateDate;
     }
 
-    public String getUrl() {
-        return url;
+    public String getUpdateDate() {
+        return updateDate;
     }
 
     @Override
     public String toString() {
         return "Summary{" +
-                "id='" + id + '\'' +
                 ", seri='" + seri + '\'' +
                 ", name='" + name + '\'' +
+                ", updateDate='" + updateDate + '\'' +
                 ", status='" + status + '\'' +
-                ", updateTime='" + updateTime + '\'' +
                 ", backTime='" + backTime + '\'' +
                 ", leftTime='" + leftTime + '\'' +
-                ", url='" + url + '\'' +
-                '}';
+                '}' + super.toString();
     }
 }
