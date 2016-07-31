@@ -33,6 +33,21 @@
             <version>2.7</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>4.3.11.Final</version>
+        </dependency>
+
+        <!--MySql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.18</version>
+        </dependency>
+
+
     </dependencies>
 
 </project>
