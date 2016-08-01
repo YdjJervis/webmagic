@@ -2,6 +2,10 @@ package us.codecraft.webmagic.samples.ttmeiju.pojo;
 
 import us.codecraft.webmagic.samples.base.entity.BasePojo;
 
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+
+@Entity
 public class Movie extends BasePojo {
 
     private String seri;
@@ -12,6 +16,7 @@ public class Movie extends BasePojo {
     private String words;//字幕
     private String discuss;//讨论
 
+    @Basic
     public String getSeri() {
         return seri;
     }
@@ -20,6 +25,7 @@ public class Movie extends BasePojo {
         this.seri = seri;
     }
 
+    @Basic
     public String getName() {
         return name;
     }
@@ -28,6 +34,7 @@ public class Movie extends BasePojo {
         this.name = name;
     }
 
+    @Basic
     public String getDownload() {
         return download;
     }
@@ -36,6 +43,7 @@ public class Movie extends BasePojo {
         this.download = download;
     }
 
+    @Basic
     public String getSize() {
         return size;
     }
@@ -44,6 +52,7 @@ public class Movie extends BasePojo {
         this.size = size;
     }
 
+    @Basic
     public String getType() {
         return type;
     }
@@ -52,6 +61,7 @@ public class Movie extends BasePojo {
         this.type = type;
     }
 
+    @Basic
     public String getWords() {
         return words;
     }
@@ -60,6 +70,7 @@ public class Movie extends BasePojo {
         this.words = words;
     }
 
+    @Basic
     public String getDiscuss() {
         return discuss;
     }

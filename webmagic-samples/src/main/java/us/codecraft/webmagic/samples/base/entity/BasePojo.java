@@ -1,13 +1,17 @@
 package us.codecraft.webmagic.samples.base.entity;
 
+import javax.persistence.Basic;
+import javax.persistence.MappedSuperclass;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@MappedSuperclass
 public class BasePojo {
 
     private String url = "";
     private String updatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
+    @Basic
     public String getUpdatetime() {
         return updatetime;
     }
@@ -20,6 +24,7 @@ public class BasePojo {
         this.url = url;
     }
 
+    @Basic
     public String getUrl() {
         return url;
     }
