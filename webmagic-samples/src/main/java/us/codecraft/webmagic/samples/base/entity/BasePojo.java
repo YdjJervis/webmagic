@@ -1,15 +1,36 @@
 package us.codecraft.webmagic.samples.base.entity;
 
-import javax.persistence.Basic;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @MappedSuperclass
 public class BasePojo {
 
+    private Integer id;
     private String url = "";
+    private String createtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     private String updatetime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Basic
+    public String getCreatetime() {
+        return createtime;
+    }
+
+    public void setCreatetime(String createtime) {
+        this.createtime = createtime;
+    }
 
     @Basic
     public String getUpdatetime() {
@@ -32,8 +53,10 @@ public class BasePojo {
     @Override
     public String toString() {
         return "BasePojo{" +
-                "url='" + url + '\'' +
-                ", updatetime='" + updatetime + '\'' +
+                "id='" + id + '\'' +
+                ", url='" + url + '\'' +
+                ", createtime=" + createtime +
+                ", updatetime=" + updatetime +
                 '}';
     }
 }

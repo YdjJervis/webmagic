@@ -7,6 +7,7 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.samples.ttmeiju.pipeline.MoviePipleline;
 import us.codecraft.webmagic.samples.ttmeiju.pojo.Movie;
 import us.codecraft.webmagic.samples.ttmeiju.pojo.Summary;
 import us.codecraft.webmagic.selector.Selectable;
@@ -44,18 +45,21 @@ public class SummaryPageProcessor implements PageProcessor {
                 summaryList.add(summary);
             }
             logger.info(summaryList.toString());
-
+            page.putField(MoviePipleline.SUMMARY_LIST,summaryList);
             //继续下载详情
-            /*for (Summary summary : summaryList) {
+            for (Summary summary : summaryList) {
                 page.addTargetRequest(summary.getUrl());//爬每一部的列表
-            }*/
+            }
 
-            logger.info(summaryList.get(0).getUrl());
-            page.addTargetRequest(summaryList.get(0).getUrl());//爬每一部的列表
+//            logger.info(summaryList.get(0).getUrl());
+//            page.addTargetRequest(summaryList.get(0).getUrl());//爬每一部的列表
 
         } else if (page.getUrl().get().contains("seed")) {
 
         } else {//每一部的列表解析
+
+            String img = page.getHtml().xpath("//img[@id='spic']/@src").get();
+
             List<Selectable> trNodes = page.getHtml().xpath("//tr[@class='Scontent']").nodes();
 
             List<Movie> movieList = new ArrayList<Movie>();
@@ -83,9 +87,12 @@ public class SummaryPageProcessor implements PageProcessor {
                 movie.setWords(tdNodes.get(5).xpath("td/font/text()|td/a/text()").get());
                 movie.setDiscuss(getContent(tdNodes.get(6)));
 
+                movie.setImg(img);
+
                 movieList.add(movie);
             }
             logger.info(movieList.toString());
+            page.putField(MoviePipleline.MOVIE_LIST,movieList);
 
             //翻页信息
             List<String> pageList = page.getHtml().xpath("//div[@class='pages']//a/@href").all();
@@ -108,6 +115,8 @@ public class SummaryPageProcessor implements PageProcessor {
     public static void main(String[] args) {
         Spider.create(new SummaryPageProcessor())
                 .addUrl("http://www.ttmeiju.com/summary.html")
+                .addPipeline(new MoviePipleline())
+                .thread(1)
                 .start();
     }
 }

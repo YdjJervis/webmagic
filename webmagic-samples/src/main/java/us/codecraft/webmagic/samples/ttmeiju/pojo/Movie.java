@@ -1,20 +1,23 @@
 package us.codecraft.webmagic.samples.ttmeiju.pojo;
 
+import org.hibernate.annotations.Type;
 import us.codecraft.webmagic.samples.base.entity.BasePojo;
 
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
 public class Movie extends BasePojo {
 
-    private String seri;
+    private String seri;//网页上的排序
     private String name;
     private String download;//用json封装的多个下载地址
     private String size;
     private String type;//格式
     private String words;//字幕
     private String discuss;//讨论
+    private String img;
 
     @Basic
     public String getSeri() {
@@ -25,7 +28,7 @@ public class Movie extends BasePojo {
         this.seri = seri;
     }
 
-    @Basic
+    @Column(unique = true)
     public String getName() {
         return name;
     }
@@ -35,6 +38,7 @@ public class Movie extends BasePojo {
     }
 
     @Basic
+    @Type(type = "text")
     public String getDownload() {
         return download;
     }
@@ -79,6 +83,15 @@ public class Movie extends BasePojo {
         this.discuss = discuss;
     }
 
+    @Basic
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
@@ -89,6 +102,7 @@ public class Movie extends BasePojo {
                 ", type='" + type + '\'' +
                 ", words='" + words + '\'' +
                 ", discuss='" + discuss + '\'' +
-                '}' + super.toString();
+                ", img='" + img + '\'' +
+                '}';
     }
 }

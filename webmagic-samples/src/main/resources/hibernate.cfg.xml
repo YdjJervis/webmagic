@@ -7,7 +7,7 @@
 
     <session-factory>
         <!-- 各属性的配置-->
-        <property name="show_sql">true</property><!--为true表示将Hibernate发送给数据库的sql显示出来 -->
+        <property name="show_sql">false</property><!--为true表示将Hibernate发送给数据库的sql显示出来 -->
         <property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property><!-- SQL方言，这边设定的是MySQL -->
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property><!--自动生成数据表-->
@@ -16,5 +16,7 @@
         <!--映射文件 -->
         <!--<mapping resource="com/amigo/pojo/User.hbm.xml"/>
         <mapping resource="com/amigo/pojo/Org.hbm.xml"/>-->
+        <mapping class="us.codecraft.webmagic.samples.ttmeiju.pojo.Summary"/>
+        <mapping class="us.codecraft.webmagic.samples.ttmeiju.pojo.Movie"/>
     </session-factory>
 </hibernate-configuration>

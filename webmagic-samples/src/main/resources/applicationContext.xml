@@ -58,12 +58,14 @@
 
     <!-- 配置Hibernate的局部事务管理器，使用HibernateTransactionManager类 -->
     <!-- 该类实现PlatformTransactionManager接口，是针对Hibernate的特定实现-->
-    <!--<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        &lt;!&ndash; 配置HibernateTransactionManager时需要依注入SessionFactory的引用 &ndash;&gt;
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <!-- 配置HibernateTransactionManager时需要依注入SessionFactory的引用 -->
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    &lt;!&ndash; 配置事务切面Bean,指定事务管理器 &ndash;&gt;
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--&lt;!&ndash; 配置事务切面Bean,指定事务管理器 &ndash;&gt;
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         &lt;!&ndash; 用于配置详细的事务语义 &ndash;&gt;
         <tx:attributes>
@@ -138,4 +140,6 @@
             </list>
         </property>
     </bean>-->
+
+    <context:component-scan base-package="us.codecraft.webmagic.samples"/>
 </beans>

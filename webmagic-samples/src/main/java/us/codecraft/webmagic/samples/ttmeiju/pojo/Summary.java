@@ -2,9 +2,14 @@ package us.codecraft.webmagic.samples.ttmeiju.pojo;
 
 import us.codecraft.webmagic.samples.base.entity.BasePojo;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+
 /**
  * 排行榜实体
  */
+@Entity
 public class Summary extends BasePojo {
 
     private String seri;//排行榜位置
@@ -14,6 +19,7 @@ public class Summary extends BasePojo {
     private String backTime;//回归时间
     private String leftTime;//倒计时
 
+    @Basic
     public String getSeri() {
         return seri;
     }
@@ -22,6 +28,7 @@ public class Summary extends BasePojo {
         this.seri = seri;
     }
 
+    @Column(unique = true)
     public String getName() {
         return name;
     }
@@ -30,6 +37,7 @@ public class Summary extends BasePojo {
         this.name = name;
     }
 
+    @Basic
     public String getStatus() {
         return status;
     }
@@ -38,6 +46,7 @@ public class Summary extends BasePojo {
         this.status = status;
     }
 
+    @Basic
     public String getBackTime() {
         return backTime;
     }
@@ -46,6 +55,7 @@ public class Summary extends BasePojo {
         this.backTime = backTime;
     }
 
+    @Basic
     public String getLeftTime() {
         return leftTime;
     }
@@ -58,6 +68,7 @@ public class Summary extends BasePojo {
         this.updateDate = updateDate;
     }
 
+    @Basic
     public String getUpdateDate() {
         return updateDate;
     }
