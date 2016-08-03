@@ -76,13 +76,15 @@ public class AllProcessor implements PageProcessor {
 
             for (CompanyResult result : companyResultList) {
                 if (!mCompanyDao.isExist(result.getName())) {
+                    logger.info("加入下载队列(详情)：" + result.getUrl());
                     page.addTargetRequest(result.getUrl());
                 }
             }
 
             String pageUrl = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/@href").all().get(0);
-            List<String> pageNumList = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/@href").all();
+            List<String> pageNumList = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/text()").all();
             for (String pageNum : pageNumList) {
+                logger.info("加入下载队列(翻页)：" + getPagedUrl(pageUrl, pageNum));
                 page.addTargetRequest(getPagedUrl(pageUrl, pageNum));
             }
 
@@ -163,10 +165,10 @@ public class AllProcessor implements PageProcessor {
      * 根据页码生产新的URL
      */
     private String getPagedUrl(String url, String page) {
-        if(NumberUtils.isNumber(page)){
+        if (NumberUtils.isNumber(page)) {
             String[] split = url.split("\\?");
-            return split[0] + "/page/" + page + "?" + split[1];
-        }else{
+            return "http://www.tianyancha.com/search/page/" + page + "?" + split[1];
+        } else {
             return url;
         }
     }
@@ -189,13 +191,13 @@ public class AllProcessor implements PageProcessor {
             .addPipeline(new DetailsPipeline())
             .thread(1);
 
-    private static final String BASE_URL = "http://www.tianyancha.com/search?cate=2800&cateName=房地产业&filterType=cate";
+    private static final String BASE_URL = "http://www.tianyancha.com/search?cate=2800&cateName=房地产业&filterType=cate&base=";
 
     public static void main(String[] args) {
-        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(15 * 1000);
+        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(10 * 1000);
         mSpider.setDownloader(mDownloader);
 
-        String[] urls = {BASE_URL + "&base=bj", BASE_URL + "&base=tj"};
+        String[] urls = {BASE_URL + "bj", BASE_URL + "tj"};
         mSpider.addUrl(urls);
         mSpider.start();
     }
