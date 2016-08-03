@@ -74,6 +74,12 @@
     <bean id="companyNameDao" class="us.codecraft.webmagic.netsense.tianyan.dao.CompanyNameDao">
         <constructor-arg ref="jdbcDataSource"/>
     </bean>
+    <bean id="buildingDao" class="us.codecraft.webmagic.netsense.tianyan.dao.BuildingDao">
+        <constructor-arg ref="jdbcDataSource"/>
+    </bean>
+    <bean id="landInfoDao" class="us.codecraft.webmagic.netsense.tianyan.dao.LandInfoDao">
+        <constructor-arg ref="jdbcDataSource"/>
+    </bean>
 
     <!-- bean id="abstractDAO" class="com.yf.app.common.dao.AbstractBaseJdbcDAO" abstract="true">
         <constructor-arg ref="jdbcDataSource" />

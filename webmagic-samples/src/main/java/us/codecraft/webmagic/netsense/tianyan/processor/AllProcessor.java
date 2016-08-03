@@ -2,14 +2,16 @@ package us.codecraft.webmagic.netsense.tianyan.processor;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.selenium.SeleniumDownloader;
-import us.codecraft.webmagic.netsense.tianyan.model.CompanyHouseModel;
-import us.codecraft.webmagic.netsense.tianyan.model.CompanyModel;
+import us.codecraft.webmagic.netsense.Context;
+import us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao;
 import us.codecraft.webmagic.netsense.tianyan.pipeline.DetailsPipeline;
-import us.codecraft.webmagic.netsense.tianyan.pojo.Company;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyInfo;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyResult;
 import us.codecraft.webmagic.netsense.tianyan.pojo.RelationShip;
@@ -22,27 +24,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 全国500强企业
+ * 爬取房地产业下，每个城市前800强的公司信息
  */
-public class MastestCompanyProcessor implements PageProcessor {
+public class AllProcessor implements PageProcessor {
 
     private Site site = Site.me().setRetryTimes(3);
+
     public static final String DETAILS = "result_param_1";
     public static final String LIST = "result_param_2";
 
-    private static final String TAG = "DetailsProcessor::";
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
+    private CompanyDao mCompanyDao = (CompanyDao) Context.getInstance().getBean("companyDao");
 
     @Override
     public void process(Page page) {
-        System.out.println(TAG + "搜索的URL：" + page.getUrl());
-
-        String reg = "href=\"(http://www.tianyancha.com/company/.*?)\"";
+        logger.info("搜索的URL：" + page.getUrl());
 
         if (page.getUrl().toString().contains("search")) {
-            System.out.println(TAG + "此为搜索列表页面");
+            logger.info("此为搜索列表页面");
 
             List<Selectable> searchResultNodeList = page.getHtml().xpath("//div[@class='b-c-white search_result_container']/div").nodes();
-
 
             List<CompanyResult> companyResultList = new ArrayList<CompanyResult>();
             for (int i = 0; i < searchResultNodeList.size(); i++) {
@@ -65,25 +67,23 @@ public class MastestCompanyProcessor implements PageProcessor {
                     continue;
                 }
 
-                System.out.println(TAG + "企业名称：" + name);
+                logger.info("企业名称：" + name);
                 cr.setName(name);
                 cr.setUrl(selectable.xpath("//a[@class='query_name']/@href").get());
-                System.out.println(TAG + "列表结果：" + i + " - " + cr);
+                logger.info("列表结果：" + i + " - " + cr);
                 companyResultList.add(cr);
             }
 
-            if (CollectionUtils.isEmpty(companyResultList)) {
-                crawlNext();
-            }
-
-            for (int i = 0; i < companyResultList.size(); i++) {
-                if (i == 1) break;
-                CompanyResult result = companyResultList.get(i);
-                if (mCompanyModel.isExsit(result.getName())) {
-                    crawlNext();
-                } else {
+            for (CompanyResult result : companyResultList) {
+                if (!mCompanyDao.isExist(result.getName())) {
                     page.addTargetRequest(result.getUrl());
                 }
+            }
+
+            String pageUrl = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/@href").all().get(0);
+            List<String> pageNumList = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/@href").all();
+            for (String pageNum : pageNumList) {
+                page.addTargetRequest(getPagedUrl(pageUrl, pageNum));
             }
 
         } else if (page.getUrl().toString().contains("company")) {
@@ -129,7 +129,7 @@ public class MastestCompanyProcessor implements PageProcessor {
             if (StringUtils.isNotEmpty(name)) {
                 page.putField(DETAILS, info);
 
-                System.out.println(TAG + "对外投资::==========");
+                logger.info("对外投资::==========");
                 List<Selectable> nodes = page.getHtml().xpath("//div[@ng-if='company.investList.length>0']/div/div").nodes();
 
                 if (CollectionUtils.isNotEmpty(nodes)) {
@@ -138,7 +138,7 @@ public class MastestCompanyProcessor implements PageProcessor {
                         String investCompany = node.xpath("//a/text()").get();
                         String icUrl = node.xpath("//a/@href").get();
                         String money = node.xpath("//p[@class='ng-binding']/text()").get();
-                        System.out.println(TAG + "对外投资公司：" + investCompany + " 链接：" + icUrl + " 投资金额：" + money);
+                        logger.info("对外投资公司：" + investCompany + " 链接：" + icUrl + " 投资金额：" + money);
 
                         RelationShip rs = new RelationShip();
                         rs.setSrcCompany(name);
@@ -152,28 +152,29 @@ public class MastestCompanyProcessor implements PageProcessor {
                     page.putField(LIST, rsList);
                 }
             } else {
-                System.out.println(TAG + "没有成功解析详情页");
+                logger.info("没有成功解析详情页");
             }
-            crawlNext();
 
-        } else {
-            System.out.println(TAG + "没有搜索到公司列表");
-            crawlNext();
         }
 
     }
 
-    private void crawlNext() {
-        String next = next();
-        if (null != next) {
-            mSpider.addUrl(next);
+    /**
+     * 根据页码生产新的URL
+     */
+    private String getPagedUrl(String url, String page) {
+        if(NumberUtils.isNumber(page)){
+            String[] split = url.split("\\?");
+            return split[0] + "/page/" + page + "?" + split[1];
+        }else{
+            return url;
         }
     }
 
     private String getByXpath(Page page, String xpath) {
         String baseXpath = "//div[@class='row b-c-white company-content']";
         String value = page.getHtml().xpath(baseXpath + xpath).get();
-        System.out.println(TAG + "getByXpath:" + value);
+        logger.info("getByXpath:" + value);
 
         return value;
     }
@@ -184,51 +185,19 @@ public class MastestCompanyProcessor implements PageProcessor {
     }
 
     private static Spider mSpider = Spider
-            .create(new MastestCompanyProcessor())
+            .create(new AllProcessor())
             .addPipeline(new DetailsPipeline())
             .thread(1);
-    private static int mIndex = 0;
-    private static String[] mUrls;
-    private static CompanyHouseModel mCompanyHouseModel;
-    private static CompanyModel mCompanyModel;
+
+    private static final String BASE_URL = "http://www.tianyancha.com/search?cate=2800&cateName=房地产业&filterType=cate";
 
     public static void main(String[] args) {
-        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(10 * 1000);
+        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(15 * 1000);
         mSpider.setDownloader(mDownloader);
-        mCompanyHouseModel = new CompanyHouseModel();
-        mCompanyModel = new CompanyModel();
 
-        List<Company> companyList = mCompanyHouseModel.getListFromFile();
-
-        List<String> srcList = new ArrayList<String>();
-        for (Company company : companyList) {
-            srcList.add(company.getName());
-        }
-
-        srcList.removeAll(mCompanyModel.getNameList());
-
-        List<String> urlList = new ArrayList<String>();
-        for (String companyName : srcList) {
-            String url = "http://www.tianyancha.com/search/" + companyName + "?type=company";
-            urlList.add(url);
-        }
-        System.out.println(TAG + "表格中剩余的公司数量：" + urlList.size());
-        String[] urls = new String[urlList.size()];
-
-        mUrls = urlList.toArray(urls);
-
-        String next = next();
-        if (StringUtils.isNotEmpty(next)) {
-            mSpider.addUrl(next).start();
-        }
-
+        String[] urls = {BASE_URL + "&base=bj", BASE_URL + "&base=tj"};
+        mSpider.addUrl(urls);
+        mSpider.start();
     }
 
-    private static String next() {
-        if (mIndex < mUrls.length) {
-            return mUrls[mIndex++];
-        }
-        System.out.println(TAG + "剩余数据数量：" + (mUrls.length - mIndex));
-        return null;
-    }
 }
