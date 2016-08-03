@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class CompanyHouseModel {
 
     public static final String USER_DIR = System.getProperties().getProperty("user.dir");
-    public static final String FILE_PATH = USER_DIR + "/webmagic-samples/src/main/java/us/codecraft/webmagic/netsense/tianyan/res/mastest_company.txt";
+    public static final String FILE_PATH = USER_DIR + "/webmagic-samples/src/main/java/us/codecraft/webmagic/netsense/tianyan/res/2016房地产500强名单.txt";
 
     private static CompanyNameDao mDao;
     private LandInfoDao mLandInfoDao;
