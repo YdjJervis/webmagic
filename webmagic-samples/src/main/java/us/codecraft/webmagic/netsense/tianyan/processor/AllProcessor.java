@@ -3,6 +3,7 @@ package us.codecraft.webmagic.netsense.tianyan.processor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.http.HttpHost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Page;
@@ -10,6 +11,7 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.selenium.SeleniumDownloader;
 import us.codecraft.webmagic.netsense.Context;
+import us.codecraft.webmagic.netsense.base.UserAgentUtil;
 import us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao;
 import us.codecraft.webmagic.netsense.tianyan.pipeline.DetailsPipeline;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyInfo;
@@ -28,18 +30,19 @@ import java.util.regex.Pattern;
  */
 public class AllProcessor implements PageProcessor {
 
-    private Site site = Site.me().setRetryTimes(3);
+    private Site site = Site.me().setRetryTimes(1).setUserAgent(UserAgentUtil.getRandomUserAgent()).setHttpProxy(new HttpHost("172.16.7.1445",80));
 
     public static final String DETAILS = "result_param_1";
     public static final String LIST = "result_param_2";
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private CompanyDao mCompanyDao = (CompanyDao) Context.getInstance().getBean("companyDao");
 
     @Override
     public void process(Page page) {
         logger.info("搜索的URL：" + page.getUrl());
+        site.setUserAgent(UserAgentUtil.getRandomUserAgent());
 
         if (page.getUrl().toString().contains("search")) {
             logger.info("此为搜索列表页面");
@@ -154,7 +157,7 @@ public class AllProcessor implements PageProcessor {
                     page.putField(LIST, rsList);
                 }
             } else {
-                logger.info("没有成功解析详情页");
+                logger.info("没有成功解析详情页,一般是被限制了");
             }
 
         }
@@ -194,10 +197,9 @@ public class AllProcessor implements PageProcessor {
     private static final String BASE_URL = "http://www.tianyancha.com/search?cate=2800&cateName=房地产业&filterType=cate&base=";
 
     public static void main(String[] args) {
-        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(10 * 1000);
+        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(20 * 1000);
         mSpider.setDownloader(mDownloader);
-
-        String[] urls = {BASE_URL + "bj", BASE_URL + "tj"};
+        String[] urls = {BASE_URL + "bj", BASE_URL + "tj" + BASE_URL + "sh", BASE_URL + "cq"};
         mSpider.addUrl(urls);
         mSpider.start();
     }

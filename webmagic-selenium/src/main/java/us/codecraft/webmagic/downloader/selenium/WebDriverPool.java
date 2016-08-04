@@ -1,11 +1,13 @@
 package us.codecraft.webmagic.downloader.selenium;
 
 import org.apache.log4j.Logger;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -65,7 +67,7 @@ class WebDriverPool {
     public void configure() throws IOException {
         // Read config file
         sConfig = new Properties();
-        logger.info("加载config.init文件：" + CONFIG_FILE);
+        logger.info("加载config.ini文件：" + CONFIG_FILE);
         sConfig.load(new FileReader(CONFIG_FILE));
 
         // Prepare capabilities
@@ -133,6 +135,14 @@ class WebDriverPool {
         } else if (driver.equals(DRIVER_FIREFOX)) {
             mDriver = new FirefoxDriver(sCaps);
         } else if (driver.equals(DRIVER_CHROME)) {
+            Proxy proxy = new Proxy();
+            String proxyIpAndPort = "172.16.7.144:80";
+            proxyIpAndPort = "172.16.7.144:9090";
+            proxy.setHttpProxy(proxyIpAndPort).setFtpProxy(proxyIpAndPort).setSslProxy(proxyIpAndPort);
+            sCaps.setCapability(CapabilityType.ForSeleniumServer.AVOIDING_PROXY, true);
+            sCaps.setCapability(CapabilityType.ForSeleniumServer.ONLY_PROXYING_SELENIUM_TRAFFIC, true);
+            System.setProperty("http.nonProxyHosts", "localhost");
+            sCaps.setCapability(CapabilityType.PROXY, proxy);
             mDriver = new ChromeDriver(sCaps);
         } else if (driver.equals(DRIVER_PHANTOMJS)) {
             mDriver = new PhantomJSDriver(sCaps);

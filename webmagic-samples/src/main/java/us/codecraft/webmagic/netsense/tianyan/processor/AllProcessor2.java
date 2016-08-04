@@ -3,18 +3,21 @@ package us.codecraft.webmagic.netsense.tianyan.processor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.http.HttpHost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.downloader.selenium.SeleniumDownloader;
+import us.codecraft.webmagic.downloader.FireFoxDownloader;
 import us.codecraft.webmagic.netsense.Context;
+import us.codecraft.webmagic.netsense.base.UserAgentUtil;
 import us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao;
 import us.codecraft.webmagic.netsense.tianyan.pipeline.DetailsPipeline;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyInfo;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyResult;
 import us.codecraft.webmagic.netsense.tianyan.pojo.RelationShip;
+import us.codecraft.webmagic.netsense.tianyan.pojo.SearchParamMap;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Selectable;
 
@@ -28,18 +31,19 @@ import java.util.regex.Pattern;
  */
 public class AllProcessor2 implements PageProcessor {
 
-    private Site site = Site.me().setRetryTimes(3);
+    private Site site = Site.me().setRetryTimes(1).setUserAgent(UserAgentUtil.getRandomUserAgent()).setHttpProxy(new HttpHost("172.16.7.1445", 80));
 
     public static final String DETAILS = "result_param_1";
     public static final String LIST = "result_param_2";
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private CompanyDao mCompanyDao = (CompanyDao) Context.getInstance().getBean("companyDao");
 
     @Override
     public void process(Page page) {
         logger.info("搜索的URL：" + page.getUrl());
+        site.setUserAgent(UserAgentUtil.getRandomUserAgent());
 
         if (page.getUrl().toString().contains("search")) {
             logger.info("此为搜索列表页面");
@@ -154,7 +158,7 @@ public class AllProcessor2 implements PageProcessor {
                     page.putField(LIST, rsList);
                 }
             } else {
-                logger.info("没有成功解析详情页");
+                logger.info("没有成功解析详情页,一般是被限制了");
             }
 
         }
@@ -191,14 +195,16 @@ public class AllProcessor2 implements PageProcessor {
             .addPipeline(new DetailsPipeline())
             .thread(1);
 
-    private static final String BASE_URL = "http://www.tianyancha.com/search?cate=2800&cateName=房地产业&filterType=cate&base=";
-
     public static void main(String[] args) {
-        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(10 * 1000);
-        mSpider.setDownloader(mDownloader);
+//        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(20 * 1000);
+        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+                .setSleepTime(15 * 1000)
+                .setProxy("172.16.7.144", 9090);
 
-        String[] urls = {BASE_URL + "sh", BASE_URL + "cq"};
+        mSpider.setDownloader(downloader);
+        String[] urls = new SearchParamMap().getUrls();
         mSpider.addUrl(urls);
+//        mSpider.addUrl("http://www.tianyancha.com/company/324613874");
         mSpider.start();
     }
 
