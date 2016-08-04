@@ -86,6 +86,7 @@ public class SummaryPageProcessor implements PageProcessor {
                 movie.setType(getContent(tdNodes.get(4)));
                 movie.setWords(tdNodes.get(5).xpath("td/font/text()|td/a/text()").get());
                 movie.setDiscuss(getContent(tdNodes.get(6)));
+                movie.setIntroduce(page.getHtml().xpath("//div[@class='newstxt']").get());
 
                 movie.setImg(img);
 

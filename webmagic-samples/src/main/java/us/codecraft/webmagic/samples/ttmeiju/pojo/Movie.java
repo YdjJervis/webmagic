@@ -18,6 +18,7 @@ public class Movie extends BasePojo {
     private String words;//字幕
     private String discuss;//讨论
     private String img;
+    private String introduce;
 
     @Basic
     public String getSeri() {
@@ -90,6 +91,16 @@ public class Movie extends BasePojo {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    @Basic
+    @Type(type = "text")
+    public String getIntroduce() {
+        return introduce;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
     }
 
     @Override
