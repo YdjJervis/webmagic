@@ -35,7 +35,7 @@ public class CompanyDao extends AbstractBaseJdbcDAO {
         return findAll(TABLE_NAME, CompanyInfo.class);
     }
 
-    public boolean isExist(String companyName) {
-        return isExist(TABLE_NAME,CompanyInfo.class,new String[]{"name"},new String[]{companyName});
+    public boolean isExist(String companyUrl) {
+        return isExist(TABLE_NAME,CompanyInfo.class,new String[]{"url"},new String[]{companyUrl});
     }
 }

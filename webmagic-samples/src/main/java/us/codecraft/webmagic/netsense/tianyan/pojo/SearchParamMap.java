@@ -13,7 +13,7 @@ public class SearchParamMap {
 
     public Map<String, List> spMap = new HashMap<String, List>();
 
-    public SearchParamMap(){
+    public SearchParamMap() {
         init();
     }
 
@@ -75,8 +75,42 @@ public class SearchParamMap {
         return urls;
     }
 
+    /**
+    1.一线城市：5个  北京，上海，广州，深圳，天津
+    2.二线发达城市：8个  杭州，南京，济南，重庆，青岛，大连，宁波，厦门.
+      (辽宁省都没有，大连受灾)
+    */
+    public String[] getFirstSeondCityUrls() {
+        final String base = "http://www.tianyancha.com/search?cate=2800&cateName=房地产业&filterType=cate&base=";
+
+        List<String> list = new ArrayList<String>() {{
+            add(base + "bj");
+            add(base + "sh");
+            add(base + "cq");
+            add(base + "tj");
+            add(base + "gd&searchCity=广州");
+            add(base + "gd&searchCity=深圳");
+            add(base + "zj&searchCity=杭州");
+            add(base + "js&searchCity=南京");
+            add(base + "sd&searchCity=济南");
+            add(base + "sd&searchCity=青岛");
+            add(base + "zj&searchCity=宁波");
+            add(base + "fj&searchCity=厦门");
+        }};
+
+        String[] urls = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            urls[i] = list.get(i);
+        }
+
+        return urls;
+    }
+
     public static void main(String[] args) {
-        for (String url : new SearchParamMap().getUrls()) {
+        /*for (String url : new SearchParamMap().getUrls()) {
+            System.out.println(url);
+        }*/
+        for (String url : new SearchParamMap().getFirstSeondCityUrls()) {
             System.out.println(url);
         }
 
