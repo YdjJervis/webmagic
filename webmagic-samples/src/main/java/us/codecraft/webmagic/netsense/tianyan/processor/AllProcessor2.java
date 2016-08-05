@@ -198,7 +198,8 @@ public class AllProcessor2 implements PageProcessor {
     public static void main(String[] args) {
 //        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(20 * 1000);
         FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
-                .setSleepTime(15 * 1000)
+//        FireFoxDownloader downloader = new FireFoxDownloader("D:\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+                .setSleepTime(5 * 1000)
                 .setProxy("172.16.7.144", 9090);
 
         mSpider.setDownloader(downloader);

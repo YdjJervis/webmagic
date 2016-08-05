@@ -39,13 +39,13 @@ public class FireFoxDownloader extends AbstractDownloader {
     public FireFoxDownloader(String driverPath) {
         System.setProperty("webdriver.firefox.bin", driverPath);
         mDriverPath = driverPath;
-        initDriver();
     }
 
     @Override
     public Page download(Request request, Task task) {
         Page page = null;
         try {
+            initDriver();
             mWebDriver.get(request.getUrl());
 
             sleep(mSleepTime);

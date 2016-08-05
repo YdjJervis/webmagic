@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.downloader.selenium.SeleniumDownloader;
+import us.codecraft.webmagic.downloader.FireFoxDownloader;
 import us.codecraft.webmagic.netsense.Context;
 import us.codecraft.webmagic.netsense.base.UserAgentUtil;
 import us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao;
@@ -197,8 +197,13 @@ public class AllProcessor implements PageProcessor {
     private static final String BASE_URL = "http://www.tianyancha.com/search?cate=2800&cateName=房地产业&filterType=cate&base=";
 
     public static void main(String[] args) {
-        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(20 * 1000);
-        mSpider.setDownloader(mDownloader);
+//        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(20 * 1000);
+
+        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+                .setSleepTime(5 * 1000)
+                .setProxy("172.16.7.144", 9090);
+
+        mSpider.setDownloader(downloader);
         String[] urls = {BASE_URL + "bj", BASE_URL + "tj" + BASE_URL + "sh", BASE_URL + "cq"};
         mSpider.addUrl(urls);
         mSpider.start();
