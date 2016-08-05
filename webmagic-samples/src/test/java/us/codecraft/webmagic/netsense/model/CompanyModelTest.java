@@ -1,6 +1,8 @@
 package us.codecraft.webmagic.netsense.model;
 
 import junit.framework.TestCase;
+import us.codecraft.webmagic.netsense.Context;
+import us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao;
 import us.codecraft.webmagic.netsense.tianyan.model.CompanyModel;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyCvs;
 
@@ -11,6 +13,13 @@ import java.util.List;
  * 公司
  */
 public class CompanyModelTest extends TestCase {
+
+    private CompanyDao companyDao;
+
+    @Override
+    protected void setUp() throws Exception {
+        companyDao = (CompanyDao) Context.getInstance().getBean("companyDao");
+    }
 
     public void testGetList() {
 
@@ -29,5 +38,9 @@ public class CompanyModelTest extends TestCase {
         srcList.removeAll(nameList);
         System.out.println(srcList.size());
 
+    }
+
+    public void testExist(){
+        System.out.println(companyDao.isExist("http://www.tianyancha.com/company/1070074"));
     }
 }

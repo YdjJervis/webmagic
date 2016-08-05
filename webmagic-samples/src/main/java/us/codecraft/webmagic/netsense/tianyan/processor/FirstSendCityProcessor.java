@@ -159,6 +159,12 @@ public class FirstSendCityProcessor implements PageProcessor {
                 }
             } else {
                 logger.info("没有成功解析详情页,一般是被限制了");
+                try {
+                    //解析失败，等待一个小时，服务器拨号后继续抓取
+                    Thread.sleep(60 * 60 * 1000);
+                } catch (InterruptedException e) {
+                    logger.error(e.toString());
+                }
             }
 
         }
@@ -170,7 +176,7 @@ public class FirstSendCityProcessor implements PageProcessor {
      */
     private String getPagedUrl(String url, String page) {
         if (NumberUtils.isNumber(page)) {
-            if(Integer.valueOf(page)>10){//一个城市只爬取10个页面，合200个公司，一，二线总共13个城市
+            if (Integer.valueOf(page) > 10) {//一个城市只爬取10个页面，合200个公司，一，二线总共13个城市
                 return url;
             }
             String[] split = url.split("\\?");
@@ -200,8 +206,8 @@ public class FirstSendCityProcessor implements PageProcessor {
 
     public static void main(String[] args) {
 //        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(20 * 1000);
-        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
-//        FireFoxDownloader downloader = new FireFoxDownloader("D:\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+//        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+        FireFoxDownloader downloader = new FireFoxDownloader("D:\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
                 .setSleepTime(20 * 1000)
                 .setProxy("172.16.7.144", 9090);
 

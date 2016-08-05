@@ -98,6 +98,7 @@ public class SearchParamMap {
             add(base + "fj&searchCity=厦门");
         }};
 
+        Collections.reverse(list);
         String[] urls = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
             urls[i] = list.get(i);
