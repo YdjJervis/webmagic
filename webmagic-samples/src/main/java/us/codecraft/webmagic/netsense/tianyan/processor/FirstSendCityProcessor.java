@@ -19,6 +19,7 @@ import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyResult;
 import us.codecraft.webmagic.netsense.tianyan.pojo.RelationShip;
 import us.codecraft.webmagic.netsense.tianyan.pojo.SearchParamMap;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.scheduler.PriorityScheduler;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
@@ -71,19 +72,20 @@ public class FirstSendCityProcessor implements PageProcessor {
                     continue;
                 }
 
-                logger.info("企业名称：" + name);
                 cr.setName(name);
                 cr.setUrl(selectable.xpath("//a[@class='query_name']/@href").get());
                 logger.info("列表结果：" + i + " - " + cr);
                 companyResultList.add(cr);
             }
 
+            List<String> needToCrawlList = new ArrayList<String>();
             for (CompanyResult result : companyResultList) {
                 if (!mCompanyDao.isExist(result.getUrl())) {
                     logger.info("加入下载队列(详情)：" + result.getUrl());
-                    page.addTargetRequest(result.getUrl());
+                    needToCrawlList.add(result.getUrl());
                 }
             }
+            page.addTargetRequests(needToCrawlList, 1);
 
             String pageUrl = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/@href").all().get(0);
             List<String> pageNumList = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/text()").all();
@@ -159,16 +161,25 @@ public class FirstSendCityProcessor implements PageProcessor {
                 }
             } else {
                 logger.info("没有成功解析详情页,一般是被限制了");
-                try {
-                    //解析失败，等待一个小时，服务器拨号后继续抓取
-                    Thread.sleep(60 * 60 * 1000);
-                } catch (InterruptedException e) {
-                    logger.error(e.toString());
-                }
+                //解析失败，等待一个小时，服务器拨号后继续抓取
+//                sleep(60);
             }
 
+        } else {
+//            sleep(60);
         }
 
+    }
+
+    /**
+     * @param timeMin 分钟数
+     */
+    private void sleep(long timeMin) {
+        try {
+            Thread.sleep(timeMin * 60 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -200,21 +211,19 @@ public class FirstSendCityProcessor implements PageProcessor {
     }
 
     private static Spider mSpider = Spider
-            .create(new AllProcessor())
+            .create(new FirstSendCityProcessor())
             .addPipeline(new DetailsPipeline())
             .thread(1);
 
     public static void main(String[] args) {
-//        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(20 * 1000);
-//        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
-        FireFoxDownloader downloader = new FireFoxDownloader("D:\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
-                .setSleepTime(20 * 1000)
+        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+//        FireFoxDownloader downloader = new FireFoxDownloader("D:\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+                .setSleepTime(15 * 1000)
                 .setProxy("172.16.7.144", 9090);
 
-        mSpider.setDownloader(downloader);
+        mSpider.setDownloader(downloader).setScheduler(new PriorityScheduler());
         String[] urls = new SearchParamMap().getFirstSeondCityUrls();
         mSpider.addUrl(urls);
-//        mSpider.addUrl("http://www.tianyancha.com/company/324613874");
         mSpider.start();
     }
 

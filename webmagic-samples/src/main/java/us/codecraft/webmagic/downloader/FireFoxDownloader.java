@@ -2,7 +2,6 @@ package us.codecraft.webmagic.downloader;
 
 import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -90,9 +89,6 @@ public class FireFoxDownloader extends AbstractDownloader {
                 ffDesiredcap.setCapability("firefox_profile", profile);
 //                mWebDriver = new RemoteWebDriver(new URL("http://" + mIPPort + "/wd/hub"), ffDesiredcap);
                 mWebDriver = new FirefoxDriver(profile);
-
-                Dimension dim = new Dimension(512, 384);
-                mWebDriver.manage().window().setSize(dim);
 
                 mWebDriver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
 
