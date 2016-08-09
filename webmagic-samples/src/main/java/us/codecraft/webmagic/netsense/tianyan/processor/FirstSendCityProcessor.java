@@ -87,13 +87,15 @@ public class FirstSendCityProcessor implements PageProcessor {
             }
             page.addTargetRequests(needToCrawlList, 1);
 
-            String pageUrl = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/@href").all().get(0);
-            List<String> pageNumList = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/text()").all();
-            for (String pageNum : pageNumList) {
-                logger.info("加入下载队列(翻页)：" + getPagedUrl(pageUrl, pageNum));
-                page.addTargetRequest(getPagedUrl(pageUrl, pageNum));
+            List<String> all = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/@href").all();
+            if(CollectionUtils.isNotEmpty(all)){
+                String pageUrl = all.get(0);
+                List<String> pageNumList = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/text()").all();
+                for (String pageNum : pageNumList) {
+                    logger.info("加入下载队列(翻页)：" + getPagedUrl(pageUrl, pageNum));
+                    page.addTargetRequest(getPagedUrl(pageUrl, pageNum));
+                }
             }
-
         } else if (page.getUrl().toString().contains("company")) {
             CompanyInfo info = new CompanyInfo();
 
@@ -216,8 +218,8 @@ public class FirstSendCityProcessor implements PageProcessor {
             .thread(1);
 
     public static void main(String[] args) {
-        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
-//        FireFoxDownloader downloader = new FireFoxDownloader("D:\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+//        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+        FireFoxDownloader downloader = new FireFoxDownloader("D:\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
                 .setSleepTime(15 * 1000)
                 .setProxy("172.16.7.144", 9090);
 
