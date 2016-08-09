@@ -9,6 +9,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -45,7 +46,7 @@ class WebDriverPool {
 	private WebDriver mDriver = null;
 	private boolean mAutoQuitDriver = true;
 
-	private static final String CONFIG_FILE = "/Users/Bingo/Documents/workspace/webmagic/webmagic-selenium/config.ini";
+    private static final String CONFIG_FILE = System.getProperties().getProperty("user.dir") + File.separator + "webmagic-selenium" + File.separator + "config.ini";
 	private static final String DRIVER_FIREFOX = "firefox";
 	private static final String DRIVER_CHROME = "chrome";
 	private static final String DRIVER_PHANTOMJS = "phantomjs";
@@ -64,6 +65,7 @@ class WebDriverPool {
 	public void configure() throws IOException {
 		// Read config file
 		sConfig = new Properties();
+        logger.info("加载config.ini文件：" + CONFIG_FILE);
 		sConfig.load(new FileReader(CONFIG_FILE));
 
 		// Prepare capabilities

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: us.codecraft.webmagic.netsense.tianyan.processor.FirstSend
+ CityProcessor
+
