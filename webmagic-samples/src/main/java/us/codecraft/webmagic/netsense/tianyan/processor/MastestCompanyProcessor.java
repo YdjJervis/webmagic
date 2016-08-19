@@ -18,12 +18,13 @@ import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 全国500强企业
  */
-public class MastestCompanyProcessor implements PageProcessor{
-
+public class MastestCompanyProcessor implements PageProcessor {
 
     private Site site = Site.me().setRetryTimes(3);
     public static final String DETAILS = "result_param_1";
@@ -42,43 +43,51 @@ public class MastestCompanyProcessor implements PageProcessor{
 
             List<Selectable> searchResultNodeList = page.getHtml().xpath("//div[@class='b-c-white search_result_container']/div").nodes();
 
+
             List<CompanyResult> companyResultList = new ArrayList<CompanyResult>();
             for (int i = 0; i < searchResultNodeList.size(); i++) {
                 Selectable selectable = searchResultNodeList.get(i);
                 CompanyResult cr = new CompanyResult();
-                String name = selectable.xpath("//span[@ng-bind-html='node.name | trustHtml']").smartContent().get();
+                String name = selectable.xpath("//span[@ng-bind-html='node.name | trustHtml']").get();
+
                 if (StringUtils.isEmpty(name)) {
                     continue;
                 }
+
+                Matcher matcher = Pattern.compile("([\\u4E00-\\u9FFF(（）)]+)").matcher(name);
+                StringBuffer sb = new StringBuffer();
+                while (matcher.find()) {
+                    sb.append(matcher.group(1));
+                }
+                name = sb.toString();
+
+                if (StringUtils.isEmpty(name)) {
+                    continue;
+                }
+
                 System.out.println(TAG + "企业名称：" + name);
-                cr.setName(name.replaceAll("<em>", "").replaceAll("</em>", ""));
+                cr.setName(name);
                 cr.setUrl(selectable.xpath("//a[@class='query_name']/@href").get());
                 System.out.println(TAG + "列表结果：" + i + " - " + cr);
                 companyResultList.add(cr);
             }
-            if (CollectionUtils.isNotEmpty(companyResultList)) {
+
+            if (CollectionUtils.isEmpty(companyResultList)) {
                 crawlNext();
-                return;
             }
+
             for (int i = 0; i < companyResultList.size(); i++) {
                 if (i == 1) break;
                 CompanyResult result = companyResultList.get(i);
                 if (mCompanyModel.isExsit(result.getName())) {
                     crawlNext();
-                    return;
                 } else {
-//                    page.addTargetRequest(result.getUrl());
+                    page.addTargetRequest(result.getUrl());
                 }
             }
-            crawlNext();
+
         } else if (page.getUrl().toString().contains("company")) {
             CompanyInfo info = new CompanyInfo();
-
-            try {
-                Thread.sleep(5 * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
             String name = page.getHtml().xpath("//div[@class='company_info_text']/p/text()").get();
 
@@ -184,7 +193,7 @@ public class MastestCompanyProcessor implements PageProcessor{
     private static CompanyModel mCompanyModel;
 
     public static void main(String[] args) {
-        SeleniumDownloader mDownloader = new SeleniumDownloader("/home/hihi/opt/env/java/chromedrivers/chromedriver2.9").setSleepTime(3000);
+        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(10 * 1000);
         mSpider.setDownloader(mDownloader);
         mCompanyHouseModel = new CompanyHouseModel();
         mCompanyModel = new CompanyModel();
@@ -209,7 +218,7 @@ public class MastestCompanyProcessor implements PageProcessor{
         mUrls = urlList.toArray(urls);
 
         String next = next();
-        if (null != next) {
+        if (StringUtils.isNotEmpty(next)) {
             mSpider.addUrl(next).start();
         }
 
@@ -219,6 +228,7 @@ public class MastestCompanyProcessor implements PageProcessor{
         if (mIndex < mUrls.length) {
             return mUrls[mIndex++];
         }
+        System.out.println(TAG + "剩余数据数量：" + (mUrls.length - mIndex));
         return null;
     }
 }

@@ -1,0 +1,18 @@
+选择北京的时候
+http://www.tianyancha.com/search?base=bj&cate=2800&cateName=房地产业&filterType=cate
+
+选天津
+http://www.tianyancha.com/search?base=tj&cate=2800&cateName=房地产业&filterType=cate
+
+选湖北恩施
+http://www.tianyancha.com/search?base=hub&searchCity=恩施土家族苗族自治州&cate=2800&cateName=房地产业&filterType=cate
+
+选深圳
+http://www.tianyancha.com/search?base=gd&searchCity=深圳&cate=2800&cateName=房地产业&filterType=cate
+http://www.tianyancha.com/search/page/3?base=gd&cate=2800&filterType=cate%5C&searchCity=深圳&cateName=房地产业
+因此：
+baseURL：http://www.tianyancha.com/search?cate=2800&cateName=房地产业&filterType=cate
+param：base=gd
+       searchCity=深圳
+
+http://www.tianyancha.com/search/page/http://www.tianyancha.com/search?cate=2800&cateName=%E6%88%BF%E5%9C%B0%E4%BA%A7%E4%B8%9A&filterType=cate&base=bj?cate=2800&cateName=%E6%88%BF%E5%9C%B0%E4%BA%A7%E4%B8%9A&filterType=cate&base=bj
