@@ -14,7 +14,7 @@ public class JsoupDownloader implements Downloader {
     public Page download(Request request, Task task) {
         Page page = new Page();
         try {
-            String content = Jsoup.connect(request.getUrl()).get().html();
+            String content = Jsoup.connect(request.getUrl()).timeout(1000 * 10).get().html();
             page.setRawText(content);
         } catch (IOException e) {
             e.printStackTrace();
@@ -24,8 +24,21 @@ public class JsoupDownloader implements Downloader {
         return page;
     }
 
+    public Page download(String url) {
+        Page page = new Page();
+        try {
+            String content = Jsoup.connect(url).get().html();
+            page.setRawText(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        page.setUrl(new PlainText(url));
+        page.setRequest(new Request(url));
+        return page;
+    }
+
+
     @Override
     public void setThread(int threadNum) {
-
     }
 }

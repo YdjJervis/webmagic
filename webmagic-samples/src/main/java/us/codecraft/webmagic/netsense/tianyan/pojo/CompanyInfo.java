@@ -2,7 +2,7 @@ package us.codecraft.webmagic.netsense.tianyan.pojo;
 
 
 import us.codecraft.webmagic.model.annotation.ExtractBy;
-import us.codecraft.webmagic.netsense.base.BaseBean;
+import us.codecraft.webmagic.netsense.base.pojo.BaseBean;
 
 /**
  * 天眼查

@@ -81,6 +81,18 @@
         <constructor-arg ref="jdbcDataSource"/>
     </bean>
 
+    <!--国家统计局相关-->
+    <bean id="navigationDao" class="us.codecraft.webmagic.netsense.stats.gov.dao.NavigationDao">
+        <constructor-arg ref="jdbcDataSource"/>
+    </bean>
+    <bean id="statsGovDao" class="us.codecraft.webmagic.netsense.stats.gov.dao.StatsGovDao">
+        <constructor-arg ref="jdbcDataSource"/>
+    </bean>
+    <bean id="targetDao" class="us.codecraft.webmagic.netsense.stats.gov.dao.TargetDao">
+        <constructor-arg ref="jdbcDataSource"/>
+    </bean>
+
+
     <!-- bean id="abstractDAO" class="com.yf.app.common.dao.AbstractBaseJdbcDAO" abstract="true">
         <constructor-arg ref="jdbcDataSource" />
     </bean -->

@@ -2,9 +2,6 @@ package us.codecraft.webmagic.netsense.stats.gov.pojo;
 
 import java.util.List;
 
-/**
- * Created by Administrator on 2016/8/20.
- */
 public class OtherWds {
 
 

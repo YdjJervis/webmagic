@@ -11,7 +11,7 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.FireFoxDownloader;
 import us.codecraft.webmagic.netsense.Context;
-import us.codecraft.webmagic.netsense.base.UserAgentUtil;
+import us.codecraft.webmagic.netsense.base.util.UserAgentUtil;
 import us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao;
 import us.codecraft.webmagic.netsense.tianyan.pipeline.DetailsPipeline;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyInfo;

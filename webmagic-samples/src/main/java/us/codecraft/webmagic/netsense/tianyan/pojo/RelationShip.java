@@ -1,6 +1,6 @@
 package us.codecraft.webmagic.netsense.tianyan.pojo;
 
-import us.codecraft.webmagic.netsense.base.BaseBean;
+import us.codecraft.webmagic.netsense.base.pojo.BaseBean;
 
 /**
  * 投资关系

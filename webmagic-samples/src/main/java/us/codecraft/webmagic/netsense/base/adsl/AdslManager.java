@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.netsense.base;
+package us.codecraft.webmagic.netsense.base.adsl;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

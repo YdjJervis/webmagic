@@ -1,6 +1,11 @@
 package us.codecraft.webmagic.netsense.stats.gov.pojo;
 
-public class Navigation {
+import us.codecraft.webmagic.netsense.base.pojo.BaseBean;
+
+/**
+ * 导航树
+ */
+public class Navigation extends BaseBean{
     /**
      * dbcode : hgyd
      * id : A01
@@ -33,7 +38,7 @@ public class Navigation {
         this.id = id;
     }
 
-    public boolean isParent() {
+    public boolean isIsParent() {
         return isParent;
     }
 

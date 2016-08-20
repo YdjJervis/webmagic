@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.netsense.base;
+package us.codecraft.webmagic.netsense.base.pojo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
