@@ -10,26 +10,22 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.FireFoxDownloader;
-import us.codecraft.webmagic.netsense.Context;
 import us.codecraft.webmagic.netsense.base.util.UserAgentUtil;
-import us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao;
 import us.codecraft.webmagic.netsense.tianyan.pipeline.DetailsPipeline;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyInfo;
-import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyResult;
 import us.codecraft.webmagic.netsense.tianyan.pojo.RelationShip;
 import us.codecraft.webmagic.netsense.tianyan.pojo.SearchParamMap;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.scheduler.PriorityScheduler;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 爬取房地产业下，每个城市前800强的公司信息
  */
-public class AllProcessor2 implements PageProcessor {
+public class Left500Processor implements PageProcessor {
 
     private Site site = Site.me().setRetryTimes(1).setUserAgent(UserAgentUtil.getRandomUserAgent()).setHttpProxy(new HttpHost("172.16.7.1445", 80));
 
@@ -38,61 +34,12 @@ public class AllProcessor2 implements PageProcessor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private CompanyDao mCompanyDao = (CompanyDao) Context.getInstance().getBean("companyDao");
-
     @Override
     public void process(Page page) {
         logger.info("搜索的URL：" + page.getUrl());
         site.setUserAgent(UserAgentUtil.getRandomUserAgent());
 
-        if (page.getUrl().toString().contains("search")) {
-            logger.info("此为搜索列表页面");
-
-            List<Selectable> searchResultNodeList = page.getHtml().xpath("//div[@class='b-c-white search_result_container']/div").nodes();
-
-            List<CompanyResult> companyResultList = new ArrayList<CompanyResult>();
-            for (int i = 0; i < searchResultNodeList.size(); i++) {
-                Selectable selectable = searchResultNodeList.get(i);
-                CompanyResult cr = new CompanyResult();
-                String name = selectable.xpath("//span[@ng-bind-html='node.name | trustHtml']").get();
-
-                if (StringUtils.isEmpty(name)) {
-                    continue;
-                }
-
-                Matcher matcher = Pattern.compile("([\\u4E00-\\u9FFF(（）)]+)").matcher(name);
-                StringBuffer sb = new StringBuffer();
-                while (matcher.find()) {
-                    sb.append(matcher.group(1));
-                }
-                name = sb.toString();
-
-                if (StringUtils.isEmpty(name)) {
-                    continue;
-                }
-
-                logger.info("企业名称：" + name);
-                cr.setName(name);
-                cr.setUrl(selectable.xpath("//a[@class='query_name']/@href").get());
-                logger.info("列表结果：" + i + " - " + cr);
-                companyResultList.add(cr);
-            }
-
-            for (CompanyResult result : companyResultList) {
-                if (!mCompanyDao.isExist(result.getName())) {
-                    logger.info("加入下载队列(详情)：" + result.getUrl());
-                    page.addTargetRequest(result.getUrl());
-                }
-            }
-
-            String pageUrl = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/@href").all().get(0);
-            List<String> pageNumList = page.getHtml().xpath("//li[@class='pagination-page ng-scope']/a/text()").all();
-            for (String pageNum : pageNumList) {
-                logger.info("加入下载队列(翻页)：" + getPagedUrl(pageUrl, pageNum));
-                page.addTargetRequest(getPagedUrl(pageUrl, pageNum));
-            }
-
-        } else if (page.getUrl().toString().contains("company")) {
+        if (page.getUrl().toString().contains("company")) {
             CompanyInfo info = new CompanyInfo();
 
             String name = page.getHtml().xpath("//div[@class='company_info_text']/p/text()").get();
@@ -159,10 +106,25 @@ public class AllProcessor2 implements PageProcessor {
                 }
             } else {
                 logger.info("没有成功解析详情页,一般是被限制了");
+                //解析失败，等待一个小时，服务器拨号后继续抓取
+                sleep(30);
             }
 
+        } else {
+            sleep(30);
         }
 
+    }
+
+    /**
+     * @param timeMin 分钟数
+     */
+    private void sleep(long timeMin) {
+        try {
+            Thread.sleep(timeMin * 60 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -170,6 +132,9 @@ public class AllProcessor2 implements PageProcessor {
      */
     private String getPagedUrl(String url, String page) {
         if (NumberUtils.isNumber(page)) {
+            if (Integer.valueOf(page) > 10) {//一个城市只爬取10个页面，合200个公司，一，二线总共13个城市
+                return url;
+            }
             String[] split = url.split("\\?");
             return "http://www.tianyancha.com/search/page/" + page + "?" + split[1];
         } else {
@@ -191,21 +156,19 @@ public class AllProcessor2 implements PageProcessor {
     }
 
     private static Spider mSpider = Spider
-            .create(new AllProcessor())
+            .create(new Left500Processor())
             .addPipeline(new DetailsPipeline())
             .thread(1);
 
     public static void main(String[] args) {
-//        SeleniumDownloader mDownloader = new SeleniumDownloader("E:\\softsare\\chromedriver.exe").setSleepTime(20 * 1000);
-        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
-//        FireFoxDownloader downloader = new FireFoxDownloader("D:\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
-                .setSleepTime(5 * 1000)
+//        FireFoxDownloader downloader = new FireFoxDownloader("E:\\softsare\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+        FireFoxDownloader downloader = new FireFoxDownloader("D:\\web245\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe")
+                .setSleepTime(20 * 1000)
                 .setProxy("172.16.7.144", 9090);
 
-        mSpider.setDownloader(downloader);
-        String[] urls = new SearchParamMap().getUrls();
+        mSpider.setDownloader(downloader).setScheduler(new PriorityScheduler());
+        String[] urls = new SearchParamMap().getLeftList();
         mSpider.addUrl(urls);
-//        mSpider.addUrl("http://www.tianyancha.com/company/324613874");
         mSpider.start();
     }
 

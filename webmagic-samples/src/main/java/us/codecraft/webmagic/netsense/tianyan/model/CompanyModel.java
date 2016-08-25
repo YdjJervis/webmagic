@@ -3,7 +3,7 @@ package us.codecraft.webmagic.netsense.tianyan.model;
 import org.apache.commons.lang.StringUtils;
 import org.jumpmind.symmetric.csv.CsvReader;
 import us.codecraft.webmagic.netsense.Context;
-import us.codecraft.webmagic.netsense.base.BaseModel;
+import us.codecraft.webmagic.netsense.base.model.BaseModel;
 import us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyCvs;
 import us.codecraft.webmagic.netsense.tianyan.pojo.CompanyInfo;

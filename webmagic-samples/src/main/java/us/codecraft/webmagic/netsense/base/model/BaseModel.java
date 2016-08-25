@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.netsense.base;
+package us.codecraft.webmagic.netsense.base.model;
 
 import java.util.List;
 

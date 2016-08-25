@@ -1,5 +1,12 @@
 package us.codecraft.webmagic.netsense.tianyan.pojo;
 
+import us.codecraft.webmagic.netsense.Context;
+import us.codecraft.webmagic.netsense.tianyan.dao.CompanyDao;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -76,10 +83,10 @@ public class SearchParamMap {
     }
 
     /**
-    1.一线城市：5个  北京，上海，广州，深圳，天津
-    2.二线发达城市：8个  杭州，南京，济南，重庆，青岛，大连，宁波，厦门.
-      (辽宁省都没有，大连受灾)
-    */
+     * 1.一线城市：5个  北京，上海，广州，深圳，天津
+     * 2.二线发达城市：8个  杭州，南京，济南，重庆，青岛，大连，宁波，厦门.
+     * (辽宁省都没有，大连受灾)
+     */
     public String[] getFirstSeondCityUrls() {
         final String base = "http://www.tianyancha.com/search?cate=2800&cateName=房地产业&filterType=cate&base=";
 
@@ -107,13 +114,67 @@ public class SearchParamMap {
         return urls;
     }
 
+    /**
+     * @return 房产500强剩余的公司详情页面URL列表
+     */
+    public String[] getLeftList() {
+        List<String> list = new ArrayList<String>();
+
+        String FILE_PATH = "D:/archieve/runnable_jar/2016房地产500强剩余公司详情URL.txt";
+        FILE_PATH  = "E:\\workspace\\服务端\\spider\\webmagic\\webmagic-samples\\src\\main\\java\\us\\codecraft\\webmagic\\netsense\\tianyan\\res\\2016房地产500强剩余公司详情URL.txt";
+
+        File file = new File(FILE_PATH);
+        FileReader reader = null;
+        BufferedReader br = null;
+
+        CompanyDao dao = (CompanyDao) Context.getInstance().getBean("companyDao");
+        try {
+            reader = new FileReader(file);
+            br = new BufferedReader(reader);
+
+            String line = br.readLine();
+            while (line != null) {
+                if (!dao.isExist(line)) {
+                    list.add(line);
+                }
+                line = br.readLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        String[] urls = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            urls[i] = list.get(i);
+        }
+        return urls;
+    }
+
     public static void main(String[] args) {
         /*for (String url : new SearchParamMap().getUrls()) {
             System.out.println(url);
         }*/
-        for (String url : new SearchParamMap().getFirstSeondCityUrls()) {
+        /*for (String url : new SearchParamMap().getFirstSeondCityUrls()) {
+            System.out.println(url);
+        }*/
+        for (String url : new SearchParamMap().getLeftList()) {
             System.out.println(url);
         }
-
     }
 }
