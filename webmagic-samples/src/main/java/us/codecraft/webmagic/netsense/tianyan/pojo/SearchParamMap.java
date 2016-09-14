@@ -121,7 +121,7 @@ public class SearchParamMap {
         List<String> list = new ArrayList<String>();
 
         String FILE_PATH = "D:/archieve/runnable_jar/2016房地产500强剩余公司详情URL.txt";
-        FILE_PATH  = "E:\\workspace\\服务端\\spider\\webmagic\\webmagic-samples\\src\\main\\java\\us\\codecraft\\webmagic\\netsense\\tianyan\\res\\2016房地产500强剩余公司详情URL.txt";
+        FILE_PATH = "E:\\workspace\\服务端\\spider\\webmagic\\webmagic-samples\\src\\main\\java\\us\\codecraft\\webmagic\\netsense\\tianyan\\res\\2016房地产500强剩余公司详情URL.txt";
 
         File file = new File(FILE_PATH);
         FileReader reader = null;
@@ -163,6 +163,55 @@ public class SearchParamMap {
         for (int i = 0; i < list.size(); i++) {
             urls[i] = list.get(i);
         }
+        return urls;
+    }
+
+    public String[] getTop100Urls() {
+        /*http://www.tianyancha.com/company/878129276
+
+绿地控股股份有限公司
+绿地控股集团股份有限公司
+
+保利房地产（集团）股份有限公司
+
+中国海外发展有限公司
+
+融创房地产集团有限公司
+天津融创置地有限公司
+
+重庆龙湖地产发展有限公司
+
+广州富力地产股份有限公司   */
+        //前10
+        String[] urls = new String[]{"http://www.tianyancha.com/company/13637692"
+                , "http://www.tianyancha.com/company/878129276"
+                , "http://www.tianyancha.com/company/863895721",
+                "http://www.tianyancha.com/company/2350439957",
+                "http://www.tianyancha.com/company/8562950",
+                "http://www.tianyancha.com/company/1402539256",
+                "http://www.tianyancha.com/company/1684115751"
+                , "http://www.tianyancha.com/company/15213635",
+                "http://www.tianyancha.com/company/24201445",
+                "http://www.tianyancha.com/company/14365540"
+        };
+
+        //前20
+        urls = new String[]{
+                "http://www.tianyancha.com/company/1197371",
+                "http://www.tianyancha.com/company/651442",
+                "http://tianyancha.com/company/6955599",
+                "http://www.tianyancha.com/company/4690086",
+                "http://www.tianyancha.com/company/232640220",
+                "http://www.tianyancha.com/company/8863903",
+                "http://www.tianyancha.com/company/14365540",
+                "http://www.tianyancha.com/company/1639591524",
+                "http://www.tianyancha.com/company/356885",
+                "http://www.tianyancha.com/company/5733344",
+                "http://www.tianyancha.com/company/25953156",
+                "http://www.tianyancha.com/company/1883468",
+                "http://www.tianyancha.com/company/4845369"
+
+        };
         return urls;
     }
 

@@ -12,6 +12,7 @@ public class RelationShip extends BaseBean {
     private String found;//投资资金
     private String desUrl;
     private String url;
+    private int layer;
 
     public String getSrcCompany() {
         return srcCompany;
@@ -53,6 +54,14 @@ public class RelationShip extends BaseBean {
         this.url = url;
     }
 
+    public int getLayer() {
+        return layer;
+    }
+
+    public void setLayer(int layer) {
+        this.layer = layer;
+    }
+
     @Override
     public String toString() {
         return "RelationShip{" +
@@ -61,7 +70,7 @@ public class RelationShip extends BaseBean {
                 ", found='" + found + '\'' +
                 ", desUrl='" + desUrl + '\'' +
                 ", url='" + url + '\'' +
+                ", layer=" + layer +
                 '}';
     }
-
 }

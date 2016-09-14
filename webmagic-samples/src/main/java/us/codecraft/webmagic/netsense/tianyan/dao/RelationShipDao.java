@@ -16,7 +16,7 @@ public class RelationShipDao extends AbstractBaseJdbcDAO {
     }
 
     public void add(List<RelationShip> list) {
-        super.add(list, RelationShip.class, "t_ori_company_relation");
+        super.add(list, RelationShip.class, "t_ori_company_relation_qichacha");
     }
 
 }
