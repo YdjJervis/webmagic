@@ -5,6 +5,7 @@ package us.codecraft.webmagic.samples.amazon.pojo;
  */
 public class Discuss {
 
+    private String asin;
     private String title;
     private String time;
     private String content;
@@ -12,6 +13,14 @@ public class Discuss {
     private String person;
     private String buyStatus;
     private String star;
+
+    public void setAsin(String asin) {
+        this.asin = asin;
+    }
+
+    public String getAsin() {
+        return asin;
+    }
 
     public String getTitle() {
         return title;
@@ -72,6 +81,7 @@ public class Discuss {
     @Override
     public String toString() {
         return "Discuss{" +
+                "asin='" + asin + '\'' +
                 "title='" + title + '\'' +
                 ", time='" + time + '\'' +
                 ", content='" + content + '\'' +
