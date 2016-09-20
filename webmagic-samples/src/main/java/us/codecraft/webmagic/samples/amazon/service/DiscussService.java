@@ -10,4 +10,8 @@ import java.util.List;
 public interface DiscussService {
 
     List<Discuss> findAll();
+
+    long add(Discuss discuss);
+
+    long addAll(List<Discuss> discussList);
 }

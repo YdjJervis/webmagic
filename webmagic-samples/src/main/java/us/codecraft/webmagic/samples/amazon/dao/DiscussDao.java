@@ -13,5 +13,11 @@ public interface DiscussDao {
 
     List<Discuss> findAll();
 
-    void add(Discuss discuss);
+    /**
+     * @return ASIN code
+     */
+    long add(Discuss discuss);
+
+    long addAll(List<Discuss> discussList);
+
 }

@@ -17,4 +17,16 @@ public class DiscussServiceImpl implements DiscussService {
     public List<Discuss> findAll() {
         return discussDao.findAll();
     }
+
+    @Override
+    public long add(Discuss discuss) {
+        return discussDao.add(discuss);
+    }
+
+    @Override
+    public long addAll(List<Discuss> discussList) {
+        return discussDao.addAll(discussList);
+    }
+
+
 }

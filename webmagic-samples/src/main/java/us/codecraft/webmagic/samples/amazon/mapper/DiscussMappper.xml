@@ -12,9 +12,49 @@
     </select>
 
     <insert id="add" parameterType="Discuss">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
         INSERT INTO amazon_discuss (asin,title,time,content,version,person,buyStatus,star)
         VALUES (#{asin},#{title},#{time},#{content},#{version},#{person},#{buyStatus},#{star})
-        ON DUPLICATE KEY UPDATE asin=#{asin},title=#{title},time=#{time},content=#{content},version=#{version},person=#{person},buyStatus=#{buyStatus},star=#{star}
+        ON DUPLICATE KEY UPDATE
+        asin=#{asin},title=#{title},time=#{time},content=#{content},version=#{version},person=#{person},buyStatus=#{buyStatus},star=#{star}
     </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        INSERT INTO amazon_discuss (
+        asin,
+        title,
+        time,
+        content,
+        version,
+        person,
+        buyStatus,
+        star)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.asin},#{item.title},
+            #{item.time},#{item.content},
+            #{item.version},
+            #{item.person},
+            #{item.buyStatus},
+            #{item.star}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        asin=VALUES(asin),
+        title=VALUES(title),
+        time=VALUES(time),
+        content=VALUES(content),
+        version=VALUES(version),
+        person=VALUES(person),
+        buyStatus=VALUES(buyStatus),
+        star=VALUES(star)
+    </insert>
+
 
 </mapper>
