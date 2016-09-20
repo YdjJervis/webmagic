@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.DiscussDao">
+    <!--设置domain类和数据库中表的字段一一对应，注意数据库字段和domain类中的字段名称不致，此处一定要！-->
+    <resultMap id="DiscussResultMap" type="Discuss">
+        <result column="start" property="star"/>
+    </resultMap>
+    <!-- 查询单条记录 -->
+    <select id="findAll" resultMap="DiscussResultMap">
+        SELECT * FROM amazon_discuss;
+    </select>
+
+    <insert id="add" parameterType="Discuss">
+        INSERT INTO amazon_discuss (asin,title,time,content,version,person,buyStatus,start) VALUES (#{asin},#{title},#{time},#{content},#{version},#{person},#{buyStatus},#{star})
+        ON DUPLICATE KEY UPDATE time=#{time}
+    </insert>
+
+</mapper>

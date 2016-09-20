@@ -35,111 +35,40 @@
         <!-- 指定连接数据库连接池的最小连接数 -->
         <!-- 指定连接数据库连接池的初始化连接数 -->
         <!-- 指定连接数据库连接池的连接的最大空闲时间 -->
-        <property name="driverClass" value="${driverClassName}"/>
+        <!--<property name="driverClass" value="${driverClassName}"/>
         <property name="jdbcUrl" value="${url}"/>
         <property name="user" value="${username}"/>
         <property name="password" value="${password}"/>
         <property name="maxPoolSize" value="${maxActive}"/>
+        <property name="initialPoolSize" value="${initialSize}"/>-->
+
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/eccang?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false"/>
+        <property name="user" value="root"/>
+        <property name="password" value="eccang"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="initialPoolSize" value="4"/>
         <property name="minPoolSize" value="1"/>
-        <property name="initialPoolSize" value="${initialSize}"/>
         <property name="maxIdleTime" value="20"/>
     </bean>
 
-    <!-- 定义Hibernate的SessionFactory -->
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <!-- 依赖注入数据源，注入上面定义的dataSource -->
+    <!-- 配置Mybatis的文件 ，mapperLocations配置**Mapper.xml文件位置，configLocation配置mybatis-config文件位置-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <!-- 定义Hibernate的SessionFactory的属性 -->
-        <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
-        <!-- mappingResouces属性用来列出全部映射文件 -->
-        <!--<property name="mappingResources" value="org/crazyjava/auction/model/*.hbm.xml"/>-->
-
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
     </bean>
 
-    <!-- 配置Hibernate的局部事务管理器，使用HibernateTransactionManager类 -->
-    <!-- 该类实现PlatformTransactionManager接口，是针对Hibernate的特定实现-->
-    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-        <!-- 配置HibernateTransactionManager时需要依注入SessionFactory的引用 -->
-        <property name="sessionFactory" ref="sessionFactory"/>
+    <!-- 扫描mapper.java -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" autowire="byName">
+        <property name="basePackage" value="us.codecraft.webmagic.samples.amazon.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
-    <tx:annotation-driven transaction-manager="transactionManager"/>
-
-    <!--&lt;!&ndash; 配置事务切面Bean,指定事务管理器 &ndash;&gt;
-    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-        &lt;!&ndash; 用于配置详细的事务语义 &ndash;&gt;
-        <tx:attributes>
-            &lt;!&ndash; 所有以'get'开头的方法是read-only的 &ndash;&gt;
-            <tx:method name="get*" read-only="true"/>
-            &lt;!&ndash; 其他方法使用默认的事务设置 &ndash;&gt;
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
-    <aop:config>
-        &lt;!&ndash; 配置一个切入点，匹配指定包下所有以Impl结尾的类执行的所有方法 &ndash;&gt;
-        <aop:pointcut id="txPointcut" expression="execution(* org.crazyjava.auction.service.impl.*Impl.*(..))"/>
-        &lt;!&ndash; 指定在leeService切入点应用txAdvice事务切面 &ndash;&gt;
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
-    </aop:config>
-
-    &lt;!&ndash; 定义JavaMailSenderImpl，它用于发送邮件 &ndash;&gt;
-    <bean id="mailSender"
-          class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        &lt;!&ndash; 指定发送邮件的SMTP服务器地址 &ndash;&gt;
-        <property name="host" value="smtp.163.com"/>
-        <property name="javaMailProperties">
-            <props>
-                <prop key="mail.smtp.auth">true</prop>
-                <prop key="mail.smtp.timeout">25000</prop>
-            </props>
-        </property>
-        &lt;!&ndash; 指定登录邮箱的用户名、密码 &ndash;&gt;
-        <property name="username" value="spring_test"/>
-        <property name="password" value="123abc"/>
-    </bean>
-    &lt;!&ndash; 定义SimpleMailMessage Bean，它代表了一份邮件 &ndash;&gt;
-    <bean id="mailMessage"
-          class="org.springframework.mail.SimpleMailMessage">
-        <property name="from" value="spring_test@163.com"/>
-        &lt;!&ndash; 指定邮件标题 &ndash;&gt;
-        <property name="subject" value="竞价通知"/>
-    </bean>
-
-    &lt;!&ndash; 配置业务逻辑组件 &ndash;&gt;
-    <bean id="mgr"
-          class="org.crazyjava.auction.service.impl.AuctionManagerImpl">
-        &lt;!&ndash; 为业务逻辑组件注入所需的DAO组件 &ndash;&gt;
-        <property name="userDao" ref="auctionUserDao"/>
-        <property name="bidDao" ref="bidDao"/>
-        <property name="itemDao" ref="itemDao"/>
-        <property name="kindDao" ref="kindDao"/>
-        <property name="stateDao" ref="stateDao"/>
-        <property name="mailSender" ref="mailSender"/>
-        <property name="message" ref="mailMessage"/>
-    </bean>
-    &lt;!&ndash; 配置一个TimerTask Bean &ndash;&gt;
-    <bean id="checkWiner" class="org.crazyjava.auction.schedule.CheckWiner">
-        &lt;!&ndash; 依赖注入业务逻辑组件 &ndash;&gt;
-        <property name="mgr" ref="mgr"/>
-    </bean>
-    &lt;!&ndash; 将TimerTask Bean：checkWiner包装成可周期性执行的任务调度Bean &ndash;&gt;
-    <bean id="scheduledTask"
-          class="org.springframework.scheduling.timer.ScheduledTimerTask">
-        &lt;!&ndash; 指定调度频率和延迟 &ndash;&gt;
-        <property name="delay" value="0"/>
-        <property name="period" value="86400000"/>
-        <property name="timerTask" ref="checkWiner"/>
-    </bean>
-    &lt;!&ndash; 启动实际调度 &ndash;&gt;
-    <bean id="timerFactory"
-          class="org.springframework.scheduling.timer.TimerFactoryBean">
-        &lt;!&ndash; 下面列出所有需要调用的任务调度Bean &ndash;&gt;
-        <property name="scheduledTimerTasks">
-            <list>
-                <ref bean="scheduledTask"/>
-            </list>
-        </property>
-    </bean>-->
-
+    <!-- 自动扫描注解的bean -->
     <context:component-scan base-package="us.codecraft.webmagic.samples"/>
+
+    <!--<bean id="discussDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+        <property name="mapperInterface" value="us.codecraft.webmagic.samples.amazon.dao.DiscussDao"></property>
+    </bean>-->
 </beans>
