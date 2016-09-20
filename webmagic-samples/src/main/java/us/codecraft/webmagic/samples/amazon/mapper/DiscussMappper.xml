@@ -2,12 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.DiscussDao">
-    <!--设置domain类和数据库中表的字段一一对应，注意数据库字段和domain类中的字段名称不致，此处一定要！-->
-    <resultMap id="DiscussResultMap" type="Discuss">
-        <result column="star" property="star"/>
-    </resultMap>
+
     <!-- 查询单条记录 -->
-    <select id="findAll" resultMap="DiscussResultMap">
+    <select id="findAll" resultType="Discuss">
         SELECT * FROM amazon_discuss;
     </select>
 
@@ -15,10 +12,10 @@
         <selectKey resultType="java.lang.Long">
             SELECT @@IDENTITY AS id
         </selectKey>
-        INSERT INTO amazon_discuss (asin,title,time,content,version,person,buyStatus,star)
-        VALUES (#{asin},#{title},#{time},#{content},#{version},#{person},#{buyStatus},#{star})
+        INSERT INTO amazon_discuss (asin,title,time,content,version,person,buyStatus,star,personID)
+        VALUES (#{asin},#{title},#{time},#{content},#{version},#{person},#{buyStatus},#{star},#{personID})
         ON DUPLICATE KEY UPDATE
-        asin=#{asin},title=#{title},time=#{time},content=#{content},version=#{version},person=#{person},buyStatus=#{buyStatus},star=#{star}
+        asin=#{asin},title=#{title},time=#{time},content=#{content},version=#{version},person=#{person},buyStatus=#{buyStatus},star=#{star},personID=#{personID}
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
@@ -26,14 +23,7 @@
             SELECT @@IDENTITY AS id
         </selectKey>
         INSERT INTO amazon_discuss (
-        asin,
-        title,
-        time,
-        content,
-        version,
-        person,
-        buyStatus,
-        star)
+        asin,title,time,content,version,person,buyStatus,star,personID)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -42,7 +32,8 @@
             #{item.version},
             #{item.person},
             #{item.buyStatus},
-            #{item.star}
+            #{item.star},
+            #{item.personID}
             )
         </foreach>
         ON DUPLICATE KEY UPDATE
@@ -53,8 +44,8 @@
         version=VALUES(version),
         person=VALUES(person),
         buyStatus=VALUES(buyStatus),
-        star=VALUES(star)
+        star=VALUES(star),
+        personID=VALUES(personID)
     </insert>
-
 
 </mapper>

@@ -11,6 +11,7 @@ public class Discuss {
     private String content;
     private String version;
     private String person;
+    private String personID;
     private String buyStatus;
     private String star;
 
@@ -78,17 +79,26 @@ public class Discuss {
         this.star = star;
     }
 
+    public String getPersonID() {
+        return personID;
+    }
+
+    public void setPersonID(String personID) {
+        this.personID = personID;
+    }
+
     @Override
     public String toString() {
         return "Discuss{" +
                 "asin='" + asin + '\'' +
-                "title='" + title + '\'' +
+                ", title='" + title + '\'' +
                 ", time='" + time + '\'' +
                 ", content='" + content + '\'' +
                 ", version='" + version + '\'' +
                 ", person='" + person + '\'' +
+                ", personID='" + personID + '\'' +
                 ", buyStatus='" + buyStatus + '\'' +
-                ", star=" + star +
+                ", star='" + star + '\'' +
                 '}';
     }
 }
