@@ -35,25 +35,19 @@
         <!-- 指定连接数据库连接池的最小连接数 -->
         <!-- 指定连接数据库连接池的初始化连接数 -->
         <!-- 指定连接数据库连接池的连接的最大空闲时间 -->
-        <!--<property name="driverClass" value="${driverClassName}"/>
+        <property name="driverClass" value="${driverClassName}"/>
         <property name="jdbcUrl" value="${url}"/>
         <property name="user" value="${username}"/>
         <property name="password" value="${password}"/>
         <property name="maxPoolSize" value="${maxActive}"/>
-        <property name="initialPoolSize" value="${initialSize}"/>-->
-
-        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/eccang?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false"/>
-        <property name="user" value="root"/>
-        <property name="password" value="eccang"/>
-        <property name="maxPoolSize" value="10"/>
-        <property name="initialPoolSize" value="4"/>
+        <property name="initialPoolSize" value="${initialSize}"/>
         <property name="minPoolSize" value="1"/>
         <property name="maxIdleTime" value="20"/>
     </bean>
 
     <!-- 配置Mybatis的文件 ，mapperLocations配置**Mapper.xml文件位置，configLocation配置mybatis-config文件位置-->
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <!--sqlSessionFactory:用这个id的话会报错-->
+    <bean id="_sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:mybatis-config.xml"/>
     </bean>
@@ -61,7 +55,7 @@
     <!-- 扫描mapper.java -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" autowire="byName">
         <property name="basePackage" value="us.codecraft.webmagic.samples.amazon.dao"/>
-        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <property name="sqlSessionFactoryBeanName" value="_sqlSessionFactory"/>
     </bean>
 
     <!-- 自动扫描注解的bean -->
