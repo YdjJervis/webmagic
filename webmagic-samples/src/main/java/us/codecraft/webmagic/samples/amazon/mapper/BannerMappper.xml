@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.BannerDao">
+
+    <!-- 查询单条记录 -->
+    <select id="findAll" resultType="Banner">
+        SELECT * FROM amazon_banner;
+    </select>
+
+    <select id="findAllBySite" parameterType="java.lang.String" resultType="Banner">
+        SELECT * FROM amazon_banner WHERE asin = #{0};
+    </select>
+
+    <insert id="add" parameterType="Banner">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        INSERT INTO amazon_banner (site,sort,price,imgUrl)
+        VALUES (#{site},#{sort},#{price},#{imgUrl})
+        ON DUPLICATE KEY UPDATE
+        site=#{site},sort=#{sort},price=#{price},imgUrl=#{imgUrl}
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        INSERT INTO amazon_banner (
+        site,sort,price,imgUrl)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.site},#{item.sort},
+            #{item.price},#{item.imgUrl}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        site=VALUES(site),
+        sort=VALUES(sort),
+        price=VALUES(price),
+        imgUrl=VALUES(imgUrl)
+    </insert>
+
+</mapper>

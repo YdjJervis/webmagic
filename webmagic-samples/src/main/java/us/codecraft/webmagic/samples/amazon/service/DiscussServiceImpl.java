@@ -7,7 +7,7 @@ import us.codecraft.webmagic.samples.amazon.pojo.Discuss;
 
 import java.util.List;
 
-@Service
+@Service("discussService")
 public class DiscussServiceImpl implements DiscussService {
 
     @Autowired
