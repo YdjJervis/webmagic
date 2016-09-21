@@ -13,6 +13,7 @@ public class UrlPrefix {
             put("cn",new Country("https://www.amazon.cn/dp/","https://www.amazon.cn/product-reviews/"));
             put("us",new Country("https://www.amazon.com/dp/","https://www.amazon.com/product-reviews/"));
             put("de",new Country("https://www.amazon.de/dp/","https://www.amazon.de/product-reviews/"));
+            put("jp",new Country("https://www.amazon.jp/dp/","https://www.amazon.jp/product-reviews/"));
         }
     };
 

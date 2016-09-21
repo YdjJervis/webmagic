@@ -13,11 +13,14 @@ public interface DiscussDao {
 
     List<Discuss> findAll();
 
+    List<Discuss> findAllByAsin(String asin);
+
     /**
      * @return ASIN code
      */
     long add(Discuss discuss);
 
     long addAll(List<Discuss> discussList);
+
 
 }

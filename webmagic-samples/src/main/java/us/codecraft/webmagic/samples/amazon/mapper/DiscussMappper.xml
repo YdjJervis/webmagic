@@ -8,6 +8,10 @@
         SELECT * FROM amazon_discuss;
     </select>
 
+    <select id="findAllByAsin" parameterType="java.lang.String" resultType="Discuss">
+        SELECT * FROM amazon_discuss WHERE asin = #{0};
+    </select>
+
     <insert id="add" parameterType="Discuss">
         <selectKey resultType="java.lang.Long">
             SELECT @@IDENTITY AS id

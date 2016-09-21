@@ -28,5 +28,10 @@ public class DiscussServiceImpl implements DiscussService {
         return discussDao.addAll(discussList);
     }
 
+    @Override
+    public List<Discuss> findAllByAsin(String asin) {
+        return discussDao.findAllByAsin(asin);
+    }
+
 
 }

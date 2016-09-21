@@ -17,6 +17,8 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
 
+    <import resource="classpath:cxf-context.xml"/>
+
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
@@ -61,4 +63,5 @@
         <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
         <property name="mapperInterface" value="us.codecraft.webmagic.samples.amazon.dao.DiscussDao"></property>
     </bean>-->
+
 </beans>

@@ -22,7 +22,7 @@ public class DiscussServiceTest extends SpringTestCase {
     @Test
     public void findAllTest() {
         List<Discuss> discussList = discussService.findAll();
-        logger.debug(discussList.toString());
+        logger.info(discussList.toString());
     }
 
     @Test
@@ -31,7 +31,7 @@ public class DiscussServiceTest extends SpringTestCase {
         discuss.setAsin("11111");
         discuss.setPerson("222223");
         discuss.setTime("33333");
-        discuss.setTitle("不足哦排版");
+        discuss.setTitle("不足哦排版\uD83D\uDC4E".replaceAll("\\\\","#"));
         long asin = discussService.add(discuss);
         System.out.println(asin);
     }
@@ -50,7 +50,7 @@ public class DiscussServiceTest extends SpringTestCase {
         discuss1.setPerson("22222333");
         discuss1.setTime("33333");
         discuss1.setTitle("444445");
-        discuss1.setContent("666677\uD83D\uDE09");
+        discuss1.setContent("666677");
 
         List<Discuss> list = new ArrayList<Discuss>();
         list.add(discuss);
@@ -58,5 +58,9 @@ public class DiscussServiceTest extends SpringTestCase {
 
         long asin = discussService.addAll(list);
         System.out.println(asin);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("不足哦排版\uD83D\uDC4E".replace("\uD83D","#"));
     }
 }
