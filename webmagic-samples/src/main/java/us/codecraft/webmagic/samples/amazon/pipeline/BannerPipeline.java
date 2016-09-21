@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.pipeline;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import us.codecraft.webmagic.ResultItems;
@@ -29,10 +30,8 @@ public class BannerPipeline implements Pipeline {
         if (CollectionUtils.isNotEmpty(bannerList)) {
             logger.info(bannerList.toString());
             for (Banner banner : bannerList) {
-                try {
+                if(StringUtils.isNotEmpty(banner.getSort())) {
                     bannerDao.add(banner);
-                } catch (Exception e) {
-                    logger.error(e.toString());
                 }
             }
         }

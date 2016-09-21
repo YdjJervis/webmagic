@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.downloader.FireFoxDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pipeline.BannerPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Banner;
@@ -31,16 +32,15 @@ public class BannerProcessor implements PageProcessor {
     }
 
     private void dealBanner(Page page) {
-        System.out.println(page.getHtml());
         if (isHomePage(page)) {
             String site = page.getUrl().get();
             List<Selectable> bannerNodeList = page.getHtml().xpath("//div[@class='cc-lm-tcgImgItem']").nodes();
             List<Banner> bannerList = new ArrayList<Banner>();
             for (Selectable bannerNode : bannerNodeList) {
                 Banner banner = new Banner(site);
-                banner.setSort(bannerNode.xpath("/div[@id='ccCateName']/text()").get());
-                banner.setPrice(bannerNode.xpath("/div[@id='ccShowAd']/text()").get());
-                banner.setImgUrl(bannerNode.xpath("/a/@src").get());
+                banner.setSort(bannerNode.xpath("//div[@id='ccCateName']/text()").get());
+                banner.setPrice(bannerNode.xpath("//div[@id='ccShowAd']/text()").get());
+                banner.setImgUrl(bannerNode.xpath("//a/img/@src").get());
 
                 bannerList.add(banner);
             }
@@ -64,8 +64,13 @@ public class BannerProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) {
+
+        FireFoxDownloader downloader = new FireFoxDownloader("D:\\install\\webdriver\\firefox\\hhllq_Firefox_gr\\App\\Firefox\\firefox.exe");
+        downloader.setSleepTime(5000);
+
         Spider.create(new BannerProcessor())
                 .addPipeline(new BannerPipeline())
+                .setDownloader(downloader)
                 .thread(1)
                 .addUrl("https://www.amazon.cn")
                 .start();

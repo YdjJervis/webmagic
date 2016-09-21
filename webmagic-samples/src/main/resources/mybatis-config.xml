@@ -9,5 +9,6 @@
 
     <mappers>
         <mapper resource="us/codecraft/webmagic/samples/amazon/mapper/DiscussMappper.xml"/>
+        <mapper resource="us/codecraft/webmagic/samples/amazon/mapper/BannerMappper.xml"/>
     </mappers>
 </configuration>
