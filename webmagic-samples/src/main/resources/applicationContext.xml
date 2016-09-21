@@ -6,6 +6,7 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:aop="http://www.springframework.org/schema/aop"
+
        xsi:schemaLocation="http://www.springframework.org/schema/mvc
                            http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
                            http://www.springframework.org/schema/beans
@@ -16,8 +17,6 @@
                            http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
-
-    <import resource="classpath:cxf-context.xml"/>
 
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">

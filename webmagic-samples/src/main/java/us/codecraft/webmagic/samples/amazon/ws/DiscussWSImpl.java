@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.pojo.Discuss;
 import us.codecraft.webmagic.samples.amazon.service.DiscussService;
-import us.codecraft.webmagic.samples.base.Context;
 
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
@@ -24,14 +23,12 @@ public class DiscussWSImpl implements DiscussWS {
     @Override
     public List<Discuss> getAllDiscuss(String asin) {
         logger.info("getAllDiscuss(String asin)::asin=" + asin);
-        discussService = (DiscussService) Context.getInstance().getBean("discussService");
         return discussService.findAllByAsin(asin);
     }
 
     @Override
     public List<Discuss> getAll() {
         logger.info("getAll()::");
-        discussService = (DiscussService) Context.getInstance().getBean("discussService");
         return discussService.findAll();
     }
 
