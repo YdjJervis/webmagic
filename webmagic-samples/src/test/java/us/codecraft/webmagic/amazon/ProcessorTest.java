@@ -5,7 +5,6 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pipeline.DiscussPipeline;
-import us.codecraft.webmagic.samples.amazon.processor.DiscussProcessor;
 
 /**
  * 测试页面是否还能获取到数据
@@ -43,7 +42,7 @@ public class ProcessorTest implements PageProcessor {
                 .addPipeline(new DiscussPipeline())
                 .thread(1)
 //                .addUrl("https://www.amazon.cn/dp/B013SMD0PI")
-                .addUrl("https://www.amazon.de/product-reviews/B012BU6NKW")
+                .addUrl("https://www.amazon.co.jp/product-reviews/B00SSRSY96")
                 .start();
     }
 }

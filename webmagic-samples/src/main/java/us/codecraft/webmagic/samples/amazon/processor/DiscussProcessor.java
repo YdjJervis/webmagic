@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
+import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pipeline.DiscussPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Country;
@@ -13,6 +14,8 @@ import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 评论
@@ -20,9 +23,9 @@ import java.util.List;
 public class DiscussProcessor implements PageProcessor {
 
     private static final String ASIN = "asin";
-    private static Country mCountry = UrlPrefix.getCountry("jp");
+    private static Country mCountry = UrlPrefix.getCountry("de");
 
-    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(250);
+    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(250).setTimeOut(2000);
 
     private Logger logger = Logger.getLogger(getClass());
 
@@ -78,9 +81,12 @@ public class DiscussProcessor implements PageProcessor {
 
             List<String> pageUrlList = page.getHtml().xpath("//li[@class='page-button']/a/@href").all();
             for (String pageUrl : pageUrlList) {
-                Request request = new Request(pageUrl);
-                request.putExtra(ASIN, asin);
-                page.addTargetRequest(request);
+                Matcher matcher = Pattern.compile("(.*amazon.*?/).*(product-reviews.*)").matcher(pageUrl);
+                if (matcher.find()) {
+                    Request request = new Request(matcher.group(1) + matcher.group(2));
+                    request.putExtra(ASIN, asin);
+                    page.addTargetRequest(request);
+                }
             }
         }
     }
@@ -92,12 +98,12 @@ public class DiscussProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) {
-//        Spider.create(new DiscussProcessor())
-//                .addPipeline(new DiscussPipeline())
-//                .thread(1)
-////                .addUrl("https://www.amazon.cn/dp/B013SMD0PI")
-//                .addUrl(mCountry.getProductUrl() + "B01JIB1LRW")
-//                .start();
-        new DiscussProcessor().logger.info("hello");
+        Spider.create(new DiscussProcessor())
+                .addPipeline(new DiscussPipeline())
+                .thread(1)
+//                .addUrl("https://www.amazon.cn/dp/B013SMD0PI")
+                .addUrl(mCountry.getProductUrl() + "B00A235SMU")
+                .start();
+
     }
 }
