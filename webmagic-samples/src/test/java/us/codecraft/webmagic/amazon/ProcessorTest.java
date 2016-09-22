@@ -42,7 +42,7 @@ public class ProcessorTest implements PageProcessor {
                 .addPipeline(new DiscussPipeline())
                 .thread(1)
 //                .addUrl("https://www.amazon.cn/dp/B013SMD0PI")
-                .addUrl("https://www.amazon.co.jp/product-reviews/B00SSRSY96")
+                .addUrl("https://www.amazon.cn/gp/cart/view.html/ref=lh_cart")
                 .start();
     }
 }

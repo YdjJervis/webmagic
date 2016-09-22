@@ -30,7 +30,11 @@ public class DiscussPipeline implements Pipeline {
         if (CollectionUtils.isNotEmpty(discussList)) {
             logger.info(discussList.toString());
             for (Discuss discuss : discussList) {
+                try {
                     discussDao.add(discuss);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

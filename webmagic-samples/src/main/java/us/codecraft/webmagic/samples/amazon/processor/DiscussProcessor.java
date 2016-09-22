@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
@@ -10,6 +11,8 @@ import us.codecraft.webmagic.samples.amazon.pipeline.DiscussPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Country;
 import us.codecraft.webmagic.samples.amazon.pojo.Discuss;
 import us.codecraft.webmagic.samples.amazon.pojo.UrlPrefix;
+import us.codecraft.webmagic.samples.base.util.PageUtil;
+import us.codecraft.webmagic.samples.base.util.UrlUtils;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
@@ -23,9 +26,9 @@ import java.util.regex.Pattern;
 public class DiscussProcessor implements PageProcessor {
 
     private static final String ASIN = "asin";
-    private static Country mCountry = UrlPrefix.getCountry("de");
+    private static Country mCountry = UrlPrefix.getCountry("cn");
 
-    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(250).setTimeOut(2000);
+    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(0).setTimeOut(2000);
 
     private Logger logger = Logger.getLogger(getClass());
 
@@ -33,6 +36,23 @@ public class DiscussProcessor implements PageProcessor {
     public void process(Page page) {
         dealProductDetails(page);
         dealAllDiscuss(page);
+        dealValidate(page);
+    }
+
+    private void dealValidate(Page page) {
+        String validateUrl = page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
+        if (StringUtils.isNotEmpty(validateUrl)) {
+            PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
+
+            String value = UrlUtils.getValue(page.getUrl().get(), "flag");
+            if (StringUtils.isEmpty(value)) {
+                value = "0";
+            }
+            String newUrl = UrlUtils.setValue(page.getUrl().get(), "flag", String.valueOf(Integer.valueOf(value) + 1));
+
+            Request request = new Request(newUrl);
+            page.addTargetRequest(request);
+        }
     }
 
     private void dealProductDetails(Page page) {
@@ -101,8 +121,7 @@ public class DiscussProcessor implements PageProcessor {
         Spider.create(new DiscussProcessor())
                 .addPipeline(new DiscussPipeline())
                 .thread(1)
-//                .addUrl("https://www.amazon.cn/dp/B013SMD0PI")
-                .addUrl(mCountry.getProductUrl() + "B00A235SMU")
+                .addUrl(mCountry.getProductUrl() + "B001UE7DM8")
                 .start();
 
     }
