@@ -13,6 +13,7 @@ import us.codecraft.webmagic.samples.amazon.pojo.Discuss;
 import us.codecraft.webmagic.samples.amazon.pojo.UrlPrefix;
 import us.codecraft.webmagic.samples.base.util.PageUtil;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
+import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
@@ -26,9 +27,9 @@ import java.util.regex.Pattern;
 public class DiscussProcessor implements PageProcessor {
 
     private static final String ASIN = "asin";
-    private static Country mCountry = UrlPrefix.getCountry("cn");
+    private static Country mCountry = UrlPrefix.getCountry("es");
 
-    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(0).setTimeOut(2000);
+    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(3000).setTimeOut(2000);
 
     private Logger logger = Logger.getLogger(getClass());
 
@@ -37,6 +38,7 @@ public class DiscussProcessor implements PageProcessor {
         dealProductDetails(page);
         dealAllDiscuss(page);
         dealValidate(page);
+
     }
 
     private void dealValidate(Page page) {
@@ -51,6 +53,7 @@ public class DiscussProcessor implements PageProcessor {
             String newUrl = UrlUtils.setValue(page.getUrl().get(), "flag", String.valueOf(Integer.valueOf(value) + 1));
 
             Request request = new Request(newUrl);
+            request.putExtra(ASIN, page.getRequest().getExtra(ASIN));
             page.addTargetRequest(request);
         }
     }
@@ -113,16 +116,17 @@ public class DiscussProcessor implements PageProcessor {
 
     @Override
     public Site getSite() {
-        mSite.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36 QIHU 360SE");
+        logger.debug("getSite():::");
+        mSite.setUserAgent(UserAgentUtil.getRandomUserAgent());
         return mSite;
     }
 
-    public static void main(String[] args) {
-        Spider.create(new DiscussProcessor())
-                .addPipeline(new DiscussPipeline())
-                .thread(1)
-                .addUrl(mCountry.getProductUrl() + "B001UE7DM8")
-                .start();
+    private static Spider mSpider = Spider.create(new DiscussProcessor())
+            .addPipeline(new DiscussPipeline())
+            .addUrl(mCountry.getProductUrl() + "B01E7JP428")
+            .thread(1);
 
+    public static void main(String[] args) {
+        mSpider.start();
     }
 }

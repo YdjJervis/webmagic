@@ -14,6 +14,7 @@ public class UrlPrefix {
             put("us",new Country("https://www.amazon.com/dp/","https://www.amazon.com/product-reviews/"));
             put("de",new Country("https://www.amazon.de/dp/","https://www.amazon.de/product-reviews/"));
             put("jp",new Country("https://www.amazon.jp/dp/","https://www.amazon.jp/product-reviews/"));
+            put("es",new Country("https://www.amazon.es/dp/","https://www.amazon.es/product-reviews/"));
         }
     };
 

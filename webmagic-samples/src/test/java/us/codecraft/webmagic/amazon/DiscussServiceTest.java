@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
 import us.codecraft.webmagic.samples.amazon.pojo.Discuss;
 import us.codecraft.webmagic.samples.amazon.service.DiscussService;
+import us.codecraft.webmagic.samples.base.util.EncodeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,9 @@ public class DiscussServiceTest extends SpringTestCase {
         Discuss discuss = new Discuss();
         discuss.setAsin("11111");
         discuss.setPerson("222223");
+        discuss.setPersonID("222223");
         discuss.setTime("33333");
-        discuss.setTitle("不足哦排版\uD83D\uDC4E".replaceAll("\\\\","#"));
+        discuss.setTitle(EncodeUtil.str2uni2str("不足哦排版\uD83D\uDC4E"));
         long asin = discussService.add(discuss);
         System.out.println(asin);
     }
@@ -61,6 +63,7 @@ public class DiscussServiceTest extends SpringTestCase {
     }
 
     public static void main(String[] args) {
-        System.out.println("不足哦排版\uD83D\uDC4E".replace("\uD83D","#"));
+        String src = "不足哦排版\uD83D\uDC4E";
+        System.out.println(EncodeUtil.str2uni2str(src));
     }
 }
