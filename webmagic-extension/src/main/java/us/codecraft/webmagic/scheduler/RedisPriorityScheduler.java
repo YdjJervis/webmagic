@@ -1,7 +1,6 @@
 package us.codecraft.webmagic.scheduler;
 
 import com.alibaba.fastjson.JSON;
-import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import redis.clients.jedis.Jedis;
