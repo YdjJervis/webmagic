@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.samples.base.entity;
+package us.codecraft.webmagic.samples.base.pojo;
 
 /**
  * 数据库URL基类，定义一些通用字段

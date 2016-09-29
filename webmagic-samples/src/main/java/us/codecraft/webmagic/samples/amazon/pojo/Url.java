@@ -1,6 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.pojo;
 
-import us.codecraft.webmagic.samples.base.entity.BaseUrl;
+import us.codecraft.webmagic.samples.base.pojo.BaseUrl;
 
 /**
  * URL实体

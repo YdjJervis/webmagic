@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.samples.base.entity;
+package us.codecraft.webmagic.samples.base.pojo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
