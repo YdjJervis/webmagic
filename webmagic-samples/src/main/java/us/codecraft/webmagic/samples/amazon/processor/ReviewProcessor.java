@@ -14,7 +14,6 @@ import us.codecraft.webmagic.samples.amazon.pipeline.DiscussPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Country;
 import us.codecraft.webmagic.samples.amazon.pojo.Discuss;
 import us.codecraft.webmagic.samples.amazon.pojo.UrlPrefix;
-import us.codecraft.webmagic.samples.base.listener.ScheduledTask;
 import us.codecraft.webmagic.samples.base.util.PageUtil;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
@@ -29,7 +28,7 @@ import java.util.regex.Pattern;
  * 评论
  */
 @Service
-public class ReviewProcessor implements PageProcessor,ScheduledTask{
+public class ReviewProcessor implements PageProcessor{
 
     @Autowired
     private CrawlUrlListener mCrawlUrlListener;
@@ -140,7 +139,4 @@ public class ReviewProcessor implements PageProcessor,ScheduledTask{
         mSpider.start();
     }
 
-    @Override
-    public void execute() {
-    }
 }

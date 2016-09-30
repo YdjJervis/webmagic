@@ -3,6 +3,7 @@ package us.codecraft.webmagic.samples.base.listener;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
+import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.base.pojo.BaseUrl;
 
@@ -39,7 +40,7 @@ public class UrlListener implements ScheduledTask {
      * subclass
      * @param urlList Url list
      */
-    protected void onUrlList(List<BaseUrl> urlList) {
+    protected void onUrlList(List<Url> urlList) {
 
         if (sPage == null) return;
 
