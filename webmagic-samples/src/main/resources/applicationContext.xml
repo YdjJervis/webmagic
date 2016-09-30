@@ -7,7 +7,10 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:aop="http://www.springframework.org/schema/aop"
 
+       xmlns:task="http://www.springframework.org/schema/task"
+
        xsi:schemaLocation="http://www.springframework.org/schema/mvc
+
     http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
     http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
@@ -16,7 +19,9 @@
     http://www.springframework.org/schema/tx
     http://www.springframework.org/schema/tx/spring-tx.xsd
     http://www.springframework.org/schema/aop
-    http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+    http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+    http://www.springframework.org/schema/task
+    http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
@@ -63,9 +68,9 @@
     <!-- 自动扫描注解的bean -->
     <context:component-scan base-package="us.codecraft.webmagic.samples"/>
 
-    <!--<bean id="discussDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
-        <property name="mapperInterface" value="us.codecraft.webmagic.samples.amazon.dao.DiscussDao"></property>
-    </bean>-->
+    <task:scheduled-tasks>
+        <task:scheduled ref="asinParseListener" method="execute" cron="0 */1 * * * ?"/>
+        <task:scheduled ref="crawlUrlListener" method="execute" cron="0 */ * * * ?"/>
+    </task:scheduled-tasks>
 
 </beans>

@@ -1,17 +1,15 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
-
 import java.util.List;
 
 /**
  * URL Service
  */
-public interface UrlService {
+public interface UrlService<T> {
 
-    List<Url> findAll();
+    List<T> findAll();
 
-    void update(Url url);
+    void update(T url);
 
-    long addAll(List<Url> urlList);
+    long addAll(List<T> urlList);
 }

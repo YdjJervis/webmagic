@@ -1,11 +1,11 @@
 package us.codecraft.webmagic.samples.amazon.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
-import us.codecraft.webmagic.samples.base.util.ThreadUtil;
+import us.codecraft.webmagic.samples.base.listener.ParseListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,45 +13,23 @@ import java.util.List;
 /**
  * 这个地方，把asin对象转换成URL对象后入库
  */
-public class AsinParseListener implements Runnable {
+@Service
+public class AsinParseListener extends ParseListener {
 
     @Autowired
-    private AsinService asinService;
-    @Autowired
-    private UrlService urlService;
-
-    private boolean start = true;
+    private AsinService mAsinService;
 
     @Override
-    public void run() {
+    protected List<Url> getUrl() {
+        List<Asin> asinList = mAsinService.findAll();
 
-        while (start) {
-
-            List<Asin> list = asinService.findAll();
-
-            List<Url> urlList = new ArrayList<Url>();
-            for (Asin asin : list) {
-                Url url = new Url();
-                url.site = asin.site;
-                url.status = 0;
-                url.url = "http://" + url.site + "/dp/" + asin.code;
-                urlList.add(url);
-
-                asin.status = 1;
-                asinService.update(asin);
-            }
-
-            urlService.addAll(urlList);
-            ThreadUtil.sleep(60);
+        List<Url> urlList = new ArrayList<Url>();
+        for (int i = 0, len = asinList.size(); i < len; i++) {
+            Url url = new Url();
+            Asin asin = asinList.get(i);
+            url.url = "http://www.amazon.cn/dp/" + asin;
+            urlList.add(url);
         }
-    }
-
-    public void stop() {
-        start = false;
-    }
-
-    public void start() {
-        start = true;
-        run();
+        return urlList;
     }
 }
