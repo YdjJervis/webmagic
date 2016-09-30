@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.base.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
@@ -12,10 +13,8 @@ import java.util.List;
 /**
  * 从数据库获取未爬去的URL的监听器
  */
+@Service
 public class UrlListener implements ScheduledTask {
-
-    @Autowired
-    UrlListener mUrlListener;
 
     @Autowired
     private UrlService mUrlService;
