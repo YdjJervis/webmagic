@@ -16,7 +16,7 @@ public abstract class ParseListener implements ScheduledTask {
 
     @Override
     public void execute() {
-        mUrlDao.addAll(getUrl());
+//        mUrlDao.addAll(/*getUrl()*/);
     }
 
     /**

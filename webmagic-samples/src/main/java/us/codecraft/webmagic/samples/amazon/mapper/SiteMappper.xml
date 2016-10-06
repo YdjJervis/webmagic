@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.SiteDao">
+
+    <resultMap id="SiteResultMap" type="Site">
+        <result property="basCode" column="BAS_CODE"/>
+        <result property="basSite" column="bas_site"/>
+        <result property="basName" column="bas_name"/>
+        <result property="basCrawl" column="bas_crawl"/>
+    </resultMap>
+
+    <!--public String basCode;
+    public String basSite;
+    public String basName;
+    public String basCrawl;-->
+
+    <select id="find" resultMap="SiteResultMap">
+        SELECT * FROM base_amazon_site WHERE BAS_CODE = #{0};
+    </select>
+
+    <select id="findAll" resultMap="SiteResultMap">
+        SELECT * FROM base_amazon_site;
+    </select>
+
+</mapper>

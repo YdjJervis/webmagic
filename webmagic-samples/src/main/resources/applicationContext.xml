@@ -70,7 +70,7 @@
 
     <task:scheduled-tasks>
         <task:scheduled ref="asinParseListener" method="execute" cron="0 */1 * * * ?"/>
-        <task:scheduled ref="crawlUrlListener" method="execute" cron="0 */ * * * ?"/>
+        <task:scheduled ref="crawlUrlListener" method="execute" cron="0 */1 * * * ?"/>
     </task:scheduled-tasks>
 
 </beans>
