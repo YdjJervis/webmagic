@@ -5,9 +5,9 @@ import us.codecraft.webmagic.samples.amazon.pojo.Site;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
 /**
- * 网站字典表Dao
+ * Asin来源Dao
  */
 @Repository
-public interface SiteDao extends BaseDao<Site> {
+public interface AsinSourceDao extends BaseDao<Site> {
 
 }

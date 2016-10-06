@@ -10,11 +10,6 @@
         <result property="basCrawl" column="bas_crawl"/>
     </resultMap>
 
-    <!--public String basCode;
-    public String basSite;
-    public String basName;
-    public String basCrawl;-->
-
     <select id="find" resultMap="SiteResultMap">
         SELECT * FROM base_amazon_site WHERE BAS_CODE = #{0};
     </select>
