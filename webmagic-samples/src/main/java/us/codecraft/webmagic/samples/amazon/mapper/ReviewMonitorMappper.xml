@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.ReviewMonitorDao">
+
+    <resultMap id="ReviewMonitorResultMap" type="ReviewMonitor">
+        <result property="smrReviewId" column="smr_review_id"/>
+        <result property="smrMarked" column="smr_marked"/>
+    </resultMap>
+
+    <select id="find" resultMap="ReviewMonitorResultMap">
+        SELECT * FROM spider_monitor_review WHERE smr_review_id = #{0};
+    </select>
+
+    <select id="findAll" resultMap="ReviewMonitorResultMap">
+        SELECT * FROM spider_monitor_review;
+    </select>
+
+</mapper>
