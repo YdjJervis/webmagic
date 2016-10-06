@@ -3,13 +3,45 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.AsinDao">
 
+    <resultMap id="AsinResultMap" type="Asin">
+        <result property="saaAsin" column="saa_asin"/>
+        <result property="saaStar" column="saa_star"/>
+        <result property="saaStatus" column="saa_status"/>
+        <result property="saaPriority" column="saa_priority"/>
+        <result property="extra" column="saa_extra"/>
+        <result property="saaSyncTime" column="saa_sync_time"/>
+        <association property="asinSource" resultMap="AsinSourceResultMap"/>
+        <association property="site" resultMap="SiteResultMap"/>
+    </resultMap>
+
+    <resultMap id="AsinSourceResultMap" type="AsinSource">
+        <result property="baasCode" column="BAAS_CODE"/>
+        <result property="baasName" column="baas_name"/>
+    </resultMap>
+
+    <resultMap id="SiteResultMap" type="Site">
+        <result property="basCode" column="BAS_CODE"/>
+        <result property="basSite" column="bas_site"/>
+        <result property="basName" column="bas_name"/>
+        <result property="basCrawl" column="bas_crawl"/>
+    </resultMap>
+
+    <select id="find" resultMap="AsinResultMap">
+        SELECT * FROM spider_amazon_asin asin
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
+        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        WHERE asin.saa_status = #{0}
+    </select>
+
     <!-- 查询单条记录 -->
-    <select id="findAll" resultType="Banner">
-        SELECT * FROM amazon_asin WHERE status = 0;
+    <select id="findAll" resultMap="AsinResultMap">
+        SELECT * FROM spider_amazon_asin asin
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
+        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
     </select>
 
     <update id="update" parameterType="Asin">
-        UPDATE amazon_asin SET status = 1 WHERE code = #{code}
+        UPDATE spider_amazon_asin SET status = 1 WHERE code = #{code}
     </update>
 
 </mapper>
