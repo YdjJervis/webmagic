@@ -46,4 +46,16 @@ public class AsinDaoTest extends SpringTestCase {
         }
     }
 
+    @Test
+    public void testUpdateSyncTime(){
+        List<Asin> asinList = mDao.find("0-0-1-1-1");
+
+        if(CollectionUtils.isNotEmpty(asinList)) {
+            for (Asin asin : asinList) {
+                asin.saaSyncTime = new Date();
+                mDao.updateSyncTime(asin);
+            }
+        }
+    }
+
 }

@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.samples.amazon.listener;
+package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.base.listener.UrlListener;
@@ -7,6 +7,6 @@ import us.codecraft.webmagic.samples.base.listener.UrlListener;
  * 爬取URL的监听
  */
 @Service
-public class CrawlUrlListener extends UrlListener {
+public class CrawlUrlMonitor extends UrlListener {
 
 }

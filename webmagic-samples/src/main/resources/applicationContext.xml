@@ -89,8 +89,8 @@
 
     <!--配置定时任务-->
     <task:scheduled-tasks>
-        <task:scheduled ref="asinParseListener" method="execute" cron="0 */1 * * * ?"/>
-        <task:scheduled ref="crawlUrlListener" method="execute" cron="0 */1 * * * ?"/>
+        <task:scheduled ref="asinParseMonitor" method="execute" cron="0 */1 * * * ?"/>
+        <task:scheduled ref="crawlUrlMonitor" method="execute" cron="0 */1 * * * ?"/>
     </task:scheduled-tasks>
 
 </beans>

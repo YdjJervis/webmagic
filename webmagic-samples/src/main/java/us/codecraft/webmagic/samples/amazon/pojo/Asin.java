@@ -2,6 +2,8 @@ package us.codecraft.webmagic.samples.amazon.pojo;
 
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
+import java.util.Date;
+
 /**
  * Asin
  */
@@ -19,7 +21,7 @@ public class Asin extends BasePojo {
      */
     public String saaStatus;
     public String saaPriority;
-    public String saaSyncTime;
+    public Date saaSyncTime;
 
     @Override
     public String toString() {

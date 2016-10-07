@@ -56,5 +56,8 @@
         sau_update_time=#{item.updatetime}
     </insert>
 
+    <select id="find" resultMap="UrlResultMap">
+        SELECT * FROM spider_amazon_url WHERE sau_status != 200;
+    </select>
 
 </mapper>

@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.samples.amazon.listener;
+package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.List;
  * 这个地方，把asin对象转换成URL对象后入库
  */
 @Service
-public class AsinParseListener extends ParseListener {
+public class AsinParseMonitor extends ParseListener {
 
     @Autowired
     private AsinDao mAsinDao;

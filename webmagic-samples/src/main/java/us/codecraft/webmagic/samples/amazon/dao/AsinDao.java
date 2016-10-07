@@ -10,4 +10,5 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 @Repository
 public interface AsinDao extends BaseDao<Asin> {
 
+    long updateSyncTime(Asin asin);
 }

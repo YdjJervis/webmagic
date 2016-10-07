@@ -21,4 +21,17 @@ public class BaseUrl extends BasePojo{
     /**SON格式，需要由此页面带到下一个页面的参数类容*/
     public String otherParams;
 
+    @Override
+    public String toString() {
+        return super.toString() + "BaseUrl{" +
+                "siteCode='" + siteCode + '\'' +
+                ", status=" + status +
+                ", url='" + url + '\'' +
+                ", parentUrl='" + parentUrl + '\'' +
+                ", postParams='" + postParams + '\'' +
+                ", headers='" + headers + '\'' +
+                ", cookies='" + cookies + '\'' +
+                ", otherParams='" + otherParams + '\'' +
+                '}';
+    }
 }

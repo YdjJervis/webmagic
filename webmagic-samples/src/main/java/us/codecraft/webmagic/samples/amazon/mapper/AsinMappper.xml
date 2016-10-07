@@ -51,4 +51,8 @@
         UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
     </update>
 
+    <update id="updateSyncTime" parameterType="Asin">
+        UPDATE spider_amazon_asin SET saa_sync_time=#{saaSyncTime} WHERE saa_asin = #{saaAsin}
+    </update>
+
 </mapper>
