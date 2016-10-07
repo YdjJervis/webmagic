@@ -43,8 +43,8 @@
         <property name="password" value="${password}"/>
         <property name="maxPoolSize" value="${maxActive}"/>
         <property name="initialPoolSize" value="${initialSize}"/>
-        <property name="minPoolSize" value="1"/>
-        <property name="maxIdleTime" value="20"/>
+        <property name="minPoolSize" value="${minPoolSize}"/>
+        <property name="maxIdleTime" value="${maxIdleTime}"/>
     </bean>
 
     <!-- 配置Mybatis的文件 ，mapperLocations配置**Mapper.xml文件位置，configLocation配置mybatis-config文件位置-->
@@ -68,6 +68,26 @@
     <!-- 自动扫描注解的bean -->
     <context:component-scan base-package="us.codecraft.webmagic.samples"/>
 
+    <!--配置事务-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="delete*" propagation="REQUIRED" read-only="false" rollback-for="java.lang.Exception" no-rollback-for="java.lang.RuntimeException" />
+            <tx:method name="add*" propagation="REQUIRED" read-only="false" rollback-for="java.lang.Exception" />
+            <tx:method name="update*" propagation="REQUIRED" read-only="false" rollback-for="java.lang.Exception" />
+            <tx:method name="find*" propagation="SUPPORTS" />
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="pc" expression="execution(* us.codecraft.webmagic.samples.amazon.service.*.*(..))" /> <!--把事务控制在Service层 -->
+        <aop:advisor pointcut-ref="pc" advice-ref="txAdvice" />
+    </aop:config>
+
+    <!--配置定时任务-->
     <task:scheduled-tasks>
         <task:scheduled ref="asinParseListener" method="execute" cron="0 */1 * * * ?"/>
         <task:scheduled ref="crawlUrlListener" method="execute" cron="0 */1 * * * ?"/>

@@ -168,6 +168,13 @@
         </dependency>
         <!--CXF相关-->
 
+        <!-- spring集成AspectJ LTW织入器所需 -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.8.9</version>
+        </dependency>
+
     </dependencies>
 
     <build>

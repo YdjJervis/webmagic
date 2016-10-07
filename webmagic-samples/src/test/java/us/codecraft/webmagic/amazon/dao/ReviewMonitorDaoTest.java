@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.amazon;
+package us.codecraft.webmagic.amazon.dao;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
@@ -22,6 +22,12 @@ public class ReviewMonitorDaoTest extends SpringTestCase {
     private ReviewMonitorDao mDao;
 
     private Logger mLogger = Logger.getLogger(getClass());
+
+    @Test
+    public void addTest() {
+        ReviewMonitor monitor = new ReviewMonitor("reviewID_001");
+        mDao.add(monitor);
+    }
 
     @Test
     public void findTest() {

@@ -10,6 +10,15 @@
         <result property="updatetime" column="smr_udpate_time"/>
     </resultMap>
 
+    <insert id="add" parameterType="ReviewMonitor">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        insert into spider_monitor_review(smr_review_id,smr_marked)
+        values(#{smrReviewId},#{smrMarked})
+        ON DUPLICATE KEY UPDATE smr_review_id=#{smrReviewId},smr_marked=#{smrMarked},smr_udpate_time=#{updatetime}
+    </insert>
+
     <select id="find" resultMap="ReviewMonitorResultMap">
         SELECT * FROM spider_monitor_review
         WHERE smr_review_id = #{0};

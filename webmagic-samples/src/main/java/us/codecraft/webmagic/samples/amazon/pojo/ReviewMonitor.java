@@ -10,6 +10,10 @@ public class ReviewMonitor extends BasePojo {
     public String smrReviewId;
     public int smrMarked;
 
+    public ReviewMonitor(String smrReviewId) {
+        this.smrReviewId = smrReviewId;
+    }
+
     @Override
     public String toString() {
         return super.toString() + "ReviewMonitor{" +

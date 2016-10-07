@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.amazon;
+package us.codecraft.webmagic.amazon.dao;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;

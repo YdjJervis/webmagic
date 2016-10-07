@@ -1,31 +1,36 @@
-package us.codecraft.webmagic.amazon;
+package us.codecraft.webmagic.amazon.dao;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
-import us.codecraft.webmagic.samples.amazon.dao.SiteDao;
+import us.codecraft.webmagic.samples.amazon.dao.AsinSourceDao;
 
 /**
  * 功能概要：DiscussService单元测试
  *
  * @author Jervis
  */
-public class SiteDaoTest extends SpringTestCase {
+public class AsinSourceDaoTest extends SpringTestCase {
 
     @Autowired
-    private SiteDao mSiteDao;
+    private AsinSourceDao mDao;
 
     private Logger mLogger = Logger.getLogger(getClass());
 
     @Test
     public void findTest() {
-        mLogger.info(mSiteDao.find("JP"));
+        mLogger.info(mDao.find(1));
     }
 
     @Test
     public void findAllTest(){
-        mLogger.info(mSiteDao.findAll());
+        mLogger.info(mDao.findAll());
+    }
+
+    @Test
+    public void deleteTest(){
+        mLogger.info(mDao.delete(1));
     }
 
 }
