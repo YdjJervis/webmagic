@@ -2,8 +2,8 @@ package us.codecraft.webmagic.samples.amazon.ws;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import us.codecraft.webmagic.samples.amazon.dao.DiscussDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Discuss;
-import us.codecraft.webmagic.samples.amazon.service.DiscussService;
 
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
@@ -18,18 +18,18 @@ public class DiscussWSImpl implements DiscussWS {
     private Logger logger = Logger.getLogger(getClass());
 
     @Autowired
-    DiscussService discussService;
+    DiscussDao mDiscussDao;
 
     @Override
     public List<Discuss> getAllDiscuss(String asin) {
         logger.info("getAllDiscuss(String asin)::asin=" + asin);
-        return discussService.findAllByAsin(asin);
+        return mDiscussDao.findAllByAsin(asin);
     }
 
     @Override
     public List<Discuss> getAll() {
         logger.info("getAll()::");
-        return discussService.findAll();
+        return mDiscussDao.findAll();
     }
 
     public static void main(String[] args) {

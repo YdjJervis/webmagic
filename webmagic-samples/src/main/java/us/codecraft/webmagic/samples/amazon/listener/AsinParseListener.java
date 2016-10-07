@@ -2,9 +2,9 @@ package us.codecraft.webmagic.samples.amazon.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.samples.amazon.dao.AsinDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.base.listener.ParseListener;
 
 import java.util.ArrayList;
@@ -17,11 +17,11 @@ import java.util.List;
 public class AsinParseListener extends ParseListener {
 
     @Autowired
-    private AsinService mAsinService;
+    private AsinDao mAsinDao;
 
     @Override
     protected List<Url> getUrl() {
-        List<Asin> asinList = mAsinService.findAll();
+        List<Asin> asinList = mAsinDao.findAll();
 
         List<Url> urlList = new ArrayList<Url>();
         for (int i = 0, len = asinList.size(); i < len; i++) {
