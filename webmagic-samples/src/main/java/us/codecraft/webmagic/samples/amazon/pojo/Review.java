@@ -16,4 +16,20 @@ public class Review extends BasePojo {
     public String sarVersion;
     public String sarContent;
 
+    @Override
+    public String toString() {
+        return super.toString() + "Review{" +
+                "basCode='" + basCode + '\'' +
+                ", saaAsin='" + saaAsin + '\'' +
+                ", sarPersonId='" + sarPersonId + '\'' +
+                ", sarTime='" + sarTime + '\'' +
+                ", sarDealTime='" + sarDealTime + '\'' +
+                ", sarPerson='" + sarPerson + '\'' +
+                ", sarReviewId='" + sarReviewId + '\'' +
+                ", sarBuyStatus='" + sarBuyStatus + '\'' +
+                ", sarStar='" + sarStar + '\'' +
+                ", sarVersion='" + sarVersion + '\'' +
+                ", sarContent='" + sarContent + '\'' +
+                '}';
+    }
 }

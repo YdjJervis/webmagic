@@ -10,6 +10,9 @@
         <result property="saaPriority" column="saa_priority"/>
         <result property="extra" column="saa_extra"/>
         <result property="saaSyncTime" column="saa_sync_time"/>
+        <result property="createtime" column="saa_create_time"/>
+        <result property="updatetime" column="saa_update_time"/>
+
         <association property="asinSource" resultMap="AsinSourceResultMap"/>
         <association property="site" resultMap="SiteResultMap"/>
     </resultMap>
@@ -17,6 +20,8 @@
     <resultMap id="AsinSourceResultMap" type="AsinSource">
         <result property="baasCode" column="BAAS_CODE"/>
         <result property="baasName" column="baas_name"/>
+        <result property="createtime" column="baas_create_time"/>
+        <result property="updatetime" column="baas_update_time"/>
     </resultMap>
 
     <resultMap id="SiteResultMap" type="Site">
@@ -24,6 +29,8 @@
         <result property="basSite" column="bas_site"/>
         <result property="basName" column="bas_name"/>
         <result property="basCrawl" column="bas_crawl"/>
+        <result property="createtime" column="bas_create_time"/>
+        <result property="updatetime" column="bas_update_time"/>
     </resultMap>
 
     <select id="find" resultMap="AsinResultMap">
@@ -41,7 +48,7 @@
     </select>
 
     <update id="update" parameterType="Asin">
-        UPDATE spider_amazon_asin SET status = 1 WHERE code = #{code}
+        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
     </update>
 
 </mapper>

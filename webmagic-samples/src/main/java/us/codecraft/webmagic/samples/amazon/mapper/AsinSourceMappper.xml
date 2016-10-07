@@ -6,6 +6,7 @@
     <resultMap id="AsinSourceResultMap" type="AsinSource">
         <result property="baasCode" column="BAAS_CODE"/>
         <result property="baasName" column="baas_name"/>
+        <result property="updatetime" column="baas_update_time"/>
     </resultMap>
 
     <select id="find" resultMap="AsinSourceResultMap">

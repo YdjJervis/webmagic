@@ -6,14 +6,23 @@
     <resultMap id="ReviewMonitorResultMap" type="ReviewMonitor">
         <result property="smrReviewId" column="smr_review_id"/>
         <result property="smrMarked" column="smr_marked"/>
+        <result property="createtime" column="smr_create_time"/>
+        <result property="updatetime" column="smr_udpate_time"/>
     </resultMap>
 
     <select id="find" resultMap="ReviewMonitorResultMap">
-        SELECT * FROM spider_monitor_review WHERE smr_review_id = #{0};
+        SELECT * FROM spider_monitor_review
+        WHERE smr_review_id = #{0};
     </select>
 
     <select id="findAll" resultMap="ReviewMonitorResultMap">
         SELECT * FROM spider_monitor_review;
     </select>
+
+    <update id="update" parameterType="ReviewMonitor">
+        UPDATE spider_monitor_review
+        SET smr_marked = #{smrMarked},smr_udpate_time=#{updatetime}
+        WHERE smr_review_id = #{smrReviewId}
+    </update>
 
 </mapper>

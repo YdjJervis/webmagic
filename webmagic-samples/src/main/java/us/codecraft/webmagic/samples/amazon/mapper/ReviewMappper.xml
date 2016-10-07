@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.ReviewDao">
+
+    <resultMap id="ReviewResultMap" type="Review">
+        <result property="basCode" column="BAS_CODE"/>
+        <result property="saaAsin" column="saa_asin"/>
+        <result property="sarPersonId" column="sar_person_id"/>
+        <result property="sarTime" column="sar_time"/>
+        <result property="sarDealTime" column="sar_deal_time"/>
+        <result property="sarPerson" column="sar_person"/>
+        <result property="sarReviewId" column="sar_review_id"/>
+        <result property="sarBuyStatus" column="sar_buy_status"/>
+        <result property="sarStar" column="sar_star"/>
+        <result property="sarVersion" column="sar_version"/>
+        <result property="sarContent" column="sar_content"/>
+        <result property="extra" column="sar_extra"/>
+        <result property="createtime" column="sar_create_time"/>
+        <result property="updatetime" column="sar_update_time"/>
+    </resultMap>
+
+    <insert id="add" parameterType="Review">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        insert into spider_amazon_review(BAS_CODE,
+        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_buy_status,sar_star,sar_version,sar_content,sar_extra)
+        values(#{basCode},#{saaAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarContent},#{extra})
+        ON DUPLICATE KEY UPDATE BAS_CODE=#{basCode},
+        saa_asin=#{saaAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_review_id=#{sarReviewId},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_content=#{sarContent},sar_extra=#{extra},sar_update_time=#{updatetime}
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        insert into spider_amazon_review(BAS_CODE,
+        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_buy_status,sar_star,sar_version,sar_content,sar_extra)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.basCode},#{item.saaAsin},#{item.sarPersonId},#{item.sarTime},#{item.sarDealTime},#{item.sarPerson},#{item.sarReviewId},#{item.sarBuyStatus},#{item.sarStar},#{item.sarVersion},#{item.sarContent},#{item.extra}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        BAS_CODE=#{item.basCode},
+        saa_asin=#{item.saaAsin},
+        sar_person_id=#{item.sarPersonId},
+        sar_time=#{item.sarTime},
+        sar_deal_time=#{item.sarDealTime},
+        sar_person=#{item.sarPerson},
+        sar_review_id=#{item.sarReviewId},
+        sar_buy_status=#{item.sarBuyStatus},
+        sar_star=#{item.sarStar},
+        sar_version=#{item.sarVersion},
+        sar_content=#{item.sarContent},
+        sar_extra=#{item.extra},
+        sar_update_time=#{item.updatetime}
+    </insert>
+
+
+</mapper>

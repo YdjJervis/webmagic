@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.UrlDao">
+
+    <resultMap id="UrlResultMap" type="Url">
+        <result property="siteCode" column="BAS_CODE"/>
+        <result property="status" column="sau_status"/>
+        <result property="url" column="sau_url"/>
+        <result property="parentUrl" column="sau_parent_url"/>
+        <result property="postParams" column="sau_post_params"/>
+        <result property="headers" column="sau_headers"/>
+        <result property="cookies" column="sau_cookies"/>
+        <result property="otherParams" column="sau_other_params"/>
+        <result property="extra" column="sau_extra"/>
+        <result property="updatetime" column="sau_update_time"/>
+    </resultMap>
+
+    <insert id="add" parameterType="Url">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        insert into spider_amazon_url(BAS_CODE,
+        sau_status,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
+        values(#{siteCode},#{status},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra})
+        ON DUPLICATE KEY UPDATE BAS_CODE = #{siteCode},sau_status = #{status},sau_url =
+        #{url},sau_parent_url=#{parentUrl},sau_post_params=#{postParams},sau_headers=#{headers},sau_cookies=#{cookies},sau_other_params=#{otherParams},sau_extra=#{extra},sau_update_time=#{updatetime}
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        INSERT INTO spider_amazon_url(BAS_CODE,
+        sau_status,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.siteCode},#{item.status},
+            #{item.url},#{item.parentUrl},
+            #{item.postParams},#{item.headers},
+            #{item.cookies},#{item.otherParams},
+            #{item.extra}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        BAS_CODE = #{item.siteCode},
+        sau_status = #{item.status},
+        sau_url = #{item.url},
+        sau_parent_url=#{item.parentUrl},
+        sau_post_params=#{item.postParams},
+        sau_headers=#{item.headers},
+        sau_cookies=#{item.cookies},
+        sau_other_params=#{item.otherParams},
+        sau_extra=#{item.extra},
+        sau_update_time=#{item.updatetime}
+    </insert>
+
+
+</mapper>
