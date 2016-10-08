@@ -43,9 +43,7 @@ public class UrlMonitor implements ScheduledTask {
 
         if (sPage == null || CollectionUtils.isEmpty(urlList)) return;
 
-        for (int i = 0, len = urlList.size(); i < len; i++) {
-            Url url = urlList.get(i);
-
+        for (Url url : urlList) {
             Request request = new Request(url.url);
             sPage.addTargetRequest(request);
         }

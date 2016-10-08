@@ -91,6 +91,7 @@
     <task:scheduled-tasks>
         <task:scheduled ref="asinParseMonitor" method="execute" cron="0 */1 * * * ?"/>
         <task:scheduled ref="reviewlUrlMonitor" method="execute" cron="0 */1 * * * ?"/>
+        <task:scheduled ref="reviewProcessor" method="execute" cron="0 * */1 * * ?"/>
     </task:scheduled-tasks>
 
 </beans>

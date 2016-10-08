@@ -30,14 +30,11 @@ public class AsinService {
         }
 
         int[] startStatus = {0, 0, 0, 0, 0};
-
         for (int i = 0; i < priority; i++) {//eg：吧0,0,0,0,0改成0,0,1,1,1表示查找3星,4星,5星的
             startStatus[startStatus.length - i - 1] = 1;
         }
 
         String status = getStatusStr(startStatus);
-        mLogger.info("爬取的状态为：" + status);
-
         List<Asin> asinList = mAsinDao.find(status);
 
         if (CollectionUtils.isNotEmpty(asinList)) {
@@ -102,5 +99,9 @@ public class AsinService {
         asin.updatetime = new Date();
 
         mAsinDao.update(asin);
+    }
+
+    public List<Asin> findAll(){
+        return mAsinDao.findAll();
     }
 }

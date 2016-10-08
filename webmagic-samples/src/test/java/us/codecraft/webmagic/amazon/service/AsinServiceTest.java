@@ -22,4 +22,9 @@ public class AsinServiceTest extends SpringTestCase {
     public void testUpdateStatus() {
         mAsinService.update(mAsinService.find(3).get(0), 2, 1);
     }
+
+    @Test
+    public void testFindAll() {
+        mLogger.info(mAsinService.findAll());
+    }
 }

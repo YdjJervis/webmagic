@@ -4,17 +4,56 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
 public class Review extends BasePojo {
 
+    public static final String PRODUCT_REVIEWS = "product-reviews";
+
+    /**
+     * 站点码
+     */
     public String basCode;
+    /**
+     * Asin码
+     */
     public String saaAsin;
+    /**
+     * 评论者ID
+     */
     public String sarPersonId;
+    /**
+     * 评论时间
+     */
     public String sarTime;
+    /**
+     * 评论时间格式化后的时间
+     */
     public String sarDealTime;
+    /**
+     * 评论者
+     */
     public String sarPerson;
+    /**
+     * 评论ID
+     */
     public String sarReviewId;
+    /**
+     * 购买状态
+     */
     public String sarBuyStatus;
+    /**
+     * 评论者打分
+     */
     public String sarStar;
+    /**
+     * 购买版本信息
+     */
     public String sarVersion;
+    /**
+     * 评论内容
+     */
     public String sarContent;
+    /**
+     * 评论标题
+     */
+    public String sarTitle;
 
     @Override
     public String toString() {
@@ -30,6 +69,7 @@ public class Review extends BasePojo {
                 ", sarStar='" + sarStar + '\'' +
                 ", sarVersion='" + sarVersion + '\'' +
                 ", sarContent='" + sarContent + '\'' +
+                ", sarTitle='" + sarTitle + '\'' +
                 '}';
     }
 }
