@@ -8,6 +8,6 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
  * Url Dao
  */
 @Repository
-public interface UrlDao  extends BaseDao<Url> {
+public interface UrlDao extends BaseDao<Url> {
 
 }

@@ -1,12 +1,12 @@
 package us.codecraft.webmagic.samples.base.monitor;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
-import us.codecraft.webmagic.samples.base.pojo.BaseUrl;
 
 import java.util.List;
 
@@ -41,10 +41,10 @@ public class UrlMonitor implements ScheduledTask {
      */
     protected void onUrlList(List<Url> urlList) {
 
-        if (sPage == null) return;
+        if (sPage == null || CollectionUtils.isEmpty(urlList)) return;
 
         for (int i = 0, len = urlList.size(); i < len; i++) {
-            BaseUrl url = urlList.get(i);
+            Url url = urlList.get(i);
 
             Request request = new Request(url.url);
             sPage.addTargetRequest(request);

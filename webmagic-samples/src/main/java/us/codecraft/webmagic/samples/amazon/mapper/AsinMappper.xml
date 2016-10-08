@@ -33,11 +33,12 @@
         <result property="updatetime" column="bas_update_time"/>
     </resultMap>
 
+    <!--获取指定星级的数据-->
     <select id="find" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
         INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
-        WHERE asin.saa_status = #{0}
+        WHERE asin.saa_star = #{0}
     </select>
 
     <!-- 查询单条记录 -->

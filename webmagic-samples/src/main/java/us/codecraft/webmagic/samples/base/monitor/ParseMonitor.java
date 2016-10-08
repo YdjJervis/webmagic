@@ -1,8 +1,8 @@
 package us.codecraft.webmagic.samples.base.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
-import us.codecraft.webmagic.samples.base.pojo.BaseUrl;
+import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.service.UrlService;
 
 import java.util.List;
 
@@ -12,16 +12,16 @@ import java.util.List;
 public abstract class ParseMonitor implements ScheduledTask {
 
     @Autowired
-    private UrlDao mUrlDao;
+    private UrlService mUrlService;
 
     @Override
     public void execute() {
-//        mUrlDao.addAll(/*getUrl()*/);
+        mUrlService.addAll(getUrl());
     }
 
     /**
      * 把数据列表源转换成URL列表，数据来源不同，转换规则不同，所以需要
      * 子类单独处理
      */
-    protected abstract <T extends BaseUrl> List<T> getUrl();
+    protected abstract List<Url> getUrl();
 }

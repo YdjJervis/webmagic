@@ -10,7 +10,10 @@ public class Site extends BasePojo {
     public String basCode;
     public String basSite;
     public String basName;
-    public String basCrawl;
+    /**
+     * 站点是否爬取。0-不爬取；1-要爬取
+     */
+    public int basCrawl;
 
     @Override
     public String toString() {

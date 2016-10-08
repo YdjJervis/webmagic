@@ -27,7 +27,9 @@ public class UrlService {
     /**
      * @return 状态码不为200的所有Url
      */
-    public List<Url> findFailures(){
+    public List<Url> findFailures() {
         return mUrlDao.find("");
     }
+
+
 }

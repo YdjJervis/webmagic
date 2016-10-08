@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.monitor;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
@@ -24,11 +25,15 @@ public class AsinParseMonitor extends ParseMonitor {
         List<Asin> asinList = mAsinService.find(3);
 
         List<Url> urlList = new ArrayList<Url>();
-        for (int i = 0, len = asinList.size(); i < len; i++) {
-            Url url = new Url();
-            Asin asin = asinList.get(i);
-            url.url = "http://www.amazon.cn/dp/" + asin;
-            urlList.add(url);
+
+        if (CollectionUtils.isNotEmpty(asinList)) {
+            for (Asin asin : asinList) {
+                if (asin.site.basCrawl == 1) {
+                    Url url = new Url();
+                    url.url = asin.site.basSite + "/dp/" + asin;
+                    urlList.add(url);
+                }
+            }
         }
         return urlList;
     }
