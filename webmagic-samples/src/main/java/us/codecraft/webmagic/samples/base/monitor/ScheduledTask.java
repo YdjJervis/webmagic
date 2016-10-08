@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.samples.base.listener;
+package us.codecraft.webmagic.samples.base.monitor;
 
 /**
  * 定时任务接口

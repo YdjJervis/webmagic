@@ -9,7 +9,7 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.samples.amazon.monitor.CrawlUrlMonitor;
+import us.codecraft.webmagic.samples.amazon.monitor.ReviewlUrlMonitor;
 import us.codecraft.webmagic.samples.amazon.pipeline.DiscussPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Country;
 import us.codecraft.webmagic.samples.amazon.pojo.Discuss;
@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 public class ReviewProcessor implements PageProcessor{
 
     @Autowired
-    private CrawlUrlMonitor mCrawlUrlMonitor;
+    private ReviewlUrlMonitor mReviewlUrlMonitor;
 
     private static final String ASIN = "asin";
     private static Country mCountry = UrlPrefix.getCountry("es");
@@ -42,7 +42,7 @@ public class ReviewProcessor implements PageProcessor{
 
     @Override
     public void process(Page page) {
-        mCrawlUrlMonitor.setPage(page);
+        mReviewlUrlMonitor.setPage(page);
 
         dealProductDetails(page);
         dealAllDiscuss(page);

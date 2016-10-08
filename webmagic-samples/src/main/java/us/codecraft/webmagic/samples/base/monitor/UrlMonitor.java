@@ -1,11 +1,11 @@
-package us.codecraft.webmagic.samples.base.listener;
+package us.codecraft.webmagic.samples.base.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
-import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.base.pojo.BaseUrl;
 
 import java.util.List;
@@ -14,10 +14,10 @@ import java.util.List;
  * 从数据库获取未爬去的URL的监听器
  */
 @Service
-public class UrlListener implements ScheduledTask {
+public class UrlMonitor implements ScheduledTask {
 
     @Autowired
-    private UrlDao mUrlDao;
+    private UrlService mUrlService;
 
     protected Page sPage;
 
@@ -30,7 +30,7 @@ public class UrlListener implements ScheduledTask {
 
     @Override
     public void execute() {
-        onUrlList(mUrlDao.findAll());
+        onUrlList(mUrlService.findFailures());
     }
 
     /**

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.AsinDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,13 +23,9 @@ public class AsinService {
 
     private Logger mLogger = Logger.getLogger(getClass());
 
-    /**
-     * @param priority 级别，爬取什么星级以下的评论,取值范围[0-5]
-     * @return
-     */
-    public List<Asin> find(int priority) {
+    private List<Asin> findByPriority(int priority) {
 
-        if (priority < 0 || priority > 5) {
+        if (priority < 1 || priority > 5) {
             throw new ParameterException("priority must between 0 and 5");
         }
 
@@ -51,11 +48,26 @@ public class AsinService {
 
         List<Asin> asinList = mAsinDao.find(status);
 
-        if(CollectionUtils.isNotEmpty(asinList)) {
+        if (CollectionUtils.isNotEmpty(asinList)) {
             for (Asin asin : asinList) {
                 asin.saaSyncTime = new Date();
                 mAsinDao.updateSyncTime(asin);
             }
+        }
+
+        return asinList;
+    }
+
+    /**
+     * @param priority 级别，爬取priority星级以下的评论,取值范围[1-5]
+     * @return 返回priority及以下等级的Asin列表
+     */
+    public List<Asin> find(int priority) {
+
+        List<Asin> asinList = new ArrayList<Asin>();
+
+        for (int i = 1; i <= priority; i++) {
+            asinList.addAll(findByPriority(i));
         }
 
         return asinList;

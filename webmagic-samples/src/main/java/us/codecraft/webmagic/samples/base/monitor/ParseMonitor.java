@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.samples.base.listener;
+package us.codecraft.webmagic.samples.base.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 把源数据转换成需要爬去的目标URL
  */
-public abstract class ParseListener implements ScheduledTask {
+public abstract class ParseMonitor implements ScheduledTask {
 
     @Autowired
     private UrlDao mUrlDao;
