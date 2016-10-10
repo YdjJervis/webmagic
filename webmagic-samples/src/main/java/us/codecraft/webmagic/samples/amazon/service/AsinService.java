@@ -1,6 +1,5 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
-import com.beust.jcommander.ParameterException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class AsinService {
     private List<Asin> findByPriority(int priority) {
 
         if (priority < 1 || priority > 5) {
-            throw new ParameterException("priority must between 0 and 5");
+            throw new IllegalArgumentException("priority must between 0 and 5");
         }
 
         int[] startStatus = {0, 0, 0, 0, 0};
@@ -45,6 +44,18 @@ public class AsinService {
         }
 
         return asinList;
+    }
+
+    /**
+     * 把String数组转换成Int数组
+     */
+    private int[] parseStringArray2IntArray(String[] array) {
+        int[] startStatus = {0, 0, 0, 0, 0};
+        for (int i = 0; i < array.length; i++) {
+            startStatus[i] = Integer.valueOf(array[i]);
+        }
+        return startStatus;
+
     }
 
     /**
@@ -101,7 +112,30 @@ public class AsinService {
         mAsinDao.update(asin);
     }
 
-    public List<Asin> findAll(){
+    public List<Asin> findAll() {
         return mAsinDao.findAll();
+    }
+
+    /**
+     * 把asin更新为已经爬取过的状态
+     */
+    public void updateStausCrawled(Asin asin) {
+        if (asin == null) return;
+
+        int[] starArray = parseStringArray2IntArray(asin.saaStar.split("-"));
+        int[] statusArray = parseStringArray2IntArray(asin.saaStatus.split("-"));
+
+        for (int i = 0; i < starArray.length; i++) {
+            if (starArray[i] == 1) {
+                statusArray[i] = 1;
+            }
+        }
+
+        asin.saaStatus = getStatusStr(statusArray);
+        mAsinDao.update(asin);
+    }
+
+    public void find(String string){
+
     }
 }

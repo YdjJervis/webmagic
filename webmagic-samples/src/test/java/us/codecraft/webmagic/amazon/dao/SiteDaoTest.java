@@ -28,4 +28,9 @@ public class SiteDaoTest extends SpringTestCase {
         mLogger.info(mSiteDao.findAll());
     }
 
+    @Test
+    public void testFindByDomain(){
+        mLogger.info(mSiteDao.findByDomain("https://www.amazon.cn"));
+    }
+
 }

@@ -21,4 +21,12 @@ public class SiteService {
     public Site find(String siteCode) {
         return mSiteDao.find(siteCode).get(0);
     }
+
+    /**
+     * 根据域名找Site对象
+     */
+    public Site findByDomain(String domain) {
+        return mSiteDao.findByDomain(domain);
+    }
+
 }

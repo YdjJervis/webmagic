@@ -7,6 +7,5 @@ import us.codecraft.webmagic.samples.base.monitor.UrlMonitor;
  * 爬取URL的监听
  */
 @Service
-public class ReviewlUrlMonitor extends UrlMonitor {
-
+public class ReviewUrlMonitor extends UrlMonitor {
 }

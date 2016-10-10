@@ -10,4 +10,9 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 @Repository
 public interface SiteDao extends BaseDao<Site> {
 
+    /**
+     * @param domain 协议+域名，eg：https://www.amazon.cn
+     * @return Site对象
+     */
+    Site findByDomain(String domain);
 }

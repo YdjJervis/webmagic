@@ -1,7 +1,11 @@
 package us.codecraft.webmagic.samples.base.monitor;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
 
 import java.util.List;
@@ -9,14 +13,28 @@ import java.util.List;
 /**
  * 把源数据转换成需要爬去的目标URL
  */
+@Service
 public abstract class ParseMonitor implements ScheduledTask {
 
     @Autowired
     private UrlService mUrlService;
 
+    @Autowired
+    private AsinService mAsinService;
+
+
+    protected Logger sLogger = Logger.getLogger(getClass());
+
     @Override
     public void execute() {
-        mUrlService.addAll(getUrl());
+        List<Url> urlList = getUrl();
+        mUrlService.addAll(urlList);
+
+        if (CollectionUtils.isNotEmpty(urlList)) {
+            for (Url url : urlList) {
+                mAsinService.updateStausCrawled(url.asin);
+            }
+        }
     }
 
     /**

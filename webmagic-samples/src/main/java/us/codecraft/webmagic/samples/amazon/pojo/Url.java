@@ -23,6 +23,8 @@ public class Url extends BasePojo {
     /**SON格式，需要由此页面带到下一个页面的参数类容*/
     public String otherParams;
 
+    public Asin asin;
+
     @Override
     public String toString() {
         return super.toString() + "BaseUrl{" +

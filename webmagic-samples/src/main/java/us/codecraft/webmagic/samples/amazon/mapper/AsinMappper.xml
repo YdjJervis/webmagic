@@ -41,7 +41,7 @@
         WHERE asin.saa_star = #{0}
     </select>
 
-    <!-- 查询单条记录 -->
+    <!-- 查询所有记录 -->
     <select id="findAll" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE

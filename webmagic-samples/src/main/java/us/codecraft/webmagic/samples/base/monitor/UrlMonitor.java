@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.base.monitor;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -20,6 +21,8 @@ public class UrlMonitor implements ScheduledTask {
     private UrlService mUrlService;
 
     protected Page sPage;
+
+    protected Logger sLogger = Logger.getLogger(getClass());
 
     /**
      * @param page 爬虫Processor中回调的page对象

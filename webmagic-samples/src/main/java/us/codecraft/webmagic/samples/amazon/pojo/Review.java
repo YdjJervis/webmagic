@@ -41,7 +41,7 @@ public class Review extends BasePojo {
     /**
      * 评论者打分
      */
-    public String sarStar;
+    public int sarStar;
     /**
      * 购买版本信息
      */
