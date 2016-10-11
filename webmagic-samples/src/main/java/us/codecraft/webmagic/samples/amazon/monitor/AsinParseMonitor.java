@@ -45,6 +45,8 @@ public class AsinParseMonitor extends ParseMonitor {
                             url.url = UrlUtils.setValue(url.url, "filterByStar", filter);//为Url添加过滤器
                             url.siteCode = asin.site.basCode;
                             url.asin = asin;
+                            url.priority = asin.saaPriority;
+                            url.type = 0;
                             url.saaAsin = asin.saaAsin;
 
                             urlList.add(url);//添加进爬取队列，会有很多重复的，但是入库会去重

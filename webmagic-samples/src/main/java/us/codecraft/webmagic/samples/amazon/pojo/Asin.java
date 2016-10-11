@@ -24,7 +24,7 @@ public class Asin extends BasePojo {
      * 已经转换成URL过
      */
     public int saaParsed;
-    public String saaPriority;
+    public int saaPriority;
     public Date saaSyncTime;
 
     @Override

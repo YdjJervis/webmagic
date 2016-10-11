@@ -5,7 +5,7 @@ import org.junit.Test;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.pipeline.FilePipeline;
 import us.codecraft.webmagic.pipeline.JsonFilePipeline;
-import us.codecraft.webmagic.samples.SinaBlogProcessor;
+import us.codecraft.webmagic.samples.processor.SinaBlogProcessor;
 import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 
 import java.io.IOException;

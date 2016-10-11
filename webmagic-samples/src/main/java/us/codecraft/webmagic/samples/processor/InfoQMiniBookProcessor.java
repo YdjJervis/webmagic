@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.samples;
+package us.codecraft.webmagic.samples.processor;
 
 import org.apache.commons.collections.CollectionUtils;
 import us.codecraft.webmagic.Page;

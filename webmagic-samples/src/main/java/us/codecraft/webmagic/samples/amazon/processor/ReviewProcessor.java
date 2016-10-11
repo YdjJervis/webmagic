@@ -156,7 +156,7 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
 
     @Override
     public Site getSite() {
-        mLogger.debug("getSite():::");
+        mLogger.info("getSite()::");
         mSite.setUserAgent(UserAgentUtil.getRandomUserAgent());
         return mSite;
     }
