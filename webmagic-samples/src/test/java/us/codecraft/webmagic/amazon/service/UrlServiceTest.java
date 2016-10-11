@@ -36,12 +36,17 @@ public class UrlServiceTest extends SpringTestCase {
 
         List<Url> urlList = new ArrayList<Url>();
         urlList.add(url);
+        urlList.add(url);
 
         mUrlService.addAll(urlList);
     }
 
     private Url getUrl() {
         Url url = new Url();
+        url.siteCode = "CN";
+        url.saaAsin = "B009P4OWJ2";
+        url.status = 0;
+        url.priority = 0;
         url.url = "https://www.amazon.cn/product-reviews/B00HYRXT4G";
         url.parentUrl = "test";
         url.siteCode = "CN";

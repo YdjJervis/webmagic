@@ -8,8 +8,6 @@ import us.codecraft.webmagic.downloader.FireFoxDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pipeline.BannerPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Banner;
-import us.codecraft.webmagic.samples.amazon.pojo.Country;
-import us.codecraft.webmagic.samples.amazon.pojo.UrlPrefix;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
@@ -24,7 +22,6 @@ public class BannerProcessor implements PageProcessor {
     private Site mSite = Site.me().setRetryTimes(3).setSleepTime(250);
 
     private Logger logger = Logger.getLogger(getClass());
-    private static Country mCountry = UrlPrefix.getCountry("jp");
 
     @Override
     public void process(Page page) {

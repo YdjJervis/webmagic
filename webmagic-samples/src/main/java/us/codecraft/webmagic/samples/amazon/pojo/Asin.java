@@ -5,7 +5,10 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 import java.util.Date;
 
 /**
- * Asin
+ * @author Jervis
+ * @version V0.1
+ * @Description: ASIN码对象
+ * @date 2016/10/11
  */
 public class Asin extends BasePojo {
 

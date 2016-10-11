@@ -3,7 +3,10 @@ package us.codecraft.webmagic.samples.amazon.pojo;
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
 /**
- * Review监听表
+ * @author Jervis
+ * @version V0.1
+ * @Description: Review监听对象
+ * @date 2016/10/11
  */
 public class ReviewMonitor extends BasePojo {
 

@@ -12,7 +12,10 @@ import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import java.util.List;
 
 /**
- * 从数据库获取未爬去的URL的监听器
+ * @author Jervis
+ * @version V0.1
+ * @Description: Url监听器
+ * @date 2016/10/11
  */
 @Service
 public class UrlMonitor implements ScheduledTask {

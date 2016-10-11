@@ -3,7 +3,10 @@ package us.codecraft.webmagic.samples.base.dao;
 import java.util.List;
 
 /**
- * 基础DAO
+ * @author Jervis
+ * @version V0.1
+ * @Description: 基础Dao
+ * @date 2016/10/11
  */
 public interface BaseDao<T> {
 

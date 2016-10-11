@@ -10,7 +10,6 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.samples.amazon.monitor.ReviewUrlMonitor;
 import us.codecraft.webmagic.samples.amazon.pipeline.ReviewPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
@@ -28,33 +27,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 评论
+ * @author Jervis
+ * @version V0.1
+ * @Description: 评论爬取Processor，定时任务，负责对未爬取的Url进行爬取和信息抽取，入库等逻辑
+ * @date 2016/10/11
  */
 @Service
 public class ReviewProcessor implements PageProcessor, ScheduledTask {
 
     @Autowired
-    private ReviewUrlMonitor mReviewUrlMonitor;
+    private ReviewPipeline mReviewPipeline;
     @Autowired
     private SiteService mSiteService;
     @Autowired
-    private ReviewPipeline mReviewPipeline;
+    private UrlService mUrlService;
 
     private static final String URL_EXTRA = "url_extra";
 
-    @Autowired
-    private UrlService mUrlService;
-
-    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(3000).setTimeOut(2000);
+    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(3 * 1000).setTimeOut(10 * 1000);
 
     private Logger mLogger = Logger.getLogger(getClass());
 
     @Override
     public void process(Page page) {
-        mReviewUrlMonitor.setPage(page);
 
         dealAllReview(page);
         dealValidate(page);
+
     }
 
     private void dealValidate(Page page) {
@@ -80,10 +79,7 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
 
             List<Selectable> reviewNodeList = page.getHtml().xpath("//div[@class='a-section review']").nodes();
 
-            String asin = page.getUrl().regex(".*product-reviews/(.*?)/.*").get();//URL中提取asin码
-            if (StringUtils.isEmpty(asin)) {//提取失败,更改规则重提取
-                asin = page.getUrl().regex(".*product-reviews/(.*)").get();
-            }
+            String asin = page.getUrl().regex(".*product-reviews/([0-9a-zA-Z\\-]*).*").get();//URL中提取asin码
             String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
             String siteCode = mSiteService.findByDomain(domain).basCode;
 
@@ -142,6 +138,9 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
         }
     }
 
+    /**
+     * @param page 更新Url爬取状态,成功或失败
+     */
     private void updateUrlStatus(Page page) {
 
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
@@ -165,23 +164,25 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
     public void execute() {
         mLogger.info("开始执行爬取任务...");
 
-        Spider mSpider = Spider.create(this)
-                .addPipeline(mReviewPipeline)
-                .thread(1);
-
         List<Url> urlList = mUrlService.find(0);
 
         mLogger.info("找到状态码不为200的Url个数：" + urlList.size());
         if (CollectionUtils.isNotEmpty(urlList)) {
+
+            Spider mSpider = Spider.create(this)
+                    .addPipeline(mReviewPipeline)
+                    .thread(1);
+
             for (Url url : urlList) {
                 Request request = new Request(url.url);
                 request.putExtra(URL_EXTRA, url);
                 mSpider.addRequest(request);
             }
+
+            mLogger.info("开始爬取...");
+            mSpider.start();
         }
 
-        mLogger.info("开始爬取...");
-        mSpider.start();
     }
 
 }

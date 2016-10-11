@@ -5,7 +5,10 @@ import us.codecraft.webmagic.samples.amazon.pojo.Site;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
 /**
- * 网站字典表Dao
+ * @author Jervis
+ * @version V0.1
+ * @Description: 网站字典表Dao
+ * @date 2016/10/11 18:00
  */
 @Repository
 public interface SiteDao extends BaseDao<Site> {

@@ -11,7 +11,10 @@ import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import java.util.List;
 
 /**
- * 把源数据转换成需要爬去的目标URL
+ * @author Jervis
+ * @version V0.1
+ * @Description: 把Asin转换成需要爬取的URL对象
+ * @date 2016/10/11
  */
 @Service
 public abstract class ParseMonitor implements ScheduledTask {
@@ -22,7 +25,6 @@ public abstract class ParseMonitor implements ScheduledTask {
     @Autowired
     private AsinService mAsinService;
 
-
     protected Logger sLogger = Logger.getLogger(getClass());
 
     @Override
@@ -30,6 +32,7 @@ public abstract class ParseMonitor implements ScheduledTask {
         List<Url> urlList = getUrl();
         mUrlService.addAll(urlList);
 
+        sLogger.info("更新ASIN状态...更新数量：" + urlList.size());
         if (CollectionUtils.isNotEmpty(urlList)) {
             for (Url url : urlList) {
                 mAsinService.updateStausCrawled(url.asin);

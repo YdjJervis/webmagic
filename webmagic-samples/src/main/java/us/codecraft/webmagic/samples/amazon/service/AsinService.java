@@ -12,7 +12,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Review业务
+ * @author Jervis
+ * @version V0.1
+ * @Description: Asin业务
+ * @date 2016/10/11
  */
 @Service
 public class AsinService {
@@ -123,12 +126,13 @@ public class AsinService {
      * 把asin更新为已经爬取过的状态
      */
     public void updateStausCrawled(Asin asin) {
+        mLogger.info("ASIN状态转换前：" + asin);
         if (asin == null) return;
 
         int[] starArray = parseStringArray2IntArray(asin.saaStar.split("-"));
         int[] statusArray = parseStringArray2IntArray(asin.saaStatus.split("-"));
 
-        for (int i = 0; i < starArray.length; i++) {
+        for (int i = 0, len = starArray.length; i < len; i++) {
             if (starArray[i] == 1) {
                 statusArray[i] = 1;
             }
@@ -136,11 +140,9 @@ public class AsinService {
 
         asin.saaStatus = getStatusStr(statusArray);
         asin.saaParsed = 1;
+
+        mLogger.info("ASIN状态转换后：" + asin);
         mAsinDao.update(asin);
-    }
-
-    public void find(String string) {
-
     }
 
     /**
@@ -149,7 +151,6 @@ public class AsinService {
      */
     public List<String> getFilterWords(String star) {
         List<String> filterList = new ArrayList<String>();
-
 
         if ("0-0-0-0-1".equals(star)) {//抓一星
             filterList.add(Filter.START_1);
@@ -247,6 +248,7 @@ public class AsinService {
             filterList.add(Filter.START_ALL);
         }
 
+        mLogger.info("当前过滤器集合为：" + filterList);
         return filterList;
     }
 

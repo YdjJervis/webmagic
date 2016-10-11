@@ -3,7 +3,10 @@ package us.codecraft.webmagic.samples.amazon.pojo;
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
 /**
- * 字典表
+ * @author Jervis
+ * @version V0.1
+ * @Description: 网页字典表
+ * @date 2016/10/11
  */
 public class Site extends BasePojo {
 

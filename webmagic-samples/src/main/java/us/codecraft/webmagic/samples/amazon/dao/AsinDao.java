@@ -5,7 +5,10 @@ import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
 /**
- * Asin Dao
+ * @author Jervis
+ * @version V0.1
+ * @Description: Asin Dao层
+ * @date 2016/10/11 18:00
  */
 @Repository
 public interface AsinDao extends BaseDao<Asin> {

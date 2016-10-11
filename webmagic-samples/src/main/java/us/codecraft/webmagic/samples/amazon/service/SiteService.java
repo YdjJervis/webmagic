@@ -6,7 +6,10 @@ import us.codecraft.webmagic.samples.amazon.dao.SiteDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Site;
 
 /**
- * Review业务
+ * @author Jervis
+ * @version V0.1
+ * @Description: 站点业务
+ * @date 2016/10/11
  */
 @Service
 public class SiteService {

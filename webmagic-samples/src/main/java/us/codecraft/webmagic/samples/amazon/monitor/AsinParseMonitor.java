@@ -14,7 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 这个地方，把asin对象转换成URL对象后入库
+ * @author Jervis
+ * @version V0.1
+ * @Description: Asin对象转Url对象的监听器，会心跳监听ASIN表的变化
+ * @date 2016/10/11
  */
 @Service
 public class AsinParseMonitor extends ParseMonitor {

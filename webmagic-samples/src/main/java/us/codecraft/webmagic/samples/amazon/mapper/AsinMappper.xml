@@ -51,7 +51,7 @@
 
     <!--更新爬取状态和URL转换状态-->
     <update id="update" parameterType="Asin">
-        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saaParsed=#{saa_parsed},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
+        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saa_parsed=#{saaParsed},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
     </update>
 
     <update id="updateSyncTime" parameterType="Asin">

@@ -14,6 +14,12 @@ import us.codecraft.webmagic.samples.amazon.service.UrlService;
 
 import java.util.List;
 
+/**
+ * @author Jervis
+ * @version V0.1
+ * @Description: 评论和Url入库的管道
+ * @date 2016/10/11
+ */
 @Service
 public class ReviewPipeline implements Pipeline {
 

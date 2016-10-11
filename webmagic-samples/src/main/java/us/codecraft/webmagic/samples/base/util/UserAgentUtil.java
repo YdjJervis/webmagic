@@ -3,7 +3,10 @@ package us.codecraft.webmagic.samples.base.util;
 import java.util.Random;
 
 /**
- * UA操作
+ * @author Jervis
+ * @version V0.1
+ * @Description: UserAgent工具类
+ * @date 2016/10/11
  */
 public class UserAgentUtil {
 

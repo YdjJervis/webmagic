@@ -1,7 +1,10 @@
 package us.codecraft.webmagic.samples.amazon.pojo;
 
 /**
- * 站点枚举
+ * @author Jervis
+ * @version V0.1
+ * @Description: 站点类型枚举
+ * @date 2016/10/11
  */
 public enum SiteEnum {
 

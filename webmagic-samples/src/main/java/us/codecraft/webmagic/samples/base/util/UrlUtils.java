@@ -2,6 +2,12 @@ package us.codecraft.webmagic.samples.base.util;
 
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * @author Jervis
+ * @version V0.1
+ * @Description: Url工具类
+ * @date 2016/10/11
+ */
 public class UrlUtils {
 
     /**

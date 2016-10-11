@@ -2,6 +2,12 @@ package us.codecraft.webmagic.samples.amazon.pojo;
 
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
+/**
+ * @author Jervis
+ * @version V0.1
+ * @Description:
+ * @date 2016/10/11
+ */
 public class Review extends BasePojo {
 
     public static final String PRODUCT_REVIEWS = "product-reviews";

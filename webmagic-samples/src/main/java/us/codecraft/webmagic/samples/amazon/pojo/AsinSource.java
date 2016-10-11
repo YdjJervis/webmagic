@@ -3,7 +3,10 @@ package us.codecraft.webmagic.samples.amazon.pojo;
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
 /**
- * Asin源
+ * @author Jervis
+ * @version V0.1
+ * @Description: ASIN来源对象
+ * @date 2016/10/11
  */
 public class AsinSource extends BasePojo {
 

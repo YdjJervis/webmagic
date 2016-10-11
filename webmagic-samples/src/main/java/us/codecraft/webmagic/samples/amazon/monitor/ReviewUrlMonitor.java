@@ -4,7 +4,10 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.base.monitor.UrlMonitor;
 
 /**
- * 爬取URL的监听
+ * @author Jervis
+ * @version V0.1
+ * @Description: 监听爬取的URL
+ * @date 2016/10/11
  */
 @Service
 public class ReviewUrlMonitor extends UrlMonitor {

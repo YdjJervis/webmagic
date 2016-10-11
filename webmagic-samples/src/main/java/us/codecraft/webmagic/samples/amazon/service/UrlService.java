@@ -9,7 +9,10 @@ import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import java.util.List;
 
 /**
- * Review业务
+ * @author Jervis
+ * @version V0.1
+ * @Description: Url爬取队列业务
+ * @date 2016/10/11
  */
 @Service
 public class UrlService {

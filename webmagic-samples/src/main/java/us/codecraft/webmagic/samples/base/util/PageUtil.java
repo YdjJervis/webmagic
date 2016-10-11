@@ -10,7 +10,10 @@ import java.io.PrintWriter;
 import java.net.URL;
 
 /**
- * 页面工具
+ * @author Jervis
+ * @version V0.1
+ * @Description: 页面工具类
+ * @date 2016/10/11
  */
 public class PageUtil {
 

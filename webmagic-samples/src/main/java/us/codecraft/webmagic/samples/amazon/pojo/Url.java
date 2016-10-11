@@ -3,7 +3,10 @@ package us.codecraft.webmagic.samples.amazon.pojo;
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
 /**
- * URL实体
+ * @author Jervis
+ * @version V0.1
+ * @Description: 爬取队列实体
+ * @date 2016/10/11
  */
 public class Url extends BasePojo {
 
