@@ -33,7 +33,7 @@ public class UrlMonitor implements ScheduledTask {
 
     @Override
     public void execute() {
-        onUrlList(mUrlService.findFailures());
+        onUrlList(mUrlService.find(0));
     }
 
     /**

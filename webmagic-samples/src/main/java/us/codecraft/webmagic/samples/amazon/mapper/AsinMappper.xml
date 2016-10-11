@@ -7,6 +7,7 @@
         <result property="saaAsin" column="saa_asin"/>
         <result property="saaStar" column="saa_star"/>
         <result property="saaStatus" column="saa_status"/>
+        <result property="saaParsed" column="saa_parsed"/>
         <result property="saaPriority" column="saa_priority"/>
         <result property="extra" column="saa_extra"/>
         <result property="saaSyncTime" column="saa_sync_time"/>
@@ -45,11 +46,12 @@
     <select id="findAll" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
-        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE WHERE saa_parsed = 0
     </select>
 
+    <!--更新爬取状态和URL转换状态-->
     <update id="update" parameterType="Asin">
-        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
+        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saaParsed=#{saa_parsed},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
     </update>
 
     <update id="updateSyncTime" parameterType="Asin">

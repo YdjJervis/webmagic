@@ -36,10 +36,11 @@ public class UrlService {
     }
 
     /**
+     * @param type 抓取类型。0-抓Review
      * @return 状态码不为200的所有Url
      */
-    public List<Url> findFailures() {
-        return mUrlDao.find("");
+    public List<Url> find(int type) {
+        return mUrlDao.find(type);
     }
 
 

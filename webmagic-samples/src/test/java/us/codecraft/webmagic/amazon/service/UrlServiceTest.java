@@ -19,7 +19,7 @@ public class UrlServiceTest extends SpringTestCase {
 
     @Test
     public void findTest(){
-        mLogger.info(mUrlService.findFailures());
+        mLogger.info(mUrlService.find(0));
     }
 
     @Test

@@ -5,7 +5,10 @@
 
     <resultMap id="UrlResultMap" type="Url">
         <result property="siteCode" column="BAS_CODE"/>
+        <result property="type" column="sau_type"/>
+        <result property="saaAsin" column="saa_asin"/>
         <result property="status" column="sau_status"/>
+        <result property="priority" column="sau_priority"/>
         <result property="url" column="sau_url"/>
         <result property="parentUrl" column="sau_parent_url"/>
         <result property="postParams" column="sau_post_params"/>
@@ -20,24 +23,22 @@
         <selectKey resultType="java.lang.Long">
             SELECT @@IDENTITY AS id
         </selectKey>
-        insert into spider_amazon_url(BAS_CODE,
-        sau_status,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
-        values(#{siteCode},#{status},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra})
+        insert into spider_amazon_url(BAS_CODE,sau_type,saa_asin,
+        sau_status,sau_priority,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
+        values(#{siteCode},#{type},#{saaAsin},#{status},#{priority},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra})
         ON DUPLICATE KEY UPDATE sau_url = #{url}
     </insert>
-    <!--ON DUPLICATE KEY UPDATE BAS_CODE = #{siteCode},sau_status = #{status},sau_url =
-        #{url},sau_parent_url=#{parentUrl},sau_post_params=#{postParams},sau_headers=#{headers},sau_cookies=#{cookies},sau_other_params=#{otherParams},sau_extra=#{extra},sau_update_time=#{updatetime}-->
 
     <insert id="addAll" parameterType="java.util.List">
         <selectKey resultType="java.lang.Long">
             SELECT @@IDENTITY AS id
         </selectKey>
-        INSERT INTO spider_amazon_url(BAS_CODE,
-        sau_status,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
+        INSERT INTO spider_amazon_url(BAS_CODE,sau_type,saa_asin,
+        sau_status,sau_priority,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.siteCode},#{item.status},
+            #{item.siteCode},#{item.type},#{item.saaAsin},#{item.status},#{item.priority},
             #{item.url},#{item.parentUrl},
             #{item.postParams},#{item.headers},
             #{item.cookies},#{item.otherParams},
@@ -46,7 +47,10 @@
         </foreach>
         ON DUPLICATE KEY UPDATE
         BAS_CODE = #{item.siteCode},
+        sau_type = #{item.type},
+        saa_asin = #{item.saaAsin},
         sau_status = #{item.status},
+        sau_priority = #{item.priority},
         sau_url = #{item.url},
         sau_parent_url=#{item.parentUrl},
         sau_post_params=#{item.postParams},
@@ -57,19 +61,16 @@
         sau_update_time=#{item.updatetime}
     </insert>
 
-    <insert id="update" parameterType="Url">
-        <selectKey resultType="java.lang.Long">
-            SELECT @@IDENTITY AS id
-        </selectKey>
-        insert into spider_amazon_url(BAS_CODE,
-        sau_status,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
-        values(#{siteCode},#{status},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra})
-        ON DUPLICATE KEY UPDATE BAS_CODE = #{siteCode},sau_status = #{status},sau_url =
+    <update id="update" parameterType="Url">
+        insert into spider_amazon_url(BAS_CODE,sau_type,saa_asin,
+        sau_status,sau_priority,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
+        values(#{siteCode},#{type},#{saaAsin},#{status},#{priority},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra})
+        ON DUPLICATE KEY UPDATE BAS_CODE = #{siteCode},sau_type=#{type},saa_asin=#{saaAsin},sau_status = #{status},sau_priority=#{priority},sau_url =
         #{url},sau_parent_url=#{parentUrl},sau_post_params=#{postParams},sau_headers=#{headers},sau_cookies=#{cookies},sau_other_params=#{otherParams},sau_extra=#{extra},sau_update_time=#{updatetime}
-    </insert>
+    </update>
 
-    <select id="find" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE sau_status != 200;
+    <select id="find" resultMap="UrlResultMap" parameterType="int">
+        SELECT * FROM spider_amazon_url WHERE sau_status != 200 AND sau_type = #{0};
     </select>
 
 </mapper>

@@ -4,7 +4,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
@@ -40,8 +39,6 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
     private SiteService mSiteService;
     @Autowired
     private ReviewPipeline mReviewPipeline;
-
-    private ApplicationContext mContext;
 
     private static final String URL_EXTRA = "url_extra";
 
@@ -134,6 +131,7 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
                     String urlStr = matcher.group(1) + matcher.group(2);
                     Url url = new Url();
                     url.siteCode = siteCode;
+                    url.saaAsin = asin;
                     url.parentUrl = page.getUrl().get();
                     url.url = urlStr;
 
@@ -171,7 +169,7 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
                 .addPipeline(mReviewPipeline)
                 .thread(1);
 
-        List<Url> urlList = mUrlService.findFailures();
+        List<Url> urlList = mUrlService.find(0);
 
         mLogger.info("找到状态码不为200的Url个数：" + urlList.size());
         if (CollectionUtils.isNotEmpty(urlList)) {

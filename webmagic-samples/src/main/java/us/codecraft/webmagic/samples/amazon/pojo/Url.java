@@ -8,8 +8,14 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 public class Url extends BasePojo {
 
     public String siteCode;
+    /** 抓取类型。0-抓Review */
+    public int type;
+    /**ASIN码*/
+    public String saaAsin;
     /**爬取URL返回的状态码*/
     public int status;
+    /** 爬取优先级 */
+    public int priority;
     /**当前爬取的URL*/
     public String url;
     /**当前爬取URL的父级URL*/
@@ -27,15 +33,19 @@ public class Url extends BasePojo {
 
     @Override
     public String toString() {
-        return super.toString() + "BaseUrl{" +
+        return super.toString() + "Url{" +
                 "siteCode='" + siteCode + '\'' +
+                ", type=" + type +
+                ", saaAsin='" + saaAsin + '\'' +
                 ", status=" + status +
+                ", priority=" + priority +
                 ", url='" + url + '\'' +
                 ", parentUrl='" + parentUrl + '\'' +
                 ", postParams='" + postParams + '\'' +
                 ", headers='" + headers + '\'' +
                 ", cookies='" + cookies + '\'' +
                 ", otherParams='" + otherParams + '\'' +
+                ", asin=" + asin +
                 '}';
     }
 }

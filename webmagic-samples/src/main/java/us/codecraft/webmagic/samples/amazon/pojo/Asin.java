@@ -20,6 +20,10 @@ public class Asin extends BasePojo {
      * 爬取状态，0未爬取，1已经爬取，2爬取完毕
      */
     public String saaStatus;
+    /**
+     * 已经转换成URL过
+     */
+    public int saaParsed;
     public String saaPriority;
     public Date saaSyncTime;
 
@@ -31,6 +35,7 @@ public class Asin extends BasePojo {
                 ", saaAsin='" + saaAsin + '\'' +
                 ", saaStar='" + saaStar + '\'' +
                 ", saaStatus='" + saaStatus + '\'' +
+                ", saaParsed='" + saaParsed + '\'' +
                 ", saaPriority='" + saaPriority + '\'' +
                 ", saaSyncTime='" + saaSyncTime + '\'' +
                 '}';
