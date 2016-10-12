@@ -32,7 +32,8 @@ public class AsinParseMonitor extends ParseMonitor {
         List<Asin> asinList = mAsinService.findAll();
         sLogger.info("剩余未转换成URL的Asin数量：" + asinList.size());
 
-        Set<Url> urlSet = new HashSet<Url>();
+        Set<String> urlSet = new HashSet<String>();
+        List<Url> urlList = new ArrayList<Url>();
 
         if (CollectionUtils.isNotEmpty(asinList)) {
             for (Asin asin : asinList) {
@@ -54,7 +55,11 @@ public class AsinParseMonitor extends ParseMonitor {
                             url.type = 0;
                             url.saaAsin = asin.saaAsin;
 
-                            urlSet.add(url);
+                            if (!urlSet.contains(url.url)) {
+                                urlList.add(url);
+                                urlSet.add(url.url);
+                            }
+
                         }
                     }
                 }
@@ -62,15 +67,7 @@ public class AsinParseMonitor extends ParseMonitor {
         }
 
         sLogger.info("转换后的URL列表如下：");
-        sLogger.info(urlSet);
-
-        List<Url> urlList = new ArrayList<Url>();
-        if (CollectionUtils.isNotEmpty(urlSet)) {
-            for (Url url : urlSet) {
-                urlList.add(url);
-            }
-        }
-
+        sLogger.info(urlList);
         return urlList;
     }
 

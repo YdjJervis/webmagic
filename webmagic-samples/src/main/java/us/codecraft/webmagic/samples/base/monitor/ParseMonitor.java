@@ -35,7 +35,7 @@ public abstract class ParseMonitor implements ScheduledTask {
         sLogger.info("更新ASIN状态...更新数量：" + urlList.size());
         if (CollectionUtils.isNotEmpty(urlList)) {
             for (Url url : urlList) {
-                mAsinService.updateStausCrawled(url.asin);
+                mAsinService.updateStatus(url.asin, false);
             }
         }
     }

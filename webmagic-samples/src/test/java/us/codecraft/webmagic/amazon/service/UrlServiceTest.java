@@ -18,19 +18,19 @@ public class UrlServiceTest extends SpringTestCase {
     private Logger mLogger = Logger.getLogger(getClass());
 
     @Test
-    public void findTest(){
+    public void findTest() {
         mLogger.info(mUrlService.find(0));
     }
 
     @Test
-    public void testAdd(){
+    public void testAdd() {
 
         Url url = getUrl();
         mUrlService.add(url);
     }
 
     @Test
-    public void testAddAll(){
+    public void testAddAll() {
 
         Url url = getUrl();
 
@@ -54,9 +54,14 @@ public class UrlServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         Url url = getUrl();
         mUrlService.update(url);
+    }
+
+    @Test
+    public void testIsCrawlFinish() {
+        mUrlService.updateAsinCrawledAll("B003GIS2J4");
     }
 
 }

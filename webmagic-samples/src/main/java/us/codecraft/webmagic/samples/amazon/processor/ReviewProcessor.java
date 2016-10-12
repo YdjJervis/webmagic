@@ -151,6 +151,7 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
         mLogger.info("改变状态后的Url对象：" + url);
 
         mUrlService.update(url);
+        mUrlService.updateAsinCrawledAll(url.saaAsin);
     }
 
     @Override

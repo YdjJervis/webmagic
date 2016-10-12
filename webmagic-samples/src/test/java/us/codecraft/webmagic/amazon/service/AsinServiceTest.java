@@ -14,16 +14,6 @@ public class AsinServiceTest extends SpringTestCase {
     private Logger mLogger = Logger.getLogger(getClass());
 
     @Test
-    public void findTest() {
-        mLogger.info(mAsinService.find(3));
-    }
-
-    @Test
-    public void testUpdateStatus() {
-        mAsinService.update(mAsinService.find(3).get(0), 2, 1);
-    }
-
-    @Test
     public void testFindAll() {
         mLogger.info(mAsinService.findAll());
     }

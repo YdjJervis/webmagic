@@ -52,4 +52,9 @@ public class UrlDaoTest extends SpringTestCase {
         mLogger.info(mDao.addAll(list));
     }
 
+    @Test
+    public void testFindByAsin(){
+        mLogger.info(mDao.findByAsin("B00K0A38WM").size());
+    }
+
 }

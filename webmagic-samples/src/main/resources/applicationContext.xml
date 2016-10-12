@@ -89,8 +89,7 @@
     <!--配置定时任务-->
     <task:scheduled-tasks>
         <task:scheduled ref="asinParseMonitor" method="execute" cron="0/5 * * * * ?"/>
-        <!--<task:scheduled ref="reviewUrlMonitor" method="execute" cron="0 */1 * * * ?"/>-->
-        <task:scheduled ref="reviewProcessor" method="execute" cron="0/30 * * * * ?"/>
+        <task:scheduled ref="reviewProcessor" method="execute" cron="0/5 * * * * ?"/>
     </task:scheduled-tasks>
 
 </beans>

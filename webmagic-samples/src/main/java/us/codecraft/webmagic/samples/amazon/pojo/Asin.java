@@ -24,6 +24,10 @@ public class Asin extends BasePojo {
      */
     public String saaStatus;
     /**
+     * 爬取进度
+     */
+    public float saaProgress;
+    /**
      * 已经转换成URL过
      */
     public int saaParsed;

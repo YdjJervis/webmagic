@@ -19,5 +19,11 @@ public interface UrlDao extends BaseDao<Url> {
      * @param type 抓取类型。0-抓Review
      * @return 状态码不为200的所有Url
      */
-    List<Url> find(int type);
+    List<Url> findByType(int type);
+
+    /**
+     * @param asin ASIN码
+     * @return 指定ASIN的Url列表
+     */
+    List<Url> findByAsin(String asin);
 }
