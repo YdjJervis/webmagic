@@ -13,4 +13,5 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 @Repository
 public interface ReviewMonitorDao extends BaseDao<ReviewMonitor> {
 
+    ReviewMonitor findByReviewId(String reviewID);
 }

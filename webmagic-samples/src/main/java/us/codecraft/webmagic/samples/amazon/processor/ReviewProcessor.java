@@ -1,24 +1,16 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
-import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pipeline.ReviewPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.SiteService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
-import us.codecraft.webmagic.samples.base.util.PageUtil;
-import us.codecraft.webmagic.samples.base.util.UrlUtils;
-import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
@@ -33,43 +25,17 @@ import java.util.regex.Pattern;
  * @date 2016/10/11
  */
 @Service
-public class ReviewProcessor implements PageProcessor, ScheduledTask {
+public class ReviewProcessor extends BasePageProcessor implements ScheduledTask {
 
     @Autowired
     private ReviewPipeline mReviewPipeline;
     @Autowired
     private SiteService mSiteService;
-    @Autowired
-    private UrlService mUrlService;
-
-    private static final String URL_EXTRA = "url_extra";
-
-    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(3 * 1000).setTimeOut(10 * 1000);
-
-    private Logger mLogger = Logger.getLogger(getClass());
 
     @Override
     public void process(Page page) {
-
+        super.process(page);
         dealAllReview(page);
-        dealValidate(page);
-
-    }
-
-    private void dealValidate(Page page) {
-        String validateUrl = page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
-        if (StringUtils.isNotEmpty(validateUrl)) {
-            PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
-
-            String value = UrlUtils.getValue(page.getUrl().get(), "flag");
-            if (StringUtils.isEmpty(value)) {
-                value = "0";
-            }
-            String newUrl = UrlUtils.setValue(page.getUrl().get(), "flag", String.valueOf(Integer.valueOf(value) + 1));
-
-            Request request = new Request(newUrl);
-            page.addTargetRequest(request);
-        }
     }
 
     private void dealAllReview(Page page) {
@@ -83,7 +49,7 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
             String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
             String siteCode = mSiteService.findByDomain(domain).basCode;
 
-            mLogger.info("解析 " + domain + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
+            sLogger.info("解析 " + domain + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 
             List<Review> reviewList = new ArrayList<Review>();
             for (Selectable reviewNode : reviewNodeList) {
@@ -109,15 +75,15 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
                 review.sarVersion = version;
                 review.sarContent = content;
                 review.sarBuyStatus = buyStatus;
-                mLogger.info(review);
+                sLogger.info(review);
 
                 reviewList.add(review);
             }
             page.putField(ReviewPipeline.PARAM_LIST, reviewList);
 
             List<String> pageUrlList = page.getHtml().xpath("//li[@class='page-button']/a/@href").all();
-            mLogger.info("新提取的翻页Url如下：");
-            mLogger.info(pageUrlList);
+            sLogger.info("新提取的翻页Url如下：");
+            sLogger.info(pageUrlList);
 
             List<Url> urlList = new ArrayList<Url>();
             for (String pageUrl : pageUrlList) {
@@ -139,35 +105,22 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
     }
 
     /**
-     * @param page 更新Url爬取状态,成功或失败
+     * 1，更新Url的爬取状态
+     * 2，更新ASIN的爬取进度状态
      */
-    private void updateUrlStatus(Page page) {
-
+    public void updateUrlStatus(Page page) {
+        super.updateUrlStatus(page);
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
-        int statusCode = page.getStatusCode();
-        mLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
-
-        url.status = statusCode;
-        mLogger.info("改变状态后的Url对象：" + url);
-
-        mUrlService.update(url);
         mUrlService.updateAsinCrawledAll(url.saaAsin);
     }
 
     @Override
-    public Site getSite() {
-        mLogger.info("getSite()::");
-        mSite.setUserAgent(UserAgentUtil.getRandomUserAgent());
-        return mSite;
-    }
-
-    @Override
     public void execute() {
-        mLogger.info("开始执行爬取任务...");
+        sLogger.info("开始执行爬取任务...");
 
         List<Url> urlList = mUrlService.find(0);
 
-        mLogger.info("找到状态码不为200的Url个数：" + urlList.size());
+        sLogger.info("找到状态码不为200的Url个数：" + urlList.size());
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
@@ -180,7 +133,7 @@ public class ReviewProcessor implements PageProcessor, ScheduledTask {
                 mSpider.addRequest(request);
             }
 
-            mLogger.info("开始爬取...");
+            sLogger.info("开始爬取...");
             mSpider.start();
         }
 

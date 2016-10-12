@@ -11,7 +11,9 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 public class ReviewMonitor extends BasePojo {
 
     public String smrReviewId;
-    public int smrMarked;
+    public int smrMarked = 1;
+
+    public ReviewMonitor(){}
 
     public ReviewMonitor(String smrReviewId) {
         this.smrReviewId = smrReviewId;

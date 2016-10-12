@@ -10,6 +10,7 @@
         <result property="updatetime" column="smr_udpate_time"/>
     </resultMap>
 
+    <!--添加到监控-->
     <insert id="add" parameterType="ReviewMonitor">
         <selectKey resultType="java.lang.Long">
             SELECT @@IDENTITY AS id
@@ -19,7 +20,8 @@
         ON DUPLICATE KEY UPDATE smr_review_id=#{smrReviewId},smr_marked=#{smrMarked},smr_udpate_time=#{updatetime}
     </insert>
 
-    <select id="find" resultMap="ReviewMonitorResultMap">
+    <!--根据ReviewId查询记录-->
+    <select id="findByReviewId" resultMap="ReviewMonitorResultMap">
         SELECT * FROM spider_monitor_review
         WHERE smr_review_id = #{0};
     </select>

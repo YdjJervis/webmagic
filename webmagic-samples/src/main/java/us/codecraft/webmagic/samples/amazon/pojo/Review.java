@@ -41,6 +41,10 @@ public class Review extends BasePojo {
      */
     public String sarReviewId;
     /**
+     * 标记是否监控0-no;1-yes
+     */
+    public int sarMonitor = 0;
+    /**
      * 购买状态
      */
     public String sarBuyStatus;
@@ -71,6 +75,7 @@ public class Review extends BasePojo {
                 ", sarDealTime='" + sarDealTime + '\'' +
                 ", sarPerson='" + sarPerson + '\'' +
                 ", sarReviewId='" + sarReviewId + '\'' +
+                ", sarMonitor='" + sarMonitor + '\'' +
                 ", sarBuyStatus='" + sarBuyStatus + '\'' +
                 ", sarStar='" + sarStar + '\'' +
                 ", sarVersion='" + sarVersion + '\'' +

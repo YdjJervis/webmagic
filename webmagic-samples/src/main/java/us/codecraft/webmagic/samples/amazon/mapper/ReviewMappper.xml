@@ -11,6 +11,7 @@
         <result property="sarDealTime" column="sar_deal_time"/>
         <result property="sarPerson" column="sar_person"/>
         <result property="sarReviewId" column="sar_review_id"/>
+        <result property="sarMonitor" column="sar_monitor"/>
         <result property="sarBuyStatus" column="sar_buy_status"/>
         <result property="sarStar" column="sar_star"/>
         <result property="sarVersion" column="sar_version"/>
@@ -26,10 +27,10 @@
             SELECT @@IDENTITY AS id
         </selectKey>
         insert into spider_amazon_review(BAS_CODE,
-        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra)
-        values(#{basCode},#{saaAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarTitle},#{sarContent},#{extra})
+        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra)
+        values(#{basCode},#{saaAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarMonitor},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarTitle},#{sarContent},#{extra})
         ON DUPLICATE KEY UPDATE BAS_CODE=#{basCode},
-        saa_asin=#{saaAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_review_id=#{sarReviewId},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_title=#{sarTitle},sar_content=#{sarContent},sar_extra=#{extra},sar_update_time=#{updatetime}
+        saa_asin=#{saaAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_review_id=#{sarReviewId},sar_monitor=#{sarMonitor},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_title=#{sarTitle},sar_content=#{sarContent},sar_extra=#{extra},sar_update_time=#{updatetime}
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
@@ -37,11 +38,11 @@
             SELECT @@IDENTITY AS id
         </selectKey>
         insert into spider_amazon_review(BAS_CODE,
-        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra)
+        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.basCode},#{item.saaAsin},#{item.sarPersonId},#{item.sarTime},#{item.sarDealTime},#{item.sarPerson},#{item.sarReviewId},#{item.sarBuyStatus},#{item.sarStar},#{item.sarVersion},#{item.sarTitle},#{item.sarContent},#{item.extra}
+            #{item.basCode},#{item.saaAsin},#{item.sarPersonId},#{item.sarTime},#{item.sarDealTime},#{item.sarPerson},#{item.sarReviewId},#{item.sarMonitor},#{item.sarBuyStatus},#{item.sarStar},#{item.sarVersion},#{item.sarTitle},#{item.sarContent},#{item.extra}
             )
         </foreach>
         ON DUPLICATE KEY UPDATE
@@ -52,6 +53,7 @@
         sar_deal_time=#{item.sarDealTime},
         sar_person=#{item.sarPerson},
         sar_review_id=#{item.sarReviewId},
+        sar_monitor=#{item.sarMonitor},
         sar_buy_status=#{item.sarBuyStatus},
         sar_star=#{item.sarStar},
         sar_version=#{item.sarVersion},

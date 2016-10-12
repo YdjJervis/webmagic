@@ -42,6 +42,7 @@ public class Asin extends BasePojo {
                 ", saaAsin='" + saaAsin + '\'' +
                 ", saaStar='" + saaStar + '\'' +
                 ", saaStatus='" + saaStatus + '\'' +
+                ", saaProgress='" + saaProgress + '\'' +
                 ", saaParsed='" + saaParsed + '\'' +
                 ", saaPriority='" + saaPriority + '\'' +
                 ", saaSyncTime='" + saaSyncTime + '\'' +
