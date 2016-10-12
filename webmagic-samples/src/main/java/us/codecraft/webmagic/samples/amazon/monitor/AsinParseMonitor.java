@@ -11,7 +11,9 @@ import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jervis
@@ -30,7 +32,7 @@ public class AsinParseMonitor extends ParseMonitor {
         List<Asin> asinList = mAsinService.findAll();
         sLogger.info("剩余未转换成URL的Asin数量：" + asinList.size());
 
-        List<Url> urlList = new ArrayList<Url>();
+        Set<Url> urlSet = new HashSet<Url>();
 
         if (CollectionUtils.isNotEmpty(asinList)) {
             for (Asin asin : asinList) {
@@ -52,7 +54,7 @@ public class AsinParseMonitor extends ParseMonitor {
                             url.type = 0;
                             url.saaAsin = asin.saaAsin;
 
-                            urlList.add(url);//添加进爬取队列，会有很多重复的，但是入库会去重
+                            urlSet.add(url);
                         }
                     }
                 }
@@ -60,7 +62,15 @@ public class AsinParseMonitor extends ParseMonitor {
         }
 
         sLogger.info("转换后的URL列表如下：");
-        sLogger.info(urlList);
+        sLogger.info(urlSet);
+
+        List<Url> urlList = new ArrayList<Url>();
+        if (CollectionUtils.isNotEmpty(urlSet)) {
+            for (Url url : urlSet) {
+                urlList.add(url);
+            }
+        }
+
         return urlList;
     }
 
