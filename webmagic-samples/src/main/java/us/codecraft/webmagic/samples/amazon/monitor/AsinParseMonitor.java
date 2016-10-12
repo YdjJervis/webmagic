@@ -7,6 +7,7 @@ import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
+import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
@@ -25,7 +26,24 @@ import java.util.Set;
 public class AsinParseMonitor extends ParseMonitor {
 
     @Autowired
+    private UrlService mUrlService;
+    @Autowired
     private AsinService mAsinService;
+
+    @Override
+    public void execute() {
+        List<Url> urlList = getUrl();
+        mUrlService.addAll(urlList);
+
+        sLogger.info("更新ASIN状态...更新数量：" + urlList.size());
+        if (CollectionUtils.isNotEmpty(urlList)) {
+            for (Url url : urlList) {
+                if (url.asin != null) {
+                    mAsinService.updateStatus(url.asin, false);
+                }
+            }
+        }
+    }
 
     @Override
     protected List<Url> getUrl() {

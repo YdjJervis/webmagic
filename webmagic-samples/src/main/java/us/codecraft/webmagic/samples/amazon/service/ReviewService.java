@@ -21,4 +21,8 @@ public class ReviewService {
         mReviewDao.add(review);
     }
 
+    public Review findByReviewId(String reviewId){
+        return mReviewDao.findByReviewId(reviewId);
+    }
+
 }

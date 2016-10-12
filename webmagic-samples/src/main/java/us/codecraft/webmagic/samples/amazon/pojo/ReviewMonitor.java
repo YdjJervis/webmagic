@@ -12,6 +12,7 @@ public class ReviewMonitor extends BasePojo {
 
     public String smrReviewId;
     public int smrMarked = 1;
+    public int smrParsed;
 
     public ReviewMonitor(){}
 
@@ -24,6 +25,7 @@ public class ReviewMonitor extends BasePojo {
         return super.toString() + "ReviewMonitor{" +
                 "slrReviewId='" + smrReviewId + '\'' +
                 ", slrMarked=" + smrMarked +
+                ", smrParsed=" + smrParsed +
                 '}';
     }
 }

@@ -133,7 +133,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
                 mSpider.addRequest(request);
             }
 
-            sLogger.info("开始爬取...");
+            sLogger.info("开始爬取评论...");
             mSpider.start();
         }
 

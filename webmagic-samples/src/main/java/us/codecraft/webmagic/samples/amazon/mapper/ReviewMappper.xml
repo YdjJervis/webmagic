@@ -63,5 +63,9 @@
         sar_update_time=#{item.updatetime}
     </insert>
 
+    <!--根据评论Id查找Review-->
+    <select id="findByReviewId" resultMap="ReviewResultMap">
+        SELECT * FROM spider_amazon_review WHERE sar_review_id = #{0};
 
+    </select>
 </mapper>

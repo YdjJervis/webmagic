@@ -26,4 +26,6 @@ public interface UrlDao extends BaseDao<Url> {
      * @return 指定ASIN的Url列表
      */
     List<Url> findByAsin(String asin);
+
+    List<Url> findMonitorUrlList();
 }

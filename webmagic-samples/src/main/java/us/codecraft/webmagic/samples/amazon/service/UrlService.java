@@ -93,5 +93,8 @@ public class UrlService {
         }
     }
 
+    public List<Url> findMonitorUrlList() {
+        return mUrlDao.findMonitorUrlList();
+    }
 
 }
