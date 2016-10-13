@@ -66,7 +66,7 @@
     </insert>
 
     <update id="update" parameterType="Url">
-        insert into spider_amazon_url(BAS_CODE,sau_type,saa_asin,sau_review_id
+        insert into spider_amazon_url(BAS_CODE,sau_type,saa_asin,sau_review_id,
         sau_status,sau_priority,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
         values(#{siteCode},#{type},#{saaAsin},#{sauReviewId},#{status},#{priority},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra})
         ON DUPLICATE KEY UPDATE BAS_CODE = #{siteCode},sau_type=#{type},saa_asin=#{saaAsin},sau_review_id=#{sauReviewId},sau_status = #{status},sau_priority=#{priority},sau_url =

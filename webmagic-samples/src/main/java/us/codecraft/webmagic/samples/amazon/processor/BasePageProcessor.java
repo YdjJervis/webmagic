@@ -12,7 +12,6 @@ import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.base.util.PageUtil;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
-import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 
 /**
  * @author Jervis
@@ -39,7 +38,7 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public Site getSite() {
         sLogger.info("getSite()::");
-        mSite.setUserAgent(UserAgentUtil.getRandomUserAgent());
+//        mSite.setUserAgent(UserAgentUtil.getRandomUserAgent());
         return mSite;
     }
 
@@ -62,7 +61,8 @@ public class BasePageProcessor implements PageProcessor {
     private void dealValidate(Page page) {
         String validateUrl = page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
         if (StringUtils.isNotEmpty(validateUrl)) {
-            PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
+            sLogger.error("身份验证,准备保存验证码...");
+            PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码2");
 
             String value = UrlUtils.getValue(page.getUrl().get(), "flag");
             if (StringUtils.isEmpty(value)) {

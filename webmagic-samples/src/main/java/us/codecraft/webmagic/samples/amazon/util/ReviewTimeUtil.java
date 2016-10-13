@@ -1,5 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.util;
 
+import org.apache.log4j.Logger;
+
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,92 +14,91 @@ import java.util.regex.Pattern;
  */
 public class ReviewTimeUtil {
 
-    public static Date parmat(String time, String siteCode) {
+    private static Logger logger = Logger.getLogger(ReviewTimeUtil.class);
+
+    public static Date parse(String time, String siteCode) {
 
         Date date = null;
-        //于 2015年11月19日 || 投稿日 2016/9/29
-        if ("CN".equals(siteCode) || "JP".equals(siteCode)) {
-            Matcher matcher = Pattern.compile(".*([0-9]{4}).{1}([0-9]+).{1}([0-9]+)").matcher(time);
-            if (matcher.find()) {
-                date = new Date();
-                date.setYear(get(matcher.group(1), "y"));
-                date.setMonth(get(matcher.group(2), "m"));
-                date.setDate(get(matcher.group(3), "d"));
-                System.out.println(date);
+
+        try {
+            if ("CN".equals(siteCode) || "JP".equals(siteCode)) {// 于 2015年11月19日 || 投稿日 2016/9/29
+                Matcher matcher = Pattern.compile(".*([0-9]{4}).{1}([0-9]+).{1}([0-9]+)").matcher(time);
+                if (matcher.find()) {
+                    date = new Date();
+                    date.setYear(get(matcher.group(1), "y"));
+                    date.setMonth(get(matcher.group(2), "m"));
+                    date.setDate(get(matcher.group(3), "d"));
+                }
+            } else if ("US".equals(siteCode) || "CA".equals(siteCode)) { // on August 12, 2016
+                time = replaceUSTime(time);// on 12 8 2016
+                Matcher matcher = Pattern.compile(".*([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+                if (matcher.find()) {
+                    date = new Date();
+                    date.setYear(get(matcher.group(3), "y"));
+                    date.setMonth(get(matcher.group(1), "m"));
+                    date.setDate(get(matcher.group(2), "d"));
+                }
+            } else if ("DE".equals(siteCode)) { // am 4. Mai 2016
+                time = replaceDETime(time);// am 4 5 2016
+                Matcher matcher = Pattern.compile(".*([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+                if (matcher.find()) {
+                    date = new Date();
+                    date.setYear(get(matcher.group(3), "y"));
+                    date.setMonth(get(matcher.group(2), "m"));
+                    date.setDate(get(matcher.group(1), "d"));
+                }
+            } else if ("MX".equals(siteCode) || "ES".equals(siteCode)) { // el 1 de junio de 2016
+                time = replaceMXTime(time);// el 1 6 2016 墨西哥
+                Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+                if (matcher.find()) {
+                    date = new Date();
+                    date.setYear(get(matcher.group(3), "y"));
+                    date.setMonth(get(matcher.group(2), "m"));
+                    date.setDate(get(matcher.group(1), "d"));
+                }
+            } else if ("FR".equals(siteCode)) { // le 11 mai 2014
+                time = replaceFRTime(time);
+                Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+                if (matcher.find()) {
+                    date = new Date();
+                    date.setYear(get(matcher.group(3), "y"));
+                    date.setMonth(get(matcher.group(2), "m"));
+                    date.setDate(get(matcher.group(1), "d"));
+                    System.out.println(date);
+                }
+            } else if ("IN".equals(siteCode)) { // on 26 April 2016
+                time = replaceUSTime(time);
+                Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+                if (matcher.find()) {
+                    date = new Date();
+                    date.setYear(get(matcher.group(3), "y"));
+                    date.setMonth(get(matcher.group(2), "m"));
+                    date.setDate(get(matcher.group(1), "d"));
+                }
+            } else if ("IT".equals(siteCode)) { // il 5 ottobre 2016
+                time = replaceITTime(time);
+                Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+                if (matcher.find()) {
+                    date = new Date();
+                    date.setYear(get(matcher.group(3), "y"));
+                    date.setMonth(get(matcher.group(2), "m"));
+                    date.setDate(get(matcher.group(1), "d"));
+                }
+            } else if ("UK".equals(siteCode)) { // on 3 September 2015
+                time = replaceUSTime(time);// on 3 9 2015
+                Matcher matcher = Pattern.compile(".*([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+                if (matcher.find()) {
+                    date = new Date();
+                    date.setYear(get(matcher.group(3), "y"));
+                    date.setMonth(get(matcher.group(2), "m"));
+                    date.setDate(get(matcher.group(1), "d"));
+                }
             }
-        } else if ("US".equals(siteCode) || "CA".equals(siteCode)) { // on August 12, 2016
-            time = replaceUSTime(time);// on 12 8 2016
-            Matcher matcher = Pattern.compile(".*([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
-            if (matcher.find()) {
-                date = new Date();
-                date.setYear(get(matcher.group(3), "y"));
-                date.setMonth(get(matcher.group(1), "m"));
-                date.setDate(get(matcher.group(2), "d"));
-                System.out.println(date);
-            }
-        } else if ("DE".equals(siteCode)) { // am 4. Mai 2016
-            time = replaceDETime(time);// am 4 5 2016
-            Matcher matcher = Pattern.compile(".*([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
-            if (matcher.find()) {
-                date = new Date();
-                date.setYear(get(matcher.group(3), "y"));
-                date.setMonth(get(matcher.group(2), "m"));
-                date.setDate(get(matcher.group(1), "d"));
-                System.out.println(date);
-            }
-        } else if ("MX".equals(siteCode) || "ES".equals(siteCode)) { // el 1 de junio de 2016
-            time = replaceMXTime(time);// el 1 6 2016 墨西哥
-            Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
-            if (matcher.find()) {
-                date = new Date();
-                date.setYear(get(matcher.group(3), "y"));
-                date.setMonth(get(matcher.group(2), "m"));
-                date.setDate(get(matcher.group(1), "d"));
-                System.out.println(date);
-            }
-        } else if ("FR".equals(siteCode)) { // le 11 mai 2014
-            time = replaceFRTime(time);
-            Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
-            if (matcher.find()) {
-                date = new Date();
-                date.setYear(get(matcher.group(3), "y"));
-                date.setMonth(get(matcher.group(2), "m"));
-                date.setDate(get(matcher.group(1), "d"));
-                System.out.println(date);
-            }
-        } else if ("IN".equals(siteCode)) { // on 26 April 2016
-            time = replaceUSTime(time);
-            Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
-            if (matcher.find()) {
-                date = new Date();
-                date.setYear(get(matcher.group(3), "y"));
-                date.setMonth(get(matcher.group(2), "m"));
-                date.setDate(get(matcher.group(1), "d"));
-                System.out.println(date);
-            }
-        } else if ("IT".equals(siteCode)) { // il 5 ottobre 2016
-            time = replaceITTime(time);
-            Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
-            if (matcher.find()) {
-                date = new Date();
-                date.setYear(get(matcher.group(3), "y"));
-                date.setMonth(get(matcher.group(2), "m"));
-                date.setDate(get(matcher.group(1), "d"));
-                System.out.println(date);
-            }
-        }else if ("UK".equals(siteCode)) { // on 3 September 2015
-            time = replaceUSTime(time);// on 3 9 2015
-            Matcher matcher = Pattern.compile(".*([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
-            if (matcher.find()) {
-                date = new Date();
-                date.setYear(get(matcher.group(3), "y"));
-                date.setMonth(get(matcher.group(2), "m"));
-                date.setDate(get(matcher.group(1), "d"));
-                System.out.println(date);
-            }
+        } catch (Exception e) {
+            logger.equals("日期格式化失败，请检查并修正..." + time + " " + siteCode);
         }
 
-        return new Date();
+        return date;
     }
 
     private static String replaceUSTime(String time) {
@@ -195,16 +196,16 @@ public class ReviewTimeUtil {
     }
 
     public static void main(String[] args) {
-        parmat("于 2015年11月19日", "CN");//中国
-        parmat("投稿日 2016/9/29", "JP");//日本
-        parmat("on August 12, 2016", "US");//美国
-        parmat("am 4. Mai 2016", "DE");//德国
-        parmat("el 28 de mayo de 2016", "MX");//墨西哥
-        parmat("el 5 de octubre de 2016", "ES");//西班牙
-        parmat("le 11 mai 2014", "FR");//法国
-        parmat("on 26 April 2016", "IN");//印度
-        parmat("il 5 ottobre 2016", "IT");//意大利
-        parmat("on 3 September 2015", "UK");//英国
+        parse("于 2015年11月19日", "CN");//中国
+        parse("投稿日 2016/9/29", "JP");//日本
+        parse("on August 12, 2016", "US");//美国
+        parse("am 4. Mai 2016", "DE");//德国
+        parse("el 28 de mayo de 2016", "MX");//墨西哥
+        parse("el 5 de octubre de 2016", "ES");//西班牙
+        parse("le 11 mai 2014", "FR");//法国
+        parse("on 26 April 2016", "IN");//印度
+        parse("il 5 ottobre 2016", "IT");//意大利
+        parse("on 3 September 2015", "UK");//英国
     }
 
 }

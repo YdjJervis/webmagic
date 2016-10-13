@@ -10,6 +10,7 @@ import us.codecraft.webmagic.samples.amazon.pipeline.ReviewPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.SiteService;
+import us.codecraft.webmagic.samples.amazon.util.ReviewTimeUtil;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 import us.codecraft.webmagic.selector.Selectable;
 
@@ -72,6 +73,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
                 review.sarReviewId = reviewId;
                 review.sarPerson = person;
                 review.sarTime = time;
+                review.sarDealTime = ReviewTimeUtil.parse(time,siteCode);
                 review.sarVersion = version;
                 review.sarContent = content;
                 review.sarBuyStatus = buyStatus;

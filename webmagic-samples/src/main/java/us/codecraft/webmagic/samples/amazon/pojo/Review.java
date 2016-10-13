@@ -2,6 +2,8 @@ package us.codecraft.webmagic.samples.amazon.pojo;
 
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
+import java.util.Date;
+
 /**
  * @author Jervis
  * @version V0.1
@@ -31,7 +33,7 @@ public class Review extends BasePojo {
     /**
      * 评论时间格式化后的时间
      */
-    public String sarDealTime;
+    public Date sarDealTime;
     /**
      * 评论者
      */

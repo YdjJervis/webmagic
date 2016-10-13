@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -41,7 +42,12 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
             String reviewId = page.getUrl().regex(".*customer-reviews/(.*)").get();
             Review review = mReviewService.findByReviewId(reviewId);
 
-            review.sarStar = Integer.valueOf(page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']//img").regex(".*stars-([1-5]).*").get());
+            String star = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']//img").regex(".*stars-([1-5]).*").get();
+            if (StringUtils.isEmpty(star)) {
+                sLogger.error("抱歉，没有成功解析颗星数：" + star);
+                return;
+            }
+            review.sarStar = Integer.valueOf(star);
             review.sarTitle = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
             review.sarTime = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/nobr/text()").get();
             review.sarContent = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
