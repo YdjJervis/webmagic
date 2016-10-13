@@ -45,9 +45,49 @@ public class ReviewTimeUtil {
                 date.setDate(get(matcher.group(1), "d"));
                 System.out.println(date);
             }
-        } else if ("MX".equals(siteCode)) { // el 1 de junio de 2016 墨西哥
+        } else if ("MX".equals(siteCode) || "ES".equals(siteCode)) { // el 1 de junio de 2016
             time = replaceMXTime(time);// el 1 6 2016 墨西哥
             Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+            if (matcher.find()) {
+                date = new Date();
+                date.setYear(get(matcher.group(3), "y"));
+                date.setMonth(get(matcher.group(2), "m"));
+                date.setDate(get(matcher.group(1), "d"));
+                System.out.println(date);
+            }
+        } else if ("FR".equals(siteCode)) { // le 11 mai 2014
+            time = replaceFRTime(time);
+            Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+            if (matcher.find()) {
+                date = new Date();
+                date.setYear(get(matcher.group(3), "y"));
+                date.setMonth(get(matcher.group(2), "m"));
+                date.setDate(get(matcher.group(1), "d"));
+                System.out.println(date);
+            }
+        } else if ("IN".equals(siteCode)) { // on 26 April 2016
+            time = replaceUSTime(time);
+            Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+            if (matcher.find()) {
+                date = new Date();
+                date.setYear(get(matcher.group(3), "y"));
+                date.setMonth(get(matcher.group(2), "m"));
+                date.setDate(get(matcher.group(1), "d"));
+                System.out.println(date);
+            }
+        } else if ("IT".equals(siteCode)) { // il 5 ottobre 2016
+            time = replaceITTime(time);
+            Matcher matcher = Pattern.compile(".*\\s([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
+            if (matcher.find()) {
+                date = new Date();
+                date.setYear(get(matcher.group(3), "y"));
+                date.setMonth(get(matcher.group(2), "m"));
+                date.setDate(get(matcher.group(1), "d"));
+                System.out.println(date);
+            }
+        }else if ("UK".equals(siteCode)) { // on 3 September 2015
+            time = replaceUSTime(time);// on 3 9 2015
+            Matcher matcher = Pattern.compile(".*([0-9]+).{1}([0-9]+).{1}([0-9]{4})").matcher(time);
             if (matcher.find()) {
                 date = new Date();
                 date.setYear(get(matcher.group(3), "y"));
@@ -102,12 +142,45 @@ public class ReviewTimeUtil {
         time = time.replace("abril", "4");
         time = time.replace("mayo", "5");
         time = time.replace("junio", "6");
-        time = time.replace("Juli", "7");
+        time = time.replace("julio", "7");
         time = time.replace("agosto", "8");
         time = time.replace("septiembre", "9");
         time = time.replace("octubre", "10");
         time = time.replace("noviembre", "11");
         time = time.replace("diciembre", "12");
+        return time;
+    }
+
+    private static String replaceFRTime(String time) {
+        time = time.replace("de ", "");
+        time = time.replace("janvier", "1");
+        time = time.replace("février", "2");
+        time = time.replace("mars", "3");
+        time = time.replace("avril", "4");
+        time = time.replace("mai", "5");
+        time = time.replace("juin", "6");
+        time = time.replace("juillet", "7");
+        time = time.replace("août", "8");
+        time = time.replace("septembre", "9");
+        time = time.replace("octobre", "10");
+        time = time.replace("novembre", "11");
+        time = time.replace("décembre", "12");
+        return time;
+    }
+
+    private static String replaceITTime(String time) {
+        time = time.replace("gennaio", "1");
+        time = time.replace("febbraio", "2");
+        time = time.replace("marzo", "3");
+        time = time.replace("aprile", "4");
+        time = time.replace("maggio", "5");
+        time = time.replace("giugno", "6");
+        time = time.replace("luglio", "7");
+        time = time.replace("agosto", "8");
+        time = time.replace("settembre", "9");
+        time = time.replace("ottobre", "10");
+        time = time.replace("novembre", "11");
+        time = time.replace("dicembre", "12");
         return time;
     }
 
@@ -122,11 +195,16 @@ public class ReviewTimeUtil {
     }
 
     public static void main(String[] args) {
-        parmat("于 2015年11月19日", "CN");
-        parmat("投稿日 2016/9/29", "JP");
-        parmat("on August 12, 2016", "US");
-        parmat("am 4. Mai 2016", "DE");
-        parmat("el 28 de mayo de 2016","MX");
+        parmat("于 2015年11月19日", "CN");//中国
+        parmat("投稿日 2016/9/29", "JP");//日本
+        parmat("on August 12, 2016", "US");//美国
+        parmat("am 4. Mai 2016", "DE");//德国
+        parmat("el 28 de mayo de 2016", "MX");//墨西哥
+        parmat("el 5 de octubre de 2016", "ES");//西班牙
+        parmat("le 11 mai 2014", "FR");//法国
+        parmat("on 26 April 2016", "IN");//印度
+        parmat("il 5 ottobre 2016", "IT");//意大利
+        parmat("on 3 September 2015", "UK");//英国
     }
 
 }
