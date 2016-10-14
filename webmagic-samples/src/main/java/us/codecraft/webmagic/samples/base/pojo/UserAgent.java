@@ -13,7 +13,7 @@ public class UserAgent extends BasePojo {
 
     @Override
     public String toString() {
-        return "UserAgent{" +
+        return super.toString() + "UserAgent{" +
                 "userAgent='" + userAgent + '\'' +
                 ", useCount=" + useCount +
                 '}';

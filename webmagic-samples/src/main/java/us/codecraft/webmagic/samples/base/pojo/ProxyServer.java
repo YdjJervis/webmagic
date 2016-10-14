@@ -10,14 +10,22 @@ public class ProxyServer extends BasePojo {
 
     public String hostName;
     public int port;
-    public String useCount;
+    /**
+     * 使用次数
+     */
+    public int useCount;
+    /**
+     * 状态。1-可用；0-不可用
+     */
+    public int status;
 
     @Override
     public String toString() {
         return super.toString() + "ProxyServer{" +
-                ", hostName='" + hostName + '\'' +
+                "hostName='" + hostName + '\'' +
                 ", port=" + port +
-                ", useCount='" + useCount + '\'' +
+                ", useCount=" + useCount +
+                ", status=" + status +
                 '}';
     }
 }

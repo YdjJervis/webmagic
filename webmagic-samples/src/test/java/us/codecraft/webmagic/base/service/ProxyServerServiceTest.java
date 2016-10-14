@@ -3,8 +3,8 @@ package us.codecraft.webmagic.base.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
-import us.codecraft.webmagic.samples.base.pojo.UserAgent;
-import us.codecraft.webmagic.samples.base.service.UserAgentService;
+import us.codecraft.webmagic.samples.base.pojo.ProxyServer;
+import us.codecraft.webmagic.samples.base.service.ProxyServerService;
 
 import java.util.List;
 
@@ -14,10 +14,10 @@ import java.util.List;
  * @Description: User-Agent业务测试
  * @date 2016/10/14 11:10
  */
-public class UAServiceTest extends SpringTestCase {
+public class ProxyServerServiceTest extends SpringTestCase {
 
     @Autowired
-    private UserAgentService mService;
+    private ProxyServerService mService;
     @Test
     public void testFindAll(){
         System.out.println(mService.findAll());
@@ -25,15 +25,15 @@ public class UAServiceTest extends SpringTestCase {
 
     @Test
     public void testUpdate(){
-        List<UserAgent> list = mService.findAll();
-        for (UserAgent userAgent : list) {
+        List<ProxyServer> list = mService.findAll();
+        for (ProxyServer userAgent : list) {
             userAgent.useCount = -1;
             mService.update(userAgent);
         }
     }
 
     @Test
-    public void tesGetRandomUA(){
-       mService.findRandomUA();
+    public void testFindRandomProxy(){
+        System.out.println(mService.findRandomProxy());
     }
 }

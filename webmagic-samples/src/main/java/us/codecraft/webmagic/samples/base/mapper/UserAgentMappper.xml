@@ -10,9 +10,9 @@
         <result property="updatetime" column="bua_update_time"/>
     </resultMap>
 
-    <select id="update" resultMap="UserAgentResultMap">
-        UPDATE base_user_agent SET bua_use_count = #{useCount},bua_update_time=#{updatetime};
-    </select>
+    <update id="update" parameterType="UserAgent">
+        UPDATE base_user_agent SET bua_use_count = #{useCount},bua_update_time=#{updatetime} WHERE bua_ip=#{id};
+    </update>
 
     <select id="findAll" resultMap="UserAgentResultMap">
         SELECT * FROM base_user_agent;
