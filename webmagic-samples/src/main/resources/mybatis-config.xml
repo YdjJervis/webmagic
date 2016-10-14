@@ -5,6 +5,7 @@
 
     <typeAliases>
         <package name="us.codecraft.webmagic.samples.amazon.pojo"/>
+        <package name="us.codecraft.webmagic.samples.base.pojo"/>
     </typeAliases>
 
     <mappers>

@@ -52,13 +52,14 @@
         <property name="mapperLocations">
             <list>
                 <value>classpath:us/codecraft/webmagic/samples/amazon/mapper/*.xml</value>
+                <value>classpath:us/codecraft/webmagic/samples/base/mapper/*.xml</value>
             </list>
         </property>
     </bean>
 
     <!-- 扫描mapper.java -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" autowire="byName">
-        <property name="basePackage" value="us.codecraft.webmagic.samples.amazon.dao"/>
+        <property name="basePackage" value="us.codecraft.webmagic.samples"/>
         <property name="sqlSessionFactoryBeanName" value="_sqlSessionFactory"/>
     </bean>
 
@@ -80,8 +81,7 @@
         </tx:attributes>
     </tx:advice>
     <aop:config>
-        <aop:pointcut id="pc"
-                      expression="execution(* us.codecraft.webmagic.samples.amazon.service.*.*(..))"/> <!--把事务控制在Service层 -->
+        <aop:pointcut id="pc" expression="execution(* us.codecraft.webmagic.samples.*.service.*.*(..))"/> <!--把事务控制在Service层 -->
         <aop:advisor pointcut-ref="pc" advice-ref="txAdvice"/>
     </aop:config>
     <!--配置事务-->
