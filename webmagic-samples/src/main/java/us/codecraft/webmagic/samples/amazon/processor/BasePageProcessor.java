@@ -56,7 +56,7 @@ public class BasePageProcessor implements PageProcessor {
         mUrlService.updateAsinCrawledAll(url.saaAsin);
     }
 
-    private void dealValidate(Page page) {
+    protected void dealValidate(Page page) {
         /*
         * 1,因为需要输入验证码时，页面Url还是不变的，只有通过判断时候包好验证码图片元素来判断是否是验证码页面
         * 2,这里抽取图片的Url
