@@ -111,6 +111,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
      * 2，更新ASIN的爬取进度状态
      */
     public void updateUrlStatus(Page page) {
+        sLogger.info("更新Url爬取状态...");
         super.updateUrlStatus(page);
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
         mUrlService.updateAsinCrawledAll(url.saaAsin);

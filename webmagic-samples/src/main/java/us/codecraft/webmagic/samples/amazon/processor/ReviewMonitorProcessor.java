@@ -2,6 +2,7 @@ package us.codecraft.webmagic.samples.amazon.processor;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -43,7 +44,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
             Review review = mReviewService.findByReviewId(reviewId);
 
             String star = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']//img").regex(".*stars-([1-5]).*").get();
-            if (StringUtils.isEmpty(star)) {
+            if (StringUtils.isEmpty(star) && !NumberUtils.isNumber(star)) {
                 sLogger.error("抱歉，没有成功解析颗星数：" + star);
                 return;
             }

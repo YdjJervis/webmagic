@@ -5,13 +5,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.base.util.PageUtil;
-import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 /**
  * @author Jervis
@@ -59,19 +57,38 @@ public class BasePageProcessor implements PageProcessor {
     }
 
     private void dealValidate(Page page) {
+        /*
+        * 1,因为需要输入验证码时，页面Url还是不变的，只有通过判断时候包好验证码图片元素来判断是否是验证码页面
+        * 2,这里抽取图片的Url
+        */
         String validateUrl = page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
         if (StringUtils.isNotEmpty(validateUrl)) {
-            sLogger.error("身份验证,准备保存验证码...");
+            sLogger.error("身份验证,准备保存验证码...网页状态码：" + page.getStatusCode());
             PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码2");
 
-            String value = UrlUtils.getValue(page.getUrl().get(), "flag");
-            if (StringUtils.isEmpty(value)) {
-                value = "0";
-            }
-            String newUrl = UrlUtils.setValue(page.getUrl().get(), "flag", String.valueOf(Integer.valueOf(value) + 1));
+            /*
+            * 当需要验证码时，page的状态码还是200，不符合我们的逻辑，所以修改一下
+            */
+            page.setStatusCode(401);
 
-            Request request = new Request(newUrl);
-            page.addTargetRequest(request);
+            /*
+            * 请求表单的Url，调用验证码识别接口
+            */
+            String validateCode = getValidateCode(validateUrl);
+            sLogger.info("网络验证码图片：" + validateUrl + " 解析的验证码：" + validateCode);
+            String url = "validateCaptcha?amzn=nW3O4Cz6t%2BPD%2Fts3YTVYPw%3D%3D&amzn-r=%2Fproduct-reviews%2FB012BU6NKW&amzn-pt=NoPageType&field-keywords=" + validateCode;
+//            page.addTargetRequest(url);
         }
+    }
+
+    /**
+     * 调用第三方验证码识别接口
+     *
+     * @param imgUrl 图片Url
+     * @return 验证码
+     */
+    private String getValidateCode(String imgUrl) {
+
+        return "";
     }
 }
