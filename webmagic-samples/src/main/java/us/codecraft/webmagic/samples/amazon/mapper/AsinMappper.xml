@@ -52,7 +52,7 @@
 
     <!--更新爬取状态和URL转换状态-->
     <update id="update" parameterType="Asin">
-        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
+        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_extra=#{extra},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
     </update>
 
     <update id="updateSyncTime" parameterType="Asin">
@@ -64,6 +64,11 @@
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
         INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
         WHERE asin.saa_asin = #{0}
+    </select>
+
+    <!--查询全量爬取已经完毕的ASIN-->
+    <select id="findCrawledAll" resultMap="AsinResultMap">
+        SELECT * FROM spider_amazon_asin WHERE saa_progress =1;
     </select>
 
 </mapper>

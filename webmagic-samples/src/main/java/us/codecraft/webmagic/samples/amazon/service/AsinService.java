@@ -1,10 +1,14 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.AsinDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
+import us.codecraft.webmagic.samples.amazon.pojo.StarTimeMap;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +24,7 @@ import java.util.List;
 public class AsinService {
 
     @Autowired
-    AsinDao mAsinDao;
+    private AsinDao mAsinDao;
 
     private Logger mLogger = Logger.getLogger(getClass());
 
@@ -97,6 +101,32 @@ public class AsinService {
 
     public Asin findByAsin(String asin) {
         return mAsinDao.findByAsin(asin);
+    }
+
+    /**
+     * @return 爬取完毕的Asin列表
+     */
+    public List<Asin> findCrawledAll() {
+        return mAsinDao.findCrawledAll();
+    }
+
+    /**
+     * @param asin ASIN码
+     * @param star 范围[1,5]
+     * @return 该ASIN某一星级的最后评论时间
+     */
+    public Date getLastReviewDate(String asin, int star) {
+        Asin byAsin = findByAsin(asin);
+        List<StarTimeMap> list = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarTimeMap>>() {
+        }.getType());
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (StarTimeMap map : list) {
+                if (map.star == star) {
+                    return map.data;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -219,5 +249,6 @@ public class AsinService {
         private static final String START_ALL = "all";
 
     }
+
 
 }

@@ -9,6 +9,7 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.base.service.UserAgentService;
 import us.codecraft.webmagic.samples.base.util.PageUtil;
 
 /**
@@ -27,6 +28,8 @@ public class BasePageProcessor implements PageProcessor {
 
     @Autowired
     protected UrlService mUrlService;
+    @Autowired
+    private UserAgentService mUserAgentService;
 
     @Override
     public void process(Page page) {
@@ -36,7 +39,7 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public Site getSite() {
         sLogger.info("getSite()::");
-//        mSite.setUserAgent(UserAgentUtil.getRandomUserAgent());
+        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent);
         return mSite;
     }
 

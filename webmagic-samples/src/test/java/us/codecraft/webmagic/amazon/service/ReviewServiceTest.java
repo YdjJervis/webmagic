@@ -23,4 +23,9 @@ public class ReviewServiceTest extends SpringTestCase {
 
         mReviewService.add(review);
     }
+
+    @Test
+    public void testFindLastReview(){
+        System.out.println(mReviewService.findLastReview("B0181YRLT4"));
+    }
 }

@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
+import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -7,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
+import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.StarTimeMap;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,9 +26,11 @@ import java.util.List;
 public class UrlService {
 
     @Autowired
-    UrlDao mUrlDao;
+    private UrlDao mUrlDao;
     @Autowired
-    AsinService mAsinService;
+    private AsinService mAsinService;
+    @Autowired
+    private ReviewService mReviewService;
 
     private Logger mLogger = Logger.getLogger(getClass());
 
@@ -82,7 +88,24 @@ public class UrlService {
         mLogger.info("最大页码：" + maxPage + " 已经爬取的页码：" + list.size());
         Asin asinObj = mAsinService.findByAsin(asin);
         if (list.size() > maxPage) {
+
+            /*
+            * 全量爬取完毕，把需要爬取星级的最后一条评论时间记录到extra字段，方便下次更新爬取的时候使用
+            */
+            List<Review> reviewList = mReviewService.findLastReview(asin);
+            if (CollectionUtils.isNotEmpty(reviewList)) {
+                List<StarTimeMap> mapList = new ArrayList<StarTimeMap>();
+                for (Review review : reviewList) {
+                    mapList.add(new StarTimeMap(review.sarStar, review.sarDealTime));
+                }
+                asinObj.extra = new Gson().toJson(mapList);
+            }
+
+            /*
+            * 标记该ASIN为已经爬取完毕
+            */
             mAsinService.updateStatus(asinObj, true);
+
         } else {
             if (maxPage != 0) {
                 float progress = 1.0f * list.size() / maxPage;

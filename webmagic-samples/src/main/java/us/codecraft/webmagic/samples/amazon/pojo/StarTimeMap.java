@@ -19,6 +19,11 @@ public class StarTimeMap {
      */
     public Date data;
 
+    public StarTimeMap(int star, Date data) {
+        this.star = star;
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "StarTimeMap{" +

@@ -17,4 +17,9 @@ public class AsinServiceTest extends SpringTestCase {
     public void testFindAll() {
         mLogger.info(mAsinService.findAll());
     }
+
+    @Test
+    public void testFindCrawledAll() {
+        System.out.println(mAsinService.findCrawledAll());
+    }
 }

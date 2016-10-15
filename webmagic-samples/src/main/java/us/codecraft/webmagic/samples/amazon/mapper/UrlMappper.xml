@@ -74,7 +74,7 @@
     </update>
 
     <select id="findByType" resultMap="UrlResultMap" parameterType="int">
-        SELECT * FROM spider_amazon_url WHERE sau_status != 200 AND sau_type = #{0};
+        SELECT * FROM spider_amazon_url WHERE sau_status != 200 AND sau_type = #{0} ORDER BY sau_priority LIMIT 10;
     </select>
 
     <select id="findByAsin" resultMap="UrlResultMap">

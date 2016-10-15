@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.ReviewDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.1
@@ -28,8 +30,12 @@ public class ReviewService {
         }
     }
 
-    public Review findByReviewId(String reviewId){
+    public Review findByReviewId(String reviewId) {
         return mReviewDao.findByReviewId(reviewId);
+    }
+
+    public List<Review> findLastReview(String asin) {
+        return mReviewDao.findLastReview(asin);
     }
 
 }
