@@ -10,6 +10,7 @@
         <result property="saaProgress" column="saa_progress"/>
         <result property="saaParsed" column="saa_parsed"/>
         <result property="saaPriority" column="saa_priority"/>
+        <result property="saaIsUpdatting" column="saa_is_updatting"/>
         <result property="extra" column="saa_extra"/>
         <result property="saaSyncTime" column="saa_sync_time"/>
         <result property="createtime" column="saa_create_time"/>
@@ -47,12 +48,13 @@
     <select id="findAll" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
-        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE WHERE saa_parsed = 0
+        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        WHERE saa_parsed = 0
     </select>
 
     <!--更新爬取状态和URL转换状态-->
     <update id="update" parameterType="Asin">
-        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_extra=#{extra},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
+        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_is_updatting=#{saaIsUpdatting},saa_extra=#{extra},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
     </update>
 
     <update id="updateSyncTime" parameterType="Asin">
@@ -68,7 +70,10 @@
 
     <!--查询全量爬取已经完毕的ASIN-->
     <select id="findCrawledAll" resultMap="AsinResultMap">
-        SELECT * FROM spider_amazon_asin WHERE saa_progress =1;
+        SELECT * FROM spider_amazon_asin asin
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
+        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        WHERE saa_progress = 1 AND saa_is_updatting = 0;
     </select>
 
 </mapper>

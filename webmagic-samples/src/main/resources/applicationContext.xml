@@ -81,18 +81,22 @@
         </tx:attributes>
     </tx:advice>
     <aop:config>
-        <aop:pointcut id="pc" expression="execution(* us.codecraft.webmagic.samples.*.service.*.*(..))"/> <!--把事务控制在Service层 -->
+        <aop:pointcut id="pc"
+                      expression="execution(* us.codecraft.webmagic.samples.*.service.*.*(..))"/> <!--把事务控制在Service层 -->
         <aop:advisor pointcut-ref="pc" advice-ref="txAdvice"/>
     </aop:config>
     <!--配置事务-->
 
     <!--配置定时任务-->
     <task:scheduled-tasks>
-        <task:scheduled ref="asinParseMonitor" method="execute" cron="0/5 * * * * ?"/>
-        <task:scheduled ref="reviewProcessor" method="execute" cron="0/5 * * * * ?"/>
+        <task:scheduled ref="asinParseMonitor" method="execute" cron="0/5 * * * * ?"/><!--每5秒-->
+        <task:scheduled ref="reviewProcessor" method="execute" cron="0/5 * * * * ?"/><!--每5秒-->
 
-        <task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>
-        <task:scheduled ref="reviewIdMonitor" method="execute" cron="0/5 * * * * ?"/>
+        <task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/><!--每5秒-->
+        <task:scheduled ref="reviewIdMonitor" method="execute" cron="0/30 * * * * ?"/><!--每30秒-->
+
+        <task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/><!--每5秒-->
+        <task:scheduled ref="updateParseMonitor" method="execute" cron="0 0 */12 * * ?"/><!--每半天-->
     </task:scheduled-tasks>
 
 </beans>

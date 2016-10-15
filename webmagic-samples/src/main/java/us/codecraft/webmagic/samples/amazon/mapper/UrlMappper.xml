@@ -4,6 +4,7 @@
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.UrlDao">
 
     <resultMap id="UrlResultMap" type="Url">
+        <result property="id" column="sau_id"/>
         <result property="siteCode" column="BAS_CODE"/>
         <result property="type" column="sau_type"/>
         <result property="saaAsin" column="saa_asin"/>
@@ -81,8 +82,17 @@
         SELECT * FROM spider_amazon_url WHERE saa_asin = #{0};
     </select>
 
+    <!--查询某个ASIN更新爬取的URL列表-->
+    <select id="findUpdateCrawl" resultMap="UrlResultMap">
+        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 2;
+    </select>
+
     <select id="findMonitorUrlList" resultMap="UrlResultMap">
         SELECT * FROM spider_amazon_url WHERE sau_type = 1;
     </select>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM spider_amazon_url WHERE sau_id = #{0};
+    </delete>
 
 </mapper>

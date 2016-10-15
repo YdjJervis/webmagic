@@ -37,7 +37,7 @@ public class ReviewIdMonitor extends ParseMonitor {
 
     @Override
     public void execute() {
-        List<Url> urlList = getUrl();
+        List<Url> urlList = getUrl(true);
         mUrlService.addAll(urlList);
         if (CollectionUtils.isNotEmpty(urlList)) {
             for (Url url : urlList) {
@@ -51,7 +51,7 @@ public class ReviewIdMonitor extends ParseMonitor {
     }
 
     @Override
-    protected List<Url> getUrl() {
+    protected List<Url> getUrl(boolean isCrawlAll) {
         List<Url> urlList = new ArrayList<Url>();
 
         List<ReviewMonitor> monitorList = mMonitorService.findAll();

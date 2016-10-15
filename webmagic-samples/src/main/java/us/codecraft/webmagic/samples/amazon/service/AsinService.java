@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.AsinDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
+import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.StarTimeMap;
 
 import java.util.ArrayList;
@@ -99,12 +100,16 @@ public class AsinService {
         mAsinDao.update(asin);
     }
 
+    public void udpate(Asin asin) {
+        mAsinDao.update(asin);
+    }
+
     public Asin findByAsin(String asin) {
         return mAsinDao.findByAsin(asin);
     }
 
     /**
-     * @return 爬取完毕的Asin列表
+     * @return 全量爬取已经完毕的Asin列表
      */
     public List<Asin> findCrawledAll() {
         return mAsinDao.findCrawledAll();
@@ -122,16 +127,39 @@ public class AsinService {
         if (CollectionUtils.isNotEmpty(list)) {
             for (StarTimeMap map : list) {
                 if (map.star == star) {
-                    return map.data;
+                    return map.date;
                 }
             }
         }
         return null;
     }
 
+    public void updateAsinExtra(String asin, Review review, String filter) {
+        int star;
+        if (Filter.START_1.equals(filter)) star = 1;
+        else if (Filter.START_2.equals(filter)) star = 2;
+        else if (Filter.START_3.equals(filter)) star = 3;
+        else if (Filter.START_4.equals(filter)) star = 4;
+        else star = 5;
+
+        Asin byAsin = mAsinDao.findByAsin(asin);
+        List<StarTimeMap> list = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarTimeMap>>() {
+        }.getType());
+
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (StarTimeMap map : list) {
+                if (map.star == star) {
+                    map.date = review.sarDealTime;
+                }
+            }
+        }
+        byAsin.extra = new Gson().toJson(list);
+        mAsinDao.update(byAsin);
+    }
+
     /**
      * @param star 需要抓取的等级。eg：0-0-1-1-1表示需要抓取差评
-     * @return 亚马逊顾虑器关键字集合
+     * @return 亚马逊全量爬取过滤器关键字集合
      */
     public List<String> getFilterWords(String star) {
         List<String> filterList = new ArrayList<String>();
@@ -234,6 +262,35 @@ public class AsinService {
 
         mLogger.info("当前过滤器集合为：" + filterList);
         return filterList;
+    }
+
+    /**
+     * @param star 需要抓取的等级。eg：0-0-1-1-1表示需要抓取差评
+     * @return 亚马逊更新爬取过滤器关键字集合
+     */
+    public List<String> getUpdateFilters(String star) {
+
+        List<String> list = new ArrayList<String>();
+        String[] starsArray = star.split("-");
+
+        for (int i = 0, len = starsArray.length; i < len; i++) {
+            if ("1".equals(starsArray[i])) {
+                String filter;
+                if (i == 0) {
+                    filter = Filter.START_5;
+                } else if (i == 1) {
+                    filter = Filter.START_4;
+                } else if (i == 2) {
+                    filter = Filter.START_3;
+                } else if (i == 3) {
+                    filter = Filter.START_2;
+                } else {
+                    filter = Filter.START_1;
+                }
+                list.add(filter);
+            }
+        }
+        return list;
     }
 
     private static final class Filter {

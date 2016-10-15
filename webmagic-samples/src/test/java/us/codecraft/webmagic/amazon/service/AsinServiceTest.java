@@ -22,4 +22,9 @@ public class AsinServiceTest extends SpringTestCase {
     public void testFindCrawledAll() {
         System.out.println(mAsinService.findCrawledAll());
     }
+
+    @Test
+    public void testGetFilter(){
+        System.out.println(mAsinService.getUpdateFilters("0-0-1-0-1"));
+    }
 }

@@ -120,4 +120,33 @@ public class UrlService {
         return mUrlDao.findMonitorUrlList();
     }
 
+    /**
+     * 某个星级的更新爬取完毕，删除该星级该过滤器的所有更新爬取的链接
+     *
+     * @param asin   ASIN码
+     * @param filter Url中的过滤器
+     */
+    public void deleteUpdateCrawl(String asin, String filter) {
+        List<Url> list = findUpdateCrawl(asin);
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (Url url : list) {
+                if (url.url.contains(filter)) {
+                    mUrlDao.delete(url.id);
+                }
+            }
+        }
+
+        /*删除后再检查一次更新爬取的Url是否为空，如果为空，就标记
+        该ASIN的更新爬取状态为0，表示可以继续下一次的更新爬取了*/
+        if (CollectionUtils.isEmpty(findUpdateCrawl(asin))) {
+            Asin byAsin = mAsinService.findByAsin(asin);
+            byAsin.saaIsUpdatting = 0;
+            mAsinService.udpate(byAsin);
+        }
+    }
+
+    public List<Url> findUpdateCrawl(String asin) {
+        return mUrlDao.findUpdateCrawl(asin);
+    }
+
 }

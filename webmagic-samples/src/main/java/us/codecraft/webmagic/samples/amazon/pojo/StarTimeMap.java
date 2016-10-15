@@ -17,18 +17,18 @@ public class StarTimeMap {
     /**
      * 该星级对应最后评论时间
      */
-    public Date data;
+    public Date date;
 
-    public StarTimeMap(int star, Date data) {
+    public StarTimeMap(int star, Date date) {
         this.star = star;
-        this.data = data;
+        this.date = date;
     }
 
     @Override
     public String toString() {
         return "StarTimeMap{" +
                 "star=" + star +
-                ", data=" + data +
+                ", date=" + date +
                 '}';
     }
 }

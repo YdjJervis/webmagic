@@ -12,9 +12,7 @@ import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Jervis
@@ -26,13 +24,13 @@ import java.util.Set;
 public class AsinParseMonitor extends ParseMonitor {
 
     @Autowired
-    private UrlService mUrlService;
+    protected UrlService mUrlService;
     @Autowired
-    private AsinService mAsinService;
+    protected AsinService mAsinService;
 
     @Override
     public void execute() {
-        List<Url> urlList = getUrl();
+        List<Url> urlList = getUrl(true);
         mUrlService.addAll(urlList);
 
         sLogger.info("更新ASIN状态...更新数量：" + urlList.size());
@@ -46,39 +44,52 @@ public class AsinParseMonitor extends ParseMonitor {
     }
 
     @Override
-    protected List<Url> getUrl() {
-        List<Asin> asinList = mAsinService.findAll();
+    protected List<Url> getUrl(boolean isCrawlAll) {
+
+        List<Asin> asinList;
+        if (isCrawlAll) {
+            asinList = mAsinService.findAll();
+        } else {
+            asinList = mAsinService.findCrawledAll();
+        }
         sLogger.info("剩余未转换成URL的Asin数量：" + asinList.size());
 
-        Set<String> urlSet = new HashSet<String>();
         List<Url> urlList = new ArrayList<Url>();
 
         if (CollectionUtils.isNotEmpty(asinList)) {
             for (Asin asin : asinList) {
 
-                String[] starArray = asin.saaStar.split("-");
-                String[] statusArray = asin.saaStatus.split("-");
+                List<String> filterList;
+                /*更新爬取和全量爬取的过滤器生成策略是不同的*/
+                if (isCrawlAll) {
+                    filterList = mAsinService.getFilterWords(asin.saaStar);
+                } else {
+                    filterList = mAsinService.getUpdateFilters(asin.saaStar);
+                }
+                sLogger.info("过滤器列表：" + filterList);
 
-                List<String> filterList = mAsinService.getFilterWords(asin.saaStar);
+                for (String filter : filterList) {
 
-                for (int i = 0, len = starArray.length; i < len; i++) {
-                    if ("1".equals(starArray[i]) && "0".equals(statusArray[i]) && asin.site.basCrawl == 1) {//标记了要爬取 && 还没有爬取 && 该网站是可以爬取的
-                        for (String filter : filterList) {
-                            Url url = new Url();
-                            url.url = asin.site.basSite + "/" + Review.PRODUCT_REVIEWS + "/" + asin.saaAsin;
-                            url.url = UrlUtils.setValue(url.url, "filterByStar", filter);//为Url添加过滤器
-                            url.siteCode = asin.site.basCode;
-                            url.asin = asin;
-                            url.priority = asin.saaPriority;
-                            url.type = 0;
-                            url.saaAsin = asin.saaAsin;
+                    /*该网站是可以爬取的*/
+                    if (asin.site.basCrawl == 1) {
 
-                            if (!urlSet.contains(url.url)) {
-                                urlList.add(url);
-                                urlSet.add(url.url);
-                            }
+                        Url url = new Url();
+                        url.url = asin.site.basSite + "/" + Review.PRODUCT_REVIEWS + "/" + asin.saaAsin;
+                        /*为Url添加过滤器*/
+                        url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
+                        url.siteCode = asin.site.basCode;
+                        url.asin = asin;
+                        url.priority = asin.saaPriority;
+                        url.type = 0;
 
+                        /*如果是更新爬取，他的url类型为2*/
+                        if (!isCrawlAll) {
+                            url.type = 2;
                         }
+
+                        url.saaAsin = asin.saaAsin;
+
+                        urlList.add(url);
                     }
                 }
             }

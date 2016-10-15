@@ -32,6 +32,7 @@ public class Asin extends BasePojo {
      */
     public int saaParsed;
     public int saaPriority;
+    public int saaIsUpdatting;
     public Date saaSyncTime;
 
     @Override
@@ -45,6 +46,7 @@ public class Asin extends BasePojo {
                 ", saaProgress='" + saaProgress + '\'' +
                 ", saaParsed='" + saaParsed + '\'' +
                 ", saaPriority='" + saaPriority + '\'' +
+                ", saaIsUpdatting='" + saaIsUpdatting + '\'' +
                 ", saaSyncTime='" + saaSyncTime + '\'' +
                 '}';
     }

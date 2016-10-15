@@ -21,6 +21,6 @@ public abstract class ParseMonitor implements ScheduledTask {
      * 把数据列表源转换成URL列表，数据来源不同，转换规则不同，所以需要
      * 子类单独处理
      */
-    protected abstract List<Url> getUrl();
+    protected abstract List<Url> getUrl(boolean isCrawlAll);
 
 }

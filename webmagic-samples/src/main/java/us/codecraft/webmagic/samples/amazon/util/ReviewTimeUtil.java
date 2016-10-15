@@ -195,6 +195,10 @@ public class ReviewTimeUtil {
         }
     }
 
+    public static boolean isEquals(Date left, Date right) {
+        return left.getYear() == right.getYear() && left.getMonth() == right.getMonth() && left.getDay() == right.getDay();
+    }
+
     public static void main(String[] args) {
         parse("于 2015年11月19日", "CN");//中国
         parse("投稿日 2016/9/29", "JP");//日本

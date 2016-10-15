@@ -10,6 +10,7 @@ import us.codecraft.webmagic.samples.amazon.pipeline.ReviewPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.SiteService;
+import us.codecraft.webmagic.samples.amazon.util.PageContentUtil;
 import us.codecraft.webmagic.samples.amazon.util.ReviewTimeUtil;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 import us.codecraft.webmagic.selector.Selectable;
@@ -31,7 +32,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     @Autowired
     private ReviewPipeline mReviewPipeline;
     @Autowired
-    private SiteService mSiteService;
+    protected SiteService mSiteService;
 
     @Override
     public void process(Page page) {
@@ -44,40 +45,17 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
             updateUrlStatus(page);
 
-            List<Selectable> reviewNodeList = page.getHtml().xpath("//div[@class='a-section review']").nodes();
+            List<Selectable> reviewNodeList = extractReviewNodeList(page);
 
-            String asin = page.getUrl().regex(".*product-reviews/([0-9a-zA-Z\\-]*).*").get();//URL中提取asin码
-            String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
-            String siteCode = mSiteService.findByDomain(domain).basCode;
+            String asin = extractAsin(page);
+            String siteCode = extractSiteCode(page);
 
-            sLogger.info("解析 " + domain + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
+            sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 
             List<Review> reviewList = new ArrayList<Review>();
             for (Selectable reviewNode : reviewNodeList) {
-                int star = Integer.valueOf(reviewNode.xpath("//*[@data-hook='review-star-rating']/@class").regex(".*-([0-5]).*").get());//提取星级
-                String title = reviewNode.xpath("//a[@class='a-size-base a-link-normal review-title a-color-base a-text-bold']/text()").get();
-                String reviewId = reviewNode.xpath("//a[@class='a-size-base a-link-normal review-title a-color-base a-text-bold']/@href").regex(".*customer-reviews/(.*)/ref.*").get();
-                String person = reviewNode.xpath("//a[@class='a-size-base a-link-normal author']/text()").get();
-                String personID = reviewNode.xpath("//a[@class='a-size-base a-link-normal author']/@href").regex(".*profile/(.*)/ref.*").get();
-                String time = reviewNode.xpath("//span[@class='a-size-base a-color-secondary review-date']/text()").get();
-                String version = reviewNode.xpath("//a[@class='a-size-mini a-link-normal a-color-secondary]/text()").get();
-                String content = reviewNode.xpath("//span[@class='a-size-base review-text]/text()").get();
-                String buyStatus = reviewNode.xpath("//span[@class='a-size-mini a-color-state a-text-bold]/text()").get();
 
-                Review review = new Review();
-                review.basCode = siteCode;
-                review.saaAsin = asin;
-                review.sarStar = star;
-                review.sarTitle = title;
-                review.sarPersonId = personID;
-                review.sarReviewId = reviewId;
-                review.sarPerson = person;
-                review.sarTime = time;
-                review.sarDealTime = ReviewTimeUtil.parse(time,siteCode);
-                review.sarVersion = version;
-                review.sarContent = content;
-                review.sarBuyStatus = buyStatus;
-                sLogger.info(review);
+                Review review = extractReviewItem(siteCode, asin, reviewNode);
 
                 reviewList.add(review);
             }
@@ -107,6 +85,59 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     }
 
     /**
+     * 根据Url提取域名，并根据域名获取站点码
+     */
+    protected String extractSiteCode(Page page) {
+        String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
+        return mSiteService.findByDomain(domain).basCode;
+    }
+
+    /**
+     * 根据Url提取其中ASIN码
+     */
+    protected String extractAsin(Page page) {
+        return page.getUrl().regex(".*product-reviews/([0-9a-zA-Z\\-]*).*").get();
+    }
+
+    /**
+     * 抽取评论列表根节点
+     */
+    protected List<Selectable> extractReviewNodeList(Page page) {
+        return page.getHtml().xpath("//div[@class='a-section review']").nodes();
+    }
+
+    /**
+     * 抽取单条评论
+     */
+    protected Review extractReviewItem(String siteCode, String asin, Selectable reviewNode) {
+        Review review = new Review();
+        int star = Integer.valueOf(reviewNode.xpath("//*[@data-hook='review-star-rating']/@class").regex(".*-([0-5]).*").get());//提取星级
+        String title = reviewNode.xpath("//a[@class='a-size-base a-link-normal review-title a-color-base a-text-bold']/text()").get();
+        String reviewId = reviewNode.xpath("//a[@class='a-size-base a-link-normal review-title a-color-base a-text-bold']/@href").regex(".*customer-reviews/(.*)/ref.*").get();
+        String person = reviewNode.xpath("//a[@class='a-size-base a-link-normal author']/text()").get();
+        String personID = reviewNode.xpath("//a[@class='a-size-base a-link-normal author']/@href").regex(".*profile/(.*)/ref.*").get();
+        String time = reviewNode.xpath("//span[@class='a-size-base a-color-secondary review-date']/text()").get();
+        String version = reviewNode.xpath("//a[@class='a-size-mini a-link-normal a-color-secondary]/text()").get();
+        String content = reviewNode.xpath("//span[@class='a-size-base review-text]/text()").get();
+        String buyStatus = reviewNode.xpath("//span[@class='a-size-mini a-color-state a-text-bold]/text()").get();
+
+        review.basCode = siteCode;
+        review.saaAsin = asin;
+        review.sarStar = star;
+        review.sarTitle = PageContentUtil.filterBadString(title);
+        review.sarPersonId = personID;
+        review.sarReviewId = reviewId;
+        review.sarPerson = person;
+        review.sarTime = time;
+        review.sarDealTime = ReviewTimeUtil.parse(time, siteCode);
+        review.sarVersion = version;
+        review.sarContent = PageContentUtil.filterBadString(content);
+        review.sarBuyStatus = buyStatus;
+        sLogger.info(review);
+        return review;
+    }
+
+    /**
      * 1，更新Url的爬取状态
      * 2，更新ASIN的爬取进度状态
      */
@@ -120,9 +151,11 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     @Override
     public void execute() {
         sLogger.info("开始执行爬取任务...");
-
         List<Url> urlList = mUrlService.find(0);
+        startToCrawl(urlList);
+    }
 
+    protected void startToCrawl(List<Url> urlList) {
         sLogger.info("找到状态码不为200的Url个数：" + urlList.size());
         if (CollectionUtils.isNotEmpty(urlList)) {
 
@@ -139,7 +172,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
             sLogger.info("开始爬取评论...");
             mSpider.start();
         }
-
     }
 
 }
