@@ -13,6 +13,9 @@ public class PageContentUtil {
      * @return 过滤特殊编码后的字符串
      */
     public static String filterBadString(String src){
-        return src.replaceAll("\uD83D\uDC4D","");//过滤👍
+        src = src.replaceAll("\uD83C\uDFFB","");//过滤👍
+        src = src.replaceAll("\uD83D\uDC4D","");//过滤? 看不到吧
+        src = src.replaceAll("\uD83D\uDC85\uD83C\uDFFB","");//过滤💅🏻
+        return src;
     }
 }
