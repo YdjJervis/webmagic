@@ -9,13 +9,17 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pojo.Constraint;
+import us.codecraft.webmagic.samples.amazon.pojo.ImgValidateResult;
 import us.codecraft.webmagic.samples.amazon.pojo.RequestStat;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.RequestStatService;
+import us.codecraft.webmagic.samples.amazon.service.SiteService;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.amazon.ws.validate.ImageOCRService;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
 import us.codecraft.webmagic.samples.base.util.PageUtil;
 
@@ -42,11 +46,16 @@ public class BasePageProcessor implements PageProcessor {
     @Autowired
     private UserAgentService mUserAgentService;
 
+    @Autowired
+    protected SiteService mSiteService;
+
+    /*压力测试统计相关 -- start*/
     private Date mFirstPageTime;
     @Autowired
     private RequestStatService mStatService;
-    public static final String CONDITIONS = "NoRandomUA-NoValidate-1Thread";
+    public static final String CONDITIONS = "RandomUA-Validate-20Thread";
     public static final String CONDITIONS_CODE = DigestUtils.md5Hex(CONDITIONS);
+    /*压力测试统计相关 -- end*/
 
     @Override
     public void process(Page page) {
@@ -56,7 +65,7 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public Site getSite() {
         sLogger.info("getSite()::");
-//        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent);
+        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent);
         return mSite;
     }
 
@@ -106,23 +115,39 @@ public class BasePageProcessor implements PageProcessor {
             /*
             * 请求表单的Url，调用验证码识别接口
             */
-            String validateCode = getValidateCode(validateUrl);
-            sLogger.info("网络验证码图片：" + validateUrl + " 解析的验证码：" + validateCode);
-            String url = "validateCaptcha?amzn=nW3O4Cz6t%2BPD%2Fts3YTVYPw%3D%3D&amzn-r=%2Fproduct-reviews%2FB012BU6NKW&amzn-pt=NoPageType&field-keywords=" + validateCode;
-//            page.addTargetRequest(url);
+            String validateCodeJson = getValidateCode(validateUrl, "review");
+            ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
+            sLogger.info("验证码码结果：" + result);
 
+            /*获取表单参数*/
+            String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
+            String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
+            String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
+            String urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
+            sLogger.info("验证表单：" + urlStr);
+
+            Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
+            Request request = new Request(urlStr);
+            request.putExtra(URL_EXTRA,url);
+            page.addTargetRequest(request);
+
+            /*压力测试统计相关 -- start*/
             if (Constraint.isFirstValidate) {
                 Constraint.isFirstValidate = false;
                 stat.firstValidateTime = new Date();
                 stat.successCountBeforeValidate = stat.totalRequestCount - stat.successCount - stat.validateCount;
             }
             stat.validateCount++;
+            /*压力测试统计相关 -- end*/
         } else {
+            /*压力测试统计相关 -- start*/
             if (!Constraint.isFirstValidate) {
                 stat.successCount++;
             }
+            /*压力测试统计相关 -- end*/
         }
 
+        /*压力测试统计相关 -- start*/
         stat.totalRequestCount++;
         Constraint.requestCount++;
         /*是否到了100个请求 && 已经出现过一次验证了*/
@@ -138,6 +163,15 @@ public class BasePageProcessor implements PageProcessor {
             stat.extra = new Gson().toJson(extraList);
         }
         mStatService.addOnDuplicate(stat);
+        /*压力测试统计相关 -- end*/
+    }
+
+    /**
+     * 根据Url提取域名，并根据域名获取站点码
+     */
+    protected String extractSiteCode(Page page) {
+        String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
+        return mSiteService.findByDomain(domain).basCode;
     }
 
     /**
@@ -146,8 +180,9 @@ public class BasePageProcessor implements PageProcessor {
      * @param imgUrl 图片Url
      * @return 验证码
      */
-    private String getValidateCode(String imgUrl) {
-
-        return "";
+    private String getValidateCode(String imgUrl, String type) {
+        ImageOCRService service = new ImageOCRService();
+        String validateCode = service.getBasicHttpBindingIImageOCRService().getVerCodeFromUrl(imgUrl, type);
+        return validateCode;
     }
 }

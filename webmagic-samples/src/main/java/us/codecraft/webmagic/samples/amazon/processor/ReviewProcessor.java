@@ -9,7 +9,6 @@ import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.samples.amazon.pipeline.ReviewPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.SiteService;
 import us.codecraft.webmagic.samples.amazon.util.PageContentUtil;
 import us.codecraft.webmagic.samples.amazon.util.ReviewTimeUtil;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
@@ -31,8 +30,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
     @Autowired
     private ReviewPipeline mReviewPipeline;
-    @Autowired
-    protected SiteService mSiteService;
 
     @Override
     public void process(Page page) {
@@ -82,14 +79,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
             }
             page.putField(ReviewPipeline.PARAM_URL, urlList);
         }
-    }
-
-    /**
-     * 根据Url提取域名，并根据域名获取站点码
-     */
-    protected String extractSiteCode(Page page) {
-        String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
-        return mSiteService.findByDomain(domain).basCode;
     }
 
     /**
