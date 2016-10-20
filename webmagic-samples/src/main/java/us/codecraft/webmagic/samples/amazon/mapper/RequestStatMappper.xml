@@ -8,8 +8,35 @@
     </select>
 
     <insert id="addOnDuplicate" parameterType="RequestStat">
-        INSERT INTO test_request_stat(conditions,conditionsCode,firstPageTime,firstValidateTime,successCountBeforeValidate,successCount,validateCount,totalRequestCount,extra)
-        VALUES (#{conditions},#{conditionsCode},#{firstPageTime},#{firstValidateTime},#{successCountBeforeValidate},#{successCount},#{validateCount},#{totalRequestCount},#{extra})
+        INSERT INTO
+        test_request_stat(
+        conditions,
+        conditionsCode,
+        firstPageTime,
+        firstValidateTime,
+        successCountBeforeValidate,
+        successCount,
+        validateCount,
+        totalRequestCount,
+        extra,
+        requestCountor,
+        isFirstValidate,
+        isFirstPage
+        )
+        VALUES
+        (#{conditions},
+        #{conditionsCode},
+        #{firstPageTime},
+        #{firstValidateTime},
+        #{successCountBeforeValidate},
+        #{successCount},
+        #{validateCount},
+        #{totalRequestCount},
+        #{extra},
+        #{requestCountor},
+        #{isFirstValidate},
+        #{isFirstPage}
+        )
         ON DUPLICATE KEY UPDATE
         conditions = #{conditions},
         conditionsCode = #{conditionsCode},
@@ -20,7 +47,10 @@
         validateCount = #{validateCount},
         updatetime = #{updatetime},
         totalRequestCount = #{totalRequestCount},
-        extra = #{extra}
+        extra = #{extra},
+        requestCountor = #{requestCountor},
+        isFirstValidate = #{isFirstValidate},
+        isFirstPage = #{isFirstPage}
     </insert>
 
 </mapper>

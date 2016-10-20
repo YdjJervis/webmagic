@@ -150,7 +150,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
             Spider mSpider = Spider.create(this)
                     .addPipeline(mReviewPipeline)
-                    .thread(1);
+                    .thread(10);
 
             for (Url url : urlList) {
                 Request request = new Request(url.url);

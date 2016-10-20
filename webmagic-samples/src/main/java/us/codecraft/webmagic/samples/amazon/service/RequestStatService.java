@@ -17,11 +17,11 @@ public class RequestStatService {
     @Autowired
     private RequestStatDao mDao;
 
-    public void addOnDuplicate(RequestStat stat) {
+    public synchronized void addOnDuplicate(RequestStat stat) {
         mDao.addOnDuplicate(stat);
     }
 
-    public RequestStat find(String conditionsCode) {
+    public synchronized RequestStat find(String conditionsCode) {
         return mDao.findByConditionsCode(conditionsCode);
     }
 }

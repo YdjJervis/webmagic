@@ -41,6 +41,10 @@ public class RequestStat extends BasePojo {
      */
     public int totalRequestCount;
 
+    public int requestCountor;
+    public int isFirstValidate = 1;
+    public int isFirstPage = 1;
+
     @Override
     public String toString() {
         return super.toString() + "RequestStat{" +
@@ -52,6 +56,9 @@ public class RequestStat extends BasePojo {
                 ", successCount=" + successCount +
                 ", validateCount=" + validateCount +
                 ", totalRequestCount=" + totalRequestCount +
+                ", requestCountor=" + requestCountor +
+                ", isFirstValidate=" + isFirstValidate +
+                ", isFirstPage=" + isFirstPage +
                 '}';
     }
 }

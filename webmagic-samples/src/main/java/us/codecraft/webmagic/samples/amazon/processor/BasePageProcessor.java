@@ -12,7 +12,6 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.samples.amazon.pojo.Constraint;
 import us.codecraft.webmagic.samples.amazon.pojo.ImgValidateResult;
 import us.codecraft.webmagic.samples.amazon.pojo.RequestStat;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
@@ -21,7 +20,6 @@ import us.codecraft.webmagic.samples.amazon.service.SiteService;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.amazon.ws.validate.ImageOCRService;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
-import us.codecraft.webmagic.samples.base.util.PageUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,7 +51,7 @@ public class BasePageProcessor implements PageProcessor {
     private Date mFirstPageTime;
     @Autowired
     private RequestStatService mStatService;
-    public static final String CONDITIONS = "RandomUA-Validate-20Thread";
+    public static final String CONDITIONS = "RandomUA-Validate-10Thread";
     public static final String CONDITIONS_CODE = DigestUtils.md5Hex(CONDITIONS);
     /*压力测试统计相关 -- end*/
 
@@ -85,16 +83,16 @@ public class BasePageProcessor implements PageProcessor {
         mUrlService.updateAsinCrawledAll(url.saaAsin);
     }
 
-    protected void dealValidate(Page page) {
-        if (Constraint.isFirstTime) {
-            Constraint.isFirstTime = false;
-            mFirstPageTime = new Date();
-        }
+    protected synchronized void dealValidate(Page page) {
         RequestStat stat = mStatService.find(CONDITIONS_CODE);
         if (stat == null) {
             stat = new RequestStat();
             stat.conditions = CONDITIONS;
             stat.conditionsCode = CONDITIONS_CODE;
+        }
+        if (stat.isFirstPage == 1) {
+            stat.isFirstPage = 0;
+            mFirstPageTime = new Date();
         }
         stat.firstPageTime = mFirstPageTime;
 
@@ -105,7 +103,9 @@ public class BasePageProcessor implements PageProcessor {
         String validateUrl = page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
         if (StringUtils.isNotEmpty(validateUrl)) {
             sLogger.error("身份验证,准备保存验证码...网页状态码：" + page.getStatusCode());
-            PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码2");
+
+            /*保存图片验证码*/
+//            PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
 
             /*
             * 当需要验证码时，page的状态码还是200，不符合我们的逻辑，所以修改一下
@@ -128,12 +128,12 @@ public class BasePageProcessor implements PageProcessor {
 
             Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
             Request request = new Request(urlStr);
-            request.putExtra(URL_EXTRA,url);
+            request.putExtra(URL_EXTRA, url);
             page.addTargetRequest(request);
 
             /*压力测试统计相关 -- start*/
-            if (Constraint.isFirstValidate) {
-                Constraint.isFirstValidate = false;
+            if (stat.isFirstValidate == 1) {
+                stat.isFirstValidate = 0;
                 stat.firstValidateTime = new Date();
                 stat.successCountBeforeValidate = stat.totalRequestCount - stat.successCount - stat.validateCount;
             }
@@ -141,7 +141,7 @@ public class BasePageProcessor implements PageProcessor {
             /*压力测试统计相关 -- end*/
         } else {
             /*压力测试统计相关 -- start*/
-            if (!Constraint.isFirstValidate) {
+            if (stat.isFirstValidate == 0) {
                 stat.successCount++;
             }
             /*压力测试统计相关 -- end*/
@@ -149,11 +149,11 @@ public class BasePageProcessor implements PageProcessor {
 
         /*压力测试统计相关 -- start*/
         stat.totalRequestCount++;
-        Constraint.requestCount++;
+        stat.requestCountor++;
         /*是否到了100个请求 && 已经出现过一次验证了*/
-        if (Constraint.requestCount % 100 == 0 && !Constraint.isFirstValidate) {
+        if (stat.requestCountor % 100 == 0 && stat.isFirstValidate == 0) {
             /*开始往大字段里面统计100个请求达到时，失败与成功的总比例，用来分析走势*/
-            Constraint.requestCount = 0;
+            stat.requestCountor = 0;
             List<Float> extraList = new Gson().fromJson(stat.extra, new TypeToken<List<Float>>() {
             }.getType());
             if (CollectionUtils.isEmpty(extraList)) {
