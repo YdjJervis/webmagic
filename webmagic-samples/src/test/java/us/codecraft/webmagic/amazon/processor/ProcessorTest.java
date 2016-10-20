@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.amazon;
+package us.codecraft.webmagic.amazon.processor;
 
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;

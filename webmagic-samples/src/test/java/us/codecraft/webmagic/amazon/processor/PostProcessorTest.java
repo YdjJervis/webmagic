@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.amazon;
+package us.codecraft.webmagic.amazon.processor;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
