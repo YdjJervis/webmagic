@@ -34,6 +34,10 @@ public class Asin extends BasePojo {
     public int saaPriority;
     public int saaIsUpdatting;
     public Date saaSyncTime;
+    /**
+     * 是否在销售
+     */
+    public int saaOnSale;
 
     @Override
     public String toString() {
@@ -41,6 +45,7 @@ public class Asin extends BasePojo {
                 "site=" + site +
                 ", asinSource=" + asinSource +
                 ", saaAsin='" + saaAsin + '\'' +
+                ", saaOnSale='" + saaOnSale + '\'' +
                 ", saaStar='" + saaStar + '\'' +
                 ", saaStatus='" + saaStatus + '\'' +
                 ", saaProgress='" + saaProgress + '\'' +

@@ -41,6 +41,10 @@ public class UrlService {
         mUrlDao.add(url);
     }
 
+    public void deleteByAsin(String asin) {
+        mUrlDao.deleteByAsin(asin);
+    }
+
     public void update(Url url) {
         mUrlDao.update(url);
     }

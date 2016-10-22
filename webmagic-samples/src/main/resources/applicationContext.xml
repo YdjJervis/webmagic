@@ -90,15 +90,15 @@
     <!--配置定时任务-->
     <task:scheduled-tasks>
         <task:scheduled ref="asinParseMonitor" method="execute" cron="0/5 * * * * ?"/><!--每5秒-->
-        <task:scheduled ref="reviewProcessor" method="execute" cron="0/5 * * * * ?"/><!--每5秒-->
+        <!--<task:scheduled ref="reviewProcessor" method="execute" cron="0/5 * * * * ?"/>&lt;!&ndash;每5秒&ndash;&gt;
 
-        <task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/><!--每5秒-->
-        <task:scheduled ref="reviewIdMonitor" method="execute" cron="0/30 * * * * ?"/><!--每30秒-->
+        <task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>&lt;!&ndash;每5秒&ndash;&gt;
+        <task:scheduled ref="reviewIdMonitor" method="execute" cron="0/30 * * * * ?"/>&lt;!&ndash;每30秒&ndash;&gt;
 
-        <task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/><!--每5秒-->
-        <task:scheduled ref="updateParseMonitor" method="execute" cron="0 0 */12 * * ?"/><!--每半天-->
+        <task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/>&lt;!&ndash;每5秒&ndash;&gt;
+        <task:scheduled ref="updateParseMonitor" method="execute" cron="0 0 */12 * * ?"/>&lt;!&ndash;每半天&ndash;&gt;-->
 
-        <task:scheduled ref="reviewStatProcessor" method="execute" cron="0/5 * * * * ?"/>
+        <task:scheduled ref="reviewStatProcessor" method="execute" cron="0/10 * * * * ?"/>
     </task:scheduled-tasks>
 
 </beans>

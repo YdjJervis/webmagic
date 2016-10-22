@@ -69,4 +69,8 @@ public class UrlServiceTest extends SpringTestCase {
         mUrlService.deleteUpdateCrawl("B0181YRLT4","one_star");
     }
 
+    @Test
+    public void testDeleteByAsin(){
+        mUrlService.deleteByAsin("B00NZS00OU");
+    }
 }

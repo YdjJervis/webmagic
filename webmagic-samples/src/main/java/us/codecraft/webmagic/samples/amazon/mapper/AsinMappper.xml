@@ -6,6 +6,7 @@
     <resultMap id="AsinResultMap" type="Asin">
         <result property="saaAsin" column="saa_asin"/>
         <result property="saaStar" column="saa_star"/>
+        <result property="saaOnSale" column="saa_on_sale"/>
         <result property="saaStatus" column="saa_status"/>
         <result property="saaProgress" column="saa_progress"/>
         <result property="saaParsed" column="saa_parsed"/>
@@ -49,12 +50,12 @@
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
         INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
-        WHERE saa_parsed = 0
+        WHERE saa_parsed = 0 AND saa_on_sale = 1
     </select>
 
     <!--更新爬取状态和URL转换状态-->
     <update id="update" parameterType="Asin">
-        UPDATE spider_amazon_asin SET saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_is_updatting=#{saaIsUpdatting},saa_extra=#{extra},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
+        UPDATE spider_amazon_asin SET saa_on_sale = #{saaOnSale},saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_is_updatting=#{saaIsUpdatting},saa_extra=#{extra},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
     </update>
 
     <update id="updateSyncTime" parameterType="Asin">
@@ -73,7 +74,7 @@
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
         INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
-        WHERE saa_progress = 1 AND saa_is_updatting = 0;
+        WHERE saa_progress = 1 AND saa_is_updatting = 0 AND saa_on_sale = 1;
     </select>
 
 </mapper>

@@ -95,4 +95,8 @@
         DELETE FROM spider_amazon_url WHERE sau_id = #{0};
     </delete>
 
+    <delete id="deleteByAsin" parameterType="String">
+        DELETE FROM spider_amazon_url WHERE saa_asin = #{0};
+    </delete>
+
 </mapper>

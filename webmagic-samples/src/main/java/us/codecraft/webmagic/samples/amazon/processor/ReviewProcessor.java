@@ -82,13 +82,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     }
 
     /**
-     * 根据Url提取其中ASIN码
-     */
-    protected String extractAsin(Page page) {
-        return page.getUrl().regex(".*product-reviews/([0-9a-zA-Z\\-]*).*").get();
-    }
-
-    /**
      * 抽取评论列表根节点
      */
     protected List<Selectable> extractReviewNodeList(Page page) {

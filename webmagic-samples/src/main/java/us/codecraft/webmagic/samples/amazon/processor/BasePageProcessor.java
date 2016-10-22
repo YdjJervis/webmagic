@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -12,9 +13,11 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.ImgValidateResult;
 import us.codecraft.webmagic.samples.amazon.pojo.RequestStat;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.amazon.service.RequestStatService;
 import us.codecraft.webmagic.samples.amazon.service.SiteService;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
@@ -35,7 +38,7 @@ import java.util.List;
 public class BasePageProcessor implements PageProcessor {
 
     protected Logger sLogger = Logger.getLogger(getClass());
-    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(3 * 1000).setTimeOut(10 * 1000);
+    private Site mSite = Site.me().setRetryTimes(3).setSleepTime(10 * 1000).setTimeOut(10 * 1000);
 
     protected static final String URL_EXTRA = "url_extra";
     @Autowired
@@ -47,6 +50,9 @@ public class BasePageProcessor implements PageProcessor {
     @Autowired
     protected SiteService mSiteService;
 
+    @Autowired
+    protected AsinService mAsinService;
+
     /*压力测试统计相关 -- start*/
     private Date mFirstPageTime;
     @Autowired
@@ -57,13 +63,32 @@ public class BasePageProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
+        dealPageNotFound(page);
         dealValidate(page);
+    }
+
+    /**
+     * 处理不工作的页面
+     */
+    protected void dealPageNotFound(Page page) {
+
+        /*下架的也代表不工作的*/
+        if (isPage404(page)) {
+            /*标记此ASIN为下架产品*/
+            String asinCode = extractAsin(page);
+            sLogger.warn("该商品已经下架：" + asinCode);
+            Asin asin = mAsinService.findByAsin(asinCode);
+            asin.saaOnSale = 0;
+            mAsinService.update(asin);
+            /*删除已经在爬取的URL*/
+            mUrlService.deleteByAsin(asinCode);
+        }
     }
 
     @Override
     public Site getSite() {
         sLogger.info("getSite()::");
-        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent);
+        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(Sets.newHashSet(200, 404));
         return mSite;
     }
 
@@ -170,8 +195,15 @@ public class BasePageProcessor implements PageProcessor {
         return page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
     }
 
+    /**
+     * 是否是验证码页面
+     */
     protected boolean isValidatePage(Page page) {
         return StringUtils.isNotEmpty(getValidateUrl(page));
+    }
+
+    protected boolean isPage404(Page page) {
+        return page.getStatusCode() == 404;
     }
 
     /**
@@ -180,6 +212,13 @@ public class BasePageProcessor implements PageProcessor {
     protected String extractSiteCode(Page page) {
         String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
         return mSiteService.findByDomain(domain).basCode;
+    }
+
+    /**
+     * 根据Url提取其中ASIN码
+     */
+    protected String extractAsin(Page page) {
+        return page.getUrl().regex(".*product-reviews/([0-9a-zA-Z\\-]*).*").get();
     }
 
     /**

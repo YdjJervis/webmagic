@@ -28,12 +28,13 @@ public class ReviewStatProcessor extends ReviewProcessor {
 
     @Override
     public void process(Page page) {
+        dealPageNotFound(page);
         dealValidate(page);
         dealReviewStat(page);
     }
 
     private void dealReviewStat(Page page) {
-        if (page.getUrl().get().contains(Review.PRODUCT_REVIEWS) && !isValidatePage(page)) {
+        if (page.getUrl().get().contains(Review.PRODUCT_REVIEWS) && !isValidatePage(page) && !isPage404(page)) {
 
             updateUrlStatus(page);
 

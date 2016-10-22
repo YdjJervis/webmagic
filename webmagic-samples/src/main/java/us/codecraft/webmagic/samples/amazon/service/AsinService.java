@@ -157,6 +157,10 @@ public class AsinService {
         mAsinDao.update(byAsin);
     }
 
+    public void update(Asin asin) {
+        mAsinDao.update(asin);
+    }
+
     /**
      * @param star 需要抓取的等级。eg：0-0-1-1-1表示需要抓取差评
      * @return 亚马逊全量爬取过滤器关键字集合

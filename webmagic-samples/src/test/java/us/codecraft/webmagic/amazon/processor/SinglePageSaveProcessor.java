@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.downloader.AbuProxyDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 
 import java.io.File;
@@ -31,7 +32,8 @@ public class SinglePageSaveProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        Spider.create(new SinglePageSaveProcessor()).addUrl("http://www.aliexpress.com/category/200001648/blouses-shirts.html?minPrice=&maxPrice=&isBigSale=n&isFreeShip=n&isFavorite=n&isRtl=n&isLocalReturn=n&isMobileExclusive=n&shipFromCountry=cn&shipCompanies=&SearchText=&CatId=200001648&g=y&needQuery=y")
+        Spider.create(new SinglePageSaveProcessor()).addUrl("http://blog.csdn.net/")
+                .setDownloader(new AbuProxyDownloader())
                 .start();
     }
 }
