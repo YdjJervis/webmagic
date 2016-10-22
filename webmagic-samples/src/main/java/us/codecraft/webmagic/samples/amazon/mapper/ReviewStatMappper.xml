@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.ReviewStatDao">
+
+    <resultMap id="ReviewStatMapper" type="ReviewStat">
+        <id column="sars_id" property="id"/>
+        <result column="saa_asin" property="saaAsin"/>
+        <result column="sars_total_review" property="sarsTotalReview"/>
+        <result column="sars_total_page" property="sarsTotalPage"/>
+        <result column="sars_average_star" property="sarsAverageStar"/>
+        <result column="sars_extra" property="extra"/>
+        <result column="sars_create_time" property="createtime"/>
+        <result column="sars_update_time" property="updatetime"/>
+    </resultMap>
+
+    <insert id="add" parameterType="RequestStat">
+        INSERT INTO
+        spider_amazon_review_stat(
+        saa_asin,
+        sars_total_review,
+        sars_total_page,
+        sars_average_star,
+        sars_extra
+        )
+        VALUES
+        (
+        #{saaAsin},
+        #{sarsTotalReview},
+        #{sarsTotalPage},
+        #{sarsAverageStar},
+        #{extra}
+        )
+        ON DUPLICATE KEY UPDATE
+        saa_asin = #{saaAsin},
+        sars_total_review = #{sarsTotalReview},
+        sars_total_page = #{sarsTotalPage},
+        sars_average_star = #{sarsAverageStar},
+        sars_extra = #{extra},
+        sars_update_time = #{updatetime}
+    </insert>
+
+    <select id="findByAsin" resultMap="ReviewStatMapper">
+        SELECT * FROM spider_amazon_review_stat WHERE saa_asin = #{0};
+    </select>
+
+</mapper>

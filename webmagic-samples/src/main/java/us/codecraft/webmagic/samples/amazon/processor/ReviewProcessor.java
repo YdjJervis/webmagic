@@ -53,9 +53,9 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
             for (Selectable reviewNode : reviewNodeList) {
 
                 Review review = extractReviewItem(siteCode, asin, reviewNode);
-
                 reviewList.add(review);
             }
+
             page.putField(ReviewPipeline.PARAM_LIST, reviewList);
 
             List<String> pageUrlList = page.getHtml().xpath("//li[@class='page-button']/a/@href").all();
@@ -150,7 +150,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
             Spider mSpider = Spider.create(this)
                     .addPipeline(mReviewPipeline)
-                    .thread(10);
+                    .thread(1);
 
             for (Url url : urlList) {
                 Request request = new Request(url.url);

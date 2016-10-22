@@ -97,6 +97,8 @@
 
         <task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/><!--每5秒-->
         <task:scheduled ref="updateParseMonitor" method="execute" cron="0 0 */12 * * ?"/><!--每半天-->
+
+        <task:scheduled ref="reviewStatProcessor" method="execute" cron="0/5 * * * * ?"/>
     </task:scheduled-tasks>
 
 </beans>

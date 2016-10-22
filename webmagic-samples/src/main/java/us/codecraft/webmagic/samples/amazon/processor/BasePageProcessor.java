@@ -51,7 +51,7 @@ public class BasePageProcessor implements PageProcessor {
     private Date mFirstPageTime;
     @Autowired
     private RequestStatService mStatService;
-    public static final String CONDITIONS = "RandomUA-Validate-10Thread";
+    public static final String CONDITIONS = "RandomUA-Validate-5Thread-FixRequestStat";
     public static final String CONDITIONS_CODE = DigestUtils.md5Hex(CONDITIONS);
     /*压力测试统计相关 -- end*/
 
@@ -100,7 +100,7 @@ public class BasePageProcessor implements PageProcessor {
         * 1,因为需要输入验证码时，页面Url还是不变的，只有通过判断时候包好验证码图片元素来判断是否是验证码页面
         * 2,这里抽取图片的Url
         */
-        String validateUrl = page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
+        String validateUrl = getValidateUrl(page);
         if (StringUtils.isNotEmpty(validateUrl)) {
             sLogger.error("身份验证,准备保存验证码...网页状态码：" + page.getStatusCode());
 
@@ -164,6 +164,14 @@ public class BasePageProcessor implements PageProcessor {
         }
         mStatService.addOnDuplicate(stat);
         /*压力测试统计相关 -- end*/
+    }
+
+    protected String getValidateUrl(Page page) {
+        return page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
+    }
+
+    protected boolean isValidatePage(Page page) {
+        return StringUtils.isNotEmpty(getValidateUrl(page));
     }
 
     /**
