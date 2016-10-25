@@ -3,6 +3,7 @@ package us.codecraft.webmagic.amazon.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
+import us.codecraft.webmagic.downloader.AbuProxyDownloader;
 import us.codecraft.webmagic.samples.amazon.pojo.IpsStat;
 import us.codecraft.webmagic.samples.amazon.service.IpsStatService;
 
@@ -19,6 +20,9 @@ public class IpsStatServiceTest extends SpringTestCase{
 
     @Autowired
     IpsStatService mIpsStatService;
+
+    @Autowired
+    AbuProxyDownloader mDownloader;
 
     @Test
     public void addIpsStatTest() {
@@ -52,4 +56,8 @@ public class IpsStatServiceTest extends SpringTestCase{
         System.out.println(ipsStat1);
     }
 
+    @Test
+    public void testIOC(){
+        System.out.println(mDownloader);
+    }
 }

@@ -64,7 +64,7 @@
     </bean>
 
     <!-- 自动扫描注解的bean -->
-    <context:component-scan base-package="us.codecraft.webmagic.samples"/>
+    <context:component-scan base-package="us.codecraft.webmagic"/>
 
     <!--配置事务-->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
