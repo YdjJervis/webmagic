@@ -63,6 +63,7 @@ public class BasePageProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
+        updateUrlStatus(page);
         dealPageNotFound(page);
         dealValidate(page);
     }
@@ -102,10 +103,10 @@ public class BasePageProcessor implements PageProcessor {
         sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
 
         url.status = statusCode;
+        url.sauCrawling = 0;
         sLogger.info("改变状态后的Url对象：" + url);
 
         mUrlService.update(url);
-        mUrlService.updateAsinCrawledAll(url.saaAsin);
     }
 
     protected synchronized void dealValidate(Page page) {
@@ -232,4 +233,5 @@ public class BasePageProcessor implements PageProcessor {
         String validateCode = service.getBasicHttpBindingIImageOCRService().getVerCodeFromUrl(imgUrl, type);
         return validateCode;
     }
+
 }

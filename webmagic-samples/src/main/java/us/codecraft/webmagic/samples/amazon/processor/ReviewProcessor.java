@@ -40,8 +40,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     private void dealAllReview(Page page) {
         if (page.getUrl().get().contains(Review.PRODUCT_REVIEWS)) {
 
-            updateUrlStatus(page);
-
             List<Selectable> reviewNodeList = extractReviewNodeList(page);
 
             String asin = extractAsin(page);
@@ -149,6 +147,9 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
                 Request request = new Request(url.url);
                 request.putExtra(URL_EXTRA, url);
                 mSpider.addRequest(request);
+
+                url.sauCrawling = 1;
+                mUrlService.update(url);
             }
 
             sLogger.info("开始爬取评论...");

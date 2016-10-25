@@ -32,7 +32,7 @@ public class SinglePageSaveProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        Spider.create(new SinglePageSaveProcessor()).addUrl("http://blog.csdn.net/")
+        Spider.create(new SinglePageSaveProcessor()).addUrl("https://www.amazon.cn/")
                 .setDownloader(new AbuProxyDownloader())
                 .start();
     }

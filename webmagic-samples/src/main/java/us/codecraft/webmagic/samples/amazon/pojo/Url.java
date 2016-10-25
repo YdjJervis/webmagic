@@ -17,6 +17,10 @@ public class Url extends BasePojo {
     public String saaAsin;
     /**爬取URL返回的状态码*/
     public int status;
+    /**
+     * 是否在爬取当中。0-否；1-是
+     */
+    public int sauCrawling;
     /** ReviewId */
     public String sauReviewId;
     /** 爬取优先级 */
@@ -44,6 +48,7 @@ public class Url extends BasePojo {
                 ", saaAsin='" + saaAsin + '\'' +
                 ", sauReviewId='" + sauReviewId + '\'' +
                 ", status=" + status +
+                ", sauCrawling=" + sauCrawling +
                 ", priority=" + priority +
                 ", url='" + url + '\'' +
                 ", parentUrl='" + parentUrl + '\'' +

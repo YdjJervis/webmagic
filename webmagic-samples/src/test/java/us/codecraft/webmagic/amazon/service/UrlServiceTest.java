@@ -73,4 +73,9 @@ public class UrlServiceTest extends SpringTestCase {
     public void testDeleteByAsin(){
         mUrlService.deleteByAsin("B00NZS00OU");
     }
+
+    @Test
+    public void testFind(){
+        System.out.println(mUrlService.find(0));
+    }
 }

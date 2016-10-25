@@ -1,14 +1,10 @@
 
 package us.codecraft.webmagic.samples.amazon.ws.validate;
 
+import javax.xml.namespace.QName;
+import javax.xml.ws.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -17,7 +13,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "ImageOCRService", targetNamespace = "http://tempuri.org/", wsdlLocation = "http://192.168.0.110:1800/ImageOCRService.svc?singleWsdl")
+@WebServiceClient(name = "ImageOCRService", targetNamespace = "http://tempuri.org/", wsdlLocation = "http://119.28.63.234:1800/ImageOCRService.svc?singleWsdl")
 public class ImageOCRService
     extends Service
 {
@@ -30,7 +26,7 @@ public class ImageOCRService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://192.168.0.110:1800/ImageOCRService.svc?singleWsdl");
+            url = new URL("http://119.28.63.234:1800/ImageOCRService.svc?singleWsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

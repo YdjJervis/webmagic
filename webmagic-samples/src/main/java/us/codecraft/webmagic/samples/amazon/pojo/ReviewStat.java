@@ -10,6 +10,7 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
  */
 public class ReviewStat extends BasePojo {
 
+    public String basCode;
     public String saaAsin;
     public int sarsTotalReview;
     public int sarsTotalPage;
@@ -19,6 +20,7 @@ public class ReviewStat extends BasePojo {
     @Override
     public String toString() {
         return super.toString() + "ReviewStat{" +
+                "basCode='" + basCode + '\'' +
                 "saaAsin='" + saaAsin + '\'' +
                 ", sarsTotalReview=" + sarsTotalReview +
                 ", sarsTotalPage=" + sarsTotalPage +

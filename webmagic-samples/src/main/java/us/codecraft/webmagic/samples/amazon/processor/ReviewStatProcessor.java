@@ -28,6 +28,7 @@ public class ReviewStatProcessor extends ReviewProcessor {
 
     @Override
     public void process(Page page) {
+        updateUrlStatus(page);
         dealPageNotFound(page);
         dealValidate(page);
         dealReviewStat(page);
@@ -36,11 +37,13 @@ public class ReviewStatProcessor extends ReviewProcessor {
     private void dealReviewStat(Page page) {
         if (page.getUrl().get().contains(Review.PRODUCT_REVIEWS) && !isValidatePage(page) && !isPage404(page)) {
 
-            updateUrlStatus(page);
-
+            /*提取ASIN码*/
             String asin = extractAsin(page);
+            String siteCode = extractSiteCode(page);
 
+            /*提取总评价数*/
             int totalReview = Integer.valueOf(page.getHtml().xpath("//*[@data-hook='total-review-count']/text()").get());
+
             //a-icon a-icon-star-medium a-star-medium-4-5 averageStarRating
             float starAverage = Float.valueOf(page.getHtml().xpath("//*[@data-hook='average-star-rating']/@class").regex(".*medium-([0-5\\-]{1,3}).*").get().replace("-", "."));
             List<Selectable> pageNodes = page.getHtml().xpath("//li[@class='page-button']").nodes();
@@ -66,6 +69,7 @@ public class ReviewStatProcessor extends ReviewProcessor {
             }
 
             ReviewStat reviewStat = new ReviewStat();
+            reviewStat.basCode = siteCode;
             reviewStat.saaAsin = asin;
             reviewStat.extra = new Gson().toJson(propList);
             reviewStat.sarsTotalReview = totalReview;
@@ -74,6 +78,7 @@ public class ReviewStatProcessor extends ReviewProcessor {
 
             sLogger.info(reviewStat);
             mService.add(reviewStat);
+            updateUrlStatus(page);
         }
     }
 
