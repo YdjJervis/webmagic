@@ -13,14 +13,8 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.ImgValidateResult;
-import us.codecraft.webmagic.samples.amazon.pojo.RequestStat;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.AsinService;
-import us.codecraft.webmagic.samples.amazon.service.RequestStatService;
-import us.codecraft.webmagic.samples.amazon.service.SiteService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.amazon.ws.validate.ImageOCRService;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
 
@@ -43,6 +37,9 @@ public class BasePageProcessor implements PageProcessor {
     protected static final String URL_EXTRA = "url_extra";
     @Autowired
     protected UrlService mUrlService;
+
+    @Autowired
+    protected IpsStatService mIpsStatService;
 
     @Autowired
     private UserAgentService mUserAgentService;
@@ -128,6 +125,15 @@ public class BasePageProcessor implements PageProcessor {
         */
         String validateUrl = getValidateUrl(page);
         if (StringUtils.isNotEmpty(validateUrl)) {
+
+            /*更新是否需要切换IP的状态（1：需要切；0：不需要切）*/
+            IpsStat ipsStat = mIpsStatService.findIpsStatById(1);
+            if(ipsStat.getIpsStatStatus().equals("0")) {
+                ipsStat.setIpsStatStatus("1");
+                mIpsStatService.updateIpsStatById(ipsStat);
+                sLogger.info("更新ip状态，需要切IP：true.");
+            }
+
             sLogger.error("身份验证,准备保存验证码...网页状态码：" + page.getStatusCode());
 
             /*保存图片验证码*/

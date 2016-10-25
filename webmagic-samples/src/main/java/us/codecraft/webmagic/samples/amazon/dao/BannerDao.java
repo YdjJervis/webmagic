@@ -20,9 +20,9 @@ public interface BannerDao {
     /**
      * @return ASIN code
      */
-    long add(Banner banner);
+    int add(Banner banner);
 
-    long addAll(List<Banner> bannerList);
+    int addAll(List<Banner> bannerList);
 
 
 }

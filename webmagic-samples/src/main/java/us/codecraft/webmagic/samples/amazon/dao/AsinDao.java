@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface AsinDao extends BaseDao<Asin> {
 
-    long updateSyncTime(Asin asin);
+    int updateSyncTime(Asin asin);
 
     Asin findByAsin(String asin);
 

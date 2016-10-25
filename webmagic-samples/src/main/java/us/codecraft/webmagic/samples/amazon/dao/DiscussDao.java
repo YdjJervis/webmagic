@@ -18,9 +18,9 @@ public interface DiscussDao {
     /**
      * @return ASIN code
      */
-    long add(Discuss discuss);
+    int add(Discuss discuss);
 
-    long addAll(List<Discuss> discussList);
+    int addAll(List<Discuss> discussList);
 
 
 }

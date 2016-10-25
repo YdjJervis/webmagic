@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.IpsStatDao">
+
+    <resultMap id="IpsStatResultMapper" type="IpsStat">
+        <id column="tis_id" property="ipsStatId"/>
+        <result column="tis_condition" property="ipsStatCondition"/>
+        <result column="tis_status" property="ipsStatStatus"/>
+        <result column="tis_change_record" property="ipsChangRecord"/>
+        <result column="tis_create_date" property="ipsStatCreateDate"/>
+        <result column="tis_udpate_date" property="ipsStatUpdateDate"/>
+    </resultMap>
+
+    <!-- add  -->
+    <insert id="addIpsStat" useGeneratedKeys="true" keyProperty="ipsStatId" parameterType="IpsStat">
+        INSERT INTO
+        test_ips_stat(
+            tis_condition,
+            tis_status,
+            tis_change_record,
+            tis_create_date,
+            tis_udpate_date
+        )
+        VALUES
+        (
+            #{ipsStatCondition,jdbcType=VARCHAR},
+            #{ipsStatStatus,jdbcType=VARCHAR},
+            #{ipsChangRecord},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- udpate -->
+    <update id="updateIpsStatById" parameterType="IpsStat">
+      UPDATE
+        test_ips_stat
+      SET
+        tis_condition = #{ipsStatCondition, jdbcType=VARCHAR},
+        tis_status = #{ipsStatStatus, jdbcType=VARCHAR},
+        tis_change_record = #{ipsChangRecord},
+        tis_udpate_date =  CURRENT_TIMESTAMP
+      WHERE
+        tis_id = #{ipsStatId}
+    </update>
+
+    <!-- select all -->
+    <select id="findIpsStatAll" resultMap="IpsStatResultMapper">
+        SELECT * FROM test_ips_stat
+    </select>
+
+    <!-- select by id -->
+    <select id="findIpsStatById" resultMap="IpsStatResultMapper" parameterType="int">
+        SELECT * FROM test_ips_stat
+        WHERE
+          tis_id = #{0}
+    </select>
+
+</mapper>

@@ -15,28 +15,27 @@ public interface BaseDao<T> {
      * @param obj 元素
      * @return 影响行数
      */
-    long add(T obj);
+    int add(T obj);
 
     /**
      * 增加多条数据库记录
      * @param objList 元素列表
      * @return 影响行数
      */
-    long addAll(List<T> objList);
+    int addAll(List<T> objList);
 
     /**
      * 根据元素ID删除一条数据库记录
      * @param id 元素ID
      * @return 影响行数
      */
-    long delete(Integer id);
+    int delete(Integer id);
 
     /**
      * 更新一条数据库记录
      * @param obj 元素
-     * @return 影响行数
      */
-    long update(T obj);
+    void update(T obj);
 
     /**
      * 根据ID查询一条数据库记录
