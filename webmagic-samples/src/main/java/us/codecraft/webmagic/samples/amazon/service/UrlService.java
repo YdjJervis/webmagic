@@ -51,8 +51,10 @@ public class UrlService {
 
     public void addAll(List<Url> urlList) {
 
-        if (CollectionUtils.isNotEmpty(urlList)) {
-            mUrlDao.addAll(urlList);
+        if (CollectionUtils.isEmpty(urlList)) return;
+
+        for (Url url : urlList) {
+            add(url);
         }
     }
 

@@ -29,7 +29,7 @@
         insert into spider_amazon_url(BAS_CODE,sau_type,saa_asin,sau_review_id,
         sau_status,sau_crawling,sau_priority,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
         values(#{siteCode},#{type},#{saaAsin},#{sauReviewId},#{status},#{sauCrawling},#{priority},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra})
-        ON DUPLICATE KEY UPDATE sau_url = #{url}
+        ON DUPLICATE KEY UPDATE sau_url = #{url},sau_type = #{item.type}
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">

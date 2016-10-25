@@ -175,6 +175,14 @@
             <version>1.8.9</version>
         </dependency>
 
+        <!-- selenium相关 -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>2.46.0</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
