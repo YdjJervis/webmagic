@@ -44,30 +44,36 @@ public class AbuProxyDownloader extends AbstractDownloader {
         List<String> ipsChangeRecordList = new ArrayList<String>();
 
         /*ipsStat.getIpsStatStatus() == 1 需要切换IP*/
-        if(ipsStat.getIpsStatStatus().equals(1)) {
+        if (ipsStat.getIpsStatStatus().equals(1)) {
             String ipsChangeRecord = ipsStat.getIpsChangRecord();
             /*切IP服务*/
             this.parseHtml(SWITCHIPURL);
 
             /*记录切换IP时的时间,并添加到数据库中*/
-            if(ipsChangeRecord != null || !("").equals(ipsChangeRecord)) {
-                ipsChangeRecordList = new Gson().fromJson(ipsChangeRecord, new TypeToken<List<String>>(){}.getType());
+            if (ipsChangeRecord != null || !("").equals(ipsChangeRecord)) {
+                ipsChangeRecordList = new Gson().fromJson(ipsChangeRecord, new TypeToken<List<String>>() {
+                }.getType());
             }
             ipsChangeRecordList.add(DateUtils.getNow());
             ipsStat.setIpsChangRecord(new Gson().toJson(ipsChangeRecordList));
             ipsStat.setIpsStatStatus("0");
             mIpsStatService.updateIpsStatById(ipsStat);
-            mLogger.info("切换IP， date : " +  DateUtils.getNow());
+            mLogger.info("切换IP， date : " + DateUtils.getNow());
         }
 
         byte[] response = this.parseHtml(request.getUrl());
-        Page page = new Page();
-        page.setRawText(new String(response));
-        page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(new String(response), request.getUrl())));
+        Page page = null;
+        if (response != null) {
 
-        page.setUrl(new PlainText(request.getUrl()));
-        page.setRequest(request);
+            page = new Page();
+            page.setRawText(new String(response));
+            page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(new String(response), request.getUrl())));
 
+            page.setUrl(new PlainText(request.getUrl()));
+            page.setRequest(request);
+        } else {
+            page.setStatusCode(404);
+        }
         return page;
     }
 
