@@ -7,3 +7,6 @@ out/
 .settings/
 bin/
 .myeclipse
+classes
+webmagic-samples/web/WEB-INF/lib/
+webmagic-samples/web/WEB-INF/test-classes/
