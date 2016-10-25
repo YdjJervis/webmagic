@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Task;
@@ -26,6 +27,7 @@ import java.util.List;
  * @Description: 扩展的阿步云代理下载器
  * @date 2016/10/22 10:22
  */
+@Service
 public class AbuProxyDownloader extends AbstractDownloader {
 
     private Logger mLogger = Logger.getLogger(getClass());
@@ -45,7 +47,7 @@ public class AbuProxyDownloader extends AbstractDownloader {
         if(ipsStat.getIpsStatStatus().equals(1)) {
             String ipsChangeRecord = ipsStat.getIpsChangRecord();
             /*切IP服务*/
-            this.manualSwitchIp(SWITCHIPURL);
+            this.parseHtml(SWITCHIPURL);
 
             /*记录切换IP时的时间,并添加到数据库中*/
             if(ipsChangeRecord != null || !("").equals(ipsChangeRecord)) {
@@ -58,43 +60,14 @@ public class AbuProxyDownloader extends AbstractDownloader {
             mLogger.info("切换IP， date : " +  DateUtils.getNow());
         }
 
-        Page page = null;
+        byte[] response = this.parseHtml(request.getUrl());
+        Page page = new Page();
+        page.setRawText(new String(response));
+        page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(new String(response), request.getUrl())));
 
-        // 代理服务器
-        String proxyServer = "proxy.abuyun.com";
-        int proxyPort = 9010;
+        page.setUrl(new PlainText(request.getUrl()));
+        page.setRequest(request);
 
-        // 代理隧道验证信息
-        String proxyUser = "H40BG298L37TP22P";
-        String proxyPass = "C38CA614F1830C2B";
-
-        try {
-            URL url = new URL(request.getUrl());
-
-            Authenticator.setDefault(new ProxyAuthenticator(proxyUser, proxyPass));
-
-            // 创建代理服务器地址对象
-            InetSocketAddress addr = new InetSocketAddress(proxyServer, proxyPort);
-            // 创建HTTP类型代理对象
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, addr);
-
-            // 设置通过代理访问目标页面
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);
-            // 设置IP切换头
-            connection.setRequestProperty("Proxy-Switch-Ip", "no");
-
-            // 解析返回数据
-            byte[] response = readStream(connection.getInputStream());
-
-            page = new Page();
-            page.setRawText(new String(response));
-            page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(new String(response), request.getUrl())));
-
-            page.setUrl(new PlainText(request.getUrl()));
-            page.setRequest(request);
-        } catch (Exception e) {
-            mLogger.error(e);
-        }
         return page;
     }
 
@@ -133,11 +106,12 @@ public class AbuProxyDownloader extends AbstractDownloader {
         }
     }
 
-    /**
-     * 手动切换IP
+    /***
+     * parse url to html
      * @param urlStr
+     * @return
      */
-    private synchronized void manualSwitchIp(String urlStr) {
+    private synchronized byte[] parseHtml(String urlStr) {
         // 代理服务器
         String proxyServer = "proxy.abuyun.com";
         int proxyPort = 9010;
@@ -146,8 +120,7 @@ public class AbuProxyDownloader extends AbstractDownloader {
         String proxyUser = "H40BG298L37TP22P";
         String proxyPass = "C38CA614F1830C2B";
 
-        Page page = null;
-
+        byte[] response = null;
         try {
             URL url = new URL(urlStr);
 
@@ -161,13 +134,14 @@ public class AbuProxyDownloader extends AbstractDownloader {
             // 设置通过代理访问目标页面
             HttpURLConnection connection = (HttpURLConnection) url.openConnection(proxy);
             // 设置IP切换头
-            connection.setRequestProperty("Proxy-Switch-Ip", "yes");
+            //connection.setRequestProperty("Proxy-Switch-Ip", "no");
 
             // 解析返回数据
-            readStream(connection.getInputStream());
+            response = readStream(connection.getInputStream());
 
         } catch (Exception e) {
             mLogger.error(e);
         }
+        return response;
     }
 }
