@@ -24,6 +24,7 @@
         <property name="locations">
             <list>
                 <value>classpath*:db.properties</value>
+                <value>classpath:ws.properties</value>
             </list>
         </property>
     </bean>
