@@ -30,7 +30,7 @@
         saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra)
         values(#{basCode},#{saaAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarMonitor},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarTitle},#{sarContent},#{extra})
         ON DUPLICATE KEY UPDATE BAS_CODE=#{basCode},
-        saa_asin=#{saaAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_review_id=#{sarReviewId},sar_monitor=#{sarMonitor},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_title=#{sarTitle},sar_content=#{sarContent},sar_extra=#{extra},sar_update_time=#{updatetime}
+        saa_asin=#{saaAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_review_id=#{sarReviewId},sar_monitor=#{sarMonitor},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_title=#{sarTitle},sar_content=#{sarContent},sar_extra=#{extra},sar_update_time=CURRENT_TIMESTAMP
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
@@ -60,7 +60,7 @@
         sar_title=#{item.sarTitle},
         sar_content=#{item.sarContent},
         sar_extra=#{item.extra},
-        sar_update_time=#{item.updatetime}
+        sar_update_time=CURRENT_TIMESTAMP
     </insert>
 
     <!--根据评论Id查找Review-->

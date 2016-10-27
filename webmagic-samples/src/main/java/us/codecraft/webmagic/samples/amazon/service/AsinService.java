@@ -94,7 +94,6 @@ public class AsinService {
 
         asin.saaStatus = getStatusStr(statusArray);
         asin.saaParsed = 1;
-        asin.updatetime = new Date();
 
         mLogger.debug("ASIN状态转换后：" + asin);
         mAsinDao.update(asin);

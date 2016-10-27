@@ -55,7 +55,7 @@
 
     <!--更新爬取状态和URL转换状态-->
     <update id="update" parameterType="Asin">
-        UPDATE spider_amazon_asin SET saa_on_sale = #{saaOnSale},saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_is_updatting=#{saaIsUpdatting},saa_extra=#{extra},saa_update_time=#{updatetime} WHERE saa_asin = #{saaAsin}
+        UPDATE spider_amazon_asin SET saa_on_sale = #{saaOnSale},saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_is_updatting=#{saaIsUpdatting},saa_extra=#{extra},saa_update_time=CURRENT_TIMESTAMP WHERE saa_asin = #{saaAsin}
     </update>
 
     <update id="updateSyncTime" parameterType="Asin">

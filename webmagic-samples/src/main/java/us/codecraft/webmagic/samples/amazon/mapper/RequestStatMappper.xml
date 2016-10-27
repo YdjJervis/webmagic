@@ -45,7 +45,7 @@
         successCountBeforeValidate = #{successCountBeforeValidate},
         successCount = #{successCount},
         validateCount = #{validateCount},
-        updatetime = #{updatetime},
+        updatetime = CURRENT_TIMESTAMP,
         totalRequestCount = #{totalRequestCount},
         extra = #{extra},
         requestCountor = #{requestCountor},

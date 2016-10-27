@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.base.dao.ProxyServerDao;
 import us.codecraft.webmagic.samples.base.pojo.ProxyServer;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -30,7 +29,6 @@ public class ProxyServerService {
      */
     public void update(ProxyServer proxyServer) {
         proxyServer.useCount++;
-        proxyServer.updatetime = new Date();
         mDao.update(proxyServer);
     }
 
@@ -43,5 +41,9 @@ public class ProxyServerService {
         ProxyServer ua = list.get(index);
         update(ua);
         return ua;
+    }
+
+    public void add(ProxyServer proxyServer) {
+        mDao.add(proxyServer);
     }
 }

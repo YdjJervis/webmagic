@@ -18,13 +18,14 @@ public class ProxyServerServiceTest extends SpringTestCase {
 
     @Autowired
     private ProxyServerService mService;
+
     @Test
-    public void testFindAll(){
+    public void testFindAll() {
         System.out.println(mService.findAll());
     }
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         List<ProxyServer> list = mService.findAll();
         for (ProxyServer userAgent : list) {
             userAgent.useCount = -1;
@@ -33,7 +34,16 @@ public class ProxyServerServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void testFindRandomProxy(){
+    public void testFindRandomProxy() {
         System.out.println(mService.findRandomProxy());
     }
+
+    @Test
+    public void testAdd() {
+        ProxyServer server = new ProxyServer();
+        server.hostName = "hostName";
+        server.port = 8001;
+        mService.add(server);
+    }
+
 }

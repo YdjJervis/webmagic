@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.ReviewMonitorDao;
 import us.codecraft.webmagic.samples.amazon.pojo.ReviewMonitor;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,7 +25,6 @@ public class ReviewMonitorService {
     }
 
     public void update(ReviewMonitor monitor) {
-        monitor.updatetime = new Date();
         mReviewMonitorDao.update(monitor);
     }
 

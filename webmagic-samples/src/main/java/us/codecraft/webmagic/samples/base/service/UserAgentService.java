@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.base.dao.UserAgentDao;
 import us.codecraft.webmagic.samples.base.pojo.UserAgent;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -30,7 +29,6 @@ public class UserAgentService {
      */
     public void update(UserAgent userAgent) {
         userAgent.useCount++;
-        userAgent.updatetime = new Date();
         mDao.update(userAgent);
     }
 

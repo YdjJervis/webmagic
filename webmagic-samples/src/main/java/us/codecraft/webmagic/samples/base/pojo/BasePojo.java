@@ -12,7 +12,7 @@ public class BasePojo {
 
     public Integer id;
     public Date createtime;
-    public Date updatetime = new Date();
+    public Date updatetime;
     public String extra;
 
     @Override

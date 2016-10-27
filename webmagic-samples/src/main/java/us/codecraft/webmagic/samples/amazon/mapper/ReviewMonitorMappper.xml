@@ -19,7 +19,7 @@
         insert into spider_monitor_review(smr_review_id,smr_marked,smr_parsed)
         values(#{smrReviewId},#{smrMarked},#{smrParsed})
         ON DUPLICATE KEY UPDATE
-        smr_review_id=#{smrReviewId},smr_marked=#{smrMarked},smr_parsed=#{smrParsed},smr_udpate_time=#{updatetime}
+        smr_review_id=#{smrReviewId},smr_marked=#{smrMarked},smr_parsed=#{smrParsed},smr_udpate_time=CURRENT_TIMESTAMP
     </insert>
 
     <!--根据ReviewId查询记录-->
@@ -34,7 +34,7 @@
 
     <update id="update" parameterType="ReviewMonitor">
         UPDATE spider_monitor_review
-        SET smr_marked = #{smrMarked},smr_parsed=#{smrParsed},smr_udpate_time=#{updatetime}
+        SET smr_marked = #{smrMarked},smr_parsed=#{smrParsed},smr_udpate_time=CURRENT_TIMESTAMP
         WHERE smr_review_id = #{smrReviewId}
     </update>
 

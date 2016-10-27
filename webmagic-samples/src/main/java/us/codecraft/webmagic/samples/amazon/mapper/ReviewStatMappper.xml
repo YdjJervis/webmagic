@@ -41,7 +41,7 @@
         sars_total_page = #{sarsTotalPage},
         sars_average_star = #{sarsAverageStar},
         sars_extra = #{extra},
-        sars_update_time = #{updatetime}
+        sars_update_time = CURRENT_TIMESTAMP
     </insert>
 
     <select id="findByAsin" resultMap="ReviewStatMapper">
