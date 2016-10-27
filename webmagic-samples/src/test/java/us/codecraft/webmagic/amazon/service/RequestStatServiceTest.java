@@ -1,9 +1,9 @@
 package us.codecraft.webmagic.amazon.service;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 import us.codecraft.webmagic.base.SpringTestCase;
 import us.codecraft.webmagic.samples.amazon.pojo.RequestStat;
 import us.codecraft.webmagic.samples.amazon.service.RequestStatService;
@@ -22,7 +22,7 @@ public class RequestStatServiceTest extends SpringTestCase {
         RequestStat stat = new RequestStat();
 
         stat.conditions = "RandomUA&10Thread";
-        stat.conditionsCode = DigestUtils.md5Hex(stat.conditions);
+        stat.conditionsCode = DigestUtils.md5DigestAsHex(stat.conditions.getBytes());
 
         mService.addOnDuplicate(stat);
     }

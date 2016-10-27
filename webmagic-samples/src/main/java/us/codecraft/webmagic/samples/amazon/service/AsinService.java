@@ -64,12 +64,12 @@ public class AsinService {
     }
 
     /**
-     * Asin转Url的时候调用，爬取没一条Url的时候调用
+     * Asin转Url的时候调用，爬取每一条Url的时候调用
      *
      * @param isCrawlFinish true:爬取完毕，false:Asin已经转换成了Url
      */
     public void updateStatus(Asin asin, boolean isCrawlFinish) {
-        mLogger.info("ASIN状态转换前：" + asin);
+        mLogger.debug("ASIN状态转换前：" + asin);
         if (asin == null) return;
 
         int[] starArray = parseStringArray2IntArray(asin.saaStar.split("-"));
@@ -96,7 +96,7 @@ public class AsinService {
         asin.saaParsed = 1;
         asin.updatetime = new Date();
 
-        mLogger.info("ASIN状态转换后：" + asin);
+        mLogger.debug("ASIN状态转换后：" + asin);
         mAsinDao.update(asin);
     }
 

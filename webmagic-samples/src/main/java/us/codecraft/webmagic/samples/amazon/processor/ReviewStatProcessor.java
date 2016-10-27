@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.ReviewStat;
 import us.codecraft.webmagic.samples.amazon.service.ReviewStatService;
 import us.codecraft.webmagic.selector.Selectable;
@@ -17,7 +16,7 @@ import java.util.List;
 /**
  * @author Jervis
  * @version V0.1
- * @Description:
+ * @Description: 统计给定一批ASIN的评论总数和评论的页码数
  * @date 2016/10/21 14:40
  */
 @Service
@@ -27,64 +26,48 @@ public class ReviewStatProcessor extends ReviewProcessor {
     private ReviewStatService mService;
 
     @Override
-    public void process(Page page) {
-        updateUrlStatus(page);
-        dealPageNotFound(page);
-        dealValidate(page);
-        dealReviewStat(page);
-    }
+    protected void dealReview(Page page) {
+        /*提取ASIN码*/
+        String asin = extractAsin(page);
+        String siteCode = extractSite(page).basCode;
 
-    private void dealReviewStat(Page page) {
-        if (page.getUrl().get().contains(Review.PRODUCT_REVIEWS) && !isValidatePage(page) && !isPage404(page)) {
+        /*提取总评价数*/
+        int totalReview = Integer.valueOf(page.getHtml().xpath("//*[@data-hook='total-review-count']/text()").get().replace(",",""));
 
-            /*提取ASIN码*/
-            String asin = extractAsin(page);
-            String siteCode = extractSiteCode(page);
-
-            /*提取总评价数*/
-            int totalReview = Integer.valueOf(page.getHtml().xpath("//*[@data-hook='total-review-count']/text()").get());
-
-            //a-icon a-icon-star-medium a-star-medium-4-5 averageStarRating
-            float starAverage = Float.valueOf(page.getHtml().xpath("//*[@data-hook='average-star-rating']/@class").regex(".*medium-([0-5\\-]{1,3}).*").get().replace("-", "."));
-            List<Selectable> pageNodes = page.getHtml().xpath("//li[@class='page-button']").nodes();
-            int totalPage = 1;
-            if (CollectionUtils.isNotEmpty(pageNodes)) {
-                totalPage = Integer.valueOf(pageNodes.get(pageNodes.size() - 1).xpath("a/text()").get());
-            }
-            List<Selectable> starPropNodes = page.getHtml().xpath("//tr[@class='a-histogram-row']").nodes();
-            List<ReviewStat.StarProp> propList = new ArrayList<ReviewStat.StarProp>();
-            for (Selectable propNode : starPropNodes) {
-                String starStr = propNode.xpath("td[@class='aok-nowrap']/a/text()").regex(".*([1-5]).*").get();
-                if (StringUtils.isEmpty(starStr)) {
-                    /*该星级没有评论，跳过*/
-                    continue;
-                }
-                sLogger.info("星级：" + starStr);
-                int star = Integer.valueOf(starStr);
-                String prop = propNode.xpath("td[@class='a-text-right aok-nowrap']/a/text()").get();
-                ReviewStat.StarProp starProp = new ReviewStat.StarProp();
-                starProp.star = star;
-                starProp.proportion = prop;
-                propList.add(starProp);
-            }
-
-            ReviewStat reviewStat = new ReviewStat();
-            reviewStat.basCode = siteCode;
-            reviewStat.saaAsin = asin;
-            reviewStat.extra = new Gson().toJson(propList);
-            reviewStat.sarsTotalReview = totalReview;
-            reviewStat.sarsAverageStar = starAverage;
-            reviewStat.sarsTotalPage = totalPage;
-
-            sLogger.info(reviewStat);
-            mService.add(reviewStat);
-            updateUrlStatus(page);
+        //a-icon a-icon-star-medium a-star-medium-4-5 averageStarRating
+        float starAverage = Float.valueOf(page.getHtml().xpath("//*[@data-hook='average-star-rating']/@class").regex(".*medium-([0-5\\-]{1,3}).*").get().replace("-", "."));
+        List<Selectable> pageNodes = page.getHtml().xpath("//li[@class='page-button']").nodes();
+        int totalPage = 1;
+        if (CollectionUtils.isNotEmpty(pageNodes)) {
+            totalPage = Integer.valueOf(pageNodes.get(pageNodes.size() - 1).xpath("a/text()").get());
         }
-    }
+        List<Selectable> starPropNodes = page.getHtml().xpath("//tr[@class='a-histogram-row']").nodes();
+        List<ReviewStat.StarProp> propList = new ArrayList<ReviewStat.StarProp>();
+        for (Selectable propNode : starPropNodes) {
+            String starStr = propNode.xpath("td[@class='aok-nowrap']/a/text()").regex(".*([1-5]).*").get();
+            if (StringUtils.isEmpty(starStr)) {
+                    /*该星级没有评论，跳过*/
+                continue;
+            }
+            sLogger.info("星级：" + starStr);
+            int star = Integer.valueOf(starStr);
+            String prop = propNode.xpath("td[@class='a-text-right aok-nowrap']/a/text()").get();
+            ReviewStat.StarProp starProp = new ReviewStat.StarProp();
+            starProp.star = star;
+            starProp.proportion = prop;
+            propList.add(starProp);
+        }
 
-    @Override
-    public void execute() {
-        super.execute();
+        ReviewStat reviewStat = new ReviewStat();
+        reviewStat.basCode = siteCode;
+        reviewStat.saaAsin = asin;
+        reviewStat.extra = new Gson().toJson(propList);
+        reviewStat.sarsTotalReview = totalReview;
+        reviewStat.sarsAverageStar = starAverage;
+        reviewStat.sarsTotalPage = totalPage;
+
+        sLogger.info(reviewStat);
+        mService.add(reviewStat);
     }
 
 }

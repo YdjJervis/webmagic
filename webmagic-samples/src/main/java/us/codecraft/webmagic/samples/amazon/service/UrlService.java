@@ -89,7 +89,7 @@ public class UrlService {
         }
 
         /*
-        * 如果列表集合数量<最大页码，表示已经爬取完毕了
+        * 如果 当前ASIN，URL列表集合数量 < 最大页码，表示已经爬取完毕了
         */
         mLogger.info("最大页码：" + maxPage + " 已经爬取的页码：" + list.size());
         Asin asinObj = mAsinService.findByAsin(asin);

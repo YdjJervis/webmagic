@@ -36,18 +36,13 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
     private AsinService mAsinService;
 
     @Override
-    public void process(Page page) {
-        dealValidate(page);
-        dealUpdateCrawl(page);
-    }
-
-    private void dealUpdateCrawl(Page page) {
+    protected void dealReview(Page page) {
         if (page.getUrl().get().contains(Review.PRODUCT_REVIEWS)) {
 
             List<Selectable> reviewNodeList = extractReviewNodeList(page);
 
             String asin = extractAsin(page);
-            String siteCode = extractSiteCode(page);
+            String siteCode = extractSite(page).basCode;
 
             sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 
