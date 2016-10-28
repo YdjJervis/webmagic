@@ -263,7 +263,7 @@ public class AsinService {
             filterList.add(Filter.START_ALL);
         }
 
-        mLogger.info("当前过滤器集合为：" + filterList);
+        //mLogger.info("当前过滤器集合为：" + filterList);
         return filterList;
     }
 

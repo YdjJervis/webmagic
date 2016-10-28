@@ -24,6 +24,7 @@ public class IpsStatServiceTest extends SpringTestCase{
     @Autowired
     AbuProxyDownloader mDownloader;
 
+
     @Test
     public void addIpsStatTest() {
         IpsStat ipsStat = new IpsStat();
@@ -38,8 +39,8 @@ public class IpsStatServiceTest extends SpringTestCase{
     public void updateIpsStatByIdTest() {
         IpsStat ipsStat = new IpsStat();
         ipsStat.setIpsStatId(1);
-        ipsStat.setIpsStatStatus("1");
-        ipsStat.setIpsChangRecord("{time:\"2016-10-20 15:06:00\"}");
+        ipsStat.setIpsStatStatus("0");
+        ipsStat.setIpsChangRecord("");
         ipsStat.setIpsStatCondition("test");
         mIpsStatService.updateIpsStatById(ipsStat);
     }
@@ -58,6 +59,7 @@ public class IpsStatServiceTest extends SpringTestCase{
 
     @Test
     public void testIOC(){
+        System.out.println(mIpsStatService);
         System.out.println(mDownloader);
     }
 }

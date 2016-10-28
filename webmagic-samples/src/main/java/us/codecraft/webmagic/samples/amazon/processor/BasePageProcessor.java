@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
-import us.codecraft.webmagic.samples.amazon.pojo.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
@@ -64,7 +63,7 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public us.codecraft.webmagic.Site getSite() {
         sLogger.info("getSite()::");
-        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(Sets.newHashSet(200, 404));
+        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(Sets.newHashSet(200, 404, 403, 503));
         return mSite;
     }
 
@@ -93,7 +92,6 @@ public class BasePageProcessor implements PageProcessor {
      * @param page 更新Url爬取状态,成功或失败
      */
     protected void updateUrlStatus(Page page) {
-
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
         int statusCode = page.getStatusCode();
         sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
@@ -109,21 +107,21 @@ public class BasePageProcessor implements PageProcessor {
 
         String validateUrl = getValidateUrl(page);
 
-        /*更新是否需要切换IP的状态（1：需要切；0：不需要切）*/
-        /*IpsStat ipsStat = mIpsStatService.findIpsStatById(1);
-        if (ipsStat.getIpsStatStatus().equals("0")) {
-            ipsStat.setIpsStatStatus("1");
-            mIpsStatService.updateIpsStatById(ipsStat);
-            sLogger.info("更新ip状态，需要切IP：true.");
-        }*/
+        if(StringUtils.isNotEmpty(validateUrl)) {
+            mIpsStatService.updateStatus2NeedSwitchIp(1);
+        }
+
+        sLogger.error("身份验证,准备保存验证码...网页状态码：" + page.getStatusCode());
 
         /*保存图片验证码*/
-//        PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
+        //PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
 
         /* 当需要验证码时，page的状态码还是200，不符合我们的逻辑，所以修改一下 */
         page.setStatusCode(401);
 
-        /* 请求表单的Url，调用验证码识别接口 */
+        /*
+        * 请求表单的Url，调用验证码识别接口
+        */
         String validateCodeJson = getValidateCode(validateUrl, "review");
         ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
         sLogger.info("验证码码结果：" + result);

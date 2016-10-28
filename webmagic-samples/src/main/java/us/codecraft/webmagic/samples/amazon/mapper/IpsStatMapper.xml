@@ -24,8 +24,8 @@
         )
         VALUES
         (
-            #{ipsStatCondition,jdbcType=VARCHAR},
-            #{ipsStatStatus,jdbcType=VARCHAR},
+            #{ipsStatCondition},
+            #{ipsStatStatus},
             #{ipsChangRecord},
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP

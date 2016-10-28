@@ -32,7 +32,13 @@ public class ReviewStatProcessor extends ReviewProcessor {
         String siteCode = extractSite(page).basCode;
 
         /*提取总评价数*/
-        int totalReview = Integer.valueOf(page.getHtml().xpath("//*[@data-hook='total-review-count']/text()").get().replace(",",""));
+        String totalReviewStr = page.getHtml().xpath("//*[@data-hook='total-review-count']/text()").get();
+        if (totalReviewStr == null) {
+            page.setStatusCode(403);
+            return;
+        }
+        int totalReview = Integer.valueOf(totalReviewStr.replace(",", ""));
+
 
         //a-icon a-icon-star-medium a-star-medium-4-5 averageStarRating
         float starAverage = Float.valueOf(page.getHtml().xpath("//*[@data-hook='average-star-rating']/@class").regex(".*medium-([0-5\\-]{1,3}).*").get().replace("-", "."));

@@ -66,7 +66,7 @@ public class AsinParseMonitor extends ParseMonitor {
                 } else {
                     filterList = mAsinService.getUpdateFilters(asin.saaStar);
                 }
-                sLogger.info("过滤器列表：" + filterList);
+                //sLogger.info("过滤器列表：" + filterList);
 
                 for (String filter : filterList) {
 
