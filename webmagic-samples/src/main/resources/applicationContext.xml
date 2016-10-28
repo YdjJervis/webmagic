@@ -96,14 +96,14 @@
         <task:scheduled ref="reviewProcessor" method="execute" cron="0/20 * * * * ?"/>
 
         <!-- 每5秒 爬取一次处在监听状态的URL -->
-        <!--<task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>-->
+        <task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>
         <!-- 每30秒 检测一次被监听的Review是否状态有变化 -->
-        <!--<task:scheduled ref="reviewIdMonitor" method="execute" cron="0/30 * * * * ?"/>-->
+        <task:scheduled ref="reviewIdMonitor" method="execute" cron="0/30 * * * * ?"/>
 
         <!-- 每5秒 检测是否需要爬取需要更新的ASIN -->
-        <!--<task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/>-->
+        <task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/>
         <!-- 每半天 把ASIN转换成一次更新爬取的链接 -->
-        <!--<task:scheduled ref="updateParseMonitor" method="execute" cron="0 0 */12 * * ?"/>-->
+        <task:scheduled ref="updateParseMonitor" method="execute" cron="0 0 */12 * * ?"/>
 
         <!-- 统计给定一批ASIN的评论总数和评论的页码数 -->
         <!--<task:scheduled ref="reviewStatProcessor" method="execute" cron="0/10 * * * * ?"/>-->

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.downloader.AbuProxyDownloader;
 import us.codecraft.webmagic.samples.amazon.pipeline.ReviewPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
@@ -31,8 +30,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
     @Autowired
     private ReviewPipeline mReviewPipeline;
-    @Autowired
-    private AbuProxyDownloader mAbuProxyDownloader;
 
     @Override
     protected void dealReview(Page page) {
@@ -136,7 +133,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
             Spider mSpider = Spider.create(this)
                     .addPipeline(mReviewPipeline)
-                    .setDownloader(mAbuProxyDownloader)
                     .thread(5);
 
             for (Url url : urlList) {
@@ -153,7 +149,4 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         }
     }
 
-    public static void main(String[] args) {
-
-    }
 }
