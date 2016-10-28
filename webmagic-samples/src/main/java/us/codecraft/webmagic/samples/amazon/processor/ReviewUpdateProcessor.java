@@ -10,11 +10,10 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.pipeline.ReviewPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.StarTimeMap;
+import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
-import us.codecraft.webmagic.samples.amazon.util.ReviewTimeUtil;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 import us.codecraft.webmagic.selector.Selectable;
 
@@ -47,7 +46,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
             sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 
             Asin byAsin = mAsinService.findByAsin(asin);
-            List<StarTimeMap> starTimeMapList = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarTimeMap>>() {
+            List<StarReviewMap> starReviewMapList = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarReviewMap>>() {
             }.getType());
 
             /*是否需要爬取下一页，默认是需要的*/
@@ -58,9 +57,9 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
                 Review review = extractReviewItem(siteCode, asin, reviewNode);
 
-                if (CollectionUtils.isNotEmpty(starTimeMapList)) {
-                    for (StarTimeMap map : starTimeMapList) {
-                        if (review.sarStar == map.star && ReviewTimeUtil.isEquals(review.sarDealTime, map.date)) {
+                if (CollectionUtils.isNotEmpty(starReviewMapList)) {
+                    for (StarReviewMap map : starReviewMapList) {
+                        if (review.sarStar == map.star && review.sarReviewId.equals(map.reviewID)) {
                             /*如果当前页面有一条评论，跟上一次爬取的评论的某星级的最后一条评论的星级相同，日期也相同，代表是
                             * 同一条评论，那么就不需要再爬取下一页了*/
                             needCrawlNextPage = false;

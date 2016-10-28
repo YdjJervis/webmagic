@@ -5,10 +5,8 @@ import com.google.gson.reflect.TypeToken;
 import junit.framework.TestCase;
 import org.junit.Test;
 import us.codecraft.webmagic.samples.amazon.pojo.RequestStat;
-import us.codecraft.webmagic.samples.amazon.pojo.StarTimeMap;
+import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,23 +19,11 @@ public class GsonTest extends TestCase {
 
     @Test
     public void testSetParse() {
-        StarTimeMap map = new StarTimeMap(1, new Date());
-        StarTimeMap map2 = new StarTimeMap(2, new Date());
-
-        List<StarTimeMap> list = new ArrayList<StarTimeMap>();
-        list.add(map);
-        list.add(map2);
-
-        for (StarTimeMap starTime : list) {
-            starTime.star = 3;
-        }
-
-        System.out.println(new Gson().toJson(list));
     }
 
     @Test
     public void testEmpty() {
-        List<StarTimeMap> list = new Gson().fromJson("", new TypeToken<List<StarTimeMap>>() {
+        List<StarReviewMap> list = new Gson().fromJson("", new TypeToken<List<StarReviewMap>>() {
         }.getType());
         System.out.println(list);
     }

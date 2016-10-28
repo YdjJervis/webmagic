@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.StarTimeMap;
+import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
@@ -93,16 +93,16 @@ public class UrlService {
         */
         mLogger.info("最大页码：" + maxPage + " 已经爬取的页码：" + list.size());
         Asin asinObj = mAsinService.findByAsin(asin);
-        if (list.size() > maxPage) {
+        if (list.size() == maxPage) {
 
             /*
             * 全量爬取完毕，把需要爬取星级的最后一条评论时间记录到extra字段，方便下次更新爬取的时候使用
             */
             List<Review> reviewList = mReviewService.findLastReview(asin);
             if (CollectionUtils.isNotEmpty(reviewList)) {
-                List<StarTimeMap> mapList = new ArrayList<StarTimeMap>();
+                List<StarReviewMap> mapList = new ArrayList<StarReviewMap>();
                 for (Review review : reviewList) {
-                    mapList.add(new StarTimeMap(review.sarStar, review.sarDealTime));
+                    mapList.add(new StarReviewMap(review.sarStar, review.sarReviewId));
                 }
                 asinObj.extra = new Gson().toJson(mapList);
             }

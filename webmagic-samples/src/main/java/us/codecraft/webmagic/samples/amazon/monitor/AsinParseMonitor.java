@@ -59,6 +59,11 @@ public class AsinParseMonitor extends ParseMonitor {
         if (CollectionUtils.isNotEmpty(asinList)) {
             for (Asin asin : asinList) {
 
+                /* 如果当前站点设置了不可爬取，直接进入下一个循环 */
+                if (asin.site.basCrawl != 1) {
+                    continue;
+                }
+
                 List<String> filterList;
                 /*更新爬取和全量爬取的过滤器生成策略是不同的*/
                 if (isCrawlAll) {
@@ -70,27 +75,23 @@ public class AsinParseMonitor extends ParseMonitor {
 
                 for (String filter : filterList) {
 
-                    /*该网站是可以爬取的*/
-                    if (asin.site.basCrawl == 1) {
+                    Url url = new Url();
+                    url.url = asin.site.basSite + "/" + Review.PRODUCT_REVIEWS + "/" + asin.saaAsin;
+                    /*为Url添加过滤器*/
+                    url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
+                    url.siteCode = asin.site.basCode;
+                    url.asin = asin;
+                    url.priority = asin.saaPriority;
+                    url.type = 0;
 
-                        Url url = new Url();
-                        url.url = asin.site.basSite + "/" + Review.PRODUCT_REVIEWS + "/" + asin.saaAsin;
-                        /*为Url添加过滤器*/
-                        url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
-                        url.siteCode = asin.site.basCode;
-                        url.asin = asin;
-                        url.priority = asin.saaPriority;
-                        url.type = 0;
-
-                        /*如果是更新爬取，他的url类型为2*/
-                        if (!isCrawlAll) {
-                            url.type = 2;
-                        }
-
-                        url.saaAsin = asin.saaAsin;
-
-                        urlList.add(url);
+                    /*如果是更新爬取，他的url类型为2*/
+                    if (!isCrawlAll) {
+                        url.type = 2;
                     }
+
+                    url.saaAsin = asin.saaAsin;
+
+                    urlList.add(url);
                 }
             }
         }

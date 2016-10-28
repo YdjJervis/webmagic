@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.AsinDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.StarTimeMap;
+import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -114,25 +113,6 @@ public class AsinService {
         return mAsinDao.findCrawledAll();
     }
 
-    /**
-     * @param asin ASIN码
-     * @param star 范围[1,5]
-     * @return 该ASIN某一星级的最后评论时间
-     */
-    public Date getLastReviewDate(String asin, int star) {
-        Asin byAsin = findByAsin(asin);
-        List<StarTimeMap> list = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarTimeMap>>() {
-        }.getType());
-        if (CollectionUtils.isNotEmpty(list)) {
-            for (StarTimeMap map : list) {
-                if (map.star == star) {
-                    return map.date;
-                }
-            }
-        }
-        return null;
-    }
-
     public void updateAsinExtra(String asin, Review review, String filter) {
         int star;
         if (Filter.START_1.equals(filter)) star = 1;
@@ -142,13 +122,13 @@ public class AsinService {
         else star = 5;
 
         Asin byAsin = mAsinDao.findByAsin(asin);
-        List<StarTimeMap> list = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarTimeMap>>() {
+        List<StarReviewMap> list = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarReviewMap>>() {
         }.getType());
 
         if (CollectionUtils.isNotEmpty(list)) {
-            for (StarTimeMap map : list) {
+            for (StarReviewMap map : list) {
                 if (map.star == star) {
-                    map.date = review.sarDealTime;
+                    map.reviewID = review.sarReviewId;
                 }
             }
         }

@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -12,12 +13,11 @@ import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.util.PageContentUtil;
 import us.codecraft.webmagic.samples.amazon.util.ReviewTimeUtil;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
+import us.codecraft.webmagic.samples.base.util.UrlUtils;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Jervis
@@ -33,6 +33,9 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
     @Override
     protected void dealReview(Page page) {
+
+        String currentUrl = page.getUrl().get();
+
         List<Selectable> reviewNodeList = extractReviewNodeList(page);
 
         String asin = extractAsin(page);
@@ -49,26 +52,33 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
         page.putField(ReviewPipeline.PARAM_LIST, reviewList);
 
-        List<String> pageUrlList = page.getHtml().xpath("//li[@class='page-button']/a/@href").all();
-        sLogger.info("新提取的翻页Url如下：");
-        sLogger.info(pageUrlList);
+        /* 当前URL没有pageNumber属性的话 */
+        if (StringUtils.isEmpty(UrlUtils.getValue(currentUrl, "pageNumber"))) {
 
-        List<Url> urlList = new ArrayList<Url>();
-        for (String pageUrl : pageUrlList) {
-            Matcher matcher = Pattern.compile("(.*amazon.*?/).*(product-reviews.*)").matcher(pageUrl);
-            if (matcher.find()) {
+            List<String> pageUrlList = page.getHtml().xpath("//li[@class='page-button']/a/@href").all();
+            sLogger.info("新提取的翻页Url如下：");
+            sLogger.info(pageUrlList);
 
-                String urlStr = matcher.group(1) + matcher.group(2);
-                Url url = new Url();
-                url.siteCode = siteCode;
-                url.saaAsin = asin;
-                url.parentUrl = page.getUrl().get();
-                url.url = urlStr;
+            List<Url> urlList = new ArrayList<Url>();
 
-                urlList.add(url);
+            if (CollectionUtils.isNotEmpty(pageUrlList)) {
+
+                /* 说明是评论第一页，就根据最大页码拼装所有评论的页码 */
+                String lastPageUrl = pageUrlList.get(pageUrlList.size() - 1);
+                int totalPage = Integer.valueOf(UrlUtils.getValue(lastPageUrl, "pageNumber"));
+                for (int i = 2; i <= totalPage; i++) {
+                    Url url = new Url();
+                    url.siteCode = siteCode;
+                    url.saaAsin = asin;
+                    url.parentUrl = currentUrl;
+                    url.url = UrlUtils.setValue(currentUrl, "pageNumber", String.valueOf(i));
+
+                    urlList.add(url);
+                }
             }
+
+            page.putField(ReviewPipeline.PARAM_URL, urlList);
         }
-        page.putField(ReviewPipeline.PARAM_URL, urlList);
     }
 
     /**
@@ -85,10 +95,9 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         Review review = new Review();
         int star = Integer.valueOf(reviewNode.xpath("//*[@data-hook='review-star-rating']/@class").regex(".*-([0-5]).*").get());//提取星级
         String title = reviewNode.xpath("//a[@data-hook='review-title']/text()").get();
-//        String reviewId = reviewNode.xpath("//a[@data-hook='review-title']/@href").regex(".*customer-reviews/(.*)/ref.*").get();
         String reviewId = reviewNode.xpath("div/@id").get();
         String person = reviewNode.xpath("//a[@data-hook='review-author']/text()").get();
-        String personID = reviewNode.xpath("//a[@data-hook='review-author']/@href").regex(".*profile/(.*)/ref.*").get();
+        String personID = reviewNode.xpath("//a[@data-hook='review-author']/@href").regex(".*profile/(.*)(/ref.*)?").get();
         String time = reviewNode.xpath("//span[@data-hook='review-date']/text()").get();
         String version = reviewNode.xpath("//a[@data-hook='format-strip']/text()").get();
         String content = reviewNode.xpath("//span[@data-hook='review-body']/text()").get();
