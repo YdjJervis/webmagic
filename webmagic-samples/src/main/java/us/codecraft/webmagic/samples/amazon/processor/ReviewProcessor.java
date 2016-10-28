@@ -84,15 +84,15 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     Review extractReviewItem(String siteCode, String asin, Selectable reviewNode) {
         Review review = new Review();
         int star = Integer.valueOf(reviewNode.xpath("//*[@data-hook='review-star-rating']/@class").regex(".*-([0-5]).*").get());//提取星级
-        String title = reviewNode.xpath("//a[@class='a-size-base a-link-normal review-title a-color-base a-text-bold']/text()").get();
+        String title = reviewNode.xpath("//a[@data-hook='review-title']/text()").get();
 //        String reviewId = reviewNode.xpath("//a[@data-hook='review-title']/@href").regex(".*customer-reviews/(.*)/ref.*").get();
         String reviewId = reviewNode.xpath("div/@id").get();
         String person = reviewNode.xpath("//a[@data-hook='review-author']/text()").get();
         String personID = reviewNode.xpath("//a[@data-hook='review-author']/@href").regex(".*profile/(.*)/ref.*").get();
-        String time = reviewNode.xpath("//span[@class='a-size-base a-color-secondary review-date']/text()").get();
-        String version = reviewNode.xpath("//a[@class='a-size-mini a-link-normal a-color-secondary]/text()").get();
-        String content = reviewNode.xpath("//span[@class='a-size-base review-text]/text()").get();
-        String buyStatus = reviewNode.xpath("//span[@class='a-size-mini a-color-state a-text-bold]/text()").get();
+        String time = reviewNode.xpath("//span[@data-hook='review-date']/text()").get();
+        String version = reviewNode.xpath("//a[@data-hook='format-strip']/text()").get();
+        String content = reviewNode.xpath("//span[@data-hook='review-body']/text()").get();
+        String buyStatus = reviewNode.xpath("//span[@data-hook='avp-badge']/text()").get();
 
         review.basCode = siteCode;
         review.saaAsin = asin;
