@@ -81,7 +81,7 @@ public class UrlService {
         if (CollectionUtils.isNotEmpty(list)) {
             for (Url url : list) {
                 String tmp = UrlUtils.getValue(url.url, "pageNumber");
-                int current = StringUtils.isEmpty(tmp) ? 0 : Integer.valueOf(tmp);
+                int current = StringUtils.isEmpty(tmp) ? 1 : Integer.valueOf(tmp);
                 if (current > maxPage) {
                     maxPage = current;
                 }

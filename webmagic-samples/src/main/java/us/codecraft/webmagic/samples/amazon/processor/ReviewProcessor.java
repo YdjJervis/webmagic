@@ -72,6 +72,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
                     url.saaAsin = asin;
                     url.parentUrl = currentUrl;
                     url.url = UrlUtils.setValue(currentUrl, "pageNumber", String.valueOf(i));
+                    url.urlMD5 = UrlUtils.md5(url.url);
 
                     urlList.add(url);
                 }
@@ -97,7 +98,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         String title = reviewNode.xpath("//a[@data-hook='review-title']/text()").get();
         String reviewId = reviewNode.xpath("div/@id").get();
         String person = reviewNode.xpath("//a[@data-hook='review-author']/text()").get();
-        String personID = reviewNode.xpath("//a[@data-hook='review-author']/@href").regex(".*profile/(.*)(/ref.*)?").get();
+        String personID = reviewNode.xpath("//a[@data-hook='review-author']/@href").regex(".*profile/(.{13}).*").get();
         String time = reviewNode.xpath("//span[@data-hook='review-date']/text()").get();
         String version = reviewNode.xpath("//a[@data-hook='format-strip']/text()").get();
         String content = reviewNode.xpath("//span[@data-hook='review-body']/text()").get();

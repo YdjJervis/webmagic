@@ -93,6 +93,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                 url.saaAsin = asin;
                 url.parentUrl = page.getUrl().get();
                 url.url = newUrl;
+                url.url = UrlUtils.md5(newUrl);
                 urlList.add(url);
 
                 page.putField(ReviewPipeline.PARAM_URL, urlList);

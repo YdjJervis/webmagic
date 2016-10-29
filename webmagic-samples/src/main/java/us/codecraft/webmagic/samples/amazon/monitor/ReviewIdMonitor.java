@@ -13,6 +13,7 @@ import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 import us.codecraft.webmagic.samples.amazon.service.SiteService;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
+import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,7 @@ public class ReviewIdMonitor extends ParseMonitor {
                 Review review = mReviewService.findByReviewId(monitor.smrReviewId);
                 Site site = mSiteService.find(review.basCode);
                 url.url = site.basSite + "/gp/customer-reviews/" + monitor.smrReviewId;
+                url.urlMD5 = UrlUtils.md5(url.url);
                 url.type = 1;
                 url.siteCode = site.basCode;
                 url.sauReviewId = monitor.smrReviewId;

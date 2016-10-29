@@ -107,17 +107,17 @@ public class BasePageProcessor implements PageProcessor {
 
         String validateUrl = getValidateUrl(page);
 
-        if(StringUtils.isNotEmpty(validateUrl)) {
+       /* if(StringUtils.isNotEmpty(validateUrl)) {
             mIpsStatService.updateStatus2NeedSwitchIp(1);
-        }
+        }*/
 
-        sLogger.error("身份验证,准备保存验证码...网页状态码：" + page.getStatusCode());
+        sLogger.warn("身份验证,准备保存验证码...网页状态码：" + page.getStatusCode());
 
         /*保存图片验证码*/
         //PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
 
         /* 当需要验证码时，page的状态码还是200，不符合我们的逻辑，所以修改一下 */
-        page.setStatusCode(401);
+//        page.setStatusCode(401);
 
         /*
         * 请求表单的Url，调用验证码识别接口
@@ -149,7 +149,7 @@ public class BasePageProcessor implements PageProcessor {
      * 只有通过判断时候包好验证码图片元素来判断是否是验证码页面。
      */
     private boolean isValidatePage(Page page) {
-        return StringUtils.isNotEmpty(getValidateUrl(page));
+        return StringUtils.isNotEmpty(getValidateUrl(page)) || page.getUrl().get().contains("validateCaptcha");
     }
 
     /**

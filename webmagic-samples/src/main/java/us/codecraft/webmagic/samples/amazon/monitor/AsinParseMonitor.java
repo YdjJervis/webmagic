@@ -79,6 +79,7 @@ public class AsinParseMonitor extends ParseMonitor {
                     url.url = asin.site.basSite + "/" + Review.PRODUCT_REVIEWS + "/" + asin.saaAsin;
                     /*为Url添加过滤器*/
                     url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
+                    url.urlMD5 = UrlUtils.md5(url.url);
                     url.siteCode = asin.site.basCode;
                     url.asin = asin;
                     url.priority = asin.saaPriority;

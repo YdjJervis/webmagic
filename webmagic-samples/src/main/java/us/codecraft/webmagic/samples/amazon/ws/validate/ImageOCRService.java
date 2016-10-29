@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Properties;
 
 
@@ -33,6 +34,7 @@ public class ImageOCRService
         try {
 
             String path = ImageOCRService.class.getResource("/ws.properties").getFile();
+            path = URLDecoder.decode(path, "utf8");
             InputStream is = new FileInputStream(new File(path));
             Properties props = new Properties();
             props.load(is);

@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.base.util;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -33,8 +34,8 @@ public class UrlUtils {
     }
 
     /**
-     * @param url 原URL
-     * @param key get请求的参数key
+     * @param url   原URL
+     * @param key   get请求的参数key
      * @param value key对应value
      * @return 添加或修改请求参数的URL
      */
@@ -50,6 +51,13 @@ public class UrlUtils {
                 return url + "?" + key + "=" + value;
             }
         }
+    }
+
+    /**
+     * url 16位MD5加密
+     */
+    public static String md5(String url) {
+        return DigestUtils.md5Hex(url).substring(8, 24);
     }
 
     public static void main(String[] args) {
