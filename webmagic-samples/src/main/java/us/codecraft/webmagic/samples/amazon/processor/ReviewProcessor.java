@@ -78,7 +78,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
                 }
             }
 
-            page.putField(ReviewPipeline.PARAM_URL, urlList);
+            mUrlService.addAll(urlList);
         }
     }
 

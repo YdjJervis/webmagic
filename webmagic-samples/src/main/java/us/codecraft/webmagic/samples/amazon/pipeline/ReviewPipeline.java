@@ -8,9 +8,7 @@ import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.Pipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.ReviewService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
 
 import java.util.List;
 
@@ -24,12 +22,8 @@ import java.util.List;
 public class ReviewPipeline implements Pipeline {
 
     public static final String PARAM_LIST = "param_list";
-    public static final String PARAM_URL = "param_url";
 
     private Logger mLogger = Logger.getLogger(getClass());
-
-    @Autowired
-    private UrlService mUrlService;
 
     @Autowired
     private ReviewService mReviewService;
@@ -46,13 +40,5 @@ public class ReviewPipeline implements Pipeline {
             }
         }
 
-        List<Url> urlList = resultItems.get(PARAM_URL);
-        if (CollectionUtils.isNotEmpty(urlList)) {
-            mLogger.info("新Url列表准备入库...");
-            mLogger.info(urlList);
-            for (Url url : urlList) {
-                mUrlService.add(url);
-            }
-        }
     }
 }

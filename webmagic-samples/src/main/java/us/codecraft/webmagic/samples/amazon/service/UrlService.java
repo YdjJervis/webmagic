@@ -31,6 +31,8 @@ public class UrlService {
     private AsinService mAsinService;
     @Autowired
     private ReviewService mReviewService;
+    @Autowired
+    private UrlHistoryService mHistoryService;
 
     private Logger mLogger = Logger.getLogger(getClass());
 
@@ -75,6 +77,16 @@ public class UrlService {
         List<Url> list = mUrlDao.findByAsin(asin);
 
         /*
+        *  把状态码已经为200的加入到临时集合
+        */
+        List<Url> crawledList = new ArrayList<Url>();
+        for (Url url : list) {
+            if (url.status == 200) {
+                crawledList.add(url);
+            }
+        }
+
+        /*
         * 找出评论的最大页码
         */
         int maxPage = 0;
@@ -91,9 +103,9 @@ public class UrlService {
         /*
         * 如果 当前ASIN，URL列表集合数量 < 最大页码，表示已经爬取完毕了
         */
-        mLogger.info("最大页码：" + maxPage + " 已经爬取的页码：" + list.size());
+        mLogger.info("最大页码：" + maxPage + " 已经爬取的页码：" + crawledList.size());
         Asin asinObj = mAsinService.findByAsin(asin);
-        if (list.size() == maxPage) {
+        if (crawledList.size() == maxPage) {
 
             /*
             * 全量爬取完毕，把需要爬取星级的最后一条评论时间记录到extra字段，方便下次更新爬取的时候使用
@@ -112,9 +124,16 @@ public class UrlService {
             */
             mAsinService.updateStatus(asinObj, true);
 
+
+            /*
+            * 全量爬取完成后，删除全量爬取的URL，并把它记入URL历史表
+            */
+            mUrlDao.deleteByAsin(asin);
+            mHistoryService.addAll(crawledList);
+
         } else {
             if (maxPage != 0) {
-                float progress = 1.0f * list.size() / maxPage;
+                float progress = 1.0f * crawledList.size() / maxPage;
                 asinObj.saaProgress = progress > 1.0f ? 1.0f : progress;
                 mLogger.info(asin + " 的爬取进度：" + asinObj.saaProgress);
                 mAsinService.updateStatus(asinObj, false);

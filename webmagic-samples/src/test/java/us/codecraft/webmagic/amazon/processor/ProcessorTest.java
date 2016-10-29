@@ -4,7 +4,6 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.samples.amazon.pipeline.DiscussPipeline;
 
 /**
  * 测试页面是否还能获取到数据
@@ -39,7 +38,6 @@ public class ProcessorTest implements PageProcessor {
 
     public static void main(String[] args) {
         Spider.create(new ProcessorTest())
-                .addPipeline(new DiscussPipeline())
                 .thread(1)
 //                .addUrl("https://www.amazon.cn/dp/B013SMD0PI")
                 .addUrl("https://www.amazon.cn/gp/cart/view.html/ref=lh_cart")

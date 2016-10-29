@@ -49,7 +49,6 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public void process(Page page) {
         sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
-        updateUrlStatus(page);
 
         if (isPage404(page)) {
             dealPageNotFound(page);
@@ -58,6 +57,8 @@ public class BasePageProcessor implements PageProcessor {
         } else if (isReviewPage(page)) {
             dealReview(page);
         }
+
+        updateUrlStatus(page);
     }
 
     @Override

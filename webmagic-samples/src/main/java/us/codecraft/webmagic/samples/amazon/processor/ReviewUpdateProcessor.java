@@ -87,16 +87,14 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                 String newUrl = UrlUtils.setValue(page.getUrl().get(), "pageNumber", String.valueOf(Integer.valueOf(pageNum) + 1));
 
                 /*把新的Url放进爬取队列*/
-                List<Url> urlList = new ArrayList<Url>();
                 Url url = new Url();
                 url.siteCode = siteCode;
                 url.saaAsin = asin;
                 url.parentUrl = page.getUrl().get();
                 url.url = newUrl;
                 url.url = UrlUtils.md5(newUrl);
-                urlList.add(url);
 
-                page.putField(ReviewPipeline.PARAM_URL, urlList);
+                mUrlService.add(url);
             } else {
                 /*不需要继续翻页，代表该星级的更新爬取已经完成，就删除该星级的Url*/
                 String filter = UrlUtils.getValue(page.getUrl().get(), "filterByStar");

@@ -68,7 +68,7 @@
         sau_cookies=#{item.cookies},
         sau_other_params=#{item.otherParams},
         sau_extra=#{item.extra},
-        sau_update_time=#{item.updatetime}
+        sau_update_time=CURRENT_TIMESTAMP
     </insert>
 
     <update id="update" parameterType="Url">

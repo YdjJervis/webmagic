@@ -7,7 +7,6 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.samples.amazon.pipeline.DiscussPipeline;
 import us.codecraft.webmagic.utils.HttpConstant;
 
 import java.util.HashMap;
@@ -72,7 +71,6 @@ public class PostProcessorTest implements PageProcessor {
         request.setMethod(HttpConstant.Method.POST);
 
         Spider.create(new PostProcessorTest())
-                .addPipeline(new DiscussPipeline())
                 .thread(1)
 //                .addUrl("https://www.amazon.cn/dp/B013SMD0PI")
                 .addRequest(request)
