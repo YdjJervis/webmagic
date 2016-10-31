@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
+import us.codecraft.webmagic.downloader.HttpClientImplDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
@@ -29,7 +30,7 @@ public class BasePageProcessor implements PageProcessor {
     Logger sLogger = Logger.getLogger(getClass());
     private us.codecraft.webmagic.Site mSite = us.codecraft.webmagic.Site.me().setRetryTimes(3).setSleepTime(10 * 1000).setTimeOut(10 * 1000);
 
-    static final String URL_EXTRA = "url_extra";
+    public static final String URL_EXTRA = "url_extra";
 
     @Autowired
     protected UrlService mUrlService;
@@ -45,6 +46,10 @@ public class BasePageProcessor implements PageProcessor {
 
     @Autowired
     protected AsinService mAsinService;
+
+    @Autowired
+    protected HttpClientImplDownloader sDownloader;
+
 
     @Override
     public void process(Page page) {
@@ -79,14 +84,8 @@ public class BasePageProcessor implements PageProcessor {
      */
     private void dealPageNotFound(Page page) {
 
-        /*标记此ASIN为下架产品*/
         String asinCode = extractAsin(page);
-        sLogger.warn("该商品已经下架：" + asinCode);
-        Asin asin = mAsinService.findByAsin(asinCode);
-        asin.saaOnSale = 0;
-        mAsinService.update(asin);
-        /*删除已经在爬取的URL*/
-        mUrlService.deleteByAsin(asinCode);
+        mAsinService.updateAndDeleteUrl(asinCode);
     }
 
     /**

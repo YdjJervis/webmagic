@@ -17,6 +17,8 @@ public class StarReviewMap {
      */
     public String reviewID;
 
+    public int reviewNum;
+
     public StarReviewMap(int star, String reviewID) {
         this.star = star;
         this.reviewID = reviewID;
@@ -24,9 +26,10 @@ public class StarReviewMap {
 
     @Override
     public String toString() {
-        return "StarTimeMap{" +
+        return "StarReviewMap{" +
                 "star=" + star +
                 ", reviewID='" + reviewID + '\'' +
+                ", reviewNum=" + reviewNum +
                 '}';
     }
 }

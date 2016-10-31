@@ -26,6 +26,9 @@ public class AsinService {
     @Autowired
     private AsinDao mAsinDao;
 
+    @Autowired
+    private UrlService mUrlService;
+
     private Logger mLogger = Logger.getLogger(getClass());
 
     /**
@@ -138,6 +141,17 @@ public class AsinService {
 
     public void update(Asin asin) {
         mAsinDao.update(asin);
+    }
+
+    public void updateAndDeleteUrl(String asinCode){
+        mLogger.warn("该商品已经下架：" + asinCode);
+
+        /*标记此ASIN为下架产品*/
+        Asin asin = findByAsin(asinCode);
+        asin.saaOnSale = 0;
+        update(asin);
+        /*删除已经在爬取的URL*/
+        mUrlService.deleteByAsin(asinCode);
     }
 
     /**

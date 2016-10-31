@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.samples.amazon.pipeline.ReviewPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.util.PageContentUtil;
+import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 import us.codecraft.webmagic.samples.amazon.util.ReviewTimeUtil;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
@@ -29,7 +28,7 @@ import java.util.List;
 public class ReviewProcessor extends BasePageProcessor implements ScheduledTask {
 
     @Autowired
-    private ReviewPipeline mReviewPipeline;
+    protected ReviewService mReviewService;
 
     @Override
     protected void dealReview(Page page) {
@@ -47,17 +46,16 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         for (Selectable reviewNode : reviewNodeList) {
 
             Review review = extractReviewItem(siteCode, asin, reviewNode);
+            review.sarPageNum = UrlUtils.getValue(currentUrl, "pageNumber");
             reviewList.add(review);
         }
 
-        page.putField(ReviewPipeline.PARAM_LIST, reviewList);
+        mReviewService.addAll(reviewList);
 
         /* 当前URL没有pageNumber属性的话 */
         if (StringUtils.isEmpty(UrlUtils.getValue(currentUrl, "pageNumber"))) {
 
             List<String> pageUrlList = page.getHtml().xpath("//li[@class='page-button']/a/@href").all();
-            sLogger.info("新提取的翻页Url如下：");
-            sLogger.info(pageUrlList);
 
             List<Url> urlList = new ArrayList<Url>();
 
@@ -66,6 +64,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
                 /* 说明是评论第一页，就根据最大页码拼装所有评论的页码 */
                 String lastPageUrl = pageUrlList.get(pageUrlList.size() - 1);
                 int totalPage = Integer.valueOf(UrlUtils.getValue(lastPageUrl, "pageNumber"));
+                sLogger.info(asin + " 评论的最大页码为 " + totalPage);
                 for (int i = 2; i <= totalPage; i++) {
                     Url url = new Url();
                     url.siteCode = siteCode;
@@ -107,14 +106,14 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         review.basCode = siteCode;
         review.saaAsin = asin;
         review.sarStar = star;
-        review.sarTitle = PageContentUtil.filterBadString(title);
+        review.sarTitle = title;
         review.sarPersonId = personID;
         review.sarReviewId = reviewId;
         review.sarPerson = person;
         review.sarTime = time;
         review.sarDealTime = ReviewTimeUtil.parse(time, siteCode);
         review.sarVersion = version;
-        review.sarContent = PageContentUtil.filterBadString(content);
+        review.sarContent = content;
         review.sarBuyStatus = buyStatus;
         sLogger.info(review);
         return review;
@@ -143,7 +142,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
-                    .addPipeline(mReviewPipeline)
+                    .setDownloader(sDownloader)
                     .thread(5);
 
             for (Url url : urlList) {

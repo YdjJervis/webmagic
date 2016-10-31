@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.samples.amazon.pipeline.ReviewPipeline;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
@@ -75,7 +74,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                     mAsinService.updateAsinExtra(asin, review, UrlUtils.getValue(page.getUrl().get(), "filterByStar"));
                 }
             }
-            page.putField(ReviewPipeline.PARAM_LIST, reviewList);
+            mReviewService.addAll(reviewList);
 
             if (needCrawlNextPage) {
                 /*提取页码，若为空，就设置成 1 */

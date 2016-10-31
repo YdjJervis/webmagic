@@ -18,50 +18,37 @@
         <result property="sarTitle" column="sar_title"/>
         <result property="sarContent" column="sar_content"/>
         <result property="extra" column="sar_extra"/>
+        <result property="sarPageNum" column="sar_page_num"/>
         <result property="createtime" column="sar_create_time"/>
         <result property="updatetime" column="sar_update_time"/>
     </resultMap>
 
+    <resultMap id="StarReviewCountMap" type="StarReviewCount">
+        <result property="star" column="sar_star"/>
+        <result property="count" column="count"/>
+    </resultMap>
+
     <insert id="add" parameterType="Review">
-        <selectKey resultType="java.lang.Long">
-            SELECT @@IDENTITY AS id
-        </selectKey>
         insert into spider_amazon_review(BAS_CODE,
-        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra)
-        values(#{basCode},#{saaAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarMonitor},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarTitle},#{sarContent},#{extra})
-        ON DUPLICATE KEY UPDATE BAS_CODE=#{basCode},
-        saa_asin=#{saaAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_review_id=#{sarReviewId},sar_monitor=#{sarMonitor},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_title=#{sarTitle},sar_content=#{sarContent},sar_extra=#{extra},sar_update_time=CURRENT_TIMESTAMP
+        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num)
+        values
+        (#{basCode},#{saaAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarMonitor},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarTitle},#{sarContent},#{extra},#{sarPageNum})
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
-        <selectKey resultType="java.lang.Long">
-            SELECT @@IDENTITY AS id
-        </selectKey>
-        insert into spider_amazon_review(BAS_CODE,
-        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra)
+        insert into spider_amazon_review
+        (BAS_CODE,saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (
-            #{item.basCode},#{item.saaAsin},#{item.sarPersonId},#{item.sarTime},#{item.sarDealTime},#{item.sarPerson},#{item.sarReviewId},#{item.sarMonitor},#{item.sarBuyStatus},#{item.sarStar},#{item.sarVersion},#{item.sarTitle},#{item.sarContent},#{item.extra}
-            )
+            (#{item.basCode},#{item.saaAsin},#{item.sarPersonId},#{item.sarTime},#{item.sarDealTime},#{item.sarPerson},#{item.sarReviewId},#{item.sarMonitor},#{item.sarBuyStatus},#{item.sarStar},#{item.sarVersion},#{item.sarTitle},#{item.sarContent},#{item.extra},#{item.sarPageNum})
         </foreach>
-        ON DUPLICATE KEY UPDATE
-        BAS_CODE=#{item.basCode},
-        saa_asin=#{item.saaAsin},
-        sar_person_id=#{item.sarPersonId},
-        sar_time=#{item.sarTime},
-        sar_deal_time=#{item.sarDealTime},
-        sar_person=#{item.sarPerson},
-        sar_review_id=#{item.sarReviewId},
-        sar_monitor=#{item.sarMonitor},
-        sar_buy_status=#{item.sarBuyStatus},
-        sar_star=#{item.sarStar},
-        sar_version=#{item.sarVersion},
-        sar_title=#{item.sarTitle},
-        sar_content=#{item.sarContent},
-        sar_extra=#{item.extra},
-        sar_update_time=CURRENT_TIMESTAMP
     </insert>
+
+    <update id="update" parameterType="Review">
+        UPDATE spider_amazon_review SET
+        saa_asin=#{saaAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_monitor=#{sarMonitor},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_title=#{sarTitle},sar_content=#{sarContent},sar_extra=#{extra},sar_page_num=#{sarPageNum},sar_update_time=CURRENT_TIMESTAMP
+        WHERE sar_review_id=#{sarReviewId}
+    </update>
 
     <!--根据评论Id查找Review-->
     <select id="findByReviewId" resultMap="ReviewResultMap">
@@ -71,6 +58,11 @@
     <!--根据ASIN找需要爬取的星级最新一条评论的时间-->
     <select id="findLastReview" resultMap="ReviewResultMap">
         SELECT tmp.* FROM (SELECT * FROM spider_amazon_review WHERE saa_asin = #{0} ORDER BY sar_create_time ASC) tmp GROUP BY tmp.sar_star;
+    </select>
+
+    <!--根据ASIN找需要爬取的星级最新一条评论的时间-->
+    <select id="findStarReviewCount" resultMap="StarReviewCountMap">
+        SELECT sar_star,COUNT(*) as count FROM spider_amazon_review WHERE saa_asin = #{0} GROUP BY sar_star;
     </select>
 
 </mapper>

@@ -14,18 +14,11 @@
     </resultMap>
 
     <insert id="add" parameterType="Url">
-        <selectKey resultType="java.lang.Long">
-            SELECT @@IDENTITY AS id
-        </selectKey>
         insert into spider_amazon_url_history(sauh_url_md5,BAS_CODE,saa_asin,sauh_url,sauh_parent_url)
         values(#{urlMD5},#{siteCode},#{saaAsin},#{url},#{parentUrl})
-        ON DUPLICATE KEY UPDATE sauh_url_md5 = #{urlMD5}
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
-        <selectKey resultType="java.lang.Long">
-            SELECT @@IDENTITY AS id
-        </selectKey>
         INSERT INTO spider_amazon_url_history(sauh_url_md5,BAS_CODE,saa_asin,sauh_url,sauh_parent_url)
         values
         <foreach collection="list" item="item" index="index" separator=",">
@@ -37,13 +30,10 @@
             #{item.parentUrl}
             )
         </foreach>
-        ON DUPLICATE KEY UPDATE
-        sauh_url_md5 = #{item.urlMD5},
-        BAS_CODE = #{item.siteCode},
-        saa_asin = #{item.saaAsin},
-        sauh_url = #{item.url},
-        sauh_parent_url=#{item.parentUrl},
-        sauh_update_time=CURRENT_TIMESTAMP
     </insert>
+
+    <select id="find" resultMap="UrlResultMap">
+        SELECT * FROM spider_amazon_url_history WHERE sauh_url_md5 = #{0};
+    </select>
 
 </mapper>

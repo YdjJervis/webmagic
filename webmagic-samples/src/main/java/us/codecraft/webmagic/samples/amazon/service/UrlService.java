@@ -7,14 +7,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
-import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jervis
@@ -40,7 +39,9 @@ public class UrlService {
      * 只做添加Url，若对象的url字段已经存在，则不进行任何处理
      */
     public void add(Url url) {
-        mUrlDao.add(url);
+        if (!isExist(url.urlMD5)) {
+            mUrlDao.add(url);
+        }
     }
 
     public void deleteByAsin(String asin) {
@@ -53,11 +54,20 @@ public class UrlService {
 
     public void addAll(List<Url> urlList) {
 
-        if (CollectionUtils.isEmpty(urlList)) return;
+        List<Url> newList = new ArrayList<Url>();
 
         for (Url url : urlList) {
-            add(url);
+            if (!isExist(url.urlMD5)) {
+                newList.add(url);
+            } else {
+                mUrlDao.update(url);
+            }
         }
+
+        if (CollectionUtils.isNotEmpty(newList)) {
+            mUrlDao.addAll(newList);
+        }
+
     }
 
     /**
@@ -111,10 +121,22 @@ public class UrlService {
             * 全量爬取完毕，把需要爬取星级的最后一条评论时间记录到extra字段，方便下次更新爬取的时候使用
             */
             List<Review> reviewList = mReviewService.findLastReview(asin);
+
+            /*
+            * 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取
+            */
+            List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin);
+            Map<Integer, Integer> srcMap = new HashMap<Integer, Integer>();
+            for (StarReviewCount src : srcList) {
+                srcMap.put(src.star, src.count);
+            }
+
             if (CollectionUtils.isNotEmpty(reviewList)) {
                 List<StarReviewMap> mapList = new ArrayList<StarReviewMap>();
                 for (Review review : reviewList) {
-                    mapList.add(new StarReviewMap(review.sarStar, review.sarReviewId));
+                    StarReviewMap sRMap = new StarReviewMap(review.sarStar, review.sarReviewId);
+                    sRMap.reviewNum = srcMap.get(review.sarStar);
+                    mapList.add(sRMap);
                 }
                 asinObj.extra = new Gson().toJson(mapList);
             }
@@ -174,4 +196,7 @@ public class UrlService {
         return mUrlDao.findUpdateCrawl(asin);
     }
 
+    public boolean isExist(String urlMd5) {
+        return mUrlDao.find(urlMd5).size() > 0;
+    }
 }
