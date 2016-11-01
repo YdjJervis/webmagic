@@ -2,21 +2,28 @@ package us.codecraft.webmagic.samples.amazon.processor;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
+import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.HttpClientImplDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.ImgValidateResult;
+import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.Site;
+import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.amazon.service.IpsStatService;
 import us.codecraft.webmagic.samples.amazon.service.SiteService;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.amazon.ws.validate.ImageOCRService;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
+
+import java.util.List;
 
 /**
  * @author Jervis
@@ -80,6 +87,14 @@ public class BasePageProcessor implements PageProcessor {
     }
 
     /**
+     * 更新URL的时候是否需要更新状态码。全量爬取的时候需要，
+     * 监听爬取的时候不需要。
+     */
+    protected boolean needUpdateStatus() {
+        return true;
+    }
+
+    /**
      * 处理不工作的页面。eg:下架页面
      */
     private void dealPageNotFound(Page page) {
@@ -93,11 +108,16 @@ public class BasePageProcessor implements PageProcessor {
      */
     protected void updateUrlStatus(Page page) {
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
-        int statusCode = page.getStatusCode();
-        sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
 
-        url.status = statusCode;
+        if(needUpdateStatus()){
+            int statusCode = page.getStatusCode();
+            sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
+
+            url.status = statusCode;
+        }
+
         url.sauCrawling = 0;
+        url.times++;
         sLogger.info("改变状态后的Url对象：" + url);
 
         mUrlService.update(url);
@@ -190,6 +210,28 @@ public class BasePageProcessor implements PageProcessor {
     private String getValidateCode(String imgUrl, String type) {
         ImageOCRService service = new ImageOCRService();
         return service.getBasicHttpBindingIImageOCRService().getVerCodeFromUrl(imgUrl, type);
+    }
+
+    void startToCrawl(List<Url> urlList) {
+        sLogger.info("找到状态码不为200的Url个数：" + urlList.size());
+        if (CollectionUtils.isNotEmpty(urlList)) {
+
+            Spider mSpider = Spider.create(this)
+                    .setDownloader(sDownloader)
+                    .thread(10);
+
+            for (Url url : urlList) {
+                Request request = new Request(url.url);
+                request.putExtra(URL_EXTRA, url);
+                mSpider.addRequest(request);
+
+                url.sauCrawling = 1;
+                mUrlService.update(url);
+            }
+
+            sLogger.info("开始爬取评论...");
+            mSpider.start();
+        }
     }
 
 }

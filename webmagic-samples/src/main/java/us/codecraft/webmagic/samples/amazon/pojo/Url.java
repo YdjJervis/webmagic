@@ -40,6 +40,12 @@ public class Url extends BasePojo {
      * 爬取优先级
      */
     public int priority;
+
+    /**
+     * 爬取的次数
+     */
+    public int times;
+
     /**
      * 当前爬取的URL
      */
@@ -69,7 +75,7 @@ public class Url extends BasePojo {
 
     @Override
     public String toString() {
-        return super.toString() + "Url{" +
+        return "Url{" +
                 "urlMD5='" + urlMD5 + '\'' +
                 ", siteCode='" + siteCode + '\'' +
                 ", type=" + type +
@@ -78,6 +84,7 @@ public class Url extends BasePojo {
                 ", sauCrawling=" + sauCrawling +
                 ", sauReviewId='" + sauReviewId + '\'' +
                 ", priority=" + priority +
+                ", times=" + times +
                 ", url='" + url + '\'' +
                 ", parentUrl='" + parentUrl + '\'' +
                 ", postParams='" + postParams + '\'' +

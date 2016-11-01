@@ -39,14 +39,16 @@ public class ReviewIdMonitor extends ParseMonitor {
     @Override
     public void execute() {
         List<Url> urlList = getUrl(true);
+
+        /* 把所有需要监听的Review转换成URL后入库 */
         mUrlService.addAll(urlList);
-        if (CollectionUtils.isNotEmpty(urlList)) {
-            for (Url url : urlList) {
-                if (StringUtils.isNotEmpty(url.sauReviewId)) {
-                    ReviewMonitor monitor = mMonitorService.findByReviewId(url.sauReviewId);
-                    monitor.smrParsed = 1;
-                    mMonitorService.update(monitor);
-                }
+
+        /* 把所有已经转换成URL的监听Review的状态标记为已经转换 */
+        for (Url url : urlList) {
+            if (StringUtils.isNotEmpty(url.sauReviewId)) {
+                ReviewMonitor monitor = mMonitorService.findByReviewId(url.sauReviewId);
+                monitor.smrParsed = 1;
+                mMonitorService.update(monitor);
             }
         }
     }
@@ -66,6 +68,7 @@ public class ReviewIdMonitor extends ParseMonitor {
                 url.type = 1;
                 url.siteCode = site.basCode;
                 url.sauReviewId = monitor.smrReviewId;
+                url.priority = monitor.smrPriority;
 
                 urlList.add(url);
             }

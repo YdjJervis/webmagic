@@ -1,7 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.ReviewDao;
@@ -22,14 +21,13 @@ public class ReviewService {
 
     @Autowired
     ReviewDao mReviewDao;
-    private Logger mLogger = Logger.getLogger(getClass());
 
     public void add(Review review) {
-        try {
+
+        if (!isExist(review.sarReviewId)) {
             mReviewDao.add(review);
-        } catch (Exception e) {
-            mLogger.error("评论入库失败，请提供日志给爬虫组...");
-            mLogger.error(e);
+        } else {
+            mReviewDao.update(review);
         }
     }
 

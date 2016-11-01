@@ -13,8 +13,10 @@ public class ReviewMonitor extends BasePojo {
     public String smrReviewId;
     public int smrMarked = 1;
     public int smrParsed;
+    public int smrPriority;
 
-    public ReviewMonitor(){}
+    public ReviewMonitor() {
+    }
 
     public ReviewMonitor(String smrReviewId) {
         this.smrReviewId = smrReviewId;
@@ -22,10 +24,11 @@ public class ReviewMonitor extends BasePojo {
 
     @Override
     public String toString() {
-        return super.toString() + "ReviewMonitor{" +
-                "slrReviewId='" + smrReviewId + '\'' +
-                ", slrMarked=" + smrMarked +
+        return "ReviewMonitor{" +
+                "smrReviewId='" + smrReviewId + '\'' +
+                ", smrMarked=" + smrMarked +
                 ", smrParsed=" + smrParsed +
+                ", smrPriority=" + smrPriority +
                 '}';
     }
 }

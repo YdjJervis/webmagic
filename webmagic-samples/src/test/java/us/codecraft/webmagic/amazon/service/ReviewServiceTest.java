@@ -38,6 +38,7 @@ public class ReviewServiceTest extends SpringTestCase {
         review.sarContent = "床前明月光，地上***";
         review.sarPersonId = "personID001";
         review.saaAsin = "Asin_00001";
+        review.sarTitle = "\uD83D\uDE04!!!\uD83D\uDE0D";
         return review;
     }
 

@@ -7,19 +7,15 @@
         <result property="smrReviewId" column="smr_review_id"/>
         <result property="smrMarked" column="smr_marked"/>
         <result property="smrParsed" column="smr_parsed"/>
+        <result property="smrPriority" column="smr_priority"/>
         <result property="createtime" column="smr_create_time"/>
         <result property="updatetime" column="smr_udpate_time"/>
     </resultMap>
 
     <!--添加到监控-->
     <insert id="add" parameterType="ReviewMonitor">
-        <selectKey resultType="java.lang.Long">
-            SELECT @@IDENTITY AS id
-        </selectKey>
-        insert into spider_monitor_review(smr_review_id,smr_marked,smr_parsed)
-        values(#{smrReviewId},#{smrMarked},#{smrParsed})
-        ON DUPLICATE KEY UPDATE
-        smr_review_id=#{smrReviewId},smr_marked=#{smrMarked},smr_parsed=#{smrParsed},smr_udpate_time=CURRENT_TIMESTAMP
+        insert into spider_monitor_review(smr_review_id,smr_marked,smr_parsed,smr_priority)
+        values(#{smrReviewId},#{smrMarked},#{smrParsed},#{smrPriority})
     </insert>
 
     <!--根据ReviewId查询记录-->
@@ -29,12 +25,13 @@
     </select>
 
     <select id="findAll" resultMap="ReviewMonitorResultMap">
-        SELECT * FROM spider_monitor_review WHERE smr_marked = 1 AND smr_parsed = 0;
+        SELECT * FROM spider_monitor_review
+        WHERE smr_marked = 1 AND smr_parsed = 0;
     </select>
 
     <update id="update" parameterType="ReviewMonitor">
         UPDATE spider_monitor_review
-        SET smr_marked = #{smrMarked},smr_parsed=#{smrParsed},smr_udpate_time=CURRENT_TIMESTAMP
+        SET smr_marked = #{smrMarked},smr_parsed = #{smrParsed},smr_priority = #{smrPriority},smr_udpate_time = CURRENT_TIMESTAMP
         WHERE smr_review_id = #{smrReviewId}
     </update>
 

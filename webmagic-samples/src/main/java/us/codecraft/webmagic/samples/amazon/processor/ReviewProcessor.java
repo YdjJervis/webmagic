@@ -5,8 +5,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.Request;
-import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.ReviewService;
@@ -135,28 +133,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         sLogger.info("开始执行爬取任务...");
         List<Url> urlList = mUrlService.find(0);
         startToCrawl(urlList);
-    }
-
-    void startToCrawl(List<Url> urlList) {
-        sLogger.info("找到状态码不为200的Url个数：" + urlList.size());
-        if (CollectionUtils.isNotEmpty(urlList)) {
-
-            Spider mSpider = Spider.create(this)
-                    .setDownloader(sDownloader)
-                    .thread(10);
-
-            for (Url url : urlList) {
-                Request request = new Request(url.url);
-                request.putExtra(URL_EXTRA, url);
-                mSpider.addRequest(request);
-
-                url.sauCrawling = 1;
-                mUrlService.update(url);
-            }
-
-            sLogger.info("开始爬取评论...");
-            mSpider.start();
-        }
     }
 
 }
