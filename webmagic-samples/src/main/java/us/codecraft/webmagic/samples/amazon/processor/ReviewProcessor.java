@@ -143,7 +143,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
             Spider mSpider = Spider.create(this)
                     .setDownloader(sDownloader)
-                    .thread(5);
+                    .thread(10);
 
             for (Url url : urlList) {
                 Request request = new Request(url.url);

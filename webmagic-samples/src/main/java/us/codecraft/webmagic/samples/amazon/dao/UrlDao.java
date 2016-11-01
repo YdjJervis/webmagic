@@ -36,4 +36,9 @@ public interface UrlDao extends BaseDao<Url> {
     List<Url> findUpdateCrawl(String asin);
 
     void deleteByAsin(String asin);
+
+    /**
+     * 重置URL爬取状态
+     */
+    void resetStatus();
 }

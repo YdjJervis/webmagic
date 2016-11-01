@@ -199,4 +199,13 @@ public class UrlService {
     public boolean isExist(String urlMd5) {
         return mUrlDao.find(urlMd5).size() > 0;
     }
+
+    /**
+     * 重置URL状态。每次强行停止的时候，很多URL都会是正在爬取的状态，
+     * 导致下次启动的时候就取不到这些未爬取的URL了，所以每次开启项目
+     * 的时候都重置一下状态就可以了。
+     */
+    public void resetStatus() {
+        mUrlDao.resetStatus();
+    }
 }

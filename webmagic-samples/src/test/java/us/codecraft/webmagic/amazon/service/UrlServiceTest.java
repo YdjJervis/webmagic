@@ -78,4 +78,9 @@ public class UrlServiceTest extends SpringTestCase {
     public void testFind(){
         System.out.println(mUrlService.find(0));
     }
+
+    @Test
+    public void testUpdateURLStatus(){
+        mUrlService.resetStatus();
+    }
 }

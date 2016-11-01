@@ -9,7 +9,6 @@
         <listener-class>
             org.springframework.web.context.ContextLoaderListener
         </listener-class>
-
     </listener>
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -26,6 +25,11 @@
     </context-param>
     <listener>
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    
+    <!-- 自定义监听器 -->
+    <listener>
+        <listener-class>us.codecraft.webmagic.samples.amazon.monitor.StatusListener</listener-class>
     </listener>
 
     <!--配置CXF-->
