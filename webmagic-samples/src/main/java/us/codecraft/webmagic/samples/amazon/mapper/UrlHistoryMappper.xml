@@ -36,4 +36,8 @@
         SELECT * FROM spider_amazon_url_history WHERE sauh_url_md5 = #{0};
     </select>
 
+    <select id="findByAsin" resultMap="UrlResultMap">
+        SELECT * FROM spider_amazon_url_history WHERE saa_asin = #{0};
+    </select>
+
 </mapper>

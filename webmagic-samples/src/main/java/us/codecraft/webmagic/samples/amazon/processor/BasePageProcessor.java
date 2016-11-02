@@ -59,7 +59,7 @@ public class BasePageProcessor implements PageProcessor {
 
 
     @Override
-    public void process(Page page) {
+    public synchronized void process(Page page) {
         sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
 
         if (isPage404(page)) {
@@ -123,7 +123,7 @@ public class BasePageProcessor implements PageProcessor {
         mUrlService.update(url);
     }
 
-    private synchronized void dealValidate(Page page) {
+    private void dealValidate(Page page) {
 
         String validateUrl = getValidateUrl(page);
 

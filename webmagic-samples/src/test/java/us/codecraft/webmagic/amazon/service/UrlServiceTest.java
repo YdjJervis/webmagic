@@ -60,11 +60,6 @@ public class UrlServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void testIsCrawlFinish() {
-        mUrlService.updateAsinCrawledAll("B003GIS2J4");
-    }
-
-    @Test
     public void testDeleteUpdateCrawl(){
         mUrlService.deleteUpdateCrawl("B0181YRLT4","one_star");
     }

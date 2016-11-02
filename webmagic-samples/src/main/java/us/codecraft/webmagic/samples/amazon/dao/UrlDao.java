@@ -41,4 +41,7 @@ public interface UrlDao extends BaseDao<Url> {
      * 重置URL爬取状态
      */
     void resetStatus();
+
+    void deleteByUrlMd5(String urlMd5);
+
 }

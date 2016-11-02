@@ -199,7 +199,7 @@ public class AsinService {
         } else if ("0-1-1-0-0".equals(star)) {//抓34
             filterList.add(Filter.START_3);
             filterList.add(Filter.START_4);
-        } else if ("1-0-3-0-0".equals(star)) {//抓35
+        } else if ("1-0-1-0-0".equals(star)) {//抓35
             filterList.add(Filter.START_3);
             filterList.add(Filter.START_5);
         } else if ("1-1-1-0-0".equals(star)) {//抓好3

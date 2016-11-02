@@ -82,50 +82,68 @@ public class UrlService {
      * 根据Url最大页码和已经爬取过的页码判断是否已经爬取完毕
      * yes：把asin的状态更新到爬取完毕，no：ignore
      */
-    public void updateAsinCrawledAll(String asin) {
+    public void updateAsinCrawledAll(Url url) {
+        List<Url> list = mUrlDao.findByAsin(url.saaAsin);
+        List<Url> historyList = mHistoryService.findByAsin(url.saaAsin);
 
-        List<Url> list = mUrlDao.findByAsin(asin);
+        mLogger.info("ASIN:" + url.saaAsin + " 对应的URL表记录数：" + list.size() + " 历史表记录数：" + historyList.size());
 
-        /*
-        *  把状态码已经为200的加入到临时集合
-        */
+        list.addAll(historyList);
+
+        /* 用过滤器作key，过滤器对应的最大的评论页码作value */
+        Map<String, Integer> maxPageMap = new HashMap<String, Integer>();
+
+        for (Url urlLooper : list) {
+
+            String filter = UrlUtils.getValue(urlLooper.url, "filterByStar");
+            Integer pn = maxPageMap.get(filter);
+
+            if (pn == null) {
+                pn = 1;
+            }
+
+            String pageNumStr = UrlUtils.getValue(urlLooper.url, "pageNumber");
+            Integer pageNum = StringUtils.isEmpty(pageNumStr) ? 1 : Integer.valueOf(pageNumStr);
+
+            if (pageNum >= pn) {
+                maxPageMap.put(filter, pageNum);
+            }
+
+        }
+        mLogger.info("过滤器对应页码：" + maxPageMap);
+
+        /* 把状态码已经为200的加入到临时集合 */
         List<Url> crawledList = new ArrayList<Url>();
-        for (Url url : list) {
-            if (url.status == 200) {
-                crawledList.add(url);
+        for (Url urlLoop : list) {
+            if (urlLoop.status == 200) {
+                crawledList.add(urlLoop);
             }
         }
 
-        /*
-        * 找出评论的最大页码
-        */
+        //数据统计开始============================================================================
+        /* 找出评论的最大页码 */
         int maxPage = 0;
-        if (CollectionUtils.isNotEmpty(list)) {
-            for (Url url : list) {
-                String tmp = UrlUtils.getValue(url.url, "pageNumber");
-                int current = StringUtils.isEmpty(tmp) ? 1 : Integer.valueOf(tmp);
-                if (current > maxPage) {
-                    maxPage = current;
-                }
-            }
+        for (Integer filterMaxPage : maxPageMap.values()) {
+            /* 总的需要爬取的页码为每个过滤器最大页码的总和 */
+            maxPage += filterMaxPage;
         }
 
         /*
-        * 如果 当前ASIN，URL列表集合数量 < 最大页码，表示已经爬取完毕了
+        * 如果 当前ASIN，URL列表集合数量 = 最大页码，表示已经爬取完毕了
         */
-        mLogger.info("最大页码：" + maxPage + " 已经爬取的页码：" + crawledList.size());
-        Asin asinObj = mAsinService.findByAsin(asin);
+        mLogger.info("最大页码总数：" + maxPage + " 已经爬取的页码：" + crawledList.size());
+        Asin asinObj = mAsinService.findByAsin(url.saaAsin);
         if (crawledList.size() == maxPage) {
 
             /*
             * 全量爬取完毕，把需要爬取星级的最后一条评论时间记录到extra字段，方便下次更新爬取的时候使用
             */
-            List<Review> reviewList = mReviewService.findLastReview(asin);
+            List<Review> reviewList = mReviewService.findLastReview(url.saaAsin);
 
-            /*
-            * 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取
-            */
-            List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin);
+            /* 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取 */
+            List<StarReviewCount> srcList = mReviewService.findStarReviewCount(url.saaAsin);
+
+            /* List转Map */
             Map<Integer, Integer> srcMap = new HashMap<Integer, Integer>();
             for (StarReviewCount src : srcList) {
                 srcMap.put(src.star, src.count);
@@ -146,21 +164,53 @@ public class UrlService {
             */
             mAsinService.updateStatus(asinObj, true);
 
-
-            /*
-            * 全量爬取完成后，删除全量爬取的URL，并把它记入URL历史表
-            */
-            mUrlDao.deleteByAsin(asin);
-            mHistoryService.addAll(crawledList);
-
         } else {
-            if (maxPage != 0) {
-                float progress = 1.0f * crawledList.size() / maxPage;
-                asinObj.saaProgress = progress > 1.0f ? 1.0f : progress;
-                mLogger.info(asin + " 的爬取进度：" + asinObj.saaProgress);
-                mAsinService.updateStatus(asinObj, false);
-            }
+            float progress = 1.0f * crawledList.size() / maxPage;
+            asinObj.saaProgress = progress > 1.0f ? 1.0f : progress;
+            mLogger.info(url.saaAsin + " 的爬取进度：" + asinObj.saaProgress);
+            mAsinService.updateStatus(asinObj, false);
         }
+        //数据统计结束============================================================================
+
+        //数据更改开始============================================================================
+        /* 用过滤器作key，过滤器对应已经爬取的Url列表做value */
+        Map<String, List<Url>> filterUrlMap = new HashMap<String, List<Url>>();
+
+        for (Url urlLooper : crawledList) {
+
+            String filter = UrlUtils.getValue(urlLooper.url, "filterByStar");
+            List<Url> urlList = filterUrlMap.get(filter);
+
+            if (urlList == null) {
+                urlList = new ArrayList<Url>();
+                filterUrlMap.put(filter, urlList);
+            }
+
+            urlList.add(urlLooper);
+        }
+
+        mLogger.info("过滤器对应对应已爬取URL列表：" + filterUrlMap);
+
+        for (String filter : maxPageMap.keySet()) {
+
+            Integer filterMaxPageNum = maxPageMap.get(filter);
+            List<Url> filterUrlList = filterUrlMap.get(filter);
+
+            if (filterUrlList == null) {
+                filterUrlList = new ArrayList<Url>();
+            }
+
+            int filterCrawledPage = filterUrlList.size();
+
+            if (filterCrawledPage == filterMaxPageNum) {
+                /* 全量爬取完成后，删除全量爬取的URL，并把它记入URL历史表 */
+                deleteAll(crawledList);
+                mHistoryService.addAll(crawledList);
+            }
+
+        }
+        //数据更改结束============================================================================
+
     }
 
     public List<Url> findMonitorUrlList() {
@@ -207,5 +257,11 @@ public class UrlService {
      */
     public void resetStatus() {
         mUrlDao.resetStatus();
+    }
+
+    public void deleteAll(List<Url> urlList) {
+        for (Url url : urlList) {
+            mUrlDao.deleteByUrlMd5(url.urlMD5);
+        }
     }
 }

@@ -4,6 +4,8 @@ import org.springframework.stereotype.Repository;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.1
@@ -13,4 +15,5 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 @Repository
 public interface UrlHistoryDao extends BaseDao<Url> {
 
+    List<Url> findByAsin(String asin);
 }

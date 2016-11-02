@@ -90,4 +90,9 @@
         UPDATE spider_amazon_url SET sau_crawling = 0;
     </update>
 
+    <!-- 根据Url的Md5值删除单条Url -->
+    <delete id="deleteByUrlMd5">
+        DELETE FROM spider_amazon_url WHERE sau_url_md5 = #{0};
+    </delete>
+
 </mapper>
