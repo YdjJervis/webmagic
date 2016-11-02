@@ -95,7 +95,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         String title = reviewNode.xpath("//a[@data-hook='review-title']/text()").get();
         String reviewId = reviewNode.xpath("div/@id").get();
         String person = reviewNode.xpath("//a[@data-hook='review-author']/text()").get();
-        String personID = reviewNode.xpath("//a[@data-hook='review-author']/@href").regex(".*profile/(.{13}).*").get();
+        String personID = reviewNode.xpath("//a[@data-hook='review-author']/@href").regex("profile/([0-9a-zA-Z]*)").get();
         String time = reviewNode.xpath("//span[@data-hook='review-date']/text()").get();
         String version = reviewNode.xpath("//a[@data-hook='format-strip']/text()").get();
         String content = reviewNode.xpath("//span[@data-hook='review-body']/text()").get();

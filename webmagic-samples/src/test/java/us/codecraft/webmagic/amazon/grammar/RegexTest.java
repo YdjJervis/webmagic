@@ -16,8 +16,7 @@ public class RegexTest extends TestCase{
      */
     @Test
     public void testStart(){
-        Matcher matcher = Pattern.compile(".*-([0-5]).*").matcher("a-icon a-icon-star a-star-3 review-rating");
-
+        Matcher matcher = Pattern.compile("profile/([0-9a-zA-Z]*)").matcher("/gp/pdp/profile/A1W06A5NUGFBQU/ref=cm_cr_arp_d_pdp?ie=UTF8");
         if (matcher.find()) {
             System.out.println(matcher.group(1));
         }
