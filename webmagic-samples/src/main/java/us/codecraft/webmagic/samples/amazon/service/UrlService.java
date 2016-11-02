@@ -213,6 +213,13 @@ public class UrlService {
 
     }
 
+    /**
+     * 查询未在爬取中 & 监听爬取类型 & 离上次处理大于一定时间间隔 的记录。
+     * 1，其中时间间隔按照优先级大小+1后诚意300秒来计算的，eg：priority=0的，
+     * 5分钟会爬取监听一次；
+     * 2，记录已经按照爬取次数和优先级的升序排序了，这样就不会导致低优先级的
+     * ，高监听次数的永远再监听不到了。
+     */
     public List<Url> findMonitorUrlList() {
         return mUrlDao.findMonitorUrlList();
     }

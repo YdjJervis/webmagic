@@ -14,12 +14,12 @@
     </resultMap>
 
     <insert id="add" parameterType="Url">
-        insert into spider_amazon_url_history(sauh_url_md5,BAS_CODE,saa_asin,sauh_url,sauh_parent_url)
-        values(#{urlMD5},#{siteCode},#{saaAsin},#{url},#{parentUrl})
+        insert into spider_amazon_url_history(sauh_url_md5,BAS_CODE,saa_asin,sauh_url,sauh_parent_url,sauh_update_time)
+        values(#{urlMD5},#{siteCode},#{saaAsin},#{url},#{parentUrl},CURRENT_TIMESTAMP)
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
-        INSERT INTO spider_amazon_url_history(sauh_url_md5,BAS_CODE,saa_asin,sauh_url,sauh_parent_url)
+        INSERT INTO spider_amazon_url_history(sauh_url_md5,BAS_CODE,saa_asin,sauh_url,sauh_parent_url,sauh_update_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -27,7 +27,8 @@
             #{item.siteCode},
             #{item.saaAsin},
             #{item.url},
-            #{item.parentUrl}
+            #{item.parentUrl},
+            CURRENT_TIMESTAMP
             )
         </foreach>
     </insert>

@@ -14,8 +14,8 @@
 
     <!--添加到监控-->
     <insert id="add" parameterType="ReviewMonitor">
-        insert into spider_monitor_review(smr_review_id,smr_marked,smr_parsed,smr_priority)
-        values(#{smrReviewId},#{smrMarked},#{smrParsed},#{smrPriority})
+        insert into spider_monitor_review(smr_review_id,smr_marked,smr_parsed,smr_priority,smr_udpate_time)
+        values(#{smrReviewId},#{smrMarked},#{smrParsed},#{smrPriority},CURRENT_TIMESTAMP)
     </insert>
 
     <!--根据ReviewId查询记录-->

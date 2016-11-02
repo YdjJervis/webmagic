@@ -23,7 +23,8 @@
         sars_total_review,
         sars_total_page,
         sars_average_star,
-        sars_extra
+        sars_extra,
+        sars_update_time
         )
         VALUES
         (
@@ -32,7 +33,8 @@
         #{sarsTotalReview},
         #{sarsTotalPage},
         #{sarsAverageStar},
-        #{extra}
+        #{extra},
+        CURRENT_TIMESTAMP
         )
         ON DUPLICATE KEY UPDATE
         BAS_CODE=#{basCode},

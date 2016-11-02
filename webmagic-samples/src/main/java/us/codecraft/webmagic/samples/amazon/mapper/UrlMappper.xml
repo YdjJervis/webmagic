@@ -26,13 +26,13 @@
 
     <insert id="add" parameterType="Url">
         insert into spider_amazon_url(sau_url_md5,BAS_CODE,sau_type,saa_asin,sau_review_id,
-        sau_status,sau_crawling,sau_priority,sau_times,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
-        values(#{urlMD5},#{siteCode},#{type},#{saaAsin},#{sauReviewId},#{status},#{sauCrawling},#{priority},#{times},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra})
+        sau_status,sau_crawling,sau_priority,sau_times,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra,sau_update_time)
+        values(#{urlMD5},#{siteCode},#{type},#{saaAsin},#{sauReviewId},#{status},#{sauCrawling},#{priority},#{times},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra},CURRENT_TIMESTAMP)
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO spider_amazon_url(sau_url_md5,BAS_CODE,sau_type,saa_asin,sau_review_id,
-        sau_status,sau_crawling,sau_priority,sau_times,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra)
+        sau_status,sau_crawling,sau_priority,sau_times,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra,sau_update_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -44,7 +44,7 @@
             #{item.url},#{item.parentUrl},
             #{item.postParams},#{item.headers},
             #{item.cookies},#{item.otherParams},
-            #{item.extra}
+            #{item.extra},CURRENT_TIMESTAMP
             )
         </foreach>
     </insert>
@@ -60,17 +60,19 @@
 
     <!-- 根据ASIN码查询全量爬取的URL -->
     <select id="findByAsin" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 0;
+        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 0 AND CURRENT_TIMESTAMP - sau_update_time > (sau_priority + 1) * 20;
     </select>
 
     <!--查询某个ASIN更新爬取的URL列表-->
     <select id="findUpdateCrawl" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 2;
+        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 2 AND CURRENT_TIMESTAMP - sau_update_time > (sau_priority + 1) * 20;
     </select>
 
     <!--查询被监听的的URL列表-->
-    <select id="findMonitorUrlList" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE sau_type = 1 AND sau_crawling = 0 ORDER BY sau_times,sau_priority LIMIT 10;
+    <select id="findMonitorUrlList" resultMap="UrlResultMap" parameterType="int">
+        SELECT * FROM spider_amazon_url
+        WHERE sau_type = 1 AND sau_crawling = 0 AND CURRENT_TIMESTAMP - sau_update_time > (sau_priority + 1) * 20
+        ORDER BY sau_times,sau_priority LIMIT 10;
     </select>
 
     <delete id="delete" parameterType="int">

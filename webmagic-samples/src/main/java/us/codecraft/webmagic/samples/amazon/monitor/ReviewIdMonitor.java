@@ -1,6 +1,5 @@
 package us.codecraft.webmagic.samples.amazon.monitor;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,20 +57,23 @@ public class ReviewIdMonitor extends ParseMonitor {
         List<Url> urlList = new ArrayList<Url>();
 
         List<ReviewMonitor> monitorList = mMonitorService.findAll();
-        if (CollectionUtils.isNotEmpty(monitorList)) {
-            for (ReviewMonitor monitor : monitorList) {
-                Url url = new Url();
-                Review review = mReviewService.findByReviewId(monitor.smrReviewId);
-                Site site = mSiteService.find(review.basCode);
-                url.url = site.basSite + "/gp/customer-reviews/" + monitor.smrReviewId;
-                url.urlMD5 = UrlUtils.md5(url.url);
-                url.type = 1;
-                url.siteCode = site.basCode;
-                url.sauReviewId = monitor.smrReviewId;
-                url.priority = monitor.smrPriority;
+        for (ReviewMonitor monitor : monitorList) {
+            Url url = new Url();
+            Review review = mReviewService.findByReviewId(monitor.smrReviewId);
 
-                urlList.add(url);
+            if (review == null) {
+                continue;
             }
+
+            Site site = mSiteService.find(review.basCode);
+            url.url = site.basSite + "/gp/customer-reviews/" + monitor.smrReviewId;
+            url.urlMD5 = UrlUtils.md5(url.url);
+            url.type = 1;
+            url.siteCode = site.basCode;
+            url.sauReviewId = monitor.smrReviewId;
+            url.priority = monitor.smrPriority;
+
+            urlList.add(url);
         }
 
         sLogger.info("新添加的review的监听条数：" + urlList.size());
