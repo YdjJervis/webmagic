@@ -1,13 +1,13 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
-import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
-import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.Asin;
+import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 import java.util.ArrayList;
@@ -28,8 +28,7 @@ public class UrlService {
     private UrlDao mUrlDao;
     @Autowired
     private AsinService mAsinService;
-    @Autowired
-    private ReviewService mReviewService;
+
     @Autowired
     private UrlHistoryService mHistoryService;
 
@@ -71,7 +70,7 @@ public class UrlService {
     }
 
     /**
-     * @param type 抓取类型。0-抓Review
+     * @param type 抓取类型。0-全量爬取；1-监控Review；2-更新爬取
      * @return 状态码不为200的所有Url
      */
     public List<Url> find(int type) {
@@ -129,41 +128,15 @@ public class UrlService {
         }
 
         /*
-        * 如果 当前ASIN，URL列表集合数量 = 最大页码，表示已经爬取完毕了
+        * 如果 当前ASIN的URL列表集合数量 = 最大页码，表示已经爬取完毕了
         */
         mLogger.info("最大页码总数：" + maxPage + " 已经爬取的页码：" + crawledList.size());
         Asin asinObj = mAsinService.findByAsin(url.saaAsin);
         if (crawledList.size() == maxPage) {
-
             /*
             * 全量爬取完毕，把需要爬取星级的最后一条评论时间记录到extra字段，方便下次更新爬取的时候使用
             */
-            List<Review> reviewList = mReviewService.findLastReview(url.saaAsin);
-
-            /* 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取 */
-            List<StarReviewCount> srcList = mReviewService.findStarReviewCount(url.saaAsin);
-
-            /* List转Map */
-            Map<Integer, Integer> srcMap = new HashMap<Integer, Integer>();
-            for (StarReviewCount src : srcList) {
-                srcMap.put(src.star, src.count);
-            }
-
-            if (CollectionUtils.isNotEmpty(reviewList)) {
-                List<StarReviewMap> mapList = new ArrayList<StarReviewMap>();
-                for (Review review : reviewList) {
-                    StarReviewMap sRMap = new StarReviewMap(review.sarStar, review.sarReviewId);
-                    sRMap.reviewNum = srcMap.get(review.sarStar);
-                    mapList.add(sRMap);
-                }
-                asinObj.extra = new Gson().toJson(mapList);
-            }
-
-            /*
-            * 标记该ASIN为已经爬取完毕
-            */
-            mAsinService.updateStatus(asinObj, true);
-
+            mAsinService.updateAsinStat(asinObj);
         } else {
             float progress = 1.0f * crawledList.size() / maxPage;
             asinObj.saaProgress = progress > 1.0f ? 1.0f : progress;
@@ -240,8 +213,8 @@ public class UrlService {
             }
         }
 
-        /*删除后再检查一次更新爬取的Url是否为空，如果为空，就标记
-        该ASIN的更新爬取状态为0，表示可以继续下一次的更新爬取了*/
+        /* 删除后再检查一次更新爬取的Url是否为空，如果为空，就标记
+        该ASIN的更新爬取状态为0，表示可以继续下一次的更新爬取了 */
         if (CollectionUtils.isEmpty(findUpdateCrawl(asin))) {
             Asin byAsin = mAsinService.findByAsin(asin);
             byAsin.saaIsUpdatting = 0;

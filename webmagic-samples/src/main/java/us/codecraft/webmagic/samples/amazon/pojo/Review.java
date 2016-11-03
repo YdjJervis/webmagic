@@ -23,6 +23,10 @@ public class Review extends BasePojo {
      */
     public String saaAsin;
     /**
+     * 根ASIN
+     */
+    public String saaRootAsin;
+    /**
      * 评论者ID
      */
     public String sarPersonId;
@@ -74,6 +78,7 @@ public class Review extends BasePojo {
         return "Review{" +
                 "basCode='" + basCode + '\'' +
                 ", saaAsin='" + saaAsin + '\'' +
+                ", saaRootAsin='" + saaRootAsin + '\'' +
                 ", sarPersonId='" + sarPersonId + '\'' +
                 ", sarTime='" + sarTime + '\'' +
                 ", sarDealTime=" + sarDealTime +

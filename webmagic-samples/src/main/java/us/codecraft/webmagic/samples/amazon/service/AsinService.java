@@ -9,10 +9,13 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.AsinDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.StarReviewCount;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jervis
@@ -28,6 +31,9 @@ public class AsinService {
 
     @Autowired
     private UrlService mUrlService;
+
+    @Autowired
+    private ReviewService mReviewService;
 
     private Logger mLogger = Logger.getLogger(getClass());
 
@@ -128,13 +134,35 @@ public class AsinService {
         List<StarReviewMap> list = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarReviewMap>>() {
         }.getType());
 
-        if (CollectionUtils.isNotEmpty(list)) {
+        if (list == null) {
+            list = new ArrayList<StarReviewMap>();
+        }
+
+        /* 之前是否存在此星级的评论 */
+        boolean exist = false;
+
+        for (StarReviewMap map : list) {
+            if (map.star == star) {
+                exist = true;
+                break;
+            }
+        }
+
+        /* 1，存在，就更新数据；2，不存在，插入数据 */
+        if (exist) {
             for (StarReviewMap map : list) {
                 if (map.star == star) {
                     map.reviewID = review.sarReviewId;
+                    map.reviewNum++;
+                    break;
                 }
             }
+        } else {
+            StarReviewMap map = new StarReviewMap(review.sarStar, review.sarReviewId);
+            map.reviewNum = 1;
+            list.add(map);
         }
+
         byAsin.extra = new Gson().toJson(list);
         mAsinDao.update(byAsin);
     }
@@ -143,7 +171,7 @@ public class AsinService {
         mAsinDao.update(asin);
     }
 
-    public void updateAndDeleteUrl(String asinCode){
+    public void updateAndDeleteUrl(String asinCode) {
         mLogger.warn("该商品已经下架：" + asinCode);
 
         /*标记此ASIN为下架产品*/
@@ -288,6 +316,38 @@ public class AsinService {
             }
         }
         return list;
+    }
+
+    /**
+     * 1，更新extra字段的状态；
+     * 2，更新爬取完毕的状态。
+     */
+    public void updateAsinStat(Asin asin) {
+        List<Review> reviewList = mReviewService.findLastReview(asin.saaAsin);
+
+        /* 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取 */
+        List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin.saaAsin);
+
+        /* List转Map */
+        Map<Integer, Integer> srcMap = new HashMap<Integer, Integer>();
+        for (StarReviewCount src : srcList) {
+            srcMap.put(src.star, src.count);
+        }
+
+        if (CollectionUtils.isNotEmpty(reviewList)) {
+            List<StarReviewMap> mapList = new ArrayList<StarReviewMap>();
+            for (Review review : reviewList) {
+                StarReviewMap sRMap = new StarReviewMap(review.sarStar, review.sarReviewId);
+                sRMap.reviewNum = srcMap.get(review.sarStar);
+                mapList.add(sRMap);
+            }
+            asin.extra = new Gson().toJson(mapList);
+        }
+
+        /*
+        * 标记该ASIN为已经爬取完毕
+        */
+        updateStatus(asin, true);
     }
 
     private static final class Filter {

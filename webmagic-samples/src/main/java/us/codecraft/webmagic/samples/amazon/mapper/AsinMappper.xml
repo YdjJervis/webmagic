@@ -69,12 +69,12 @@
         WHERE asin.saa_asin = #{0}
     </select>
 
-    <!--查询全量爬取已经完毕的ASIN-->
+    <!--查询全量爬取已经完毕的ASIN，7200为两小时，优先级为0的ASIN两小时更新爬取一次-->
     <select id="findCrawledAll" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
         INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
-        WHERE saa_progress = 1 AND saa_is_updatting = 0 AND saa_on_sale = 1;
+        WHERE saa_progress = 1 AND saa_is_updatting = 0 AND saa_on_sale = 1 AND CURRENT_TIMESTAMP - saa_update_time > (saa_priority + 1) * 7200;
     </select>
 
 </mapper>

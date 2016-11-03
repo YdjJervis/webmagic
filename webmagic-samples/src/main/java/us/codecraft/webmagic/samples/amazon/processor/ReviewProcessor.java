@@ -31,6 +31,8 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     @Override
     protected void dealReview(Page page) {
 
+        intercept(page);
+
         String currentUrl = page.getUrl().get();
 
         List<Selectable> reviewNodeList = extractReviewNodeList(page);
@@ -53,30 +55,50 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         /* 当前URL没有pageNumber属性的话 */
         if (StringUtils.isEmpty(UrlUtils.getValue(currentUrl, "pageNumber"))) {
 
-            List<String> pageUrlList = page.getHtml().xpath("//li[@class='page-button']/a/@href").all();
-
             List<Url> urlList = new ArrayList<Url>();
 
-            if (CollectionUtils.isNotEmpty(pageUrlList)) {
+            /* 说明是评论第一页，就根据最大页码拼装所有评论的页码 */
+            int totalPage = getTotalPage(page);
+            sLogger.info(asin + " 评论的最大页码为 " + totalPage);
+            for (int i = 2; i <= totalPage; i++) {
+                Url url = new Url();
+                url.siteCode = siteCode;
+                url.saaAsin = asin;
+                url.parentUrl = currentUrl;
+                url.url = UrlUtils.setValue(currentUrl, "pageNumber", String.valueOf(i));
+                url.urlMD5 = UrlUtils.md5(url.url);
 
-                /* 说明是评论第一页，就根据最大页码拼装所有评论的页码 */
-                String lastPageUrl = pageUrlList.get(pageUrlList.size() - 1);
-                int totalPage = Integer.valueOf(UrlUtils.getValue(lastPageUrl, "pageNumber"));
-                sLogger.info(asin + " 评论的最大页码为 " + totalPage);
-                for (int i = 2; i <= totalPage; i++) {
-                    Url url = new Url();
-                    url.siteCode = siteCode;
-                    url.saaAsin = asin;
-                    url.parentUrl = currentUrl;
-                    url.url = UrlUtils.setValue(currentUrl, "pageNumber", String.valueOf(i));
-                    url.urlMD5 = UrlUtils.md5(url.url);
-
-                    urlList.add(url);
-                }
+                urlList.add(url);
             }
 
-            mUrlService.addAll(urlList);
+            if (CollectionUtils.isNotEmpty(urlList)) {
+                mUrlService.addAll(urlList);
+            }
         }
+    }
+
+    /**
+     * 获取最大翻页数
+     */
+    int getTotalPage(Page page) {
+        List<String> pageUrlList = page.getHtml().xpath("//li[@class='page-button']/a/@href").all();
+        if (pageUrlList.size() == 0) {
+            return 1;
+        }
+        String lastPageUrl = pageUrlList.get(pageUrlList.size() - 1);
+        return Integer.valueOf(UrlUtils.getValue(lastPageUrl, "pageNumber"));
+    }
+
+    /**
+     * 拦截解析。
+     * 1，判断页面的rootAsin是否已经存在ASIN列表中了；
+     * 2，如果在列表中，就停止该ASIN的爬取；
+     * 3，标记ASIN的rootAsin是什么，然后删除爬取队列中的URL。
+     */
+    private boolean intercept(Page page) {
+
+
+        return false;
     }
 
     /**
@@ -124,8 +146,14 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     public void updateUrlStatus(Page page) {
         sLogger.info("更新Url爬取状态...");
         super.updateUrlStatus(page);
-        Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
-        mUrlService.updateAsinCrawledAll(url);
+        if (isCrawlAll()) {
+            Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
+            mUrlService.updateAsinCrawledAll(url);
+        }
+    }
+
+    boolean isCrawlAll() {
+        return true;
     }
 
     @Override

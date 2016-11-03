@@ -1,6 +1,5 @@
 package us.codecraft.webmagic.samples.amazon.monitor;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
@@ -34,11 +33,9 @@ public class AsinParseMonitor extends ParseMonitor {
         mUrlService.addAll(urlList);
 
         sLogger.info("更新ASIN状态...更新数量：" + urlList.size());
-        if (CollectionUtils.isNotEmpty(urlList)) {
-            for (Url url : urlList) {
-                if (url.asin != null) {
-                    mAsinService.updateStatus(url.asin, false);
-                }
+        for (Url url : urlList) {
+            if (url.asin != null) {
+                mAsinService.updateStatus(url.asin, false);
             }
         }
     }
@@ -56,44 +53,43 @@ public class AsinParseMonitor extends ParseMonitor {
 
         List<Url> urlList = new ArrayList<Url>();
 
-        if (CollectionUtils.isNotEmpty(asinList)) {
-            for (Asin asin : asinList) {
+        for (Asin asin : asinList) {
 
-                /* 如果当前站点设置了不可爬取，直接进入下一个循环 */
-                if (asin.site.basCrawl != 1) {
-                    continue;
+            /* 如果当前站点设置了不可爬取，直接进入下一个循环 */
+            if (asin.site.basCrawl != 1) {
+                continue;
+            }
+
+            List<String> filterList;
+
+            /* 更新爬取和全量爬取的过滤器生成策略是不同的 */
+            if (isCrawlAll) {
+                filterList = mAsinService.getFilterWords(asin.saaStar);
+            } else {
+                filterList = mAsinService.getUpdateFilters(asin.saaStar);
+            }
+            sLogger.debug("过滤器列表：" + filterList);
+
+            for (String filter : filterList) {
+
+                Url url = new Url();
+                url.url = asin.site.basSite + "/" + Review.PRODUCT_REVIEWS + "/" + asin.saaAsin;
+                /* 为Url添加过滤器 */
+                url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
+                url.urlMD5 = UrlUtils.md5(url.url);
+                url.siteCode = asin.site.basCode;
+                url.asin = asin;
+                url.priority = asin.saaPriority;
+                url.type = 0;
+
+                /* 如果是更新爬取，他的url类型为2 */
+                if (!isCrawlAll) {
+                    url.type = 2;
                 }
 
-                List<String> filterList;
-                /*更新爬取和全量爬取的过滤器生成策略是不同的*/
-                if (isCrawlAll) {
-                    filterList = mAsinService.getFilterWords(asin.saaStar);
-                } else {
-                    filterList = mAsinService.getUpdateFilters(asin.saaStar);
-                }
-                sLogger.debug("过滤器列表：" + filterList);
+                url.saaAsin = asin.saaAsin;
 
-                for (String filter : filterList) {
-
-                    Url url = new Url();
-                    url.url = asin.site.basSite + "/" + Review.PRODUCT_REVIEWS + "/" + asin.saaAsin;
-                    /*为Url添加过滤器*/
-                    url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
-                    url.urlMD5 = UrlUtils.md5(url.url);
-                    url.siteCode = asin.site.basCode;
-                    url.asin = asin;
-                    url.priority = asin.saaPriority;
-                    url.type = 0;
-
-                    /*如果是更新爬取，他的url类型为2*/
-                    if (!isCrawlAll) {
-                        url.type = 2;
-                    }
-
-                    url.saaAsin = asin.saaAsin;
-
-                    urlList.add(url);
-                }
+                urlList.add(url);
             }
         }
 

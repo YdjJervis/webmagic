@@ -48,7 +48,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
             List<StarReviewMap> starReviewMapList = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarReviewMap>>() {
             }.getType());
 
-            /*是否需要爬取下一页，默认是需要的*/
+            /* 是否需要爬取下一页，默认是需要的 */
             boolean needCrawlNextPage = true;
             List<Review> reviewList = new ArrayList<Review>();
             for (int i = 0, len = reviewNodeList.size(); i < len; ++i) {
@@ -59,7 +59,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                 if (CollectionUtils.isNotEmpty(starReviewMapList)) {
                     for (StarReviewMap map : starReviewMapList) {
                         if (review.sarStar == map.star && review.sarReviewId.equals(map.reviewID)) {
-                            /*如果当前页面有一条评论，跟上一次爬取的评论的某星级的最后一条评论的星级相同，日期也相同，代表是
+                            /* 如果当前页面有一条评论，跟上一次爬取的评论的某星级的最后一条评论的星级相同，评论ID也相同，代表是
                             * 同一条评论，那么就不需要再爬取下一页了*/
                             needCrawlNextPage = false;
                         }
@@ -68,9 +68,9 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
                 reviewList.add(review);
 
-                /*如果页码为空(如果是更新爬取的首页) && 是第一条评论*/
+                /* 如果页码为空(如果是更新爬取的首页) && 是第一条评论 */
                 if (StringUtils.isEmpty(UrlUtils.getValue(page.getUrl().get(), "pageNumber")) && i == 0) {
-                    /*把asin的extra字段对应星级的时间更改成最新的评论时间*/
+                    /* 把asin的extra字段对应星级的时间更改成最新的评论时间 */
                     mAsinService.updateAsinExtra(asin, review, UrlUtils.getValue(page.getUrl().get(), "filterByStar"));
                 }
             }
@@ -82,22 +82,32 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                 if (StringUtils.isEmpty(pageNum)) {
                     pageNum = "1";
                 }
+
+                int nextPageNum = Integer.valueOf(pageNum) + 1;
+
+                /* 如果拼凑的页码比实际页面中的页码大了，说明没必要继续生成翻页URL了 */
+                if (nextPageNum > getTotalPage(page)) {
+                    mAsinService.updateAsinStat(byAsin);
+                    mUrlService.deleteUpdateCrawl(asin, UrlUtils.getValue(page.getUrl().get(), "filterByStar"));
+                    return;
+                }
+
                 /*对URL的页码加 1 */
-                String newUrl = UrlUtils.setValue(page.getUrl().get(), "pageNumber", String.valueOf(Integer.valueOf(pageNum) + 1));
+                String newUrl = UrlUtils.setValue(page.getUrl().get(), "pageNumber", String.valueOf(nextPageNum));
 
                 /*把新的Url放进爬取队列*/
                 Url url = new Url();
-                url.siteCode = siteCode;
                 url.saaAsin = asin;
                 url.parentUrl = page.getUrl().get();
                 url.url = newUrl;
-                url.url = UrlUtils.md5(newUrl);
+                url.urlMD5 = UrlUtils.md5(newUrl);
+                url.siteCode = siteCode;
+                url.type = 2;
 
                 mUrlService.add(url);
             } else {
-                /*不需要继续翻页，代表该星级的更新爬取已经完成，就删除该星级的Url*/
-                String filter = UrlUtils.getValue(page.getUrl().get(), "filterByStar");
-                mUrlService.deleteUpdateCrawl(asin, filter);
+                /* 不需要继续翻页，代表该星级的更新爬取已经完成，就删除该星级的Url */
+                mUrlService.deleteUpdateCrawl(asin, UrlUtils.getValue(page.getUrl().get(), "filterByStar"));
             }
         }
     }
@@ -107,5 +117,12 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         sLogger.info("开始执行更新爬取...");
         List<Url> urlList = mUrlService.find(2);
         startToCrawl(urlList);
+    }
+
+    @Override
+    boolean isCrawlAll() {
+        /* 不是全量爬取，就不需要更新爬取进度，因为本来
+        就不知道到底要翻第几页才知道更新爬取完成了 */
+        return false;
     }
 }

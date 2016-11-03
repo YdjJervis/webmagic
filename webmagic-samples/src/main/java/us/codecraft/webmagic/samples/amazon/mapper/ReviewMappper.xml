@@ -6,6 +6,7 @@
     <resultMap id="ReviewResultMap" type="Review">
         <result property="basCode" column="BAS_CODE"/>
         <result property="saaAsin" column="saa_asin"/>
+        <result property="saaRootAsin" column="saa_root_asin"/>
         <result property="sarPersonId" column="sar_person_id"/>
         <result property="sarTime" column="sar_time"/>
         <result property="sarDealTime" column="sar_deal_time"/>

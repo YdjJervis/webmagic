@@ -34,4 +34,13 @@ public class GsonTest extends TestCase {
         System.out.println(stat);
     }
 
+    @Test
+    public void test2ObjectList() {
+        List<RequestStat> statList = new Gson().fromJson("",new TypeToken<List<RequestStat>>(){}.getType());
+        for (RequestStat stat : statList) {
+            System.out.println(stat);
+        }
+        System.out.println(statList);
+    }
+
 }
