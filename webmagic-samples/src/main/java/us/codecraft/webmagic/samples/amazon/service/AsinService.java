@@ -1,8 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +24,8 @@ import java.util.Map;
 @Service
 public class AsinService {
 
+    private Logger mLogger = Logger.getLogger(getClass());
+
     @Autowired
     private AsinDao mAsinDao;
 
@@ -34,8 +34,6 @@ public class AsinService {
 
     @Autowired
     private ReviewService mReviewService;
-
-    private Logger mLogger = Logger.getLogger(getClass());
 
     /**
      * 把String数组转换成Int数组
@@ -122,49 +120,27 @@ public class AsinService {
         return mAsinDao.findCrawledAll();
     }
 
-    public void updateAsinExtra(String asin, Review review, String filter) {
-        int star;
-        if (Filter.START_1.equals(filter)) star = 1;
-        else if (Filter.START_2.equals(filter)) star = 2;
-        else if (Filter.START_3.equals(filter)) star = 3;
-        else if (Filter.START_4.equals(filter)) star = 4;
-        else star = 5;
+    public void updateExtra(Asin asin) {
+    /* 全量爬取完毕，把需要爬取星级的最后一条评论时间记录到extra字段，方便下次更新爬取的时候使用 */
+        List<Review> reviewList = mReviewService.findLastReview(asin.saaAsin);
 
-        Asin byAsin = mAsinDao.findByAsin(asin);
-        List<StarReviewMap> list = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarReviewMap>>() {
-        }.getType());
+            /* 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取 */
+        List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin.saaAsin);
 
-        if (list == null) {
-            list = new ArrayList<StarReviewMap>();
+            /* List转Map */
+        Map<Integer, Integer> srcMap = new HashMap<Integer, Integer>();
+        for (StarReviewCount src : srcList) {
+            srcMap.put(src.star, src.count);
         }
 
-        /* 之前是否存在此星级的评论 */
-        boolean exist = false;
-
-        for (StarReviewMap map : list) {
-            if (map.star == star) {
-                exist = true;
-                break;
-            }
+        List<StarReviewMap> mapList = new ArrayList<StarReviewMap>();
+        for (Review review : reviewList) {
+            StarReviewMap sRMap = new StarReviewMap(review.sarStar, review.sarReviewId);
+            sRMap.reviewNum = srcMap.get(review.sarStar);
+            mapList.add(sRMap);
         }
-
-        /* 1，存在，就更新数据；2，不存在，插入数据 */
-        if (exist) {
-            for (StarReviewMap map : list) {
-                if (map.star == star) {
-                    map.reviewID = review.sarReviewId;
-                    map.reviewNum++;
-                    break;
-                }
-            }
-        } else {
-            StarReviewMap map = new StarReviewMap(review.sarStar, review.sarReviewId);
-            map.reviewNum = 1;
-            list.add(map);
-        }
-
-        byAsin.extra = new Gson().toJson(list);
-        mAsinDao.update(byAsin);
+        asin.extra = new Gson().toJson(mapList);
+        update(asin);
     }
 
     public void update(Asin asin) {
@@ -190,99 +166,99 @@ public class AsinService {
         List<String> filterList = new ArrayList<String>();
 
         if ("0-0-0-0-1".equals(star)) {//抓一星
-            filterList.add(Filter.START_1);
+            filterList.add(Filter.STAR_1);
         } else if ("0-0-0-1-0".equals(star)) {//抓二星
-            filterList.add(Filter.START_2);
+            filterList.add(Filter.STAR_2);
         } else if ("0-0-1-0-0".equals(star)) {//抓三星
-            filterList.add(Filter.START_3);
+            filterList.add(Filter.STAR_3);
         } else if ("0-1-0-0-0".equals(star)) {//抓四星
-            filterList.add(Filter.START_4);
+            filterList.add(Filter.STAR_4);
         } else if ("1-0-0-0-0".equals(star)) {//抓五星
-            filterList.add(Filter.START_5);
+            filterList.add(Filter.STAR_5);
         } else if ("0-0-1-1-1".equals(star)) {//抓123星
-            filterList.add(Filter.START_BAD);
+            filterList.add(Filter.STAR_BAD);
         } else if ("1-1-0-0-0".equals(star)) {//抓45星
-            filterList.add(Filter.START_GOOD);
+            filterList.add(Filter.STAR_GOOD);
         } else if ("0-0-0-1-1".equals(star)) {//抓12星
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_2);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_2);
         } else if ("0-0-1-0-1".equals(star)) {//抓13星
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_3);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_3);
         } else if ("0-1-0-0-1".equals(star)) {//抓14星
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_4);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_4);
         } else if ("1-0-0-0-1".equals(star)) {//抓15星
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_5);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_5);
         } else if ("0-0-1-1-0".equals(star)) {//抓23
-            filterList.add(Filter.START_2);
-            filterList.add(Filter.START_3);
+            filterList.add(Filter.STAR_2);
+            filterList.add(Filter.STAR_3);
         } else if ("0-1-0-1-0".equals(star)) {//抓24
-            filterList.add(Filter.START_2);
-            filterList.add(Filter.START_4);
+            filterList.add(Filter.STAR_2);
+            filterList.add(Filter.STAR_4);
         } else if ("1-0-0-1-0".equals(star)) {//抓25
-            filterList.add(Filter.START_2);
-            filterList.add(Filter.START_5);
+            filterList.add(Filter.STAR_2);
+            filterList.add(Filter.STAR_5);
         } else if ("0-1-1-0-0".equals(star)) {//抓34
-            filterList.add(Filter.START_3);
-            filterList.add(Filter.START_4);
+            filterList.add(Filter.STAR_3);
+            filterList.add(Filter.STAR_4);
         } else if ("1-0-1-0-0".equals(star)) {//抓35
-            filterList.add(Filter.START_3);
-            filterList.add(Filter.START_5);
+            filterList.add(Filter.STAR_3);
+            filterList.add(Filter.STAR_5);
         } else if ("1-1-1-0-0".equals(star)) {//抓好3
-            filterList.add(Filter.START_GOOD);
-            filterList.add(Filter.START_3);
+            filterList.add(Filter.STAR_GOOD);
+            filterList.add(Filter.STAR_3);
         } else if ("1-1-0-1-0".equals(star)) {//抓好2
-            filterList.add(Filter.START_GOOD);
-            filterList.add(Filter.START_2);
+            filterList.add(Filter.STAR_GOOD);
+            filterList.add(Filter.STAR_2);
         } else if ("1-1-0-0-1".equals(star)) {//抓好1
-            filterList.add(Filter.START_GOOD);
-            filterList.add(Filter.START_1);
+            filterList.add(Filter.STAR_GOOD);
+            filterList.add(Filter.STAR_1);
         } else if ("1-0-1-1-0".equals(star)) {//抓235
-            filterList.add(Filter.START_2);
-            filterList.add(Filter.START_3);
-            filterList.add(Filter.START_5);
+            filterList.add(Filter.STAR_2);
+            filterList.add(Filter.STAR_3);
+            filterList.add(Filter.STAR_5);
         } else if ("0-1-1-1-0".equals(star)) {//抓234
-            filterList.add(Filter.START_2);
-            filterList.add(Filter.START_3);
-            filterList.add(Filter.START_4);
+            filterList.add(Filter.STAR_2);
+            filterList.add(Filter.STAR_3);
+            filterList.add(Filter.STAR_4);
         } else if ("1-0-1-0-1".equals(star)) {//抓135
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_3);
-            filterList.add(Filter.START_5);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_3);
+            filterList.add(Filter.STAR_5);
         } else if ("0-1-1-0-1".equals(star)) {//抓134
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_3);
-            filterList.add(Filter.START_4);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_3);
+            filterList.add(Filter.STAR_4);
         } else if ("1-0-0-1-1".equals(star)) {//抓125
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_2);
-            filterList.add(Filter.START_5);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_2);
+            filterList.add(Filter.STAR_5);
         } else if ("0-1-0-1-1".equals(star)) {//抓124
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_2);
-            filterList.add(Filter.START_4);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_2);
+            filterList.add(Filter.STAR_4);
         } else if ("1-1-1-1-0".equals(star)) {//抓23好
-            filterList.add(Filter.START_2);
-            filterList.add(Filter.START_3);
-            filterList.add(Filter.START_GOOD);
+            filterList.add(Filter.STAR_2);
+            filterList.add(Filter.STAR_3);
+            filterList.add(Filter.STAR_GOOD);
         } else if ("1-1-1-0-1".equals(star)) {//抓13好
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_3);
-            filterList.add(Filter.START_GOOD);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_3);
+            filterList.add(Filter.STAR_GOOD);
         } else if ("1-1-0-1-1".equals(star)) {//抓12好
-            filterList.add(Filter.START_2);
-            filterList.add(Filter.START_1);
-            filterList.add(Filter.START_GOOD);
+            filterList.add(Filter.STAR_2);
+            filterList.add(Filter.STAR_1);
+            filterList.add(Filter.STAR_GOOD);
         } else if ("1-0-1-1-1".equals(star)) {//抓5差
-            filterList.add(Filter.START_5);
-            filterList.add(Filter.START_BAD);
+            filterList.add(Filter.STAR_5);
+            filterList.add(Filter.STAR_BAD);
         } else if ("0-1-1-1-1".equals(star)) {//抓4差
-            filterList.add(Filter.START_4);
-            filterList.add(Filter.START_BAD);
+            filterList.add(Filter.STAR_4);
+            filterList.add(Filter.STAR_BAD);
         } else {//抓全部
-            filterList.add(Filter.START_ALL);
+            filterList.add(Filter.STAR_ALL);
         }
 
         //mLogger.info("当前过滤器集合为：" + filterList);
@@ -302,15 +278,15 @@ public class AsinService {
             if ("1".equals(starsArray[i])) {
                 String filter;
                 if (i == 0) {
-                    filter = Filter.START_5;
+                    filter = Filter.STAR_5;
                 } else if (i == 1) {
-                    filter = Filter.START_4;
+                    filter = Filter.STAR_4;
                 } else if (i == 2) {
-                    filter = Filter.START_3;
+                    filter = Filter.STAR_3;
                 } else if (i == 3) {
-                    filter = Filter.START_2;
+                    filter = Filter.STAR_2;
                 } else {
-                    filter = Filter.START_1;
+                    filter = Filter.STAR_1;
                 }
                 list.add(filter);
             }
@@ -319,48 +295,23 @@ public class AsinService {
     }
 
     /**
-     * 1，更新extra字段的状态；
-     * 2，更新爬取完毕的状态。
+     * 把所有在更新爬取的URL状态修改为未在更新爬取
      */
-    public void updateAsinStat(Asin asin) {
-        List<Review> reviewList = mReviewService.findLastReview(asin.saaAsin);
-
-        /* 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取 */
-        List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin.saaAsin);
-
-        /* List转Map */
-        Map<Integer, Integer> srcMap = new HashMap<Integer, Integer>();
-        for (StarReviewCount src : srcList) {
-            srcMap.put(src.star, src.count);
-        }
-
-        if (CollectionUtils.isNotEmpty(reviewList)) {
-            List<StarReviewMap> mapList = new ArrayList<StarReviewMap>();
-            for (Review review : reviewList) {
-                StarReviewMap sRMap = new StarReviewMap(review.sarStar, review.sarReviewId);
-                sRMap.reviewNum = srcMap.get(review.sarStar);
-                mapList.add(sRMap);
-            }
-            asin.extra = new Gson().toJson(mapList);
-        }
-
-        /*
-        * 标记该ASIN为已经爬取完毕
-        */
-        updateStatus(asin, true);
+    public void resetUpdating() {
+        mAsinDao.resetUpdating();
     }
 
     private static final class Filter {
 
-        private static final String START_1 = "one_star";
-        private static final String START_2 = "two_star";
-        private static final String START_3 = "three_star";
-        private static final String START_4 = "four_star";
-        private static final String START_5 = "five_star";
+        private static final String STAR_1 = "one_star";
+        private static final String STAR_2 = "two_star";
+        private static final String STAR_3 = "three_star";
+        private static final String STAR_4 = "four_star";
+        private static final String STAR_5 = "five_star";
 
-        private static final String START_GOOD = "positive";
-        private static final String START_BAD = "critical";
-        private static final String START_ALL = "all";
+        private static final String STAR_GOOD = "positive";
+        private static final String STAR_BAD = "critical";
+        private static final String STAR_ALL = "all";
 
     }
 

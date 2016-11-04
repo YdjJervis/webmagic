@@ -44,4 +44,8 @@ public interface UrlDao extends BaseDao<Url> {
 
     void deleteByUrlMd5(String urlMd5);
 
+    /**
+     * @param type 0-全量；1-监听；2-更新
+     */
+    void deleteByType(int type);
 }

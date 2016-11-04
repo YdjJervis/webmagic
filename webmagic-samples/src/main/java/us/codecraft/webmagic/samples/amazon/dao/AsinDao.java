@@ -23,4 +23,6 @@ public interface AsinDao extends BaseDao<Asin> {
      * @return 爬取进度为1的Asin列表
      */
     List<Asin> findCrawledAll();
+
+    void resetUpdating();
 }

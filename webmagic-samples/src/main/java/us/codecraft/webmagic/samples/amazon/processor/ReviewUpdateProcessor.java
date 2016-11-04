@@ -17,7 +17,9 @@ import us.codecraft.webmagic.samples.base.util.UrlUtils;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jervis
@@ -35,80 +37,74 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
     @Override
     protected void dealReview(Page page) {
-        if (page.getUrl().get().contains(Review.PRODUCT_REVIEWS)) {
 
-            List<Selectable> reviewNodeList = extractReviewNodeList(page);
+        String filter = UrlUtils.getValue(page.getUrl().get(), "filterByStar");
 
-            String asin = extractAsin(page);
-            String siteCode = extractSite(page).basCode;
+        List<Selectable> reviewNodeList = extractReviewNodeList(page);
 
-            sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
+        String asin = extractAsin(page);
+        String siteCode = extractSite(page).basCode;
 
-            Asin byAsin = mAsinService.findByAsin(asin);
-            List<StarReviewMap> starReviewMapList = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarReviewMap>>() {
-            }.getType());
+        sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 
-            /* 是否需要爬取下一页，默认是需要的 */
-            boolean needCrawlNextPage = true;
-            List<Review> reviewList = new ArrayList<Review>();
-            for (int i = 0, len = reviewNodeList.size(); i < len; ++i) {
-                Selectable reviewNode = reviewNodeList.get(i);
+        Asin byAsin = mAsinService.findByAsin(asin);
+        List<StarReviewMap> starReviewMapList = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarReviewMap>>() {
+        }.getType());
 
-                Review review = extractReviewItem(siteCode, asin, reviewNode);
-
-                if (CollectionUtils.isNotEmpty(starReviewMapList)) {
-                    for (StarReviewMap map : starReviewMapList) {
-                        if (review.sarStar == map.star && review.sarReviewId.equals(map.reviewID)) {
-                            /* 如果当前页面有一条评论，跟上一次爬取的评论的某星级的最后一条评论的星级相同，评论ID也相同，代表是
-                            * 同一条评论，那么就不需要再爬取下一页了*/
-                            needCrawlNextPage = false;
-                        }
-                    }
-                }
-
-                reviewList.add(review);
-
-                /* 如果页码为空(如果是更新爬取的首页) && 是第一条评论 */
-                if (StringUtils.isEmpty(UrlUtils.getValue(page.getUrl().get(), "pageNumber")) && i == 0) {
-                    /* 把asin的extra字段对应星级的时间更改成最新的评论时间 */
-                    mAsinService.updateAsinExtra(asin, review, UrlUtils.getValue(page.getUrl().get(), "filterByStar"));
-                }
+        /* 把所有星级评论的ID加入Set集合 */
+        Set<String> lastReviewSet = new HashSet<String>();
+        if (CollectionUtils.isNotEmpty(starReviewMapList)) {
+            for (StarReviewMap map : starReviewMapList) {
+                lastReviewSet.add(map.reviewID);
             }
-            mReviewService.addAll(reviewList);
+        }
 
-            if (needCrawlNextPage) {
-                /*提取页码，若为空，就设置成 1 */
-                String pageNum = UrlUtils.getValue(page.getUrl().get(), "pageNumber");
-                if (StringUtils.isEmpty(pageNum)) {
-                    pageNum = "1";
-                }
+        /* 是否需要爬取下一页，默认是需要的 */
+        boolean needCrawlNextPage = true;
 
-                int nextPageNum = Integer.valueOf(pageNum) + 1;
+        List<Review> reviewList = new ArrayList<Review>();
+        for (Selectable reviewNode : reviewNodeList) {
 
-                /* 如果拼凑的页码比实际页面中的页码大了，说明没必要继续生成翻页URL了 */
-                if (nextPageNum > getTotalPage(page)) {
-                    mAsinService.updateAsinStat(byAsin);
-                    mUrlService.deleteUpdateCrawl(asin, UrlUtils.getValue(page.getUrl().get(), "filterByStar"));
-                    return;
-                }
+            Review review = extractReviewItem(siteCode, asin, reviewNode);
+            if (lastReviewSet.contains(review.sarReviewId)) {
+                needCrawlNextPage = false;
+                break;
+            }
+            reviewList.add(review);
+        }
+        mReviewService.addAll(reviewList);
 
-                /*对URL的页码加 1 */
-                String newUrl = UrlUtils.setValue(page.getUrl().get(), "pageNumber", String.valueOf(nextPageNum));
+        if (needCrawlNextPage) {
+            /* 提取页码，若为空，就设置成 1 */
+            String pageNum = UrlUtils.getValue(page.getUrl().get(), "pageNumber");
+            pageNum = StringUtils.isEmpty(pageNum) ? "1" : pageNum;
 
-                /*把新的Url放进爬取队列*/
+            int currentPage = Integer.valueOf(pageNum);
+            int totalPage = extractTotalPage(page);
+
+            if (currentPage < totalPage) {
+
+                /* 对URL的页码加 1 */
+                String nextPageUrl = UrlUtils.setValue(page.getUrl().get(), "pageNumber", String.valueOf(currentPage + 1));
+
+                /* 把新的Url放进爬取队列 */
                 Url url = new Url();
                 url.saaAsin = asin;
                 url.parentUrl = page.getUrl().get();
-                url.url = newUrl;
-                url.urlMD5 = UrlUtils.md5(newUrl);
+                url.url = nextPageUrl;
+                url.urlMD5 = UrlUtils.md5(nextPageUrl);
                 url.siteCode = siteCode;
                 url.type = 2;
 
                 mUrlService.add(url);
             } else {
-                /* 不需要继续翻页，代表该星级的更新爬取已经完成，就删除该星级的Url */
-                mUrlService.deleteUpdateCrawl(asin, UrlUtils.getValue(page.getUrl().get(), "filterByStar"));
+                needCrawlNextPage = false;
             }
+        }
+
+        if (!needCrawlNextPage) {
+            /* 不需要继续翻页，代表该星级的更新爬取已经完成，就删除该星级的Url */
+            mUrlService.deleteUpdateCrawl(asin, filter);
         }
     }
 
@@ -119,10 +115,4 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         startToCrawl(urlList);
     }
 
-    @Override
-    boolean isCrawlAll() {
-        /* 不是全量爬取，就不需要更新爬取进度，因为本来
-        就不知道到底要翻第几页才知道更新爬取完成了 */
-        return false;
-    }
 }

@@ -1,6 +1,5 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     @Override
     protected void dealReview(Page page) {
 
-        intercept(page);
-
         String currentUrl = page.getUrl().get();
 
         List<Selectable> reviewNodeList = extractReviewNodeList(page);
@@ -57,8 +54,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
             List<Url> urlList = new ArrayList<Url>();
 
-            /* 说明是评论第一页，就根据最大页码拼装所有评论的页码 */
-            int totalPage = getTotalPage(page);
+            int totalPage = extractTotalPage(page);
             sLogger.info(asin + " 评论的最大页码为 " + totalPage);
             for (int i = 2; i <= totalPage; i++) {
                 Url url = new Url();
@@ -71,34 +67,24 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
                 urlList.add(url);
             }
 
-            if (CollectionUtils.isNotEmpty(urlList)) {
-                mUrlService.addAll(urlList);
-            }
+            mUrlService.addAll(urlList);
         }
+
+        upgradeCrawlStatus(page);
     }
 
     /**
-     * 获取最大翻页数
+     * @return 抽取的最大页码
      */
-    int getTotalPage(Page page) {
+    int extractTotalPage(Page page) {
         List<String> pageUrlList = page.getHtml().xpath("//li[@class='page-button']/a/@href").all();
         if (pageUrlList.size() == 0) {
             return 1;
         }
+
+        /* 说明是评论第一页，就根据最大页码拼装所有评论的页码 */
         String lastPageUrl = pageUrlList.get(pageUrlList.size() - 1);
         return Integer.valueOf(UrlUtils.getValue(lastPageUrl, "pageNumber"));
-    }
-
-    /**
-     * 拦截解析。
-     * 1，判断页面的rootAsin是否已经存在ASIN列表中了；
-     * 2，如果在列表中，就停止该ASIN的爬取；
-     * 3，标记ASIN的rootAsin是什么，然后删除爬取队列中的URL。
-     */
-    private boolean intercept(Page page) {
-
-
-        return false;
     }
 
     /**
@@ -140,20 +126,14 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     }
 
     /**
-     * 1，更新Url的爬取状态
-     * 2，更新ASIN的爬取进度状态
+     * 如果ASIN爬取结束
+     * 1，更新URL列表，历史URL列表
+     * 2，更新ASIN表状态
      */
-    public void updateUrlStatus(Page page) {
+    private void upgradeCrawlStatus(Page page) {
         sLogger.info("更新Url爬取状态...");
-        super.updateUrlStatus(page);
-        if (isCrawlAll()) {
-            Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
-            mUrlService.updateAsinCrawledAll(url);
-        }
-    }
-
-    boolean isCrawlAll() {
-        return true;
+        Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
+        mUrlService.updateAsinCrawledAll(url);
     }
 
     @Override

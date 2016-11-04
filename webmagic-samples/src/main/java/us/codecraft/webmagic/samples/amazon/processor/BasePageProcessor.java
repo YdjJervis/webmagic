@@ -62,6 +62,8 @@ public class BasePageProcessor implements PageProcessor {
     public synchronized void process(Page page) {
         sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
 
+        updateUrlStatus(page);
+
         if (isPage404(page)) {
             dealPageNotFound(page);
         } else if (isValidatePage(page)) {
@@ -69,8 +71,6 @@ public class BasePageProcessor implements PageProcessor {
         } else if (isReviewPage(page)) {
             dealReview(page);
         }
-
-        updateUrlStatus(page);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class BasePageProcessor implements PageProcessor {
     /**
      * @param page 更新Url爬取状态,成功或失败
      */
-    protected void updateUrlStatus(Page page) {
+    private void updateUrlStatus(Page page) {
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
 
         if(needUpdateStatus()){

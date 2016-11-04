@@ -60,18 +60,18 @@
 
     <!-- 根据ASIN码查询全量爬取的URL -->
     <select id="findByAsin" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 0 AND CURRENT_TIMESTAMP - sau_update_time > (sau_priority + 1) * 20;
+        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 0;
     </select>
 
     <!--查询某个ASIN更新爬取的URL列表-->
     <select id="findUpdateCrawl" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 2 AND CURRENT_TIMESTAMP - sau_update_time > (sau_priority + 1) * 20;
+        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 2;
     </select>
 
     <!--查询被监听的的URL列表-->
-    <select id="findMonitorUrlList" resultMap="UrlResultMap" parameterType="int">
+    <select id="findMonitorUrlList" resultMap="UrlResultMap">
         SELECT * FROM spider_amazon_url
-        WHERE sau_type = 1 AND sau_crawling = 0 AND CURRENT_TIMESTAMP - sau_update_time > (sau_priority + 1) * 20
+        WHERE sau_type = 1 AND sau_crawling = 0 AND CURRENT_TIMESTAMP - sau_update_time > (sau_priority + 1) * 7200
         ORDER BY sau_times,sau_priority LIMIT 10;
     </select>
 
@@ -81,6 +81,10 @@
 
     <delete id="deleteByAsin" parameterType="String">
         DELETE FROM spider_amazon_url WHERE saa_asin = #{0};
+    </delete>
+
+    <delete id="deleteByType" parameterType="int">
+        DELETE FROM spider_amazon_url WHERE sau_type = #{0};
     </delete>
 
     <select id="find" resultMap="UrlResultMap">
