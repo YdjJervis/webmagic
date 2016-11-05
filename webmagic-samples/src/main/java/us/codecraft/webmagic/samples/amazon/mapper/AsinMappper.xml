@@ -5,12 +5,15 @@
 
     <resultMap id="AsinResultMap" type="Asin">
         <result property="saaAsin" column="saa_asin"/>
+        <result property="saaRootAsin" column="saa_root_asin"/>
         <result property="saaStar" column="saa_star"/>
         <result property="saaOnSale" column="saa_on_sale"/>
+        <result property="saaCrawledHead" column="saa_crawled_head"/>
         <result property="saaStatus" column="saa_status"/>
         <result property="saaProgress" column="saa_progress"/>
         <result property="saaParsed" column="saa_parsed"/>
         <result property="saaPriority" column="saa_priority"/>
+        <result property="saaNeedUpdatting" column="saa_need_updatting"/>
         <result property="saaIsUpdatting" column="saa_is_updatting"/>
         <result property="extra" column="saa_extra"/>
         <result property="saaSyncTime" column="saa_sync_time"/>
@@ -45,17 +48,19 @@
         WHERE asin.saa_star = #{0}
     </select>
 
-    <!-- 查询所有记录 -->
+    <!-- 查询所有记录,全量爬取所需 -->
     <select id="findAll" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
         INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
-        WHERE saa_parsed = 0 AND saa_on_sale = 1
+        WHERE saa_parsed = 0
+        AND saa_on_sale = 1
+        AND saa_crawled_head = 2
     </select>
 
     <!--更新爬取状态和URL转换状态-->
     <update id="update" parameterType="Asin">
-        UPDATE spider_amazon_asin SET saa_on_sale = #{saaOnSale},saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_is_updatting=#{saaIsUpdatting},saa_extra=#{extra},saa_update_time=CURRENT_TIMESTAMP WHERE saa_asin = #{saaAsin}
+        UPDATE spider_amazon_asin SET saa_on_sale = #{saaOnSale},saa_crawled_head=#{saaCrawledHead},saa_root_asin=#{saaRootAsin},saa_status = #{saaStatus},saa_progress=#{saaProgress},saa_parsed=#{saaParsed},saa_need_updatting=#{saaNeedUpdatting},saa_is_updatting=#{saaIsUpdatting},saa_extra=#{extra},saa_update_time=CURRENT_TIMESTAMP WHERE saa_asin = #{saaAsin}
     </update>
 
     <update id="resetUpdating">
@@ -73,12 +78,32 @@
         WHERE asin.saa_asin = #{0}
     </select>
 
-    <!--查询全量爬取已经完毕的ASIN，7200为两小时，优先级为0的ASIN两小时更新爬取一次-->
+    <!--查询全量爬取已经完毕的ASIN，7200为两小时，优先级为0的ASIN两小时更新爬取一次 -->
     <select id="findCrawledAll" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
         INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
-        WHERE saa_progress = 1 AND saa_is_updatting = 0 AND saa_on_sale = 1 AND CURRENT_TIMESTAMP - saa_update_time > (saa_priority + 1) * 7200;
+        WHERE saa_progress = 1
+        AND saa_is_updatting = 0
+        AND saa_on_sale = 1
+        AND saa_crawled_head = 2
+        AND saa_need_updatting = 1
+        AND CURRENT_TIMESTAMP - saa_update_time > (saa_priority + 1) * 7200;
+    </select>
+
+    <!-- 查询没有爬取过产品首页的ASIN -->
+    <select id="findNotRooted" resultMap="AsinResultMap">
+        SELECT * FROM spider_amazon_asin asin
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
+        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        WHERE asin.saa_crawled_head = 0;
+    </select>
+
+    <select id="findByRootAsin" resultMap="AsinResultMap">
+        SELECT * FROM spider_amazon_asin asin
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
+        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        WHERE asin.saa_root_asin = #{0}
     </select>
 
 </mapper>

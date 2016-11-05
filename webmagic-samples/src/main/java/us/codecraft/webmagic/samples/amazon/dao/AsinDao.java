@@ -25,4 +25,8 @@ public interface AsinDao extends BaseDao<Asin> {
     List<Asin> findCrawledAll();
 
     void resetUpdating();
+
+    List<Asin> findNotRooted();
+
+    List<Asin> findByRootAsin(String rootAsin);
 }

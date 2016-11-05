@@ -301,6 +301,39 @@ public class AsinService {
         mAsinDao.resetUpdating();
     }
 
+    /**
+     * 查询没有爬取过产品首页的ASIN
+     */
+    public List<Asin> findNotRooted() {
+        return mAsinDao.findNotRooted();
+    }
+
+    /**
+     * @param rootAsin 当前爬取的root asin在数据库是否已经存在
+     * @return true-存在；false-不存在
+     */
+    public boolean haveSameRootAsin(String rootAsin) {
+        return mAsinDao.findByRootAsin(rootAsin).size() > 0;
+    }
+
+    /**
+     * 设置为不需要更新爬取。
+     * 因为拥有相同root asin的asin会做整个流程，这个
+     * asin再做的话就多余了。
+     */
+    public void setParsedNotUpdate(Asin asin) {
+
+        asin.saaParsed = 1;
+
+        /* 标记为不需要更新爬取，因为有相同root asin的记录会执行更新爬取 */
+        asin.saaNeedUpdatting = 0;
+
+        /* SRA = same root asin */
+        asin.extra = "SRA";
+
+        update(asin);
+    }
+
     private static final class Filter {
 
         private static final String STAR_1 = "one_star";

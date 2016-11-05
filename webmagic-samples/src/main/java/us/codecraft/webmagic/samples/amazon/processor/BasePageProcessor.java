@@ -24,6 +24,8 @@ import us.codecraft.webmagic.samples.amazon.ws.validate.ImageOCRService;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Jervis
@@ -70,7 +72,15 @@ public class BasePageProcessor implements PageProcessor {
             dealValidate(page);
         } else if (isReviewPage(page)) {
             dealReview(page);
+        } else {
+            dealOtherPage(page);
         }
+    }
+
+    /**
+     * 处理其它页码，对亚马逊页面爬取的扩展
+     */
+    protected void dealOtherPage(Page page) {
     }
 
     @Override
@@ -109,7 +119,7 @@ public class BasePageProcessor implements PageProcessor {
     private void updateUrlStatus(Page page) {
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
 
-        if(needUpdateStatus()){
+        if (needUpdateStatus()) {
             int statusCode = page.getStatusCode();
             sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
 
@@ -234,4 +244,10 @@ public class BasePageProcessor implements PageProcessor {
         }
     }
 
+    public static void main(String[] args) {
+        Matcher matcher = Pattern.compile("/dp/(.*)").matcher("https://www.amazon.de/dp/B01LYYCL20");
+        if(matcher.find()){
+            System.out.println(matcher.group(1));
+        }
+    }
 }

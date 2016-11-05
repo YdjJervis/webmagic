@@ -18,6 +18,7 @@ public class Asin extends BasePojo {
     public Site site;
     public AsinSource asinSource;
     public String saaAsin;
+    public String saaRootAsin;
     public String saaStar;
     /**
      * 爬取状态，0未爬取，1已经爬取，2爬取完毕
@@ -32,27 +33,32 @@ public class Asin extends BasePojo {
      */
     public int saaParsed;
     public int saaPriority;
+    public int saaNeedUpdatting;
     public int saaIsUpdatting;
     public Date saaSyncTime;
     /**
      * 是否在销售
      */
     public int saaOnSale;
+    public int saaCrawledHead;
 
     @Override
     public String toString() {
-        return super.toString() + "Asin{" +
+        return "Asin{" +
                 "site=" + site +
                 ", asinSource=" + asinSource +
                 ", saaAsin='" + saaAsin + '\'' +
-                ", saaOnSale='" + saaOnSale + '\'' +
+                ", saaRootAsin='" + saaRootAsin + '\'' +
                 ", saaStar='" + saaStar + '\'' +
                 ", saaStatus='" + saaStatus + '\'' +
-                ", saaProgress='" + saaProgress + '\'' +
-                ", saaParsed='" + saaParsed + '\'' +
-                ", saaPriority='" + saaPriority + '\'' +
-                ", saaIsUpdatting='" + saaIsUpdatting + '\'' +
-                ", saaSyncTime='" + saaSyncTime + '\'' +
+                ", saaProgress=" + saaProgress +
+                ", saaParsed=" + saaParsed +
+                ", saaPriority=" + saaPriority +
+                ", saaNeedUpdatting=" + saaNeedUpdatting +
+                ", saaIsUpdatting=" + saaIsUpdatting +
+                ", saaSyncTime=" + saaSyncTime +
+                ", saaOnSale=" + saaOnSale +
+                ", saaCrawledHead=" + saaCrawledHead +
                 '}';
     }
 }
