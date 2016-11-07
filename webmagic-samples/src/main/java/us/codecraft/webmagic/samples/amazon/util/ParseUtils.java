@@ -25,17 +25,17 @@ public class ParseUtils {
     private Logger mLogger = Logger.getLogger(getClass());
 
     /*代理服务器*/
-    private static String PROXY_SERVER = "proxy.abuyun.com";
+    private final static String PROXY_SERVER = "proxy.abuyun.com";
     /*代理端口*/
-    private static int PROXY_PORT = 9010;
+    private final static int PROXY_PORT = 9010;
 
     /*阿布云代理隧道验证信息*/
-    private static String ABU_PROXY_USER = "H40BG298L37TP22P";
-    private static String ABU_PROXY_PASS = "C38CA614F1830C2B";
+    private final static String ABU_PROXY_USER = "H40BG298L37TP22P";
+    private final static String ABU_PROXY_PASS = "C38CA614F1830C2B";
 
     /*固定代理身份验证信息*/
-    private static String IP_PROXY_USER = "hanyun853490";
-    private static String IP_PROXY_PASS = "hanyun853490";
+    private final static String IP_PROXY_USER = "hanyun853490";
+    private final static String IP_PROXY_PASS = "hanyun853490";
 
     /**
      * 通过阿布云的代理隧道IP解析URL
