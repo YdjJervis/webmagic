@@ -62,4 +62,9 @@ public class IpsStatServiceTest extends SpringTestCase{
         System.out.println(mIpsStatService);
         System.out.println(mDownloader);
     }
+
+    @Test
+    public void manualSwitchIpByAbuTest() {
+        mIpsStatService.manualSwitchIpByAbu();
+    }
 }

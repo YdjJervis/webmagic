@@ -21,7 +21,7 @@ public class IpsInfoService {
 
     /**
      * 查询所有IP信息
-     * @return
+     * @return IpsInfo对象集合
      */
     public List<IpsInfo> findAll() {
         return mIpsInfoDao.findAll();
@@ -29,8 +29,8 @@ public class IpsInfoService {
 
     /**
      * 通过ID查询IP信息
-     * @param id
-     * @return
+     * @param id id
+     * @return IpsInfo对象
      */
     public IpsInfo findById(int id) {
         return mIpsInfoDao.findById(id);
@@ -38,8 +38,8 @@ public class IpsInfoService {
 
     /**
      * 通过HOST查询IP信息
-     * @param host
-     * @return
+     * @param host 域名
+     * @return IpsInfo对象集合
      */
     public List<IpsInfo> findByHost(String host) {
         return mIpsInfoDao.findByHost(host);
@@ -47,8 +47,8 @@ public class IpsInfoService {
 
     /**
      * 批量新增IP信息
-     * @param list
-     * @return
+     * @param list 需要添加的IpsInfo集合
+     * @return 影响行数
      */
     public int addAll(List<IpsInfo> list) {
         return mIpsInfoDao.addAll(list);

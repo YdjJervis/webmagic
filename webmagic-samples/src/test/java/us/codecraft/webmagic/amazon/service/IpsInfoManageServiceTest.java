@@ -25,19 +25,19 @@ public class IpsInfoManageServiceTest extends SpringTestCase {
 
     @Test
     public void findIsValidIpsTest() {
-        List<IpsInfoManage> result = mIpsInfoManageService.findIsValidIps();
+        List<IpsInfoManage> result = mIpsInfoManageService.findIsValidIps("www.amazon.co.uk");
         System.out.println(result.size());
     }
 
     @Test
     public void findIpInfoIsUsingTest() {
-        IpsInfoManage ipsInfoManage = mIpsInfoManageService.findIpInfoIsUsing();
+        IpsInfoManage ipsInfoManage = mIpsInfoManageService.findIpInfoIsUsing("www.amazon.co.uk");
         System.out.println(ipsInfoManage);
     }
 
     @Test
     public void updateTest() {
-        IpsInfoManage ipsInfoManage = mIpsInfoManageService.findIpInfoIsUsing();
+        IpsInfoManage ipsInfoManage = mIpsInfoManageService.findIpInfoIsUsing("www.amazon.co.uk");
         ipsInfoManage.setIsUsing(0);
         ipsInfoManage.setIsBlocked(1);
         mIpsInfoManageService.update(ipsInfoManage);

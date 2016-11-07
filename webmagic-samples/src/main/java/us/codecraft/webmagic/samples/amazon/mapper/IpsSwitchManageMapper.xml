@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.IpsSwitchManageDao">
+    <resultMap id="ipsSwitchManageMap" type="IpsSwitchManage">
+        <id property="id" column="bism_id" />
+        <result property="ipsType" column="bism_ips_type" />
+        <result property="totalNum" column="bism_total_num" />
+        <result property="isComplete" column="bism_is_complete" />
+        <result property="exceptionInfo" column="bism_exception_info" />
+        <result property="createDate" column="bism_create_date" />
+        <result property="updateDate" column="bism_udpate_date" />
+    </resultMap>
+
+    <!-- 新增 -->
+    <insert id="add" parameterType="IpsSwitchManage" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO BASE_IPS_SWITCH_MANAGE(
+          BISM_IPS_TYPE,
+          BISM_TOTAL_NUM,
+          BISM_IS_COMPLETE,
+          BISM_EXCEPTION_INFO,
+          BISM_CREATE_DATE,
+          BISM_UDPATE_DATE
+        ) VALUES (
+          #{ipsType},
+          #{totalNum},
+          #{isComplete},
+          #{exceptionInfo},
+          CURRENT_TIMESTAMP,
+          CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 通过是否完成来查询切换管理信息 -->
+    <select id="findByIsComplete" resultMap="ipsSwitchManageMap" parameterType="int">
+        SELECT * FROM BASE_IPS_SWITCH_MANAGE
+        WHERE BISM_IS_COMPLETE = #{0}
+    </select>
+
+    <!-- 更新切换管理信息 -->
+    <update id="updateById" parameterType="IpsSwitchManage">
+      UPDATE
+        BASE_IPS_SWITCH_MANAGE
+      <trim prefix="SET" suffixOverrides=",">
+          <if test="totalNum!=0">BISM_TOTAL_NUM = #{totalNum},</if>
+          <if test="isComplete!=0">BISM_IS_COMPLETE = #{isComplete},</if>
+          <if test="exceptionInfo!=null">BISM_EXCEPTION_INFO = #{exceptionInfo},</if>
+          <if test="updateDate!=null">BISM_UDPATE_DATE = #{updateDate},</if>
+      </trim>
+      WHERE
+        BISM_ID = #{id}
+    </update>
+</mapper>

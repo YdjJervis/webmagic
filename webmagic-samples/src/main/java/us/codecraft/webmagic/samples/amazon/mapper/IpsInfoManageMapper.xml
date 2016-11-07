@@ -17,7 +17,7 @@
     </resultMap>
 
     <!-- 查询有效的IP信息按最后使用时间升序排序 -->
-    <select id="findIsValidIps" resultMap="IpsInfoManageMap">
+    <select id="findIsValidIps" resultMap="IpsInfoManageMap" parameterType="java.lang.String">
         SELECT
           biim.BIIM_ID,
           biim.BII_ID,
@@ -37,7 +37,7 @@
         ON
           biim.bii_id = bii.bii_id
         WHERE
-          biim.BIIM_IS_BLOCKED = false and biim.BIIM_IS_USING = false
+          biim.BIIM_IS_BLOCKED = false and biim.BIIM_IS_USING = false AND biim.BIIM_URL_HOST = #{0}
         ORDER BY
           biim.BIIM_LAST_USED_DATE ASC
     </select>
@@ -57,9 +57,26 @@
     </update>
 
     <!-- 获取当前正在使用的ip信息 -->
-    <select id="findIpInfoIsUsing" resultMap="IpsInfoManageMap">
-        SELECT * FROM BASE_IPS_INFO_MANAGE
-        WHERE BIIM_IS_USING = TRUE
+    <select id="findIpInfoIsUsing" resultMap="IpsInfoManageMap" parameterType="java.lang.String">
+        SELECT
+          biim.BIIM_ID,
+          biim.BII_ID,
+          bii.BII_HOST,
+          bii.BII_PORT,
+          biim.BIIM_URL_HOST,
+          biim.BIIM_IS_BLOCKED,
+          biim.BIIM_IS_USING,
+          biim.BIIM_USED_COUNT,
+          biim.BIIM_LAST_USED_DATE,
+          biim.BIIM_CREATE_DATE,
+          biim.BIIM_UPDATE_DATE
+        FROM
+          BASE_IPS_INFO_MANAGE biim
+        LEFT JOIN
+          BASE_IPS_INFO bii
+        ON
+          biim.bii_id = bii.bii_id
+        WHERE biim.BIIM_IS_USING = TRUE AND biim.BIIM_URL_HOST = #{0}
     </select>
 
     <!-- 新增对应域名的所有IP管理信息 -->
@@ -81,4 +98,10 @@
             (#{item.ipInfoId}, #{item.urlHost}, #{item.isBlocked}, #{item.isUsing}, #{item.usedCount}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         </foreach>
     </insert>
+
+    <!-- 查询对应域名的IP管理信息 -->
+    <select id="findIpsInfoByUrlHost" resultMap="IpsInfoManageMap" parameterType="java.lang.String">
+        SELECT * FROM BASE_IPS_INFO_MANAGE
+        WHERE BIIM_URL_HOST = #{0}
+    </select>
 </mapper>

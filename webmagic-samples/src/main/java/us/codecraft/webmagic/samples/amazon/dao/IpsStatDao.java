@@ -16,28 +16,34 @@ public interface IpsStatDao {
 
     /***
      * add
-     * @param ipsStat
-     * @return
+     * @param ipsStat IpsStat对象
+     * @return 返回影响行
      */
-    public Integer addIpsStat(IpsStat ipsStat);
+    Integer addIpsStat(IpsStat ipsStat);
 
     /***
      * update ipsStat by id
-     * @param ipsStat
+     * @param ipsStat IpsStat对象
      */
-    public void updateIpsStatById(IpsStat ipsStat);
+    void updateIpsStatById(IpsStat ipsStat);
 
     /**
      * fina all
-     * @return
+     * @return IpsStat对象集合
      */
-    public List<IpsStat> findIpsStatAll();
+    List<IpsStat> findIpsStatAll();
 
     /**
      * find  by id
-     * @param id
-     * @return
+     * @param id id
+     * @return IpsStat对象
      */
-    public IpsStat findIpsStatById(Integer id);
+    IpsStat findIpsStatById(Integer id);
 
+    /**
+     * find by condition
+     * @param condition 代理类型
+     * @return IpsStat对象
+     */
+    IpsStat findByCondition(String condition);
 }

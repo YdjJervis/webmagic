@@ -15,15 +15,13 @@
     <!-- add  -->
     <insert id="addIpsStat" useGeneratedKeys="true" keyProperty="ipsStatId" parameterType="IpsStat">
         INSERT INTO
-        test_ips_stat(
+        test_ips_stat (
             tis_condition,
             tis_status,
             tis_change_record,
             tis_create_date,
             tis_udpate_date
-        )
-        VALUES
-        (
+        ) VALUES (
             #{ipsStatCondition},
             #{ipsStatStatus},
             #{ipsChangRecord},
@@ -32,7 +30,7 @@
         )
     </insert>
 
-    <!-- udpate -->
+    <!-- update -->
     <update id="updateIpsStatById" parameterType="IpsStat">
       UPDATE
         test_ips_stat
@@ -40,7 +38,7 @@
         tis_condition = #{ipsStatCondition, jdbcType=VARCHAR},
         tis_status = #{ipsStatStatus, jdbcType=VARCHAR},
         tis_change_record = #{ipsChangRecord},
-        tis_udpate_date =  CURRENT_TIMESTAMP
+        tis_udpate_date =  #{ipsStatUpdateDate}
       WHERE
         tis_id = #{ipsStatId}
     </update>
@@ -57,4 +55,10 @@
           tis_id = #{0}
     </select>
 
+    <!-- 通过代理类型查询 -->
+    <select id="findByCondition" resultMap="IpsStatResultMapper" parameterType="java.lang.String">
+        SELECT * FROM test_ips_stat
+        WHERE
+          tis_condition = #{0}
+    </select>
 </mapper>

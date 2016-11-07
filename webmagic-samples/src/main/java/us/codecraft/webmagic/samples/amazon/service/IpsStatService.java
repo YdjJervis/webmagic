@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import us.codecraft.webmagic.samples.amazon.dao.IpsInfoManageDao;
 import us.codecraft.webmagic.samples.amazon.dao.IpsStatDao;
 import us.codecraft.webmagic.samples.amazon.pojo.IpsInfoManage;
@@ -14,6 +13,7 @@ import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 import us.codecraft.webmagic.samples.amazon.util.ParseUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,7 +26,9 @@ import java.util.List;
 public class IpsStatService {
 
     private Logger mLogger = Logger.getLogger(getClass());
-    private final static String SWITCHIPURL = "http://proxy.abuyun.com/switch-ip";
+    private final static String SWITCH_IP_URL = "http://proxy.abuyun.com/switch-ip";
+    private final static String ABU_CONDITION = "abuProxy";
+    private final static String IPS_POOL_CONDITION = "ipsPool";
 
     @Autowired
     IpsStatDao mIpsStatDao;
@@ -35,8 +37,8 @@ public class IpsStatService {
 
     /***
      * add ipsStat info
-     * @param ipsStat
-     * @return
+     * @param ipsStat 监测对象
+     * @return int
      */
     public Integer addIpsStat(IpsStat ipsStat) {
         return this.mIpsStatDao.addIpsStat(ipsStat);
@@ -44,7 +46,7 @@ public class IpsStatService {
 
     /***
      * update ipsStat by id
-     * @param ipsStat
+     * @param ipsStat 监测对象
      */
     public void updateIpsStatById(IpsStat ipsStat) {
         this.mIpsStatDao.updateIpsStatById(ipsStat);
@@ -52,7 +54,7 @@ public class IpsStatService {
 
     /***
      * query all ipsStat info
-     * @return
+     * @return IpsStat集合
      */
     public List<IpsStat> findIpsStatAll() {
         return this.mIpsStatDao.findIpsStatAll();
@@ -60,86 +62,91 @@ public class IpsStatService {
 
     /***
      * query ipsStat info by id
-     * @param id
-     * @return
+     * @param id 数据id
+     * @return 监测对象
      */
     public IpsStat findIpsStatById(Integer id) {
         return this.mIpsStatDao.findIpsStatById(id);
     }
 
     /**
-     * get current ip info
+     * manual(手动) switch ip(阿布云)
      *
-     * @param type 1:IP POOL 2:阿布云接口
-     * @return ipStr:ip:port
      */
-    public String getCurrentIpInfo(int type) {
-        String ipStr = null;
-
-        return ipStr;
-    }
-
-    /**
-     * manual(手动) switch ip
-     *
-     * @param type 1:阿布云接口 2:IP POOL
-     */
-    @Transactional
-    public void manualSwitchIp(int type) {
+    public void manualSwitchIpByAbu() {
 
         ParseUtils parseUtils = new ParseUtils();
          /*查询监测切IP信息*/
-        IpsStat ipsStat = mIpsStatDao.findIpsStatById(type);
-         /*ipsStat.getIpsStatStatus() == 1 需要切换IP*/
-        if (ipsStat.getIpsStatStatus().equals("1")) {
-            List<String> ipsChangeRecordList = new ArrayList<String>();
-            String ipsChangeRecord = ipsStat.getIpsChangRecord();
-            if (type == 2) {
-                /*自己IP POOL进行切IP*/
-                //1.查询数据库中固定有效代理IP信息，按时间排序取停用时间最长的IP
-                List<IpsInfoManage> isValidIps = mIpsInfoManageDao.findIsValidIps();
-                if(isValidIps != null && isValidIps.size() > 0) {
-                    IpsInfoManage ipsInfoManage = isValidIps.get(0);
-                    ipsInfoManage.setIsUsing(1);
-                    mIpsInfoManageDao.update(ipsInfoManage);
-                }
-            } else if (type == 1) {
-                /*切IP服务*/
-                parseUtils.parseHtmlByAbu(SWITCHIPURL);
-            }
-            /*记录切换IP时的时间,并添加到数据库中*/
-            if (ipsChangeRecord != null && !("").equals(ipsChangeRecord)) {
-                ipsChangeRecordList = new Gson().fromJson(ipsChangeRecord, new TypeToken<List<String>>() {
-                }.getType());
-            }
-            ipsChangeRecordList.add(DateUtils.getNow());
-            ipsStat.setIpsChangRecord(new Gson().toJson(ipsChangeRecordList));
-            ipsStat.setIpsStatStatus("0");
-            mIpsStatDao.updateIpsStatById(ipsStat);
+        IpsStat ipsStat = this.findConditionAndAdd(ABU_CONDITION);
+
+        //IpsStat ipsStat = mIpsStatDao.findIpsStatById(1);
+        /*切IP服务*/
+        parseUtils.parseHtmlByAbu(SWITCH_IP_URL);
+        /*更新监测状态及记录IP时间*/
+        this.recordSwitchIpAndUpdate(ipsStat);
+        mLogger.info("切换IP， date : " + DateUtils.getNow());
+    }
+
+    /**
+     * 手动切换固定代理IP
+     * @param urlHost url域名
+     */
+    public void manualSwitchIpIpsPool(String urlHost) {
+
+         /*查询监测切IP信息*/
+        IpsStat ipsStat = this.findConditionAndAdd(IPS_POOL_CONDITION);
+
+        IpsInfoManage ipsInfoManage;
+
+        /*查询数据库中固定有效代理IP信息，按时间排序取停用时间最长的IP*/
+        List<IpsInfoManage> isValidIps = mIpsInfoManageDao.findIsValidIps(urlHost);
+
+        if (isValidIps != null && isValidIps.size() > 0) {
+            ipsInfoManage = isValidIps.get(0);
+            ipsInfoManage.setIsUsing(1);
+            /*设置当前使用的IP*/
+            mIpsInfoManageDao.update(ipsInfoManage);
+
+            /*更新监测状态及记录IP切换时间*/
+            this.recordSwitchIpAndUpdate(ipsStat);
             mLogger.info("切换IP， date : " + DateUtils.getNow());
         } else {
-            mLogger.info("IP可用无需切换， date : " + DateUtils.getNow());
+            mLogger.info("固定代理IP池中，没有正在使用的IP了.");
         }
     }
 
-    /***
-     * 更新ip监测状态，需要切IP
-     * @param type 1:阿布云接口 2:IP POOL
+    /**
+     * 记录切换IP时间，及更新监测状态
+     * @param ipsStat 监测对象
      */
-    public void updateStatus2NeedSwitchIp(int type) {
-        if(type == 2) {
-            /*获取当前正在使用的IP信息；将其是否被封（isBlocked）设为ture,是否正在使用（isUsing）设为false*/
-            IpsInfoManage ipsInfoManage = mIpsInfoManageDao.findIpInfoIsUsing();
-            ipsInfoManage.setIsBlocked(1);
-            ipsInfoManage.setIsUsing(0);
-            mIpsInfoManageDao.update(ipsInfoManage);
+    private void recordSwitchIpAndUpdate(IpsStat ipsStat) {
+        /*记录切换IP时的时间,并添加到数据库中*/
+        String ipsChangeRecord = ipsStat.getIpsChangRecord();
+        List<String> ipsChangeRecordList = new ArrayList<String>();
+        if (ipsChangeRecord != null && !("").equals(ipsChangeRecord)) {
+            ipsChangeRecordList = new Gson().fromJson(ipsChangeRecord, new TypeToken<List<String>>() {
+            }.getType());
         }
-        /*更新是否需要切换IP的状态（1：需要切；0：不需要切）*/
-        IpsStat ipsStat = mIpsStatDao.findIpsStatById(type);
-        if (ipsStat.getIpsStatStatus().equals("0")) {
-            ipsStat.setIpsStatStatus("1");
-            mIpsStatDao.updateIpsStatById(ipsStat);
-            mLogger.info("更新ip状态，需要切IP：true.");
+        ipsChangeRecordList.add(DateUtils.getNow());
+        ipsStat.setIpsChangRecord(new Gson().toJson(ipsChangeRecordList));
+        ipsStat.setIpsStatUpdateDate(new Date());
+        mIpsStatDao.updateIpsStatById(ipsStat);
+    }
+
+    /**
+     * 查询代理类型是否存在，不存在则添加
+     * @param condition 代理类型
+     * @return IpsStat对象
+     */
+    private IpsStat findConditionAndAdd(String condition) {
+        /*查询监测切IP信息*/
+        IpsStat ipsStat = mIpsStatDao.findByCondition(condition);
+        if(null == ipsStat) {
+            ipsStat = new IpsStat();
+            ipsStat.setIpsStatCondition(condition);
+            ipsStat.setIpsStatStatus("0");
+            mIpsStatDao.addIpsStat(ipsStat);
         }
+        return ipsStat;
     }
 }

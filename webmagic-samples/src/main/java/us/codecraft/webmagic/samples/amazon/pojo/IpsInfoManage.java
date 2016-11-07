@@ -9,20 +9,20 @@ import java.util.Date;
  * @date 2016/10/27 10:16
  */
 public class IpsInfoManage {
-    public int id;
-    public int ipInfoId;
-    public String ipHost;
-    public String ipPort;
-    public String urlHost;
+    private int id;
+    private int ipInfoId;
+    private String ipHost;
+    private String ipPort;
+    private String urlHost;
 
     /*IP是否出现验证码*/
-    public int isBlocked;
+    private int isBlocked;
 
-    public int isUsing;
-    public int usedCount;
-    public Date lastUsedDate;
-    public Date createDate;
-    public Date updateDate;
+    private int isUsing;
+    private int usedCount;
+    private Date lastUsedDate;
+    private Date createDate;
+    private Date updateDate;
 
     public int getId() {
         return id;

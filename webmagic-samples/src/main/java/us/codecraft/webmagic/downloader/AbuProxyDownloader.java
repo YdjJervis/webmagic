@@ -13,9 +13,6 @@ import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.PlainText;
 import us.codecraft.webmagic.utils.UrlUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
 /**
  * @author Jervis
  * @version V0.1
@@ -35,30 +32,29 @@ public class AbuProxyDownloader extends AbstractDownloader {
 
         ParseUtils parseUtils = new ParseUtils();
 
-        /*阿布云切换IP*/
-        mIpsStatService.manualSwitchIp(1);
+        Long startTime =  System.currentTimeMillis();
 
         HtmlResponse htmlResponse = parseUtils.parseHtmlByAbu(request.getUrl());
-        byte[] response = null;
-        try {
-            mLogger.info("=============== 调用阿布云隧道代理解析URL ===============");
-            response = readStream(htmlResponse.getInputStream());
-        } catch (Exception e) {
-            mLogger.debug(e);
-        }
+
+        Long entTime =  System.currentTimeMillis();
+
+        mLogger.info("======================= 调用阿布云解析URL，所需要的时间:" + (entTime -startTime)/1000 + "s.");
 
         Page page = new Page();
-        if (response != null) {
 
-            page.setRawText(new String(response));
-            page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(new String(response), request.getUrl())));
+        String htmlContent = htmlResponse.getHtmlContent();
+
+        if(htmlContent != null) {
+            page.setRawText(htmlContent);
+            page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(htmlContent, request.getUrl())));
         } else {
             page.setRawText("");
         }
         page.setStatusCode(htmlResponse.getStatusCode());
         page.setUrl(new PlainText(request.getUrl()));
         page.setRequest(request);
-
+        page.putField("ipsType", "abu");
+        page.putField("host", "");
         return page;
     }
 
@@ -67,20 +63,5 @@ public class AbuProxyDownloader extends AbstractDownloader {
 
     }
 
-    /**
-     * 将输入流转换成字符串
-     */
-    private static byte[] readStream(InputStream inStream) throws Exception {
-        ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len = -1;
 
-        while ((len = inStream.read(buffer)) != -1) {
-            outSteam.write(buffer, 0, len);
-        }
-        outSteam.close();
-        inStream.close();
-
-        return outSteam.toByteArray();
-    }
 }

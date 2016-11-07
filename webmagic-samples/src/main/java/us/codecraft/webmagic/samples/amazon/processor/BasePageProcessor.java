@@ -10,22 +10,18 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.downloader.AbuProxyDownloader;
 import us.codecraft.webmagic.downloader.HttpClientImplDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pojo.ImgValidateResult;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Site;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.AsinService;
-import us.codecraft.webmagic.samples.amazon.service.IpsStatService;
-import us.codecraft.webmagic.samples.amazon.service.SiteService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.amazon.ws.validate.ImageOCRService;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Jervis
@@ -57,12 +53,26 @@ public class BasePageProcessor implements PageProcessor {
     protected AsinService mAsinService;
 
     @Autowired
+    protected IpsSwitchManageService mIpsSwitchManageService;
+
+    @Autowired
+    protected  IpsInfoManageService mIpsInfoManageService;
+
+    @Autowired
     protected HttpClientImplDownloader sDownloader;
 
+    @Autowired
+    private AbuProxyDownloader mAbuProxyDownloader;
 
     @Override
     public synchronized void process(Page page) {
         sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
+        //Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
+        /*监测对应URL的代理使用情况*/
+
+
+        /*记录每一批次解析的URL的问题以及对应异常状态码出现的次数*/
+        ipsExceptionStatusStat(page);
 
         updateUrlStatus(page);
 
@@ -86,7 +96,7 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public us.codecraft.webmagic.Site getSite() {
         sLogger.info("getSite()::");
-        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(Sets.newHashSet(200, 404, 403, 503));
+        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(Sets.newHashSet(200, 402, 403, 404, 407, 417, 429, 503));
         return mSite;
     }
 
@@ -137,9 +147,20 @@ public class BasePageProcessor implements PageProcessor {
 
         String validateUrl = getValidateUrl(page);
 
-       /* if(StringUtils.isNotEmpty(validateUrl)) {
-            mIpsStatService.updateStatus2NeedSwitchIp(1);
-        }*/
+        if(StringUtils.isNotEmpty(validateUrl)) {
+            String ipsType = page.getResultItems().get("ipsType");
+
+            if(ipsType.equals("ipsProxy")) {
+                /*将正在使用的IP状态更新为没使用中*/
+                String urlHost = page.getResultItems().get("host");
+                mIpsInfoManageService.updateIsUsing2PrepareUsing(urlHost);
+                /*固定代理IP切换IP*/
+                mIpsStatService.manualSwitchIpIpsPool(urlHost);
+            } else if(ipsType.equals("abu")) {
+                /*阿布代理IP切换*/
+                mIpsStatService.manualSwitchIpByAbu();
+            }
+        }
 
         sLogger.warn("身份验证,准备保存验证码...网页状态码：" + page.getStatusCode());
 
@@ -227,8 +248,8 @@ public class BasePageProcessor implements PageProcessor {
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
-                    .setDownloader(sDownloader)
-                    .thread(10);
+                    .setDownloader(mAbuProxyDownloader)
+                    .thread(5);
 
             for (Url url : urlList) {
                 Request request = new Request(url.url);
@@ -244,10 +265,10 @@ public class BasePageProcessor implements PageProcessor {
         }
     }
 
-    public static void main(String[] args) {
-        Matcher matcher = Pattern.compile("/dp/(.*)").matcher("https://www.amazon.de/dp/B01LYYCL20");
-        if(matcher.find()){
-            System.out.println(matcher.group(1));
-        }
+    /**
+     * 记录每一批次解析的URL的问题以及对应异常状态码出现的次数
+     */
+    private void ipsExceptionStatusStat(Page page) {
+        mIpsSwitchManageService.ipsSwitchManageExceptionRecord(page);
     }
 }

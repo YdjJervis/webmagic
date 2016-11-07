@@ -1,7 +1,5 @@
 package us.codecraft.webmagic.samples.amazon.pojo;
 
-import java.io.InputStream;
-
 /**
  * @author Hardy
  * @version V0.1
@@ -10,15 +8,15 @@ import java.io.InputStream;
  */
 public class HtmlResponse {
 
-    public InputStream mInputStream;
-    public Integer statusCode;
+    private String htmlContent;
+    private Integer statusCode;
 
-    public InputStream getInputStream() {
-        return mInputStream;
+    public String getHtmlContent() {
+        return htmlContent;
     }
 
-    public void setInputStream(InputStream inputStream) {
-        mInputStream = inputStream;
+    public void setHtmlContent(String htmlContent) {
+        this.htmlContent = htmlContent;
     }
 
     public Integer getStatusCode() {

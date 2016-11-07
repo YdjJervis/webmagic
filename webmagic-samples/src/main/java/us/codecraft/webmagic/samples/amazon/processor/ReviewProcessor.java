@@ -142,5 +142,4 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         List<Url> urlList = mUrlService.find(0);
         startToCrawl(urlList);
     }
-
 }
