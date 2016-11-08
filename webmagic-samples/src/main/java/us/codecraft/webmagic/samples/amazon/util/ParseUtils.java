@@ -11,8 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Hardy
@@ -30,8 +28,8 @@ public class ParseUtils {
     private final static int PROXY_PORT = 9010;
 
     /*阿布云代理隧道验证信息*/
-    private final static String ABU_PROXY_USER = "H40BG298L37TP22P";
-    private final static String ABU_PROXY_PASS = "C38CA614F1830C2B";
+    private final static String ABU_PROXY_USER = "H48BF9157I793Y1P";
+    private final static String ABU_PROXY_PASS = "3FFF5172112CBBA1";
 
     /*固定代理身份验证信息*/
     private final static String IP_PROXY_USER = "hanyun853490";
@@ -64,6 +62,8 @@ public class ParseUtils {
             connection = (HttpURLConnection) url.openConnection(proxy);
             /*设置IP切换头*/
             connection.setRequestProperty("Proxy-Switch-Ip", "yes");
+            /*设置连接超时时间*/
+            //connection.setReadTimeout(5000);
             /*返回状态码*/
             statusCode = connection.getResponseCode();
             htmlResponse.setStatusCode(statusCode);
@@ -158,22 +158,6 @@ public class ParseUtils {
         }
     }
 
-    /**
-     * 正则提取异常中的状态码
-     *@param targetContent 目标内容
-     * @param reg 正则
-     * @return 匹配到的字符串
-     */
-    private static String getStatusCodeByReg(String targetContent, String reg) {
-        Matcher matcher = Pattern.compile(reg).matcher(targetContent);
-
-        if (matcher.find()) {
-            return matcher.group(1).trim();
-        } else {
-            return null;
-        }
-    }
-
     /***
      * 将输入流转换成字符串
      * @param inStream 输入流
@@ -206,7 +190,7 @@ public class ParseUtils {
 
     public static void main(String[] args) throws MalformedURLException {
         ParseUtils parseUtils = new ParseUtils();
-        HtmlResponse htmlResponse = parseUtils.parseHtmlByAbu("https://www.amazon.de/product-reviews/B01J5CHZJW?filterByStar=all");
+        HtmlResponse htmlResponse = parseUtils.parseHtmlByProxy("https://www.amazon.co.uk/Miusol-Womens-Contrast-Pattern-Bodycon/dp/B01LWN3VEH/ref=pd_rhf_se_s_cp_4?ie=UTF8&pd_rd_i=B01LWN3VEH&pd_rd_r=QS7S9D14X647ZQ111CRE&pd_rd_w=VheOe&pd_rd_wg=wlAsg&refRID=QS7S9D14X647ZQ111CRE", "104.149.125.124", "8080");
         System.out.println(htmlResponse.getHtmlContent());
     }
 }

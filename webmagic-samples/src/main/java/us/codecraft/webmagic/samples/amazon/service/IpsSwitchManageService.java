@@ -63,16 +63,16 @@ public class IpsSwitchManageService {
 
         if (ipsSwitchManageList.size() == 0) {
             /*没有，则新增*/
-            ipsSwitchManage = addIpsSwitchManage((String) page.getResultItems().get("ipsType"));
+            ipsSwitchManage = addIpsSwitchManage((String) page.getRequest().getExtra("ipsType"));
         } else {
             ipsSwitchManage = ipsSwitchManageList.get(0);
             /*如果创建时间大于一个小时，则创建新的一个批次进行监测*/
-            if((System.currentTimeMillis() - ipsSwitchManage.getCreateDate().getTime())/(1000*60*60) > 1) {
+            if((double)(System.currentTimeMillis() - ipsSwitchManage.getCreateDate().getTime())/(double) (1000*60*60) > 1) {
                 /*更新旧的批次已经完成*/
                 ipsSwitchManage.setIsComplete(1);
                 mIpsSwitchManageDao.updateById(ipsSwitchManage);
                 /*创建新的批次进行监测*/
-                ipsSwitchManage = addIpsSwitchManage((String) page.getResultItems().get("ipsType"));
+                ipsSwitchManage = addIpsSwitchManage((String) page.getRequest().getExtra("ipsType"));
             }
         }
         int statusCode = page.getStatusCode();

@@ -53,8 +53,8 @@ public class AbuProxyDownloader extends AbstractDownloader {
         page.setStatusCode(htmlResponse.getStatusCode());
         page.setUrl(new PlainText(request.getUrl()));
         page.setRequest(request);
-        page.putField("ipsType", "abu");
-        page.putField("host", "");
+        page.getRequest().putExtra("ipsType", "abu");
+        page.getRequest().putExtra("host", "");
         return page;
     }
 

@@ -91,8 +91,8 @@ public class IpsProxyDownloader extends AbstractDownloader {
         page.setStatusCode(htmlResponse.getStatusCode());
         page.setUrl(new PlainText(request.getUrl()));
         page.setRequest(request);
-        page.putField("ipsType", "ipsProxy");
-        page.putField("host", urlHost);
+        page.getRequest().putExtra("ipsType", "ipsProxy");
+        page.getRequest().putExtra("host", urlHost);
         return page;
     }
 

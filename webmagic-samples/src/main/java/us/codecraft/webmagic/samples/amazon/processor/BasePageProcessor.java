@@ -56,13 +56,16 @@ public class BasePageProcessor implements PageProcessor {
     protected IpsSwitchManageService mIpsSwitchManageService;
 
     @Autowired
-    protected  IpsInfoManageService mIpsInfoManageService;
+    protected IpsInfoManageService mIpsInfoManageService;
 
     @Autowired
     protected HttpClientImplDownloader sDownloader;
 
     @Autowired
-    private AbuProxyDownloader mAbuProxyDownloader;
+    protected AbuProxyDownloader mAbuProxyDownloader;
+
+    @Autowired
+    private HttpClientImplDownloader mHttpClientImplDownloader;
 
     @Override
     public synchronized void process(Page page) {
@@ -148,11 +151,11 @@ public class BasePageProcessor implements PageProcessor {
         String validateUrl = getValidateUrl(page);
 
         if(StringUtils.isNotEmpty(validateUrl)) {
-            String ipsType = page.getResultItems().get("ipsType");
+            String ipsType = (String)page.getRequest().getExtra("ipsType");
 
             if(ipsType.equals("ipsProxy")) {
                 /*将正在使用的IP状态更新为没使用中*/
-                String urlHost = page.getResultItems().get("host");
+                String urlHost = (String) page.getRequest().getExtra("host");
                 mIpsInfoManageService.updateIsUsing2PrepareUsing(urlHost);
                 /*固定代理IP切换IP*/
                 mIpsStatService.manualSwitchIpIpsPool(urlHost);
