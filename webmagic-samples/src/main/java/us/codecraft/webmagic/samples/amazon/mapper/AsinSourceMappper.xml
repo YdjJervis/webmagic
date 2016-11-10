@@ -4,13 +4,13 @@
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.AsinSourceDao">
 
     <resultMap id="AsinSourceResultMap" type="AsinSource">
-        <result property="baasCode" column="BAAS_CODE"/>
+        <result property="baasCode" column="baas_code"/>
         <result property="baasName" column="baas_name"/>
         <result property="updatetime" column="baas_update_time"/>
     </resultMap>
 
     <select id="find" resultMap="AsinSourceResultMap">
-        SELECT * FROM base_amazon_asin_source WHERE BAAS_CODE = #{0};
+        SELECT * FROM base_amazon_asin_source WHERE baas_code = #{0};
     </select>
 
     <select id="findAll" resultMap="AsinSourceResultMap">

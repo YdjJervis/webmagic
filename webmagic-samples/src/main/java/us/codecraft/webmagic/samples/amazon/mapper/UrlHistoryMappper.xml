@@ -6,7 +6,7 @@
     <resultMap id="UrlResultMap" type="Url">
         <result property="id" column="sauh_id"/>
         <result property="urlMD5" column="sauh_url_md5"/>
-        <result property="siteCode" column="BAS_CODE"/>
+        <result property="siteCode" column="bas_code"/>
         <result property="saaAsin" column="saa_asin"/>
         <result property="url" column="sauh_url"/>
         <result property="parentUrl" column="sauh_parent_url"/>
@@ -14,12 +14,12 @@
     </resultMap>
 
     <insert id="add" parameterType="Url">
-        insert into spider_amazon_url_history(sauh_url_md5,BAS_CODE,saa_asin,sauh_url,sauh_parent_url,sauh_update_time)
+        insert into spider_amazon_url_history(sauh_url_md5,bas_code,saa_asin,sauh_url,sauh_parent_url,sauh_update_time)
         values(#{urlMD5},#{siteCode},#{saaAsin},#{url},#{parentUrl},CURRENT_TIMESTAMP)
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
-        INSERT INTO spider_amazon_url_history(sauh_url_md5,BAS_CODE,saa_asin,sauh_url,sauh_parent_url,sauh_update_time)
+        INSERT INTO spider_amazon_url_history(sauh_url_md5,bas_code,saa_asin,sauh_url,sauh_parent_url,sauh_update_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (

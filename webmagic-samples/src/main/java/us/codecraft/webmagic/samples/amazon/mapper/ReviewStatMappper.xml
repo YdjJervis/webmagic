@@ -5,7 +5,7 @@
 
     <resultMap id="ReviewStatMapper" type="ReviewStat">
         <id column="sars_id" property="id"/>
-        <result column="BAS_CODE" property="basCode"/>
+        <result column="bas_code" property="basCode"/>
         <result column="saa_asin" property="saaAsin"/>
         <result column="sars_total_review" property="sarsTotalReview"/>
         <result column="sars_total_page" property="sarsTotalPage"/>
@@ -18,7 +18,7 @@
     <insert id="add" parameterType="RequestStat">
         INSERT INTO
         spider_amazon_review_stat(
-        BAS_CODE,
+        bas_code,
         saa_asin,
         sars_total_review,
         sars_total_page,
@@ -37,7 +37,7 @@
         CURRENT_TIMESTAMP
         )
         ON DUPLICATE KEY UPDATE
-        BAS_CODE=#{basCode},
+        bas_code=#{basCode},
         saa_asin = #{saaAsin},
         sars_total_review = #{sarsTotalReview},
         sars_total_page = #{sarsTotalPage},

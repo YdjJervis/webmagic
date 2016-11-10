@@ -4,7 +4,7 @@
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.SiteDao">
 
     <resultMap id="SiteResultMap" type="Site">
-        <result property="basCode" column="BAS_CODE"/>
+        <result property="basCode" column="bas_code"/>
         <result property="basSite" column="bas_site"/>
         <result property="basName" column="bas_name"/>
         <result property="basCrawl" column="bas_crawl"/>
@@ -12,7 +12,7 @@
     </resultMap>
 
     <select id="find" resultMap="SiteResultMap">
-        SELECT * FROM base_amazon_site WHERE BAS_CODE = #{0};
+        SELECT * FROM base_amazon_site WHERE bas_code = #{0};
     </select>
 
     <!--根据域名查询一条记录-->

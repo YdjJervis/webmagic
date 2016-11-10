@@ -4,7 +4,7 @@
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.ReviewDao">
 
     <resultMap id="ReviewResultMap" type="Review">
-        <result property="basCode" column="BAS_CODE"/>
+        <result property="basCode" column="bas_code"/>
         <result property="saaAsin" column="saa_asin"/>
         <result property="saaRootAsin" column="saa_root_asin"/>
         <result property="sarPersonId" column="sar_person_id"/>
@@ -30,7 +30,7 @@
     </resultMap>
 
     <insert id="add" parameterType="Review">
-        insert into spider_amazon_review(BAS_CODE,
+        insert into spider_amazon_review(bas_code,
         saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num,sar_update_time)
         values
         (#{basCode},#{saaAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarMonitor},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarTitle},#{sarContent},#{extra},#{sarPageNum},CURRENT_TIMESTAMP)
@@ -38,7 +38,7 @@
 
     <insert id="addAll" parameterType="java.util.List">
         insert into spider_amazon_review
-        (BAS_CODE,saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num,sar_update_time)
+        (bas_code,saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num,sar_update_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.basCode},#{item.saaAsin},#{item.sarPersonId},#{item.sarTime},#{item.sarDealTime},#{item.sarPerson},#{item.sarReviewId},#{item.sarMonitor},#{item.sarBuyStatus},#{item.sarStar},#{item.sarVersion},#{item.sarTitle},#{item.sarContent},#{item.extra},#{item.sarPageNum},CURRENT_TIMESTAMP)

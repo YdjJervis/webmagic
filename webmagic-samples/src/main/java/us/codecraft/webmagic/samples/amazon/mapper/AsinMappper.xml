@@ -25,14 +25,14 @@
     </resultMap>
 
     <resultMap id="AsinSourceResultMap" type="AsinSource">
-        <result property="baasCode" column="BAAS_CODE"/>
+        <result property="baasCode" column="baas_code"/>
         <result property="baasName" column="baas_name"/>
         <result property="createtime" column="baas_create_time"/>
         <result property="updatetime" column="baas_update_time"/>
     </resultMap>
 
     <resultMap id="SiteResultMap" type="Site">
-        <result property="basCode" column="BAS_CODE"/>
+        <result property="basCode" column="bas_code"/>
         <result property="basSite" column="bas_site"/>
         <result property="basName" column="bas_name"/>
         <result property="basCrawl" column="bas_crawl"/>
@@ -43,16 +43,16 @@
     <!--获取指定星级的数据-->
     <select id="find" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
-        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
-        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.baas_code = asin.baas_code
+        INNER JOIN base_amazon_site site ON asin.bas_code = site.bas_code
         WHERE asin.saa_star = #{0}
     </select>
 
     <!-- 查询所有记录,全量爬取所需 -->
     <select id="findAll" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
-        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
-        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.baas_code = asin.baas_code
+        INNER JOIN base_amazon_site site ON asin.bas_code = site.bas_code
         WHERE saa_parsed = 0
         AND saa_on_sale = 1
         AND saa_crawled_head = 2
@@ -73,16 +73,16 @@
 
     <select id="findByAsin" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
-        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
-        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.baas_code = asin.baas_code
+        INNER JOIN base_amazon_site site ON asin.bas_code = site.bas_code
         WHERE asin.saa_asin = #{0}
     </select>
 
     <!--查询全量爬取已经完毕的ASIN，7200为两小时，优先级为0的ASIN两小时更新爬取一次 -->
     <select id="findCrawledAll" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
-        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
-        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.baas_code = asin.baas_code
+        INNER JOIN base_amazon_site site ON asin.bas_code = site.bas_code
         WHERE saa_progress = 1
         AND saa_is_updatting = 0
         AND saa_on_sale = 1
@@ -94,15 +94,15 @@
     <!-- 查询没有爬取过产品首页的ASIN -->
     <select id="findNotRooted" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
-        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
-        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.baas_code = asin.baas_code
+        INNER JOIN base_amazon_site site ON asin.bas_code = site.bas_code
         WHERE asin.saa_crawled_head = 0;
     </select>
 
     <select id="findByRootAsin" resultMap="AsinResultMap">
         SELECT * FROM spider_amazon_asin asin
-        INNER JOIN base_amazon_asin_source asinSource ON asinSource.BAAS_CODE = asin.BAAS_CODE
-        INNER JOIN base_amazon_site site ON asin.BAS_CODE = site.BAS_CODE
+        INNER JOIN base_amazon_asin_source asinSource ON asinSource.baas_code = asin.baas_code
+        INNER JOIN base_amazon_site site ON asin.bas_code = site.bas_code
         WHERE asin.saa_root_asin = #{0}
     </select>
 
