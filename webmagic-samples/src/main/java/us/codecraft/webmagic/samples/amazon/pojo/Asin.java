@@ -23,7 +23,7 @@ public class Asin extends BasePojo {
     /**
      * 爬取状态，0未爬取，1已经爬取，2爬取完毕
      */
-    public String saaStatus;
+    public String saaStatus = "0-0-0-0-0";
     /**
      * 爬取进度
      */
@@ -33,13 +33,13 @@ public class Asin extends BasePojo {
      */
     public int saaParsed;
     public int saaPriority;
-    public int saaNeedUpdatting;
+    public int saaNeedUpdatting = 1;
     public int saaIsUpdatting;
     public Date saaSyncTime;
     /**
      * 是否在销售
      */
-    public int saaOnSale;
+    public int saaOnSale = 1;
     public int saaCrawledHead;
 
     @Override

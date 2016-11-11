@@ -20,6 +20,8 @@ public class Customer extends BasePojo {
     public String legalPerson;
     public String introduce;
 
+    public Platform platform;
+
     @Override
     public String toString() {
         return "Customer{" +
@@ -32,6 +34,7 @@ public class Customer extends BasePojo {
                 ", email='" + email + '\'' +
                 ", legalPerson='" + legalPerson + '\'' +
                 ", introduce='" + introduce + '\'' +
+                ", platform=" + platform +
                 '}';
     }
 }

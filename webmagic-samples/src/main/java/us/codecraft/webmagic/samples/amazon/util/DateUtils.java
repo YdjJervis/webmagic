@@ -36,6 +36,10 @@ public class DateUtils {
     public static String FORMAT_FULL_CN = "yyyy年MM月dd日  HH时mm分ss秒SSS毫秒";
 
     /**
+     * 批次号
+     */
+    public static final String FORMAT_BATCH = "yyyyMMddHHmmssS";
+    /**
      * 获得默认的 date pattern
      */
     public static String getDatePattern() {
@@ -87,5 +91,9 @@ public class DateUtils {
             returnValue = df.format(date);
         }
         return (returnValue);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(format(new Date(), FORMAT_BATCH));
     }
 }

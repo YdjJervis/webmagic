@@ -45,6 +45,12 @@ public interface BaseDao<T> {
     T find(Integer id);
 
     /**
+     * 根据唯一码查询一条数据库记录
+     * @param code 唯一码
+     * @return 元素对象
+     */
+    T findByCode(String code);
+    /**
      * 根据关键字查询元素列表
      * @param keyWord 查询条件
      * @return 元素列表

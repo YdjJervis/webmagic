@@ -106,4 +106,19 @@
         WHERE asin.saa_root_asin = #{0}
     </select>
 
+    <!-- 添加ASIN列表 -->
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_amazon_asin(
+        bas_code,baas_code,saa_asin,saa_root_asin,saa_star,saa_on_sale,saa_crawled_head,saa_status,saa_progress,saa_parsed,saa_priority,
+        saa_need_updatting,saa_is_updatting,saa_extra,saa_sync_time
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">(
+              #{item.site.basCode},#{item.asinSource.baasCode},#{item.saaAsin},#{item.saaRootAsin},#{item.saaStar},#{item.saaOnSale},#{item.saaCrawledHead},#{item.saaStatus},
+              #{item.saaProgress},#{item.saaParsed},#{item.saaPriority},#{item.saaNeedUpdatting},#{item.saaIsUpdatting},
+              #{item.extra},#{item.saaSyncTime}
+            )
+        </foreach>
+    </insert>
+
 </mapper>

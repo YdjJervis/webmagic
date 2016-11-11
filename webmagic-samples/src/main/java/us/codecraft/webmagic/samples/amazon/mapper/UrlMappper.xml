@@ -101,4 +101,8 @@
         DELETE FROM spider_amazon_url WHERE sau_url_md5 = #{0};
     </delete>
 
+    <update id="updatePriority">
+        UPDATE spider_amazon_url SET sau_priority = #{1} WHERE saa_asin = #{0};
+    </update>
+
 </mapper>

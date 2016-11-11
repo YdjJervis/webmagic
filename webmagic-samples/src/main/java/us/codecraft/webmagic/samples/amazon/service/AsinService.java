@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
 import com.google.gson.Gson;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -332,6 +333,26 @@ public class AsinService {
         asin.extra = "SRA";
 
         update(asin);
+    }
+
+    public boolean isExist(String asin) {
+        return mAsinDao.findByAsin(asin) != null;
+    }
+
+    public void addAll(List<Asin> asinList) {
+        List<Asin> newList = new ArrayList<Asin>();
+
+        for (Asin asin : asinList) {
+            if (isExist(asin.saaAsin)) {
+                update(asin);
+            } else {
+                newList.add(asin);
+            }
+        }
+
+        if (CollectionUtils.isNotEmpty(newList)) {
+            mAsinDao.addAll(asinList);
+        }
     }
 
     private static final class Filter {

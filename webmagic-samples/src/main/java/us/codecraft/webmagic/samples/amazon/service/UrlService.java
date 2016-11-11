@@ -210,7 +210,14 @@ public class UrlService {
     /**
      * 删除正在更新爬取的URL
      */
-    public void deleteUpdating(){
+    public void deleteUpdating() {
         mUrlDao.deleteByType(2);
+    }
+
+    /**
+     * 切换所有ASIN的URL的优先级
+     */
+    public void updatePriority(String asin, int priority) {
+        mUrlDao.updatePriority(asin,priority);
     }
 }

@@ -14,12 +14,15 @@ public class API extends BasePojo {
     public int status;
     public String token;
 
+    public Customer customer;
+
     @Override
     public String toString() {
         return "API{" +
                 "customerCode='" + customerCode + '\'' +
                 ", status=" + status +
                 ", token='" + token + '\'' +
+                ", customer=" + customer +
                 '}';
     }
 }

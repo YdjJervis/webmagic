@@ -60,22 +60,27 @@ public class UrlServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void testDeleteUpdateCrawl(){
-        mUrlService.deleteUpdateCrawl("B0181YRLT4","one_star");
+    public void testDeleteUpdateCrawl() {
+        mUrlService.deleteUpdateCrawl("B0181YRLT4", "one_star");
     }
 
     @Test
-    public void testDeleteByAsin(){
+    public void testDeleteByAsin() {
         mUrlService.deleteByAsin("B00NZS00OU");
     }
 
     @Test
-    public void testFind(){
+    public void testFind() {
         System.out.println(mUrlService.find(0));
     }
 
     @Test
-    public void testUpdateURLStatus(){
+    public void testUpdateURLStatus() {
         mUrlService.resetStatus();
+    }
+
+    @Test
+    public void testUpdatePriority() {
+        mUrlService.updatePriority("B01LZK517R", 8);
     }
 }

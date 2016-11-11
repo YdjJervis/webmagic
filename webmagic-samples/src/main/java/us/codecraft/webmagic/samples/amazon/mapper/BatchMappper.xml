@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.BatchDao">
+
+    <resultMap id="BatchResultMap" type="Batch">
+        <result property="id" column="bo_id"/>
+        <result property="number" column="bo_batch_num"/>
+        <result property="customerCode" column="bec_code"/>
+        <result property="type" column="bo_type"/>
+        <result property="status" column="bo_status"/>
+        <result property="startTime" column="bo_start_time"/>
+        <result property="finishTime" column="bo_finish_time"/>
+        <result property="progress" column="bo_progress"/>
+        <result property="extra" column="bo_extra"/>
+    </resultMap>
+
+    <insert id="add" parameterType="Batch">
+        INSERT INTO batch_order
+        (bo_batch_num,bec_code,bo_type,bo_status,bo_start_time,bo_finish_time,bo_progress,bo_extra)
+        VALUES
+        (#{number},#{customerCode},#{type},#{status},#{startTime},#{finishTime},#{progress},#{extra})
+    </insert>
+
+</mapper>

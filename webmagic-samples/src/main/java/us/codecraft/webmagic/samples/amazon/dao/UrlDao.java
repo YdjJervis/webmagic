@@ -48,4 +48,9 @@ public interface UrlDao extends BaseDao<Url> {
      * @param type 0-全量；1-监听；2-更新
      */
     void deleteByType(int type);
+
+    /**
+     * 更改指定ASIN对应URL的优先级
+     */
+    void updatePriority(String asin, int priority);
 }
