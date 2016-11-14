@@ -333,6 +333,7 @@ public class AsinService {
 
         /* SRA = same root asin */
         asin.extra = "SRA";
+        asin.saaProgress = 1;
 
         update(asin);
     }

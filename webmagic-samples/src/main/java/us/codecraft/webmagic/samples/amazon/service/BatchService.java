@@ -39,6 +39,7 @@ public class BatchService {
     /**
      * 根据ASIN列表生成批次单号，批次详单，和转换成ASIN表
      * 记录
+     *
      * @param customerCode 客户码
      * @param asinList     ASIN 列表
      */
@@ -64,6 +65,7 @@ public class BatchService {
             List<BatchAsin> baList = new ArrayList<BatchAsin>();
 
             mLogger.info("对已经爬取过的列表插入到批次单明细前面...");
+            float progress = 0;
             for (Asin asin : crawledList) {
 
                 Asin byAsin = mAsinService.findByAsin(asin.saaAsin);
@@ -73,8 +75,11 @@ public class BatchService {
                 ba.progress = byAsin.saaProgress;
                 /* 已经在爬取的ASIN的进度 < 1就标记为全量爬取，否则标记为更新爬取 */
                 ba.type = ba.progress < 1 ? 0 : 1;
-
+                ba.rootAsin = byAsin.saaRootAsin;
+                ba.extra = byAsin.extra;
                 baList.add(ba);
+
+                progress += byAsin.saaProgress;
             }
 
             mLogger.info("新的批次单明细插入到列表后面...");
@@ -85,6 +90,7 @@ public class BatchService {
             }
 
             mLogger.info("批次单入库：" + batch);
+            batch.progress = progress / (crawledList.size() + newList.size());
             add(batch);
 
             mLogger.info("批次详单入库：" + baList);
@@ -159,11 +165,11 @@ public class BatchService {
         return batch;
     }
 
-    public Batch findByBatchNumber(String batchNumber){
+    public Batch findByBatchNumber(String batchNumber) {
         return mBatchDao.findByBatchNumber(batchNumber);
     }
 
-    public void update(Batch batch){
+    public void update(Batch batch) {
         mBatchDao.update(batch);
     }
 

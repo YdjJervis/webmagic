@@ -22,7 +22,7 @@
     </select>
 
     <select id="findAllByAsin" resultMap="BatchAsinResultMap">
-        SELECT * FROM batch_order_asin WHERE boa_asin = #{0};
+        SELECT * FROM batch_order_asin WHERE boa_asin = #{0} AND boa_type != 3;
     </select>
 
     <select id="findAllByBatchNum" resultMap="BatchAsinResultMap">
@@ -56,8 +56,8 @@
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-              #{item.siteCode},#{item.batchNumber},#{item.asin},#{item.rootAsin},#{item.crawled},#{item.progress},
-              #{item.type},#{item.startTime},#{item.finishTime},#{item.extra}
+            #{item.siteCode},#{item.batchNumber},#{item.asin},#{item.rootAsin},#{item.crawled},#{item.progress},
+            #{item.type},#{item.startTime},#{item.finishTime},#{item.extra}
             )
         </foreach>
     </insert>

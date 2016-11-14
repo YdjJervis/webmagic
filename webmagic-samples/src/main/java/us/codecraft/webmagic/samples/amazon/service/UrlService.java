@@ -131,6 +131,11 @@ public class UrlService {
         mLogger.info("最大页码总数：" + maxPage + " 已经爬取的页码：" + crawledList.size());
         Asin asinObj = mAsinService.findByAsin(url.saaAsin);
         List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(url.saaAsin);
+        /* 先把rootAsin值填进去 */
+        for (BatchAsin batchAsin : batchAsinList) {
+            batchAsin.rootAsin = asinObj.saaRootAsin;
+        }
+
         /* 如果 当前ASIN，URL列表集合数量 = 最大页码，表示已经爬取完毕了 */
         if (crawledList.size() == maxPage) {
 
@@ -147,6 +152,7 @@ public class UrlService {
             /* 二期业务：改变详单表extra状态进行更新 */
             for (BatchAsin batchAsin : batchAsinList) {
                 batchAsin.extra = asin.extra;
+                batchAsin.progress = 1;
             }
         } else {
             /* 一期业务 */
@@ -161,8 +167,10 @@ public class UrlService {
                 batchAsin.progress = asinObj.saaProgress;
             }
         }
+        /* 更新批次详单表 */
+        mBatchAsinService.updateAll(batchAsinList);
 
-        /* 更新批次单表 */
+        /* 二期业务：更新批次单表 */
         for (BatchAsin batchAsin : batchAsinList) {
             /* 对批次详单进行更新 */
             if(batchAsin.progress == 1){
@@ -187,7 +195,6 @@ public class UrlService {
             progress = progress / batchAsinList2.size();
 
             Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
-
             batch.progress = progress;
 
             /* 如果爬取开始，更新开始时间 */
@@ -204,7 +211,7 @@ public class UrlService {
 
         }
 
-        /* 更新批次详单表 */
+        /* 再次更新批次详单表 */
         mBatchAsinService.updateAll(batchAsinList);
     }
 
