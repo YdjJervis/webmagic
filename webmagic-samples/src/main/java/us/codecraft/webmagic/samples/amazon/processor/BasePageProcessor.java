@@ -251,7 +251,7 @@ public class BasePageProcessor implements PageProcessor {
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
-                    .setDownloader(mAbuProxyDownloader)
+                    .setDownloader(mHttpClientImplDownloader)
                     .thread(5);
 
             for (Url url : urlList) {

@@ -22,4 +22,18 @@
         (#{number},#{customerCode},#{type},#{status},#{startTime},#{finishTime},#{progress},#{extra})
     </insert>
 
+
+    <select id="findByBatchNumber" resultMap="BatchResultMap">
+        SELECT * FROM batch_order WHERE bo_batch_num = #{0};
+    </select>
+
+    <update id="update" parameterType="Batch">
+        UPDATE batch_order SET
+        bec_code = #{customerCode},bo_type = #{type},bo_status = #{status},bo_start_time = #{startTime},
+        bo_finish_time = #{finishTime},bo_progress = #{progress},bo_extra = #{extra}
+        WHERE bo_batch_num = #{number}
+
+
+    </update>
+
 </mapper>

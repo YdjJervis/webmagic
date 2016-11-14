@@ -121,7 +121,7 @@ public class AsinService {
         return mAsinDao.findCrawledAll();
     }
 
-    public void updateExtra(Asin asin) {
+    public Asin updateExtra(Asin asin) {
     /* 全量爬取完毕，把需要爬取星级的最后一条评论时间记录到extra字段，方便下次更新爬取的时候使用 */
         List<Review> reviewList = mReviewService.findLastReview(asin.saaAsin);
 
@@ -142,6 +142,8 @@ public class AsinService {
         }
         asin.extra = new Gson().toJson(mapList);
         update(asin);
+
+        return asin;
     }
 
     public void update(Asin asin) {

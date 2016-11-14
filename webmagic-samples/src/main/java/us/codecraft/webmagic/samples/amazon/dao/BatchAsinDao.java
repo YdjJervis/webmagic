@@ -4,6 +4,8 @@ import org.springframework.stereotype.Repository;
 import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.20
@@ -14,4 +16,8 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 public interface BatchAsinDao extends BaseDao<BatchAsin> {
 
     BatchAsin find(BatchAsin batchAsin);
+
+    List<BatchAsin> findAllByAsin(String code);
+
+    List<BatchAsin> findAllByBatchNum(String batchNumber);
 }

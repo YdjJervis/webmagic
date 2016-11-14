@@ -21,6 +21,14 @@
         SELECT * FROM batch_order_asin WHERE bo_batch_num = #{0};
     </select>
 
+    <select id="findAllByAsin" resultMap="BatchAsinResultMap">
+        SELECT * FROM batch_order_asin WHERE boa_asin = #{0};
+    </select>
+
+    <select id="findAllByBatchNum" resultMap="BatchAsinResultMap">
+        SELECT * FROM batch_order_asin WHERE bo_batch_num = #{0};
+    </select>
+
     <select id="find" parameterType="BatchAsin" resultMap="BatchAsinResultMap">
         SELECT * FROM batch_order_asin WHERE bo_batch_num = #{batchNumber} AND boa_asin = #{asin};
     </select>

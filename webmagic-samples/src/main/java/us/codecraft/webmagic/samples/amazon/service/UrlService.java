@@ -7,13 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
+import us.codecraft.webmagic.samples.amazon.pojo.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Jervis
@@ -28,10 +27,15 @@ public class UrlService {
     private UrlDao mUrlDao;
     @Autowired
     private AsinService mAsinService;
-    @Autowired
-    private ReviewService mReviewService;
+
     @Autowired
     private UrlHistoryService mHistoryService;
+
+    @Autowired
+    private BatchAsinService mBatchAsinService;
+
+    @Autowired
+    private BatchService mBatchService;
 
     private Logger mLogger = Logger.getLogger(getClass());
 
@@ -126,11 +130,12 @@ public class UrlService {
 
         mLogger.info("最大页码总数：" + maxPage + " 已经爬取的页码：" + crawledList.size());
         Asin asinObj = mAsinService.findByAsin(url.saaAsin);
+        List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(url.saaAsin);
         /* 如果 当前ASIN，URL列表集合数量 = 最大页码，表示已经爬取完毕了 */
         if (crawledList.size() == maxPage) {
 
             /* 更新ASIN的extra状态 */
-            mAsinService.updateExtra(asinObj);
+            Asin asin = mAsinService.updateExtra(asinObj);
 
             /* 更新ASIN的爬取状态状态 */
             mAsinService.updateStatus(asinObj, true);
@@ -139,13 +144,68 @@ public class UrlService {
             deleteAll(crawledList);
             mHistoryService.addAll(crawledList);
 
+            /* 二期业务：改变详单表extra状态进行更新 */
+            for (BatchAsin batchAsin : batchAsinList) {
+                batchAsin.extra = asin.extra;
+            }
         } else {
+            /* 一期业务 */
             float progress = 1.0f * crawledList.size() / maxPage;
             asinObj.saaProgress = progress > 1.0f ? 1.0f : progress;
             mLogger.info(url.saaAsin + " 的爬取进度：" + asinObj.saaProgress);
+
             mAsinService.updateStatus(asinObj, false);
+
+            /* 二期业务：改变详单表进度状态进行更新 */
+            for (BatchAsin batchAsin : batchAsinList) {
+                batchAsin.progress = asinObj.saaProgress;
+            }
         }
 
+        /* 更新批次单表 */
+        for (BatchAsin batchAsin : batchAsinList) {
+            /* 对批次详单进行更新 */
+            if(batchAsin.progress == 1){
+                batchAsin.finishTime = new Date();
+                /* 调整为更新爬取 */
+                batchAsin.type = 1;
+            }
+            if(batchAsin.startTime == null){
+                batchAsin.startTime = new Date();
+            }
+
+            /* 对批次单进行更新 */
+            List<BatchAsin> batchAsinList2 = mBatchAsinService.findAllByBatchNum(batchAsin.batchNumber);
+
+            float progress = 0;
+            /* 计算总的进度值之和 */
+            for (BatchAsin batchAsin2 : batchAsinList2) {
+                progress += batchAsin2.progress;
+            }
+
+            /* 计算订单平均进度值 */
+            progress = progress / batchAsinList2.size();
+
+            Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
+
+            batch.progress = progress;
+
+            /* 如果爬取开始，更新开始时间 */
+            if (batch.startTime == null) {
+                batch.startTime = new Date();
+            }
+            /* 如果爬取完毕，更新完毕时间 */
+            if (progress == 1) {
+                batch.finishTime = new Date();
+            }
+
+
+            mBatchService.update(batch);
+
+        }
+
+        /* 更新批次详单表 */
+        mBatchAsinService.updateAll(batchAsinList);
     }
 
     /**
@@ -218,6 +278,6 @@ public class UrlService {
      * 切换所有ASIN的URL的优先级
      */
     public void updatePriority(String asin, int priority) {
-        mUrlDao.updatePriority(asin,priority);
+        mUrlDao.updatePriority(asin, priority);
     }
 }

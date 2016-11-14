@@ -159,4 +159,12 @@ public class BatchService {
         return batch;
     }
 
+    public Batch findByBatchNumber(String batchNumber){
+        return mBatchDao.findByBatchNumber(batchNumber);
+    }
+
+    public void update(Batch batch){
+        mBatchDao.update(batch);
+    }
+
 }

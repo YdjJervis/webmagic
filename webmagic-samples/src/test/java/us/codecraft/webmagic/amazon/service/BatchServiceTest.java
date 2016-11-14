@@ -4,10 +4,8 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
-import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.AsinSource;
-import us.codecraft.webmagic.samples.amazon.pojo.Batch;
-import us.codecraft.webmagic.samples.amazon.pojo.Site;
+import us.codecraft.webmagic.samples.amazon.dao.ImportAsinDao;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.BatchService;
 
 import java.util.ArrayList;
@@ -20,20 +18,25 @@ public class BatchServiceTest extends SpringTestCase {
 
     private Logger mLogger = Logger.getLogger(getClass());
 
+    @Autowired
+    private ImportAsinDao mImportAsinDao;
+
     @Test
-    public void testFindByCode() {
+    public void testGenerateBatchOrder() {
         List<Asin> list = new ArrayList<Asin>();
 
-        Asin asin = new Asin();
-        asin.saaAsin = "B01KT0ARWG";
-        asin.saaPriority = 3;
-        asin.saaStar = "1-1-1-1-1";
-        asin.site = new Site();
-        asin.asinSource = new AsinSource();
-        asin.asinSource.baasCode = "SYSTEM";
-        asin.site.basCode = "US";
-
-        list.add(asin);
+        List<ImportAsin> importAsinList = mImportAsinDao.findAll(5);
+        for (ImportAsin importAsin : importAsinList) {
+            Asin asin = new Asin();
+            asin.saaAsin = importAsin.asin;
+            asin.saaPriority = 0;
+            asin.saaStar = "0-0-1-1-1";
+            asin.site = new Site();
+            asin.asinSource = new AsinSource();
+            asin.asinSource.baasCode = "SYSTEM";
+            asin.site.basCode = importAsin.siteCode;
+            list.add(asin);
+        }
 
         mService.add("AA",list);
     }
