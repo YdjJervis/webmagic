@@ -5,12 +5,16 @@
     <resultMap id="IpsInfoManageMap" type="IpsInfoManage">
         <id property="id" column="biim_id" />
         <result property="ipInfoId" column="bii_id" />
+        <result property="ipDomain" column="bii_domain" />
         <result property="ipHost" column="bii_host" />
         <result property="ipPort" column="bii_port" />
+        <result property="ipVerifyUserName" column="bii_verify_username" />
+        <result property="ipVerifyPassword" column="bii_verify_password" />
         <result property="urlHost" column="biim_url_host" />
         <result property="isBlocked" column="biim_is_blocked" />
         <result property="isUsing" column="biim_is_using" />
         <result property="usedCount" column="biim_used_count" />
+        <result property="switchDate" column="biim_switch_date" />
         <result property="lastUsedDate" column="biim_last_used_date" />
         <result property="createDate" column="biim_create_date" />
         <result property="updateDate" column="biim_update_date" />
@@ -21,8 +25,11 @@
         SELECT
           biim.BIIM_ID,
           biim.BII_ID,
+          bii.BII_DOMAIN,
           bii.BII_HOST,
           bii.BII_PORT,
+          bii.BII_VERIFY_USERNAME,
+          bii.BII_VERIFY_PASSWORD,
           biim.BIIM_URL_HOST,
           biim.BIIM_IS_BLOCKED,
           biim.BIIM_IS_USING,
@@ -50,6 +57,7 @@
           BIIM_IS_BLOCKED = #{isBlocked},
           BIIM_IS_USING = #{isUsing},
           BIIM_USED_COUNT = #{usedCount},
+          BIIM_SWITCH_DATE = #{switchDate},
           BIIM_LAST_USED_DATE = #{lastUsedDate},
           BIIM_UPDATE_DATE = CURRENT_TIMESTAMP
         WHERE
@@ -61,12 +69,16 @@
         SELECT
           biim.BIIM_ID,
           biim.BII_ID,
+          bii.BII_DOMAIN,
           bii.BII_HOST,
           bii.BII_PORT,
+          bii.BII_VERIFY_USERNAME,
+          bii.BII_VERIFY_PASSWORD,
           biim.BIIM_URL_HOST,
           biim.BIIM_IS_BLOCKED,
           biim.BIIM_IS_USING,
           biim.BIIM_USED_COUNT,
+          biim.BIIM_SWITCH_DATE,
           biim.BIIM_LAST_USED_DATE,
           biim.BIIM_CREATE_DATE,
           biim.BIIM_UPDATE_DATE
@@ -77,6 +89,7 @@
         ON
           biim.bii_id = bii.bii_id
         WHERE biim.BIIM_IS_USING = TRUE AND biim.BIIM_URL_HOST = #{0}
+        ORDER BY biim_last_used_date DESC
     </select>
 
     <!-- 新增对应域名的所有IP管理信息 -->
@@ -90,12 +103,13 @@
           BIIM_IS_BLOCKED,
           BIIM_IS_USING,
           BIIM_USED_COUNT,
+          BIIM_SWITCH_DATE,
           BIIM_CREATE_DATE,
           BIIM_UPDATE_DATE
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.ipInfoId}, #{item.urlHost}, #{item.isBlocked}, #{item.isUsing}, #{item.usedCount}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            (#{item.ipInfoId}, #{item.urlHost}, #{item.isBlocked}, #{item.isUsing}, #{item.usedCount}, #{item.switchDate}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         </foreach>
     </insert>
 
@@ -104,4 +118,15 @@
         SELECT * FROM BASE_IPS_INFO_MANAGE
         WHERE BIIM_URL_HOST = #{0}
     </select>
+
+    <!--通过url域名和正在使用的状态来更新-->
+    <update id="updateByUrlHost" parameterType="IpsInfoManage">
+        update
+          BASE_IPS_INFO_MANAGE
+        SET
+          BIIM_IS_USING = #{isUsing},
+          BIIM_UPDATE_DATE = CURRENT_TIMESTAMP
+        WHERE
+          BIIM_URL_HOST = #{urlHost} AND BIIM_IS_USING = 1
+    </update>
 </mapper>

@@ -12,16 +12,16 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.AbuProxyDownloader;
 import us.codecraft.webmagic.downloader.HttpClientImplDownloader;
+import us.codecraft.webmagic.downloader.IpsProxyHttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.samples.amazon.pojo.ImgValidateResult;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.Site;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.amazon.ws.validate.ImageOCRService;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jervis
@@ -36,6 +36,16 @@ public class BasePageProcessor implements PageProcessor {
     private us.codecraft.webmagic.Site mSite = us.codecraft.webmagic.Site.me().setRetryTimes(3).setSleepTime(10 * 1000).setTimeOut(10 * 1000);
 
     public static final String URL_EXTRA = "url_extra";
+
+    private Set<Integer> mSet = new HashSet<Integer>(){{
+            add(402);
+            add(403);
+            add (407);
+            add(417);
+            add(429);
+            add(503);
+        }
+    };
 
     @Autowired
     protected UrlService mUrlService;
@@ -59,6 +69,9 @@ public class BasePageProcessor implements PageProcessor {
     protected IpsInfoManageService mIpsInfoManageService;
 
     @Autowired
+    protected BatchAsinService mBatchAsinService;
+
+    @Autowired
     protected HttpClientImplDownloader sDownloader;
 
     @Autowired
@@ -66,6 +79,9 @@ public class BasePageProcessor implements PageProcessor {
 
     @Autowired
     private HttpClientImplDownloader mHttpClientImplDownloader;
+
+    @Autowired
+    private IpsProxyHttpClientDownloader mIpsProxyHttpClientDownloader;
 
     @Override
     public synchronized void process(Page page) {
@@ -81,6 +97,8 @@ public class BasePageProcessor implements PageProcessor {
 
         if (isPage404(page)) {
             dealPageNotFound(page);
+        } else if(mSet.contains(page.getStatusCode())) {
+            //包括mSet里的状态码，则不做处理
         } else if (isValidatePage(page)) {
             dealValidate(page);
         } else if (isReviewPage(page)) {
@@ -136,6 +154,12 @@ public class BasePageProcessor implements PageProcessor {
             int statusCode = page.getStatusCode();
             sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
 
+            if(statusCode == 407 || statusCode == 417) {
+                if(page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
+                    mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), statusCode);
+                }
+            }
+
             url.status = statusCode;
         }
 
@@ -151,17 +175,8 @@ public class BasePageProcessor implements PageProcessor {
         String validateUrl = getValidateUrl(page);
 
         if(StringUtils.isNotEmpty(validateUrl)) {
-            String ipsType = (String)page.getRequest().getExtra("ipsType");
-
-            if(ipsType.equals("ipsProxy")) {
-                /*将正在使用的IP状态更新为没使用中*/
-                String urlHost = (String) page.getRequest().getExtra("host");
-                mIpsInfoManageService.updateIsUsing2PrepareUsing(urlHost);
-                /*固定代理IP切换IP*/
-                mIpsStatService.manualSwitchIpIpsPool(urlHost);
-            } else if(ipsType.equals("abu")) {
-                /*阿布代理IP切换*/
-                mIpsStatService.manualSwitchIpByAbu();
+            if(page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
+                mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), 0);
             }
         }
 
@@ -251,8 +266,8 @@ public class BasePageProcessor implements PageProcessor {
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
-                    .setDownloader(mHttpClientImplDownloader)
-                    .thread(5);
+                    .setDownloader(mIpsProxyHttpClientDownloader)
+                    .thread(1);
 
             for (Url url : urlList) {
                 Request request = new Request(url.url);
@@ -273,5 +288,24 @@ public class BasePageProcessor implements PageProcessor {
      */
     private void ipsExceptionStatusStat(Page page) {
         mIpsSwitchManageService.ipsSwitchManageExceptionRecord(page);
+    }
+
+    /**
+     * 监测对应批次下的url使用代理解析情况
+     */
+    void stataUrlProxy(Page page) {
+        /*通过url获取这个URL的asin*/
+        String asinCode = page.getUrl().regex(".*product-reviews/([0-9a-zA-Z\\-]*).*").get();
+        if(asinCode != null && !"".equals(asinCode)) {
+            /*通过asin来查询这个URL所对应的批次信息*/
+            List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(asinCode);
+            StringBuffer sb;
+            if(batchAsinList != null && batchAsinList.size() > 0) {
+                sb = new StringBuffer();
+                for (BatchAsin batchAsin : batchAsinList) {
+                    sb.append(batchAsin.batchNumber + ";");
+                }
+            }
+        }
     }
 }

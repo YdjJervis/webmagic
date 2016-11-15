@@ -11,8 +11,11 @@ import java.util.Date;
 public class IpsInfoManage {
     private int id;
     private int ipInfoId;
+    private String ipDomain;
     private String ipHost;
     private String ipPort;
+    private String ipVerifyUserName;
+    private String ipVerifyPassword;
     private String urlHost;
 
     /*IP是否出现验证码*/
@@ -20,6 +23,7 @@ public class IpsInfoManage {
 
     private int isUsing;
     private int usedCount;
+    private Date switchDate;
     private Date lastUsedDate;
     private Date createDate;
     private Date updateDate;
@@ -40,6 +44,14 @@ public class IpsInfoManage {
         this.ipInfoId = ipInfoId;
     }
 
+    public String getIpDomain() {
+        return ipDomain;
+    }
+
+    public void setIpDomain(String ipDomain) {
+        this.ipDomain = ipDomain;
+    }
+
     public String getUrlHost() {
         return urlHost;
     }
@@ -58,6 +70,22 @@ public class IpsInfoManage {
 
     public void setIpPort(String ipPort) {
         this.ipPort = ipPort;
+    }
+
+    public String getIpVerifyUserName() {
+        return ipVerifyUserName;
+    }
+
+    public void setIpVerifyUserName(String ipVerifyUserName) {
+        this.ipVerifyUserName = ipVerifyUserName;
+    }
+
+    public String getIpVerifyPassword() {
+        return ipVerifyPassword;
+    }
+
+    public void setIpVerifyPassword(String ipVerifyPassword) {
+        this.ipVerifyPassword = ipVerifyPassword;
     }
 
     public void setUrlHost(String urlHost) {
@@ -86,6 +114,14 @@ public class IpsInfoManage {
 
     public void setUsedCount(int usedCount) {
         this.usedCount = usedCount;
+    }
+
+    public Date getSwitchDate() {
+        return switchDate;
+    }
+
+    public void setSwitchDate(Date switchDate) {
+        this.switchDate = switchDate;
     }
 
     public Date getLastUsedDate() {

@@ -1,11 +1,21 @@
 package us.codecraft.webmagic.samples.amazon.util;
 
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 import us.codecraft.webmagic.samples.amazon.pojo.HtmlResponse;
+import us.codecraft.webmagic.samples.amazon.pojo.IpsInfoManage;
+import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,10 +40,6 @@ public class ParseUtils {
     /*阿布云代理隧道验证信息*/
     private final static String ABU_PROXY_USER = "H48BF9157I793Y1P";
     private final static String ABU_PROXY_PASS = "3FFF5172112CBBA1";
-
-    /*固定代理身份验证信息*/
-    private final static String IP_PROXY_USER = "hanyun853490";
-    private final static String IP_PROXY_PASS = "hanyun853490";
 
     /**
      * 通过阿布云的代理隧道IP解析URL
@@ -100,44 +106,63 @@ public class ParseUtils {
      * @param urlStr url
      * @return htmlResponse对象
      */
-    public HtmlResponse parseHtmlByProxy(String urlStr, String proxyHost, String proxyPort) {
+    public HtmlResponse parseHtmlByProxy(String urlStr, IpsInfoManage ipsInfoManage, String urlHost) {
         mLogger.info("=============== 调用固定代理IP解析URL ===============");
+        String proxyHost = ipsInfoManage.getIpHost();
+        String proxyPort = ipsInfoManage.getIpPort();
+        String domain = ipsInfoManage.getIpDomain();
+        String verifyUserName = ipsInfoManage.getIpVerifyUserName();
+        String verifyPassword = ipsInfoManage.getIpVerifyPassword();
         HtmlResponse htmlResponse = new HtmlResponse();
-        /*构造HttpClient的实例*/
-        HttpClient httpClient = new HttpClient();
 
+        /*构造HttpClient的实例*/
+        HttpClient httpClient = new DefaultHttpClient();
+
+        //设定目标站点
+        HttpHost httpHost = new HttpHost(urlHost);
 
         if(proxyHost != null && proxyPort != null) {
-            /*如果代理需要密码验证，这里设置用户名密码*/
-            httpClient.getState().setProxyCredentials(AuthScope.ANY, new UsernamePasswordCredentials(IP_PROXY_USER, IP_PROXY_PASS));
-            /*设置代理服务器的ip地址和端口*/
-            httpClient.getHostConfiguration().setProxy(proxyHost, Integer.valueOf(proxyPort));
-            /*使用抢先认证*/
-            httpClient.getParams().setAuthenticationPreemptive(true);
-        }
-        /*创建GET方法的实例*/
-        GetMethod getMethod = new GetMethod(urlStr);
-        /*使用系统提供的默认的恢复策略*/
-        getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+            //设置代理对象 ip/代理名称,端口
+            httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(proxyHost, Integer.valueOf(proxyPort)));
 
+            CredentialsProvider credentialsProvider = null;
+            /*如果代理需要密码验证，这里设置用户名密码*/
+            if(null != domain && domain.equalsIgnoreCase("US")) {
+                credentialsProvider = new BasicCredentialsProvider();
+                credentialsProvider.setCredentials(new AuthScope(proxyHost, Integer.valueOf(proxyPort)), new UsernamePasswordCredentials(verifyUserName, verifyPassword));
+                ((DefaultHttpClient) httpClient).setCredentialsProvider(credentialsProvider);
+            }
+            /*使用抢先认证*/
+            //httpClient.getParams().setAuthenticationPreemptive(true);
+        }
+
+
+        // 目标地址
+        HttpGet httpGet = new HttpGet(urlStr);
+
+        /*使用系统提供的默认的恢复策略*/
+        //getMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
+
+        httpGet.setHeader("User-Agent", UserAgentUtil.getRandomUserAgent());
+
+        HttpResponse httpResponse = null;
         String htmlContent = null;
-        int statusCode = 417;
+        int statusCode = 0;
         try {
             /*执行getMethod*/
-            statusCode = httpClient.executeMethod(getMethod);
+            httpResponse = httpClient.execute(httpHost, httpGet);
+            statusCode = httpResponse.getStatusLine().getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
-                mLogger.info("Method failed: " + getMethod.getStatusLine());
+                mLogger.info("Method failed: " + httpResponse.getStatusLine());
             }
-            htmlContent = getMethod.getResponseBodyAsString();
-        } catch (HttpException e) {
-            mLogger.error(e);
-        } catch (IOException e) {
+            htmlContent = getContent("utf-8", httpResponse);
+        }  catch (IOException e) {
             mLogger.error(e);
         } finally {
             htmlResponse.setHtmlContent(htmlContent);
             htmlResponse.setStatusCode(statusCode);
             /*释放连接*/
-            getMethod.releaseConnection();
+            httpGet.releaseConnection();
         }
         return htmlResponse;
     }
@@ -188,9 +213,21 @@ public class ParseUtils {
         return url.getHost();
     }
 
+    protected String getContent(String charset, HttpResponse httpResponse) throws IOException {
+        byte[] contentBytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
+        mLogger.warn("Charset autodetect failed, use " + charset + " as charset. Please specify charset in Site.setCharset");
+        return new String(contentBytes, charset);
+    }
+
     public static void main(String[] args) throws MalformedURLException {
         ParseUtils parseUtils = new ParseUtils();
-        HtmlResponse htmlResponse = parseUtils.parseHtmlByProxy("https://www.amazon.co.uk/Miusol-Womens-Contrast-Pattern-Bodycon/dp/B01LWN3VEH/ref=pd_rhf_se_s_cp_4?ie=UTF8&pd_rd_i=B01LWN3VEH&pd_rd_r=QS7S9D14X647ZQ111CRE&pd_rd_w=VheOe&pd_rd_wg=wlAsg&refRID=QS7S9D14X647ZQ111CRE", "104.149.125.124", "8080");
+        IpsInfoManage ipsInfoManage =new IpsInfoManage();
+        ipsInfoManage.setIpHost("104.149.84.131");
+        ipsInfoManage.setIpPort("8080");
+        ipsInfoManage.setIpDomain("US");
+        ipsInfoManage.setIpVerifyUserName("hanyun583745");
+        ipsInfoManage.setIpVerifyPassword("hanyun583745");
+        HtmlResponse htmlResponse = parseUtils.parseHtmlByProxy("https://www.amazon.de/dp/B015DNBF84", ipsInfoManage, "www.amazon.de");
         System.out.println(htmlResponse.getHtmlContent());
     }
 }

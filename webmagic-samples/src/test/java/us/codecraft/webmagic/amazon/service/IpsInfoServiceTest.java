@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.amazon.service;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
@@ -16,24 +17,31 @@ import java.util.List;
  * @date 2016/10/27 15:35
  */
 public class IpsInfoServiceTest extends SpringTestCase {
+
+    Logger sLogger = Logger.getLogger(getClass());
+
+
     @Autowired
     IpsInfoService mIpsInfoService;
 
     @Test
     public void findAllTest() {
+        Long startTime = System.currentTimeMillis();
         List<IpsInfo> result = mIpsInfoService.findAll();
+        Long endTime = System.currentTimeMillis();
+        sLogger.debug("所用时间：" + (double)(endTime-startTime)/(double)1000 + "s.");
         System.out.println(result.size());
     }
 
     @Test
     public void findByIdTest() {
-        IpsInfo ipsInfo = mIpsInfoService.findById(6);
+        IpsInfo ipsInfo = mIpsInfoService.findById(0);
         System.out.println(ipsInfo);
     }
 
     @Test
     public void findByHostTest() {
-        List<IpsInfo> result = mIpsInfoService.findByHost("www.proxy.com0");
+        List<IpsInfo> result = mIpsInfoService.findByHost("www.amazon.co.uk");
         System.out.println(result.size());
     }
 

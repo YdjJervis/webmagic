@@ -26,7 +26,7 @@ public class ValidatePageProcessor implements PageProcessor {
 
     public static void main(String[] args) {
         Spider mSpider = Spider.create(new ValidatePageProcessor())
-                .addUrl("https://www.amazon.de/errors/validateCaptcha")
+                .addUrl("https://www.amazon.co.uk/errors/validateCaptcha?amzn=znNnUaJ7blcuz5pxdahjGA==&amzn-r=/dp/B01E9VRK26&field-keywords=NRATCL")
                 .thread(1);
         mSpider.start();
     }

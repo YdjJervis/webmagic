@@ -10,10 +10,14 @@ import java.util.Date;
  */
 public class IpsInfo {
 
-    public int id;
-    public String host;
-    public int port;
-    public Date createDate;
+    private int id;
+    private String proxyType;
+    private String domain;
+    private String host;
+    private int port;
+    private String verifyUserName;
+    private String verifyPassword;
+    private Date createDate;
     public Date updateDate;
 
     public int getId() {
@@ -22,6 +26,22 @@ public class IpsInfo {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getProxyType() {
+        return proxyType;
+    }
+
+    public void setProxyType(String proxyType) {
+        this.proxyType = proxyType;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public String getHost() {
@@ -38,6 +58,22 @@ public class IpsInfo {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public String getVerifyUserName() {
+        return verifyUserName;
+    }
+
+    public void setVerifyUserName(String verifyUserName) {
+        this.verifyUserName = verifyUserName;
+    }
+
+    public String getVerifyPassword() {
+        return verifyPassword;
+    }
+
+    public void setVerifyPassword(String verifyPassword) {
+        this.verifyPassword = verifyPassword;
     }
 
     public Date getCreateDate() {

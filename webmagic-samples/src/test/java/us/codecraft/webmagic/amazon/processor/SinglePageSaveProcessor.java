@@ -6,6 +6,7 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.AbuProxyDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.io.IOException;
 public class SinglePageSaveProcessor implements PageProcessor {
     @Override
     public void process(Page page){
+        System.out.println(page.getHtml().get());
         try {
             FileUtils.writeStringToFile(new File("C:\\Users\\Administrator\\Desktop\\download.html"),page.getHtml().get());
         } catch (IOException e) {
@@ -28,7 +30,7 @@ public class SinglePageSaveProcessor implements PageProcessor {
 
     @Override
     public Site getSite() {
-        return Site.me();
+        return Site.me().setUserAgent(UserAgentUtil.getRandomUserAgent());
     }
 
     public static void main(String[] args) {

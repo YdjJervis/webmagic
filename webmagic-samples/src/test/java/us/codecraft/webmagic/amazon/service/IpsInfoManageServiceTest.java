@@ -31,16 +31,24 @@ public class IpsInfoManageServiceTest extends SpringTestCase {
 
     @Test
     public void findIpInfoIsUsingTest() {
-        IpsInfoManage ipsInfoManage = mIpsInfoManageService.findIpInfoIsUsing("www.amazon.co.uk");
+        List<IpsInfoManage> ipsInfoManage = mIpsInfoManageService.findIpInfoIsUsing("www.amazon.co.uk");
         System.out.println(ipsInfoManage);
     }
 
     @Test
     public void updateTest() {
-        IpsInfoManage ipsInfoManage = mIpsInfoManageService.findIpInfoIsUsing("www.amazon.co.uk");
+        List<IpsInfoManage> ipsInfoManageList = mIpsInfoManageService.findIpInfoIsUsing("www.amazon.co.uk");
+        IpsInfoManage ipsInfoManage = ipsInfoManageList.get(0);
         ipsInfoManage.setIsUsing(0);
         ipsInfoManage.setIsBlocked(1);
         mIpsInfoManageService.update(ipsInfoManage);
     }
 
+    @Test
+    public void updateAllTest() {
+        IpsInfoManage ipsInfoManage = new IpsInfoManage();
+        ipsInfoManage.setUrlHost("www.amazon.fr");
+        ipsInfoManage.setIsUsing(0);
+        mIpsInfoManageService.updateByUrlHost(ipsInfoManage);
+    }
 }
