@@ -4,6 +4,8 @@ import org.springframework.stereotype.Repository;
 import us.codecraft.webmagic.samples.amazon.pojo.BatchReview;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.20
@@ -13,4 +15,7 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 @Repository
 public interface BatchReviewDao extends BaseDao<BatchReview>{
 
+    BatchReview find(BatchReview batchAsin);
+
+    List<BatchReview> findByReviewID(String reviewID);
 }

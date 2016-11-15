@@ -173,12 +173,12 @@ public class UrlService {
         /* 二期业务：更新批次单表 */
         for (BatchAsin batchAsin : batchAsinList) {
             /* 对批次详单进行更新 */
-            if(batchAsin.progress == 1){
+            if (batchAsin.progress == 1) {
                 batchAsin.finishTime = new Date();
                 /* 调整为更新爬取 */
                 batchAsin.type = 1;
             }
-            if(batchAsin.startTime == null){
+            if (batchAsin.startTime == null) {
                 batchAsin.startTime = new Date();
             }
 
@@ -286,5 +286,12 @@ public class UrlService {
      */
     public void updatePriority(String asin, int priority) {
         mUrlDao.updatePriority(asin, priority);
+    }
+
+    /**
+     * 更改监控Review对应URL的优先级
+     */
+    public void updateMonitorPriority(String reviewID, int priority) {
+        mUrlDao.updateMonitorPriority(reviewID,priority);
     }
 }

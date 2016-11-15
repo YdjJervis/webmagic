@@ -9,7 +9,36 @@
         <result property="batchNumber" column="bo_batch_num"/>
         <result property="reviewID" column="bor_review_id"/>
         <result property="times" column="bor_times"/>
-        <result property="extra" column="bea_extra"/>
+        <result property="extra" column="bor_extra"/>
     </resultMap>
+
+    <select id="find" parameterType="BatchReview" resultMap="BatchReviewResultMap">
+        SELECT * FROM batch_order_review WHERE bo_batch_num = #{batchNumber} AND bor_review_id = #{reviewID};
+    </select>
+
+    <update id="update" parameterType="BatchReview">
+        UPDATE batch_order_review SET
+        bas_code = #{siteCode},
+        bor_times = #{times},
+        bor_extra = #{extra}
+        WHERE
+        bo_batch_num = #{batchNumber} AND bor_review_id = #{reviewID};
+    </update>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO batch_order_review(
+        bas_code,bo_batch_num,bor_review_id,bor_times,bor_extra
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.siteCode},#{item.batchNumber},#{item.reviewID},#{item.times},#{item.extra}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findByReviewID" resultMap="BatchReviewResultMap">
+        SELECT * FROM batch_order_review WHERE bor_review_id = #{0};
+    </select>
 
 </mapper>

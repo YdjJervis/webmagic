@@ -53,4 +53,6 @@ public interface UrlDao extends BaseDao<Url> {
      * 更改指定ASIN对应URL的优先级
      */
     void updatePriority(String asin, int priority);
+
+    void updateMonitorPriority(String reviewID, int priority);
 }

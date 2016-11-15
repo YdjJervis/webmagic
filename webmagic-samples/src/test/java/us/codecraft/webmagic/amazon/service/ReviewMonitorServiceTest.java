@@ -24,4 +24,9 @@ public class ReviewMonitorServiceTest extends SpringTestCase {
         monitor.smrParsed = 1;
         mReviewMonitorService.update(monitor);
     }
+
+    @Test
+    public void testFind(){
+        System.out.println(mReviewMonitorService.findAll());
+    }
 }

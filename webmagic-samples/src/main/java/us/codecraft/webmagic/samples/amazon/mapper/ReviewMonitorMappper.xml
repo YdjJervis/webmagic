@@ -5,6 +5,7 @@
 
     <resultMap id="ReviewMonitorResultMap" type="ReviewMonitor">
         <result property="smrReviewId" column="smr_review_id"/>
+        <result property="siteCode" column="bas_code"/>
         <result property="smrMarked" column="smr_marked"/>
         <result property="smrParsed" column="smr_parsed"/>
         <result property="smrPriority" column="smr_priority"/>
@@ -14,8 +15,8 @@
 
     <!--添加到监控-->
     <insert id="add" parameterType="ReviewMonitor">
-        insert into spider_monitor_review(smr_review_id,smr_marked,smr_parsed,smr_priority,smr_udpate_time)
-        values(#{smrReviewId},#{smrMarked},#{smrParsed},#{smrPriority},CURRENT_TIMESTAMP)
+        insert into spider_monitor_review(smr_review_id,bas_code,smr_marked,smr_parsed,smr_priority)
+        values(#{smrReviewId},#{siteCode},#{smrMarked},#{smrParsed},#{smrPriority})
     </insert>
 
     <!--根据ReviewId查询记录-->
@@ -31,8 +32,20 @@
 
     <update id="update" parameterType="ReviewMonitor">
         UPDATE spider_monitor_review
-        SET smr_marked = #{smrMarked},smr_parsed = #{smrParsed},smr_priority = #{smrPriority},smr_udpate_time = CURRENT_TIMESTAMP
+        SET bas_code = #{siteCode},smr_marked = #{smrMarked},smr_parsed = #{smrParsed},smr_priority = #{smrPriority}
         WHERE smr_review_id = #{smrReviewId}
     </update>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_monitor_review(
+        smr_review_id,bas_code,smr_marked,smr_parsed,smr_priority
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.smrReviewId},#{item.siteCode},#{item.smrMarked},#{item.smrParsed},#{item.smrPriority}
+            )
+        </foreach>
+    </insert>
 
 </mapper>

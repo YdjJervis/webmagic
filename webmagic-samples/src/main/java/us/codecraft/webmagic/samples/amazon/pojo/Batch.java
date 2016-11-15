@@ -16,6 +16,7 @@ public class Batch extends BasePojo {
     public String customerCode;
     public int type;
     public int status;
+    public int times;
     public Date startTime;
     public Date finishTime;
     public float progress;
@@ -27,6 +28,7 @@ public class Batch extends BasePojo {
                 ", customerCode='" + customerCode + '\'' +
                 ", type=" + type +
                 ", status=" + status +
+                ", times=" + times +
                 ", startTime=" + startTime +
                 ", finishTime=" + finishTime +
                 ", progress=" + progress +

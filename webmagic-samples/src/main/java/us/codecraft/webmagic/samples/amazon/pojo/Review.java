@@ -73,6 +73,9 @@ public class Review extends BasePojo {
 
     public String sarPageNum;
 
+    /** 二期：优先级 */
+    public int priority;
+
     @Override
     public String toString() {
         return "Review{" +

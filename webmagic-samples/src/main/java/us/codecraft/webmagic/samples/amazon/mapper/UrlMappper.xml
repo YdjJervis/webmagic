@@ -105,4 +105,8 @@
         UPDATE spider_amazon_url SET sau_priority = #{1} WHERE saa_asin = #{0};
     </update>
 
+    <update id="updateMonitorPriority">
+        UPDATE spider_amazon_url SET sau_priority = #{1} WHERE sau_review_id = #{0};
+    </update>
+
 </mapper>

@@ -38,11 +38,25 @@ public class BatchServiceTest extends SpringTestCase {
             list.add(asin);
         }
 
-        mService.add("AA",list);
+        mService.addBatch("AA", list);
     }
 
     @Test
-    public void testAdd(){
+    public void testReviewMonitorBatch() {
+        List<Review> list = new ArrayList<Review>();
+
+        Review review = new Review();
+        review.priority = 1;
+        review.sarReviewId = "R2V7LL01LD8CRA";
+        review.basCode = "UK";
+
+        list.add(review);
+
+        mService.addMonitor("BB", list);
+    }
+
+    @Test
+    public void testAdd() {
         Batch batch = new Batch();
         batch.number = "fewef";
         mService.add(batch);

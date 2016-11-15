@@ -4,12 +4,17 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.samples.amazon.pojo.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.BatchReview;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.service.BatchReviewService;
+import us.codecraft.webmagic.samples.amazon.service.BatchService;
 import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,14 +31,19 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
     @Autowired
     private ReviewService mReviewService;
 
+    @Autowired
+    private BatchReviewService mBatchReviewService;
+    @Autowired
+    private BatchService mBatchService;
+
     @Override
-    protected void dealReview(Page page) {
+    protected void dealOtherPage(Page page) {
         if (page.getUrl().get().contains("customer-reviews")) {
             String reviewId = page.getUrl().regex(".*customer-reviews/(.*)").get();
             Review review = mReviewService.findByReviewId(reviewId);
 
             String star = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']//img").regex(".*stars-([1-5]).*").get();
-            if (NumberUtils.isNumber(star)) {
+            if (!NumberUtils.isNumber(star)) {
                 sLogger.error("抱歉，没有成功解析颗星数：" + star);
                 return;
             }
@@ -44,6 +54,25 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
 
             sLogger.info(review);
             mReviewService.add(review);
+
+            /* 二期业务 */
+            /* 更新详单 */
+            List<BatchReview> batchReviewList = mBatchReviewService.findByReviewID(reviewId);
+            for (BatchReview batchReview : batchReviewList) {
+                batchReview.times++;
+            }
+            mBatchReviewService.updateAll(batchReviewList);
+
+            /* 更新新总单 */
+            for (BatchReview batchReview : batchReviewList) {
+                Batch batch = mBatchService.findByBatchNumber(batchReview.batchNumber);
+                batch.times++;
+                if (batch.startTime == null) {
+                    batch.startTime = new Date();
+                }
+                mBatchService.update(batch);
+            }
+
         }
     }
 
