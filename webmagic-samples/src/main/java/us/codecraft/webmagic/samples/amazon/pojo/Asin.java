@@ -15,8 +15,8 @@ public class Asin extends BasePojo {
     /**
      * asin码
      */
-    public Site site;
-    public AsinSource asinSource;
+    public Site site = new Site();
+    public AsinSource asinSource = new AsinSource();
     public String saaAsin;
     public String saaRootAsin;
     public String saaStar;

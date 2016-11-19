@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,12 +48,12 @@ public class BatchService {
      * @param customerCode 客户码
      * @param asinList     ASIN 列表
      */
-    public void addBatch(String customerCode, List<Asin> asinList) {
+    public Batch addBatch(String customerCode, List<Asin> asinList) {
         mLogger.info("开始处理客户的订单：customerCode = " + customerCode);
 
-        if (asinList == null) {
+        if (CollectionUtils.isEmpty(asinList)) {
             mLogger.warn("asin list is null");
-            return;
+            return null;
         }
 
         Batch batch = generate(customerCode, 0);
@@ -141,6 +142,8 @@ public class BatchService {
             }
 
         }
+
+        return batch;
     }
 
     public void add(Batch batch) {

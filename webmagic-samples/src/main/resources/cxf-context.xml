@@ -30,5 +30,20 @@
         </jaxws:outInterceptors>
     </jaxws:server>
 
+    <jaxws:server id="asinWS" serviceClass="com.eccang.cxf.AsinWS" address="/asin">
+        <jaxws:serviceBean>
+            <!-- 服务的实现类 -->
+            <bean class="com.eccang.cxf.AsinWSImpl"/>
+        </jaxws:serviceBean>
+        <!-- 加入请求的消息拦截器 -->
+        <jaxws:inInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+        </jaxws:inInterceptors>
+        <!-- 加入响应的消息拦截器 -->
+        <jaxws:outInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+        </jaxws:outInterceptors>
+    </jaxws:server>
+
 </beans>
 
