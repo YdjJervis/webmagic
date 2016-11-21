@@ -1,5 +1,5 @@
 
-package us.codecraft.webmagic.samples.amazon.ws.validate;
+package com.eccang.wsclient.validate;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="Url" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="ImageString" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -31,39 +31,39 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "url",
+    "imageString",
     "type"
 })
-@XmlRootElement(name = "GetVerCodeFromUrl")
-public class GetVerCodeFromUrl {
+@XmlRootElement(name = "GetVerCodeFromImageString")
+public class GetVerCodeFromImageString {
 
-    @XmlElementRef(name = "Url", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
-    protected JAXBElement<String> url;
+    @XmlElementRef(name = "ImageString", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
+    protected JAXBElement<String> imageString;
     @XmlElementRef(name = "type", namespace = "http://tempuri.org/", type = JAXBElement.class, required = false)
     protected JAXBElement<String> type;
 
     /**
-     * Gets the value of the url property.
+     * Gets the value of the imageString property.
      * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     
      */
-    public JAXBElement<String> getUrl() {
-        return url;
+    public JAXBElement<String> getImageString() {
+        return imageString;
     }
 
     /**
-     * Sets the value of the url property.
+     * Sets the value of the imageString property.
      * 
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link String }{@code >}
      *     
      */
-    public void setUrl(JAXBElement<String> value) {
-        this.url = value;
+    public void setImageString(JAXBElement<String> value) {
+        this.imageString = value;
     }
 
     /**

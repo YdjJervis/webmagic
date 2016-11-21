@@ -36,7 +36,7 @@ public abstract class AbstractSpiderWS implements SpiderWS {
         baseRspParam.cutomerCode = baseReqParam.cutomerCode;
 
         /* 授权信息必须存在 */
-        if (baseReqParam == null || StringUtils.isEmpty(baseReqParam.cutomerCode) ||
+        if (StringUtils.isEmpty(baseReqParam.cutomerCode) ||
                 StringUtils.isEmpty(baseReqParam.platformCode) || StringUtils.isEmpty(baseReqParam.token)) {
             sLogger.warn("permission info is not complete !!!");
             sLogger.warn(baseReqParam);

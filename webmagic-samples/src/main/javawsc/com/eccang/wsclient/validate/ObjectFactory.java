@@ -1,20 +1,20 @@
 
-package us.codecraft.webmagic.samples.amazon.ws.validate;
+package com.eccang.wsclient.validate;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the us.codecraft.webmagic.samples.amazon.ws.validate package. 
+ * generated in the com.eccang.wsclient.validate package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -28,7 +28,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _GetVerCodeFromImageStringResponseGetVerCodeFromImageStringResult_QNAME = new QName("http://tempuri.org/", "GetVerCodeFromImageStringResult");
+    private final static QName _GetVerCodeFromImageStringImageString_QNAME = new QName("http://tempuri.org/", "ImageString");
+    private final static QName _GetVerCodeFromImageStringType_QNAME = new QName("http://tempuri.org/", "type");
     private final static QName _AnyURI_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "anyURI");
     private final static QName _Char_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "char");
     private final static QName _UnsignedByte_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "unsignedByte");
@@ -50,13 +51,12 @@ public class ObjectFactory {
     private final static QName _String_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "string");
     private final static QName _UnsignedLong_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "unsignedLong");
     private final static QName _Boolean_QNAME = new QName("http://schemas.microsoft.com/2003/10/Serialization/", "boolean");
-    private final static QName _GetVerCodeFromImageStringImageString_QNAME = new QName("http://tempuri.org/", "ImageString");
-    private final static QName _GetVerCodeFromImageStringType_QNAME = new QName("http://tempuri.org/", "type");
-    private final static QName _GetVerCodeFromUrlResponseGetVerCodeFromUrlResult_QNAME = new QName("http://tempuri.org/", "GetVerCodeFromUrlResult");
     private final static QName _GetVerCodeFromUrlUrl_QNAME = new QName("http://tempuri.org/", "Url");
+    private final static QName _GetVerCodeFromUrlResponseGetVerCodeFromUrlResult_QNAME = new QName("http://tempuri.org/", "GetVerCodeFromUrlResult");
+    private final static QName _GetVerCodeFromImageStringResponseGetVerCodeFromImageStringResult_QNAME = new QName("http://tempuri.org/", "GetVerCodeFromImageStringResult");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: us.codecraft.webmagic.samples.amazon.ws.validate
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.eccang.wsclient.validate
      * 
      */
     public ObjectFactory() {
@@ -98,9 +98,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "GetVerCodeFromImageStringResult", scope = GetVerCodeFromImageStringResponse.class)
-    public JAXBElement<String> createGetVerCodeFromImageStringResponseGetVerCodeFromImageStringResult(String value) {
-        return new JAXBElement<String>(_GetVerCodeFromImageStringResponseGetVerCodeFromImageStringResult_QNAME, String.class, GetVerCodeFromImageStringResponse.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "ImageString", scope = GetVerCodeFromImageString.class)
+    public JAXBElement<String> createGetVerCodeFromImageStringImageString(String value) {
+        return new JAXBElement<String>(_GetVerCodeFromImageStringImageString_QNAME, String.class, GetVerCodeFromImageString.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "type", scope = GetVerCodeFromImageString.class)
+    public JAXBElement<String> createGetVerCodeFromImageStringType(String value) {
+        return new JAXBElement<String>(_GetVerCodeFromImageStringType_QNAME, String.class, GetVerCodeFromImageString.class, value);
     }
 
     /**
@@ -296,18 +305,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "ImageString", scope = GetVerCodeFromImageString.class)
-    public JAXBElement<String> createGetVerCodeFromImageStringImageString(String value) {
-        return new JAXBElement<String>(_GetVerCodeFromImageStringImageString_QNAME, String.class, GetVerCodeFromImageString.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "Url", scope = GetVerCodeFromUrl.class)
+    public JAXBElement<String> createGetVerCodeFromUrlUrl(String value) {
+        return new JAXBElement<String>(_GetVerCodeFromUrlUrl_QNAME, String.class, GetVerCodeFromUrl.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "type", scope = GetVerCodeFromImageString.class)
-    public JAXBElement<String> createGetVerCodeFromImageStringType(String value) {
-        return new JAXBElement<String>(_GetVerCodeFromImageStringType_QNAME, String.class, GetVerCodeFromImageString.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "type", scope = GetVerCodeFromUrl.class)
+    public JAXBElement<String> createGetVerCodeFromUrlType(String value) {
+        return new JAXBElement<String>(_GetVerCodeFromImageStringType_QNAME, String.class, GetVerCodeFromUrl.class, value);
     }
 
     /**
@@ -323,18 +332,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "Url", scope = GetVerCodeFromUrl.class)
-    public JAXBElement<String> createGetVerCodeFromUrlUrl(String value) {
-        return new JAXBElement<String>(_GetVerCodeFromUrlUrl_QNAME, String.class, GetVerCodeFromUrl.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://tempuri.org/", name = "type", scope = GetVerCodeFromUrl.class)
-    public JAXBElement<String> createGetVerCodeFromUrlType(String value) {
-        return new JAXBElement<String>(_GetVerCodeFromImageStringType_QNAME, String.class, GetVerCodeFromUrl.class, value);
+    @XmlElementDecl(namespace = "http://tempuri.org/", name = "GetVerCodeFromImageStringResult", scope = GetVerCodeFromImageStringResponse.class)
+    public JAXBElement<String> createGetVerCodeFromImageStringResponseGetVerCodeFromImageStringResult(String value) {
+        return new JAXBElement<String>(_GetVerCodeFromImageStringResponseGetVerCodeFromImageStringResult_QNAME, String.class, GetVerCodeFromImageStringResponse.class, value);
     }
 
 }

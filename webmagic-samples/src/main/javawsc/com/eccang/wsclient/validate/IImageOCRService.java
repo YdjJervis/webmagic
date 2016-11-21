@@ -1,5 +1,5 @@
 
-package us.codecraft.webmagic.samples.amazon.ws.validate;
+package com.eccang.wsclient.validate;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -32,8 +32,8 @@ public interface IImageOCRService {
      */
     @WebMethod(operationName = "GetVerCodeFromUrl", action = "http://tempuri.org/IImageOCRService/GetVerCodeFromUrl")
     @WebResult(name = "GetVerCodeFromUrlResult", targetNamespace = "http://tempuri.org/")
-    @RequestWrapper(localName = "GetVerCodeFromUrl", targetNamespace = "http://tempuri.org/", className = "us.codecraft.webmagic.samples.amazon.ws.validate.GetVerCodeFromUrl")
-    @ResponseWrapper(localName = "GetVerCodeFromUrlResponse", targetNamespace = "http://tempuri.org/", className = "us.codecraft.webmagic.samples.amazon.ws.validate.GetVerCodeFromUrlResponse")
+    @RequestWrapper(localName = "GetVerCodeFromUrl", targetNamespace = "http://tempuri.org/", className = "com.eccang.wsclient.validate.GetVerCodeFromUrl")
+    @ResponseWrapper(localName = "GetVerCodeFromUrlResponse", targetNamespace = "http://tempuri.org/", className = "com.eccang.wsclient.validate.GetVerCodeFromUrlResponse")
     public String getVerCodeFromUrl(
         @WebParam(name = "Url", targetNamespace = "http://tempuri.org/")
         String url,
@@ -49,8 +49,8 @@ public interface IImageOCRService {
      */
     @WebMethod(operationName = "GetVerCodeFromImageString", action = "http://tempuri.org/IImageOCRService/GetVerCodeFromImageString")
     @WebResult(name = "GetVerCodeFromImageStringResult", targetNamespace = "http://tempuri.org/")
-    @RequestWrapper(localName = "GetVerCodeFromImageString", targetNamespace = "http://tempuri.org/", className = "us.codecraft.webmagic.samples.amazon.ws.validate.GetVerCodeFromImageString")
-    @ResponseWrapper(localName = "GetVerCodeFromImageStringResponse", targetNamespace = "http://tempuri.org/", className = "us.codecraft.webmagic.samples.amazon.ws.validate.GetVerCodeFromImageStringResponse")
+    @RequestWrapper(localName = "GetVerCodeFromImageString", targetNamespace = "http://tempuri.org/", className = "com.eccang.wsclient.validate.GetVerCodeFromImageString")
+    @ResponseWrapper(localName = "GetVerCodeFromImageStringResponse", targetNamespace = "http://tempuri.org/", className = "com.eccang.wsclient.validate.GetVerCodeFromImageStringResponse")
     public String getVerCodeFromImageString(
         @WebParam(name = "ImageString", targetNamespace = "http://tempuri.org/")
         String imageString,

@@ -1,5 +1,5 @@
 
-package us.codecraft.webmagic.samples.amazon.ws.validate;
+package com.eccang.wsclient.validate;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;

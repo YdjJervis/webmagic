@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
+import com.eccang.wsclient.validate.ImageOCRService;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
@@ -16,7 +17,6 @@ import us.codecraft.webmagic.downloader.IpsProxyHttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.*;
-import us.codecraft.webmagic.samples.amazon.ws.validate.ImageOCRService;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
 
 import java.util.HashSet;

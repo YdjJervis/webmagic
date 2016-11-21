@@ -1,8 +1,8 @@
 package us.codecraft.webmagic.amazon.webservice;
 
+import com.eccang.wsclient.validate.ImageOCRService;
 import junit.framework.TestCase;
 import org.junit.Test;
-import us.codecraft.webmagic.samples.amazon.ws.validate.ImageOCRService;
 
 /**
  * @author Jervis
