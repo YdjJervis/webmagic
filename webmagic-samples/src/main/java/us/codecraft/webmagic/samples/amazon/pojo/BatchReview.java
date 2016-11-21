@@ -14,6 +14,7 @@ public class BatchReview extends BasePojo {
     public String batchNumber;
     public String reviewID;
     public int times;
+    public int crawled;
 
     @Override
     public String toString() {

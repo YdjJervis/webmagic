@@ -10,8 +10,8 @@ import javax.jws.WebService;
  * @date 2016/11/17 11:49
  */
 @WebService
-public interface AsinWS extends SpiderWS{
+public interface ReviewWS extends SpiderWS{
 
     @WebMethod
-    String addToCrawl(String json);
+    String addToMonitor(String json);
 }

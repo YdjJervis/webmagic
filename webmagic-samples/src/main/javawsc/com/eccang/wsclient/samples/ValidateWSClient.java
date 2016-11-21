@@ -1,19 +1,16 @@
-package us.codecraft.webmagic.amazon.webservice;
+package com.eccang.wsclient.samples;
 
 import com.eccang.wsclient.validate.ImageOCRService;
-import junit.framework.TestCase;
-import org.junit.Test;
 
 /**
  * @author Jervis
- * @version V0.1
- * @Description: 图片OCR识别验证
- * @date 2016/10/19 17:10
+ * @version V0.20
+ * @Description: 验证码识别客户端调用示例
+ * @date 2016/11/21 11:11
  */
-public class ImageOCRTest extends TestCase{
+public class ValidateWSClient {
 
-    @Test
-    public void test(){
+    public static void main(String[] args) {
         String code = new ImageOCRService().getBasicHttpBindingIImageOCRService().getVerCodeFromUrl("https://images-na.ssl-images-amazon.com/captcha/cdkxpfei/Captcha_uwrkcvuynu.jpg", "review");
         System.out.println(code);
     }

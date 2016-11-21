@@ -29,7 +29,7 @@ public abstract class AbstractSpiderWS implements SpiderWS {
     protected Logger sLogger = Logger.getLogger(getClass());
 
     public BaseRspParam auth(String json) {
-
+        sLogger.info(json);
         BaseReqParam baseReqParam = new Gson().fromJson(json, BaseReqParam.class);
 
         BaseRspParam baseRspParam = new BaseRspParam();
@@ -74,6 +74,13 @@ public abstract class AbstractSpiderWS implements SpiderWS {
             baseRspParam.setSuccess(false);
             baseRspParam.status = 401;
             baseRspParam.msg = "API授权状态未启用";
+            return baseRspParam;
+        }
+        if (!api.token.equals(baseReqParam.token)) {
+            sLogger.warn("api is limited !!!");
+            baseRspParam.setSuccess(false);
+            baseRspParam.status = 401;
+            baseRspParam.msg = "Token错误,授权失败";
             return baseRspParam;
         }
 

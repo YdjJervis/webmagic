@@ -150,11 +150,11 @@ public class BatchService {
         mBatchDao.add(batch);
     }
 
-    public void addMonitor(String customerCode, List<Review> reviewList) {
+    public Batch addMonitor(String customerCode, List<Review> reviewList) {
         mLogger.info("开始处理Review监控：customerCode = " + customerCode);
         if (reviewList == null) {
             mLogger.warn("review monitor list is null");
-            return;
+            return null;
         }
 
         Batch batch = generate(customerCode, 1);
@@ -178,6 +178,7 @@ public class BatchService {
         /* 已爬取的 转换成批次详单*/
         for (Review review : monitoringList) {
             BatchReview batchReview = initBatchReview(batch, review);
+            batchReview.crawled = 1;
             brList.add(batchReview);
         }
 
@@ -212,6 +213,8 @@ public class BatchService {
                 mReviewMonitorService.update(monitor);
             }
         }
+
+        return batch;
     }
 
     private BatchReview initBatchReview(Batch batch, Review review) {

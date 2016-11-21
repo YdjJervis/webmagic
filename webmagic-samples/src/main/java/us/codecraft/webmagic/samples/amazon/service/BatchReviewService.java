@@ -56,4 +56,7 @@ public class BatchReviewService {
         }
     }
 
+    public List<BatchReview> findAllByBatchNum(String number) {
+        return mBatchReviewDao.findAllByBatchNum(number);
+    }
 }

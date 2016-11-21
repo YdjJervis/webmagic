@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author Jervis
  * @version V0.20
- * @Description:
+ * @Description: 添加ASIN批次的WebService调用实现
  * @date 2016/11/17 11:51
  */
 @WebService
@@ -33,8 +33,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     private BatchAsinService mBatchAsinService;
 
     @WebMethod
-    public String addToCrawl(String json) throws Exception {
-
+    public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
 
         if (!baseRspParam.isSuccess()) {
@@ -53,8 +52,8 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         asinRsp.status = baseRspParam.status;
         asinRsp.msg = baseRspParam.msg;
 
+        /* 把Json里面的列表转换成业务需要的列表 */
         List<Asin> parsedAsinList = new ArrayList<Asin>();
-
         for (AsinReq.Asin asin : asinReq.data) {
             Asin parsedAsin = new Asin();
             parsedAsin.site.basCode = asin.siteCode;
@@ -67,8 +66,8 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedAsinList);
 
+        /* 统计新添加的ASIN的个数 */
         List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batch.number);
-
         int newCount = 0;
         for (BatchAsin batchAsin : batchAsinList) {
             if (batchAsin.crawled == 0) {

@@ -18,4 +18,7 @@ public interface BatchReviewDao extends BaseDao<BatchReview>{
     BatchReview find(BatchReview batchAsin);
 
     List<BatchReview> findByReviewID(String reviewID);
+
+    List<BatchReview> findAllByBatchNum(String batchNumber);
+
 }

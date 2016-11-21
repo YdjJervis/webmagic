@@ -30,5 +30,11 @@
         </jaxws:outInterceptors>
     </jaxws:server>
 
+    <jaxws:server id="reviewWS" serviceClass="com.eccang.cxf.ReviewWS" address="/review">
+        <jaxws:serviceBean>
+            <bean class="com.eccang.cxf.ReviewWSImpl"/>
+        </jaxws:serviceBean>
+    </jaxws:server>
+
 </beans>
 
