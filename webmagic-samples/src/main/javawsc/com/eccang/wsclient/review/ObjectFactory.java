@@ -26,6 +26,8 @@ public class ObjectFactory {
 
     private final static QName _AddToMonitor_QNAME = new QName("http://cxf.eccang.com/", "addToMonitor");
     private final static QName _AddToMonitorResponse_QNAME = new QName("http://cxf.eccang.com/", "addToMonitorResponse");
+    private final static QName _GetReviews_QNAME = new QName("http://cxf.eccang.com/", "getReviews");
+    private final static QName _GetReviewsResponse_QNAME = new QName("http://cxf.eccang.com/", "getReviewsResponse");
     private final static QName _Auth_QNAME = new QName("http://cxf.eccang.com/", "auth");
     private final static QName _AuthResponse_QNAME = new QName("http://cxf.eccang.com/", "authResponse");
 
@@ -50,6 +52,22 @@ public class ObjectFactory {
      */
     public AddToMonitor createAddToMonitor() {
         return new AddToMonitor();
+    }
+
+    /**
+     * Create an instance of {@link GetReviews }
+     * 
+     */
+    public GetReviews createGetReviews() {
+        return new GetReviews();
+    }
+
+    /**
+     * Create an instance of {@link GetReviewsResponse }
+     * 
+     */
+    public GetReviewsResponse createGetReviewsResponse() {
+        return new GetReviewsResponse();
     }
 
     /**
@@ -92,6 +110,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "addToMonitorResponse")
     public JAXBElement<AddToMonitorResponse> createAddToMonitorResponse(AddToMonitorResponse value) {
         return new JAXBElement<AddToMonitorResponse>(_AddToMonitorResponse_QNAME, AddToMonitorResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetReviews }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "getReviews")
+    public JAXBElement<GetReviews> createGetReviews(GetReviews value) {
+        return new JAXBElement<GetReviews>(_GetReviews_QNAME, GetReviews.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetReviewsResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "getReviewsResponse")
+    public JAXBElement<GetReviewsResponse> createGetReviewsResponse(GetReviewsResponse value) {
+        return new JAXBElement<GetReviewsResponse>(_GetReviewsResponse_QNAME, GetReviewsResponse.class, null, value);
     }
 
     /**

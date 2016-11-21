@@ -14,4 +14,7 @@ public interface ReviewWS extends SpiderWS{
 
     @WebMethod
     String addToMonitor(String json);
+
+    @WebMethod
+    String getReviews(String asinJson);
 }

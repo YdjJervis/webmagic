@@ -31,6 +31,20 @@ public interface ReviewWS {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getReviews", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.GetReviews")
+    @ResponseWrapper(localName = "getReviewsResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.GetReviewsResponse")
+    public String getReviews(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "addToMonitor", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.AddToMonitor")
     @ResponseWrapper(localName = "addToMonitorResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.AddToMonitorResponse")
     public String addToMonitor(

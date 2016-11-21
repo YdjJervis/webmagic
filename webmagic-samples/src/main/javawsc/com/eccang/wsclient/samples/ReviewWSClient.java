@@ -1,5 +1,6 @@
 package com.eccang.wsclient.samples;
 
+import com.eccang.pojo.ReviewQueryReq;
 import com.eccang.pojo.ReviewReq;
 import com.eccang.wsclient.review.ReviewWSService;
 import com.google.gson.Gson;
@@ -14,10 +15,30 @@ public class ReviewWSClient {
 
     public static void main(String[] args) {
 
+//        add();
+        query();
+    }
+
+    private static void query() {
+
+        ReviewQueryReq queryReq = new ReviewQueryReq();
+        queryReq.cutomerCode = "EC_001";
+        queryReq.platformCode = "ERP";
+        queryReq.token = "123456789";
+
+        ReviewQueryReq.Asin asin = queryReq.new Asin();
+        asin.asin = "B01864FHOK";
+        queryReq.data = asin;
+
+        String json = new ReviewWSService().getReviewWSPort().getReviews(new Gson().toJson(queryReq));
+        System.out.println(json);
+    }
+
+    private static void add() {
         ReviewReq reviewReq = new ReviewReq();
 
         reviewReq.cutomerCode = "EC_001";
-        reviewReq.platformCode = "system";
+        reviewReq.platformCode = "ERP";
         reviewReq.token = "123456789";
 
         ReviewReq.Review review1 = reviewReq.new Review();

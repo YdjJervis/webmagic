@@ -61,4 +61,12 @@ public class ReviewService {
         return findByReviewId(reviewID) != null;
     }
 
+    /**
+     * 返回给定条件的多有评论
+     * @param review 附带筛选条件的对象
+     */
+    public List<Review> findAll(Review review) {
+        return mReviewDao.findAll(review);
+    }
+
 }

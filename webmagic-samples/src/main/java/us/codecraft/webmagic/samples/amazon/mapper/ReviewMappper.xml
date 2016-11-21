@@ -66,4 +66,14 @@
         SELECT sar_star,COUNT(*) as count FROM spider_amazon_review WHERE saa_asin = #{0} GROUP BY sar_star;
     </select>
 
+    <select id="findAll" resultMap="ReviewResultMap" parameterType="Review">
+        SELECT * FROM eccang.spider_amazon_review WHERE
+        saa_asin = #{saaAsin} and
+        <if test="sarPersonId != null">
+            sar_person_id = #{sarPersonId} and
+        </if>
+        sar_star = #{sarStar}
+
+    </select>
+
 </mapper>
