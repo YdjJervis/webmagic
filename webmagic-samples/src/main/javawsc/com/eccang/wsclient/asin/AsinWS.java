@@ -28,7 +28,6 @@ public interface AsinWS {
      * @param arg0
      * @return
      *     returns java.lang.String
-     * @throws Exception_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -36,9 +35,21 @@ public interface AsinWS {
     @ResponseWrapper(localName = "addToCrawlResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.AddToCrawlResponse")
     public String addToCrawl(
         @WebParam(name = "arg0", targetNamespace = "")
-        String arg0)
-        throws Exception_Exception
-    ;
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getAsins", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.GetAsins")
+    @ResponseWrapper(localName = "getAsinsResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.GetAsinsResponse")
+    public String getAsins(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0);
 
     /**
      * 

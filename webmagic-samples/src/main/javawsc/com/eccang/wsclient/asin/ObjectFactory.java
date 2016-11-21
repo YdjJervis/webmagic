@@ -24,8 +24,9 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Exception_QNAME = new QName("http://cxf.eccang.com/", "Exception");
+    private final static QName _GetAsins_QNAME = new QName("http://cxf.eccang.com/", "getAsins");
     private final static QName _AddToCrawl_QNAME = new QName("http://cxf.eccang.com/", "addToCrawl");
+    private final static QName _GetAsinsResponse_QNAME = new QName("http://cxf.eccang.com/", "getAsinsResponse");
     private final static QName _AddToCrawlResponse_QNAME = new QName("http://cxf.eccang.com/", "addToCrawlResponse");
     private final static QName _Auth_QNAME = new QName("http://cxf.eccang.com/", "auth");
     private final static QName _AuthResponse_QNAME = new QName("http://cxf.eccang.com/", "authResponse");
@@ -46,11 +47,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Exception }
+     * Create an instance of {@link GetAsins }
      * 
      */
-    public Exception createException() {
-        return new Exception();
+    public GetAsins createGetAsins() {
+        return new GetAsins();
+    }
+
+    /**
+     * Create an instance of {@link GetAsinsResponse }
+     * 
+     */
+    public GetAsinsResponse createGetAsinsResponse() {
+        return new GetAsinsResponse();
     }
 
     /**
@@ -86,12 +95,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Exception }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetAsins }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "Exception")
-    public JAXBElement<Exception> createException(Exception value) {
-        return new JAXBElement<Exception>(_Exception_QNAME, Exception.class, null, value);
+    @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "getAsins")
+    public JAXBElement<GetAsins> createGetAsins(GetAsins value) {
+        return new JAXBElement<GetAsins>(_GetAsins_QNAME, GetAsins.class, null, value);
     }
 
     /**
@@ -101,6 +110,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "addToCrawl")
     public JAXBElement<AddToCrawl> createAddToCrawl(AddToCrawl value) {
         return new JAXBElement<AddToCrawl>(_AddToCrawl_QNAME, AddToCrawl.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetAsinsResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "getAsinsResponse")
+    public JAXBElement<GetAsinsResponse> createGetAsinsResponse(GetAsinsResponse value) {
+        return new JAXBElement<GetAsinsResponse>(_GetAsinsResponse_QNAME, GetAsinsResponse.class, null, value);
     }
 
     /**

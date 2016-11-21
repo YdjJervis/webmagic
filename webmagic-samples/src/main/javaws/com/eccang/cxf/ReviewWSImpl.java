@@ -43,7 +43,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         ReviewReq reviewReq = new Gson().fromJson(json, ReviewReq.class);
         if (CollectionUtils.isEmpty(reviewReq.data)) {
             baseRspParam.status = 413;
-            baseRspParam.msg = "Asin列表为空";
+            baseRspParam.msg = "Review列表为空";
             return baseRspParam.toJson();
         }
 

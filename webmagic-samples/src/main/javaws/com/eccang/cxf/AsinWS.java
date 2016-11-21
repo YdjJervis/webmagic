@@ -14,4 +14,7 @@ public interface AsinWS extends SpiderWS{
 
     @WebMethod
     String addToCrawl(String json);
+
+    @WebMethod
+    String getAsins(String json);
 }

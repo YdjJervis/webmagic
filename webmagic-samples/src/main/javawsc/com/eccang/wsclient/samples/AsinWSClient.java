@@ -1,5 +1,6 @@
 package com.eccang.wsclient.samples;
 
+import com.eccang.pojo.AsinQueryReq;
 import com.eccang.pojo.AsinReq;
 import com.eccang.wsclient.asin.AsinWSService;
 import com.google.gson.Gson;
@@ -13,6 +14,26 @@ import com.google.gson.Gson;
 public class AsinWSClient {
 
     public static void main(String[] args) throws Exception {
+//        add();
+        query();
+    }
+
+    private static void query() {
+        AsinQueryReq queryReq = new AsinQueryReq();
+        queryReq.cutomerCode = "EC_001";
+        queryReq.platformCode = "ERP";
+        queryReq.token = "123456789";
+
+        AsinQueryReq.Asin asin = queryReq.new Asin();
+        asin.asin = "B01CN74MU6";
+
+        queryReq.data.add(asin);
+
+        String json = new AsinWSService().getAsinWSPort().getAsins(new Gson().toJson(queryReq));
+        System.out.println(json);
+    }
+
+    private static void add() {
         AsinReq asinReq = new AsinReq();
         AsinReq.Asin asin = asinReq.new Asin();
         asin.asin = "B01CN74MU6";
@@ -21,7 +42,7 @@ public class AsinWSClient {
         asin.star = "1-1-1-1-1";
 //        asinReq.data.add(asin);
 
-        asinReq.cutomerCode = "EC_0012";
+        asinReq.cutomerCode = "EC_001";
         asinReq.platformCode = "system";
         asinReq.token = "123456789";
 

@@ -1,9 +1,5 @@
 package com.eccang.pojo;
 
-import com.google.gson.GsonBuilder;
-
-import java.lang.reflect.Modifier;
-
 /**
  * @author Jervis
  * @version V0.20
@@ -21,7 +17,4 @@ public class AsinRsp extends BaseRspParam {
         public int newCount;
     }
 
-    public String toJson() {
-        return new GsonBuilder().excludeFieldsWithModifiers(Modifier.PRIVATE).create().toJson(this);
-    }
 }

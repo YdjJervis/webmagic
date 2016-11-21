@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.pojo.API;
 import us.codecraft.webmagic.samples.amazon.pojo.Customer;
+import us.codecraft.webmagic.samples.amazon.pojo.Platform;
 import us.codecraft.webmagic.samples.amazon.service.APIService;
 import us.codecraft.webmagic.samples.amazon.service.CustomerService;
+import us.codecraft.webmagic.samples.amazon.service.PlatformService;
 
 /**
  * @author Jervis
@@ -25,6 +27,8 @@ public abstract class AbstractSpiderWS implements SpiderWS {
     private CustomerService mCustomerService;
     @Autowired
     private APIService mAPIService;
+    @Autowired
+    private PlatformService mPlatformService;
 
     protected Logger sLogger = Logger.getLogger(getClass());
 
@@ -46,6 +50,7 @@ public abstract class AbstractSpiderWS implements SpiderWS {
             return baseRspParam;
         }
 
+        /* 客户信息授权校验 */
         Customer customer = mCustomerService.findByCode(baseReqParam.cutomerCode);
         if (customer == null) {
             sLogger.warn("customer is not exist !!!");
@@ -61,6 +66,7 @@ public abstract class AbstractSpiderWS implements SpiderWS {
             baseRspParam.msg = "客户没有被启用";
         }
 
+        /* API授权校验 */
         API api = mAPIService.findByCode(customer.code);
         if (api == null) {
             sLogger.warn("api is not exist !!!");
@@ -81,6 +87,23 @@ public abstract class AbstractSpiderWS implements SpiderWS {
             baseRspParam.setSuccess(false);
             baseRspParam.status = 401;
             baseRspParam.msg = "Token错误,授权失败";
+            return baseRspParam;
+        }
+
+        /* 平台信息授权校验 */
+        Platform platform = mPlatformService.findByCode(baseReqParam.platformCode);
+        if (platform == null) {
+            sLogger.warn("platform is not exist !!!");
+            baseRspParam.setSuccess(false);
+            baseRspParam.status = 401;
+            baseRspParam.msg = "没有此平台";
+            return baseRspParam;
+        }
+        if (platform.status == 0) {
+            sLogger.warn("platform is not exist !!!");
+            baseRspParam.setSuccess(false);
+            baseRspParam.status = 401;
+            baseRspParam.msg = "当前平台无法调用该接口";
             return baseRspParam;
         }
 

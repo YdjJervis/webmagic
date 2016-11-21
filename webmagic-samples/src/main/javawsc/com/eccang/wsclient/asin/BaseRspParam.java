@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="cutomerCode" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="status" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="msg" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="success" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,13 +32,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "baseRspParam", propOrder = {
     "cutomerCode",
     "status",
-    "msg"
+    "msg",
+    "success"
 })
 public class BaseRspParam {
 
     protected String cutomerCode;
     protected int status;
     protected String msg;
+    protected boolean success;
 
     /**
      * Gets the value of the cutomerCode property.
@@ -101,6 +104,22 @@ public class BaseRspParam {
      */
     public void setMsg(String value) {
         this.msg = value;
+    }
+
+    /**
+     * Gets the value of the success property.
+     * 
+     */
+    public boolean isSuccess() {
+        return success;
+    }
+
+    /**
+     * Sets the value of the success property.
+     * 
+     */
+    public void setSuccess(boolean value) {
+        this.success = value;
     }
 
 }

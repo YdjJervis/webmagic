@@ -1,14 +1,13 @@
 package com.eccang.cxf;
 
-import com.eccang.pojo.AsinReq;
-import com.eccang.pojo.AsinRsp;
-import com.eccang.pojo.BaseRspParam;
+import com.eccang.pojo.*;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchService;
 
@@ -31,6 +30,9 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
     @Autowired
     private BatchAsinService mBatchAsinService;
+
+    @Autowired
+    private AsinService mAsinService;
 
     @WebMethod
     public String addToCrawl(String json) {
@@ -83,4 +85,37 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         return asinRsp.toJson();
     }
 
+    @Override
+    public String getAsins(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        AsinQueryReq asinQueryReq = new Gson().fromJson(json, AsinQueryReq.class);
+        if (CollectionUtils.isEmpty(asinQueryReq.data)) {
+            baseRspParam.status = 413;
+            baseRspParam.msg = "Asin查询列表为空";
+            return baseRspParam.toJson();
+        }
+
+        AsinQueryRsp asinQueryRsp = new AsinQueryRsp();
+        asinQueryRsp.cutomerCode = asinQueryReq.cutomerCode;
+        asinQueryRsp.status = baseRspParam.status;
+        asinQueryRsp.msg = baseRspParam.msg;
+
+
+        for (AsinQueryReq.Asin asin : asinQueryReq.data) {
+            Asin dbAsin = mAsinService.findByAsin(asin.asin);
+            AsinQueryRsp.Asin resultAsin = asinQueryRsp.new Asin();
+            resultAsin.asin = dbAsin.saaAsin;
+            resultAsin.onSale = dbAsin.saaOnSale;
+            resultAsin.progress = dbAsin.saaProgress;
+            resultAsin.rootAsin = dbAsin.saaRootAsin;
+            asinQueryRsp.data.add(resultAsin);
+        }
+
+        return asinQueryRsp.toJson();
+    }
 }
