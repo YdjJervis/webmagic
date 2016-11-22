@@ -65,4 +65,18 @@ public interface AsinWS {
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0);
 
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "setPriority", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.SetPriority")
+    @ResponseWrapper(localName = "setPriorityResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.SetPriorityResponse")
+    public String setPriority(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0);
+
 }

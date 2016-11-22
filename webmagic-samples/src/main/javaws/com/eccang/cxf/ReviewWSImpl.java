@@ -13,7 +13,6 @@ import us.codecraft.webmagic.samples.amazon.service.BatchReviewService;
 import us.codecraft.webmagic.samples.amazon.service.BatchService;
 import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 
-import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,6 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
     @Autowired
     private ReviewService mReviewService;
 
-    @WebMethod
     public String addToMonitor(String json) {
         BaseRspParam baseRspParam = auth(json);
 

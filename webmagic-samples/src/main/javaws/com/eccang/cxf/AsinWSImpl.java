@@ -10,8 +10,8 @@ import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.UrlService;
 
-import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,9 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     @Autowired
     private AsinService mAsinService;
 
-    @WebMethod
+    @Autowired
+    private UrlService mUrlService;
+
     public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
 
@@ -117,5 +119,40 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         }
 
         return asinQueryRsp.toJson();
+    }
+
+    @Override
+    public String setPriority(String jsonArray) {
+        BaseRspParam baseRspParam = auth(jsonArray);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        AsinPriorityReq priorityReq = new Gson().fromJson(jsonArray, AsinPriorityReq.class);
+
+        AsinPriorityRsp priorityRsp = new AsinPriorityRsp();
+        priorityRsp.cutomerCode = baseRspParam.cutomerCode;
+        priorityRsp.status = baseRspParam.status;
+        priorityRsp.msg = baseRspParam.msg;
+
+        /* 改变ASIN表对应记录的优先级 & 改变URL表对应ASIN的优先级 */
+        for (AsinPriorityReq.Asin asin : priorityReq.data) {
+            Asin dbAsin = mAsinService.findByAsin(asin.asin);
+            if (dbAsin != null) {
+                if (asin.priority > dbAsin.saaPriority) {
+                    priorityRsp.data.changed++;
+                    dbAsin.saaPriority = asin.priority;
+                    mUrlService.updatePriority(dbAsin.saaAsin, dbAsin.saaPriority);
+                    mAsinService.update(dbAsin);
+                } else {
+                    priorityRsp.data.noChange++;
+                }
+            } else {
+                priorityRsp.data.noChange++;
+            }
+        }
+
+        return priorityRsp.toJson();
     }
 }

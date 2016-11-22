@@ -27,7 +27,9 @@ public class ObjectFactory {
     private final static QName _GetAsins_QNAME = new QName("http://cxf.eccang.com/", "getAsins");
     private final static QName _AddToCrawl_QNAME = new QName("http://cxf.eccang.com/", "addToCrawl");
     private final static QName _GetAsinsResponse_QNAME = new QName("http://cxf.eccang.com/", "getAsinsResponse");
+    private final static QName _SetPriority_QNAME = new QName("http://cxf.eccang.com/", "setPriority");
     private final static QName _AddToCrawlResponse_QNAME = new QName("http://cxf.eccang.com/", "addToCrawlResponse");
+    private final static QName _SetPriorityResponse_QNAME = new QName("http://cxf.eccang.com/", "setPriorityResponse");
     private final static QName _Auth_QNAME = new QName("http://cxf.eccang.com/", "auth");
     private final static QName _AuthResponse_QNAME = new QName("http://cxf.eccang.com/", "authResponse");
 
@@ -63,11 +65,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link SetPriorityResponse }
+     * 
+     */
+    public SetPriorityResponse createSetPriorityResponse() {
+        return new SetPriorityResponse();
+    }
+
+    /**
      * Create an instance of {@link AddToCrawlResponse }
      * 
      */
     public AddToCrawlResponse createAddToCrawlResponse() {
         return new AddToCrawlResponse();
+    }
+
+    /**
+     * Create an instance of {@link SetPriority }
+     * 
+     */
+    public SetPriority createSetPriority() {
+        return new SetPriority();
     }
 
     /**
@@ -122,12 +140,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SetPriority }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "setPriority")
+    public JAXBElement<SetPriority> createSetPriority(SetPriority value) {
+        return new JAXBElement<SetPriority>(_SetPriority_QNAME, SetPriority.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddToCrawlResponse }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "addToCrawlResponse")
     public JAXBElement<AddToCrawlResponse> createAddToCrawlResponse(AddToCrawlResponse value) {
         return new JAXBElement<AddToCrawlResponse>(_AddToCrawlResponse_QNAME, AddToCrawlResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SetPriorityResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://cxf.eccang.com/", name = "setPriorityResponse")
+    public JAXBElement<SetPriorityResponse> createSetPriorityResponse(SetPriorityResponse value) {
+        return new JAXBElement<SetPriorityResponse>(_SetPriorityResponse_QNAME, SetPriorityResponse.class, null, value);
     }
 
     /**

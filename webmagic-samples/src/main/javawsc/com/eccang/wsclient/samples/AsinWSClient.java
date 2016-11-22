@@ -1,5 +1,6 @@
 package com.eccang.wsclient.samples;
 
+import com.eccang.pojo.AsinPriorityReq;
 import com.eccang.pojo.AsinQueryReq;
 import com.eccang.pojo.AsinReq;
 import com.eccang.wsclient.asin.AsinWSService;
@@ -11,11 +12,28 @@ import com.google.gson.Gson;
  * @Description: Asin WebService 客户端测试用例
  * @date 2016/11/19 11:32
  */
-public class AsinWSClient {
+public class AsinWSClient{
 
     public static void main(String[] args) throws Exception {
 //        add();
-        query();
+//        query();
+        setPriority();
+    }
+
+    private static void setPriority() {
+        AsinPriorityReq priorityReq = new AsinPriorityReq();
+        priorityReq.cutomerCode = "EC_001";
+        priorityReq.platformCode = "ERP";
+        priorityReq.token = "123456789";
+
+        AsinPriorityReq.Asin asin = priorityReq.new Asin();
+        asin.priority = 1;
+        asin.asin = "B01M70JMIJ";
+
+        priorityReq.data.add(asin);
+
+        String json = new AsinWSService().getAsinWSPort().setPriority(new Gson().toJson(priorityReq));
+        System.out.println(json);
     }
 
     private static void query() {
