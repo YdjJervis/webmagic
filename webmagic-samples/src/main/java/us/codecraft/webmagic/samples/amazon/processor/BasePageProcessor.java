@@ -37,10 +37,11 @@ public class BasePageProcessor implements PageProcessor {
 
     public static final String URL_EXTRA = "url_extra";
 
-    private Set<Integer> mSet = new HashSet<Integer>(){{
+    private Set<Integer> mSet = new HashSet<Integer>() {
+        {
             add(402);
             add(403);
-            add (407);
+            add(407);
             add(417);
             add(429);
             add(503);
@@ -97,7 +98,7 @@ public class BasePageProcessor implements PageProcessor {
 
         if (isPage404(page)) {
             dealPageNotFound(page);
-        } else if(mSet.contains(page.getStatusCode())) {
+        } else if (mSet.contains(page.getStatusCode())) {
             //包括mSet里的状态码，则不做处理
         } else if (isValidatePage(page)) {
             dealValidate(page);
@@ -142,6 +143,15 @@ public class BasePageProcessor implements PageProcessor {
 
         String asinCode = extractAsin(page);
         mAsinService.updateAndDeleteUrl(asinCode);
+
+        /* 二期业务：如果页面不存在，就把所有的记录的进度更新成1，type改成1(全量爬取完毕) */
+        List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(asinCode);
+        for (BatchAsin batchAsin : batchAsinList) {
+            batchAsin.progress = 1;
+            batchAsin.type = 1;
+        }
+        mBatchAsinService.updateAll(batchAsinList);
+
     }
 
     /**
@@ -154,8 +164,8 @@ public class BasePageProcessor implements PageProcessor {
             int statusCode = page.getStatusCode();
             sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
 
-            if(statusCode == 407 || statusCode == 417) {
-                if(page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
+            if (statusCode == 407 || statusCode == 417) {
+                if (page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
                     mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), statusCode);
                 }
             }
@@ -174,8 +184,8 @@ public class BasePageProcessor implements PageProcessor {
 
         String validateUrl = getValidateUrl(page);
 
-        if(StringUtils.isNotEmpty(validateUrl)) {
-            if(page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
+        if (StringUtils.isNotEmpty(validateUrl)) {
+            if (page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
                 mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), 0);
             }
         }
@@ -296,11 +306,11 @@ public class BasePageProcessor implements PageProcessor {
     void stataUrlProxy(Page page) {
         /*通过url获取这个URL的asin*/
         String asinCode = page.getUrl().regex(".*product-reviews/([0-9a-zA-Z\\-]*).*").get();
-        if(asinCode != null && !"".equals(asinCode)) {
+        if (asinCode != null && !"".equals(asinCode)) {
             /*通过asin来查询这个URL所对应的批次信息*/
             List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(asinCode);
             StringBuffer sb;
-            if(batchAsinList != null && batchAsinList.size() > 0) {
+            if (batchAsinList != null && batchAsinList.size() > 0) {
                 sb = new StringBuffer();
                 for (BatchAsin batchAsin : batchAsinList) {
                     sb.append(batchAsin.batchNumber + ";");

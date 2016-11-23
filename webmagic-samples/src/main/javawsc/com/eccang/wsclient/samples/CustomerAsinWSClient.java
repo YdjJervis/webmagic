@@ -20,7 +20,7 @@ public class CustomerAsinWSClient {
         asinReq.token = "123456789";
 
         CustomerAsinReq.Asin asin = asinReq.new Asin();
-        asin.asin = "";
+        asin.asin = "B01M70JMIJ";
         asin.crawl = "close";
 
         asinReq.data.add(asin);

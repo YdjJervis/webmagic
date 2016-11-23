@@ -84,14 +84,20 @@ public class BatchService {
 
             BatchAsin ba = initBatchAsin(batch, asin);
             ba.crawled = 1;
-            ba.progress = byAsin.saaProgress;
+
+            /* 如果下架了，批次表进度直接改为100% */
+            if (byAsin.saaOnSale == 0) {
+                ba.progress = 1;
+            } else {
+                ba.progress = byAsin.saaProgress;
+            }
             /* 已经在爬取的ASIN的进度 < 1就标记为全量爬取，否则标记为更新爬取 */
             ba.type = ba.progress < 1 ? 0 : 1;
             ba.rootAsin = byAsin.saaRootAsin;
             ba.extra = byAsin.extra;
             baList.add(ba);
 
-            progress += byAsin.saaProgress;
+            progress += ba.progress;
         }
 
         mLogger.info("新的批次单明细插入到列表后面...");
@@ -149,10 +155,10 @@ public class BatchService {
         /* 把客户-Asin入库关系表relation_customer_asin */
         List<CustomerAsin> customerAsinList = new ArrayList<CustomerAsin>();
         for (Asin asin : crawledList) {
-            customerAsinList.add(new CustomerAsin(asin.site.basCode, asin.saaAsin));
+            customerAsinList.add(new CustomerAsin(customerCode, asin.saaAsin));
         }
         for (Asin asin : newList) {
-            customerAsinList.add(new CustomerAsin(asin.site.basCode, asin.saaAsin));
+            customerAsinList.add(new CustomerAsin(customerCode, asin.saaAsin));
         }
         mCustomerAsinService.addAll(customerAsinList);
 

@@ -5,6 +5,10 @@ import com.eccang.pojo.AsinQueryReq;
 import com.eccang.pojo.AsinReq;
 import com.eccang.wsclient.asin.AsinWSService;
 import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Jervis
@@ -12,12 +16,12 @@ import com.google.gson.Gson;
  * @Description: Asin WebService 客户端测试用例
  * @date 2016/11/19 11:32
  */
-public class AsinWSClient{
+public class AsinWSClient {
 
     public static void main(String[] args) throws Exception {
-//        add();
+        add();
 //        query();
-        setPriority();
+//        setPriority();
     }
 
     private static void setPriority() {
@@ -53,19 +57,32 @@ public class AsinWSClient{
 
     private static void add() {
         AsinReq asinReq = new AsinReq();
-        AsinReq.Asin asin = asinReq.new Asin();
-        asin.asin = "B01CN74MU6";
-        asin.siteCode = "CN";
-        asin.priority = 1;
-        asin.star = "1-1-1-1-1";
-//        asinReq.data.add(asin);
-
         asinReq.cutomerCode = "EC_001";
-        asinReq.platformCode = "system";
+        asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
-        String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));
-        System.out.println(json);
+        try {
+            String asins = FileUtils.readFileToString(new File("E:\\IDEAWorkingspace\\webmagic_eccang\\webmagic-samples\\src\\main\\javawsc\\com\\eccang\\wsclient\\samples\\asin.text"));
+            String[] asinStr = asins.split("\r\n");
+
+            for (String line : asinStr) {
+                AsinReq.Asin asin = asinReq.new Asin();
+                String[] siteAsin = line.split("\t");
+                asin.asin = siteAsin[1];
+                asin.siteCode = siteAsin[0];
+                asin.priority = 0;
+                asin.star = "0-0-1-1-1";
+                asinReq.data.add(asin);
+            }
+
+            System.out.println(new Gson().toJson(asinReq));
+            String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));
+            System.out.println(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 }
