@@ -42,5 +42,11 @@
         </jaxws:serviceBean>
     </jaxws:server>
 
+    <jaxws:server id="customerAsinWS" serviceClass="com.eccang.cxf.CustomerAsinWS" address="/customerAsin">
+        <jaxws:serviceBean>
+            <bean class="com.eccang.cxf.CustomerAsinWSImpl"/>
+        </jaxws:serviceBean>
+    </jaxws:server>
+
 </beans>
 

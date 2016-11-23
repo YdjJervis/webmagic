@@ -41,6 +41,9 @@ public class BatchService {
     @Autowired
     private BatchReviewService mBatchReviewService;
 
+    @Autowired
+    private CustomerAsinService mCustomerAsinService;
+
     /**
      * 根据ASIN列表生成批次单号，批次详单，和转换成ASIN表
      * 记录
@@ -142,6 +145,16 @@ public class BatchService {
             }
 
         }
+
+        /* 把客户-Asin入库关系表relation_customer_asin */
+        List<CustomerAsin> customerAsinList = new ArrayList<CustomerAsin>();
+        for (Asin asin : crawledList) {
+            customerAsinList.add(new CustomerAsin(asin.site.basCode, asin.saaAsin));
+        }
+        for (Asin asin : newList) {
+            customerAsinList.add(new CustomerAsin(asin.site.basCode, asin.saaAsin));
+        }
+        mCustomerAsinService.addAll(customerAsinList);
 
         return batch;
     }
