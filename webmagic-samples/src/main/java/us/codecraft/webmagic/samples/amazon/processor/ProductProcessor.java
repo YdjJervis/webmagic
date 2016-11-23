@@ -33,7 +33,9 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             String asinStr = extractAsin(page);
             Asin asin = mAsinService.findByAsin(asinStr);
 
-            String rootAsin = page.getHtml().xpath("//link[@rel='canonical']/@href").regex("/dp/(.*)").get();
+            String rootAsinUrl = page.getHtml().xpath("//link[@rel='canonical']/@href").get();
+            int index = rootAsinUrl.lastIndexOf("/");
+            String rootAsin = rootAsinUrl.substring(index + 1, rootAsinUrl.length());
 
             if (StringUtils.isEmpty(rootAsin)) {
                 sLogger.warn("未提取到Root Asin：" + page.getUrl().get());
