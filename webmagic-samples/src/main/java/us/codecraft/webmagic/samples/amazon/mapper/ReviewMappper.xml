@@ -31,23 +31,23 @@
 
     <insert id="add" parameterType="Review">
         insert into spider_amazon_review(bas_code,
-        saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num,sar_update_time)
+        saa_asin,saa_root_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num,sar_update_time)
         values
-        (#{basCode},#{saaAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarMonitor},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarTitle},#{sarContent},#{extra},#{sarPageNum},CURRENT_TIMESTAMP)
+        (#{basCode},#{saaAsin},#{saaRootAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarMonitor},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarTitle},#{sarContent},#{extra},#{sarPageNum},CURRENT_TIMESTAMP)
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
         insert into spider_amazon_review
-        (bas_code,saa_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num,sar_update_time)
+        (bas_code,saa_asin,saa_root_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num,sar_update_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.basCode},#{item.saaAsin},#{item.sarPersonId},#{item.sarTime},#{item.sarDealTime},#{item.sarPerson},#{item.sarReviewId},#{item.sarMonitor},#{item.sarBuyStatus},#{item.sarStar},#{item.sarVersion},#{item.sarTitle},#{item.sarContent},#{item.extra},#{item.sarPageNum},CURRENT_TIMESTAMP)
+            (#{item.basCode},#{item.saaAsin},#{item.saaRootAsin},#{item.sarPersonId},#{item.sarTime},#{item.sarDealTime},#{item.sarPerson},#{item.sarReviewId},#{item.sarMonitor},#{item.sarBuyStatus},#{item.sarStar},#{item.sarVersion},#{item.sarTitle},#{item.sarContent},#{item.extra},#{item.sarPageNum},CURRENT_TIMESTAMP)
         </foreach>
     </insert>
 
     <update id="update" parameterType="Review">
         UPDATE spider_amazon_review SET
-        saa_asin=#{saaAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_monitor=#{sarMonitor},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_title=#{sarTitle},sar_content=#{sarContent},sar_extra=#{extra},sar_page_num=#{sarPageNum},sar_update_time=CURRENT_TIMESTAMP
+        saa_asin=#{saaAsin},saa_root_asin=#{saaRootAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_monitor=#{sarMonitor},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_title=#{sarTitle},sar_content=#{sarContent},sar_extra=#{extra},sar_page_num=#{sarPageNum},sar_update_time=CURRENT_TIMESTAMP
         WHERE sar_review_id=#{sarReviewId}
     </update>
 
@@ -58,12 +58,12 @@
 
     <!--根据ASIN找需要爬取的星级最新一条评论的时间-->
     <select id="findLastReview" resultMap="ReviewResultMap">
-        SELECT tmp.* FROM (SELECT * FROM spider_amazon_review WHERE saa_asin = #{0} ORDER BY sar_create_time ASC) tmp GROUP BY tmp.sar_star;
+        SELECT tmp.* FROM (SELECT * FROM spider_amazon_review WHERE saa_root_asin = #{0} ORDER BY sar_create_time ASC) tmp GROUP BY tmp.sar_star;
     </select>
 
-    <!--根据ASIN找需要爬取的星级最新一条评论的时间-->
+    <!-- 查询每个星级对应的评论数量 -->
     <select id="findStarReviewCount" resultMap="StarReviewCountMap">
-        SELECT sar_star,COUNT(*) as count FROM spider_amazon_review WHERE saa_asin = #{0} GROUP BY sar_star;
+        SELECT sar_star,COUNT(*) as count FROM spider_amazon_review WHERE saa_root_asin = #{0} GROUP BY sar_star;
     </select>
 
     <select id="findAll" resultMap="ReviewResultMap" parameterType="Review">

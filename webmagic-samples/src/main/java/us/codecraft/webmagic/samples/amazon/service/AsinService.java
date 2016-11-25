@@ -122,13 +122,13 @@ public class AsinService {
     }
 
     public Asin updateExtra(Asin asin) {
-    /* 全量爬取完毕，把需要爬取星级的最后一条评论时间记录到extra字段，方便下次更新爬取的时候使用 */
-        List<Review> reviewList = mReviewService.findLastReview(asin.saaAsin);
+        /* 全量爬取完毕，把需要爬取星级的最后一条评论ReviewID记录到extra字段，方便下次更新爬取的时候使用 */
+        List<Review> reviewList = mReviewService.findLastReview(asin.saaRootAsin);
 
-            /* 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取 */
-        List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin.saaAsin);
+        /* 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取 */
+        List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin.saaRootAsin);
 
-            /* List转Map */
+        /* List转Map */
         Map<Integer, Integer> srcMap = new HashMap<Integer, Integer>();
         for (StarReviewCount src : srcList) {
             srcMap.put(src.star, src.count);
@@ -316,7 +316,7 @@ public class AsinService {
      * @return true-存在；false-不存在
      */
     public boolean haveSameRootAsin(String rootAsin) {
-        return mAsinDao.findByRootAsin(rootAsin).size() > 0;
+        return mAsinDao.findByRootAsin(rootAsin).size() > 1;
     }
 
     /**

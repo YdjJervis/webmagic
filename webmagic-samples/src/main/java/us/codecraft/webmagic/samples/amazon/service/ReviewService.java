@@ -49,12 +49,12 @@ public class ReviewService {
         return mReviewDao.findByReviewId(reviewId);
     }
 
-    public List<Review> findLastReview(String asin) {
-        return mReviewDao.findLastReview(asin);
+    public List<Review> findLastReview(String rootAsin) {
+        return mReviewDao.findLastReview(rootAsin);
     }
 
-    public List<StarReviewCount> findStarReviewCount(String asin) {
-        return mReviewDao.findStarReviewCount(asin);
+    public List<StarReviewCount> findStarReviewCount(String rootAsin) {
+        return mReviewDao.findStarReviewCount(rootAsin);
     }
 
     public boolean isExist(String reviewID) {
