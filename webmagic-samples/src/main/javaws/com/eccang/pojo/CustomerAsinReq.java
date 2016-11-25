@@ -14,6 +14,7 @@ public class CustomerAsinReq extends BaseReqParam{
     public List<Asin> data = new ArrayList<Asin>();
 
     public class Asin{
+        public String siteCode;
         public String asin;
         public String crawl;
     }

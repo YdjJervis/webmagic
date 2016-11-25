@@ -38,7 +38,7 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
         customerAsinRsp.msg = baseRspParam.msg;
 
         for (CustomerAsinReq.Asin asin : customerAsinReq.data) {
-            CustomerAsin customerAsin = new CustomerAsin(customerAsinRsp.cutomerCode, asin.asin);
+            CustomerAsin customerAsin = new CustomerAsin(customerAsinRsp.cutomerCode, asin.siteCode, asin.asin);
             if ("open".equals(asin.crawl.trim())) {
                 customerAsin.status = 1;
             } else if ("close".equals(asin.crawl.trim())) {
