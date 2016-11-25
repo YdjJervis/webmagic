@@ -11,13 +11,15 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 public class CustomerAsin extends BasePojo {
 
     public String customerCode;
+    public String siteCode;
     public String asin;
     public int status = 1;
 
     public CustomerAsin() {
     }
 
-    public CustomerAsin(String customerCode, String asin) {
+    public CustomerAsin(String customerCode, String siteCode, String asin) {
+        this.siteCode = siteCode;
         this.customerCode = customerCode;
         this.asin = asin;
     }

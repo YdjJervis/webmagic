@@ -43,6 +43,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         for (Selectable reviewNode : reviewNodeList) {
 
             Review review = extractReviewItem(siteCode, asin, reviewNode);
+            review.saaRootAsin = mAsinService.findByAsin(asin).saaRootAsin;
             review.sarPageNum = UrlUtils.getValue(currentUrl, "pageNumber");
             reviewList.add(review);
         }
