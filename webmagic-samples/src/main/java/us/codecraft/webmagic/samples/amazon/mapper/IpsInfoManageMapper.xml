@@ -6,6 +6,7 @@
         <id property="id" column="biim_id" />
         <result property="ipInfoId" column="bii_id" />
         <result property="ipDomain" column="bii_domain" />
+        <result property="basCode" column="bas_code" />
         <result property="ipHost" column="bii_host" />
         <result property="ipPort" column="bii_port" />
         <result property="ipVerifyUserName" column="bii_verify_username" />
@@ -69,6 +70,7 @@
         SELECT
           biim.BIIM_ID,
           biim.BII_ID,
+          biim.BAS_CODE,
           bii.BII_DOMAIN,
           bii.BII_HOST,
           bii.BII_PORT,
@@ -99,6 +101,7 @@
         </selectKey>
         INSERT INTO BASE_IPS_INFO_MANAGE(
           BII_ID,
+          BAS_CODE,
           BIIM_URL_HOST,
           BIIM_IS_BLOCKED,
           BIIM_IS_USING,
@@ -109,7 +112,7 @@
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.ipInfoId}, #{item.urlHost}, #{item.isBlocked}, #{item.isUsing}, #{item.usedCount}, #{item.switchDate}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            (#{item.ipInfoId}, #{item.basCode}, #{item.urlHost}, #{item.isBlocked}, #{item.isUsing}, #{item.usedCount}, #{item.switchDate}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         </foreach>
     </insert>
 

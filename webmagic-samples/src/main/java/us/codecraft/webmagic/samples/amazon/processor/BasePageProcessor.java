@@ -37,11 +37,10 @@ public class BasePageProcessor implements PageProcessor {
 
     public static final String URL_EXTRA = "url_extra";
 
-    private Set<Integer> mSet = new HashSet<Integer>() {
-        {
+    private Set<Integer> mSet = new HashSet<Integer>(){{
             add(402);
             add(403);
-            add(407);
+            add (407);
             add(417);
             add(429);
             add(503);
@@ -73,6 +72,9 @@ public class BasePageProcessor implements PageProcessor {
     protected BatchAsinService mBatchAsinService;
 
     @Autowired
+    protected  UrlBatchStatService mUrlBatchStatService;
+
+    @Autowired
     protected HttpClientImplDownloader sDownloader;
 
     @Autowired
@@ -87,12 +89,16 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public synchronized void process(Page page) {
         sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
-        //Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
-        /*监测对应URL的代理使用情况*/
-
-
+        if(isNullHtml(page)) {
+            /*通过代理解析url返回内容为空，则将状态码改为402，让其重新解析*/
+            sLogger.info("parse " + page.getUrl().get() + " content is empty.");
+            page.setStatusCode(402);
+        }
         /*记录每一批次解析的URL的问题以及对应异常状态码出现的次数*/
         ipsExceptionStatusStat(page);
+
+        /*监测对应URL的代理使用情况*/
+        statUrlProxy(page);
 
         updateUrlStatus(page);
 
@@ -164,8 +170,8 @@ public class BasePageProcessor implements PageProcessor {
             int statusCode = page.getStatusCode();
             sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
 
-            if (statusCode == 407 || statusCode == 417) {
-                if (page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
+            if(statusCode == 407 || statusCode == 0) {
+                if(page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
                     mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), statusCode);
                 }
             }
@@ -186,7 +192,7 @@ public class BasePageProcessor implements PageProcessor {
 
         if (StringUtils.isNotEmpty(validateUrl)) {
             if (page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
-                mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), 0);
+                mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), -1);
             }
         }
 
@@ -198,25 +204,30 @@ public class BasePageProcessor implements PageProcessor {
         /* 当需要验证码时，page的状态码还是200，不符合我们的逻辑，所以修改一下 */
 //        page.setStatusCode(401);
 
+        Request request;
+        Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
         /*
         * 请求表单的Url，调用验证码识别接口
         */
-        String validateCodeJson = getValidateCode(validateUrl, "review");
-        ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
-        sLogger.info("验证码码结果：" + result);
+        if(page.getRequest().getExtra("ipsType") == null) {
+            String validateCodeJson = getValidateCode(validateUrl, "review");
+            ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
+            sLogger.info("验证码码结果：" + result);
 
-        /*获取表单参数*/
-        String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
-        String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
-        String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
-        String urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
-        sLogger.info("验证表单：" + urlStr);
-
-        Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
-        Request request = new Request(urlStr);
-        request.putExtra(URL_EXTRA, url);
-        page.addTargetRequest(request);
-
+            /*获取表单参数*/
+            String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
+            String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
+            String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
+            String urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
+            sLogger.info("验证表单：" + urlStr);
+            request = new Request(urlStr);
+            request.putExtra(URL_EXTRA, url);
+            page.addTargetRequest(request);
+        } else {
+            sLogger.info("================ 使用代理出现验证码，将响应的状态码修改为0.");
+            page.setStatusCode(0);
+            updateUrlStatus(page);
+        }
     }
 
     private String getValidateUrl(Page page) {
@@ -236,6 +247,13 @@ public class BasePageProcessor implements PageProcessor {
      */
     private boolean isPage404(Page page) {
         return page.getStatusCode() == 404;
+    }
+
+    /**
+     * 通过代理下载页面，返回为只有标签没有内容
+     */
+    private boolean isNullHtml(Page page) {
+        return StringUtils.isEmpty(page.getHtml().xpath("//body").get());
     }
 
     /**
@@ -277,7 +295,7 @@ public class BasePageProcessor implements PageProcessor {
 
             Spider mSpider = Spider.create(this)
                     .setDownloader(mIpsProxyHttpClientDownloader)
-                    .thread(1);
+                    .thread(15);
 
             for (Url url : urlList) {
                 Request request = new Request(url.url);
@@ -303,17 +321,45 @@ public class BasePageProcessor implements PageProcessor {
     /**
      * 监测对应批次下的url使用代理解析情况
      */
-    void stataUrlProxy(Page page) {
+    private void statUrlProxy(Page page) {
+        /*是否使用代理*/
+        int isProxy = page.getRequest().getExtra("ipsType") == null ? 0 : 1;
+        /*解析url正常或异常*/
+        String parseStatus = page.getStatusCode() == 200 ? "correct" : "exception";
+
         /*通过url获取这个URL的asin*/
-        String asinCode = page.getUrl().regex(".*product-reviews/([0-9a-zA-Z\\-]*).*").get();
-        if (asinCode != null && !"".equals(asinCode)) {
+        String asinCode = extractAsin(page);
+        /*当前url*/
+        String url = page.getUrl().get();
+        if(StringUtils.isNotEmpty(asinCode)) {
             /*通过asin来查询这个URL所对应的批次信息*/
             List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(asinCode);
-            StringBuffer sb;
-            if (batchAsinList != null && batchAsinList.size() > 0) {
-                sb = new StringBuffer();
-                for (BatchAsin batchAsin : batchAsinList) {
-                    sb.append(batchAsin.batchNumber + ";");
+            for (BatchAsin batchAsin : batchAsinList) {
+                /*查询批次下的url代理监测信息*/
+                UrlBatchStat urlBatchStat = mUrlBatchStatService.findByBatchAndUrl(batchAsin.batchNumber, url);
+                if(urlBatchStat != null) {
+                    /*存在则更新状态*/
+                    if("correct".equals(parseStatus)) {
+                        urlBatchStat.setCorrectTime(urlBatchStat.getCorrectTime() + 1);
+                    } else {
+                        urlBatchStat.setExceptionTime(urlBatchStat.getExceptionTime() + 1);
+                    }
+                    /*更新正确次数或异常次数*/
+                    mUrlBatchStatService.updateById(urlBatchStat);
+                } else {
+                    /*不存在则添加*/
+                    urlBatchStat = new UrlBatchStat();
+                    urlBatchStat.setUrl(url);
+                    urlBatchStat.setIsProxy(isProxy);
+                    urlBatchStat.setBatchNum(batchAsin.batchNumber);
+                    if("correct".equals(parseStatus)) {
+                        urlBatchStat.setCorrectTime(1);
+                        urlBatchStat.setExceptionTime(0);
+                    } else {
+                        urlBatchStat.setCorrectTime(0);
+                        urlBatchStat.setExceptionTime(1);
+                    }
+                    mUrlBatchStatService.addOne(urlBatchStat);
                 }
             }
         }

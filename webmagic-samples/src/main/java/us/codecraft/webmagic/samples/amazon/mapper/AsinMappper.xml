@@ -96,7 +96,7 @@
         SELECT * FROM spider_amazon_asin asin
         INNER JOIN base_amazon_asin_source asinSource ON asinSource.baas_code = asin.baas_code
         INNER JOIN base_amazon_site site ON asin.bas_code = site.bas_code
-        WHERE asin.saa_crawled_head = 0;
+        WHERE asin.saa_crawled_head = 0 LIMIT 1000;
     </select>
 
     <select id="findByRootAsin" resultMap="AsinResultMap">

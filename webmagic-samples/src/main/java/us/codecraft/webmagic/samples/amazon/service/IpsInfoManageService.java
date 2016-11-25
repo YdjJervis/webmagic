@@ -80,7 +80,7 @@ public class IpsInfoManageService {
      *
      * @param host 域名
      */
-    public void addIpsInfoManageAll(String host) {
+    public void addIpsInfoManageAll(String host, String basCode) {
         List<IpsInfoManage> ipsInfoManageList = new ArrayList<IpsInfoManage>();
         IpsInfoManage ipsInfoManage;
 
@@ -92,6 +92,7 @@ public class IpsInfoManageService {
             ipsInfoManage = new IpsInfoManage();
             ipsInfoManage.setIpInfoId(ipsInfo.getId());
             ipsInfoManage.setUrlHost(host);
+            ipsInfoManage.setBasCode(basCode);
             ipsInfoManage.setIsBlocked(0);
             ipsInfoManage.setUsedCount(0);
             ipsInfoManageList.add(ipsInfoManage);

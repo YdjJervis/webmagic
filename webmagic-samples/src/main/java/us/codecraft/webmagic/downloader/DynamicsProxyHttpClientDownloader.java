@@ -7,7 +7,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.annotation.ThreadSafe;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -40,18 +39,20 @@ import us.codecraft.webmagic.utils.UrlUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
  * The http downloader based on HttpClient.
- *
  * @author code4crafter@gmail.com <br>
  * @since 0.1.0
  */
 @Service
 @ThreadSafe
-public class IpsProxyHttpClientDownloader extends AbstractDownloader {
+public class DynamicsProxyHttpClientDownloader extends AbstractDownloader {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -96,16 +97,21 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         String urlHost = null;
         CloseableHttpClient closeableHttpClient = null;
         try {
-            /*获取当前是IP池中的IP并将IP配置到请求中*/
-            urlHost = getUrlHost(request.getUrl());
-            Url url = (Url)request.getExtra(BasePageProcessor.URL_EXTRA);
-            String basCode = url.siteCode;
-            IpsInfoManage ipsInfoManage= getPoxyHost(urlHost, basCode);
-            logger.info("use proxy {}", ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort());
-            if(ipsInfoManage.getIpVerifyUserName() != null && !"".equals(ipsInfoManage.getIpVerifyUserName())) {
-                site.setUsernamePasswordCredentials(new UsernamePasswordCredentials(ipsInfoManage.getIpVerifyUserName(), ipsInfoManage.getIpVerifyPassword()));
+            if (site.getHttpProxyPool() != null && site.getHttpProxyPool().isEnable()) {
+                proxy = site.getHttpProxyFromPool();
+                proxyHost = proxy.getHttpHost();
+            } else if(site.getHttpProxy()!= null){
+                proxyHost = site.getHttpProxy();
             }
-            proxyHost = new HttpHost(ipsInfoManage.getIpHost(), Integer.valueOf(ipsInfoManage.getIpPort()));
+
+            /*获取当前是IP池中的IP并将IP配置到请求中*/
+            Url url = (Url)request.getExtra(BasePageProcessor.URL_EXTRA);
+            try {
+                proxyHost = ParseUtils.getDynamicsIp("http://dynamic.goubanjia.com/dynamic/get/a13d9a8a05eb719e332cc3fdb3168bce.html");
+            } catch (IOException e) {
+                logger.info("============== 动态IP接口，没有正确获取到IP.");
+            }
+            logger.info("use proxy {}", proxyHost.getHostName() + ":" + proxyHost.getPort());
             site.setHttpProxy(proxyHost);
 
             Long startTime = System.currentTimeMillis();
@@ -116,16 +122,13 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
             httpResponse = closeableHttpClient.execute(httpUriRequest);
 
             Long entTime = System.currentTimeMillis();
-            logger.info("======================= 固定代理IP(" + proxyHost.getHostName() + ":" + proxyHost.getPort() + ")解析URL，所需要的时间:" + (entTime - startTime) / 1000 + "s.");
+            logger.info("======================= 动态代理IP(" + proxyHost.getHostName() + ":" + proxyHost.getPort() + ")解析URL，所需要的时间:" + (entTime - startTime) / 1000 + "s.");
 
             statusCode = httpResponse.getStatusLine().getStatusCode();
             request.putExtra(Request.STATUS_CODE, statusCode);
-            page = handleResponse(request, charset, httpResponse);
+            page = handleResponse(request, charset, httpResponse, task);
             if (!statusAccept(acceptStatCode, statusCode)) {
-                page.setStatusCode(statusCode);
-                /*添加可接受的状态码set对象不存在的状态码*/
-                acceptStatCode.add(statusCode);
-                site.setAcceptStatCode(acceptStatCode);
+                page.setStatusCode(417);
             }
         } catch (IOException e) {
             logger.warn("download page " + request.getUrl() + " error", e);
@@ -147,11 +150,10 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
                     page.setRawText("");
                 }
             }
-            /*解析发生异常时，状态码默认为0*/
-            page.setStatusCode(statusCode);
+            page.setStatusCode(statusCode==0?417:statusCode);
             page.setUrl(new PlainText(request.getUrl()));
             page.setRequest(request);
-            page.getRequest().putExtra("ipsType", "ipsProxy");
+            page.getRequest().putExtra("ipsType", "dynamicsProxy");
             page.getRequest().putExtra("host", urlHost);
         }
         return page;
@@ -206,9 +208,6 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         return acceptStatCode.contains(statusCode);
     }
 
-    /**
-     * 设置httpclient的请求参数（请求头参数，超时时间，代理信息等）
-     */
     protected HttpUriRequest getHttpUriRequest(Request request, Site site, Map<String, String> headers,HttpHost proxy) {
         RequestBuilder requestBuilder = selectRequestMethod(request).setUri(request.getUrl());
         if (headers != null) {
@@ -229,9 +228,6 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         return requestBuilder.build();
     }
 
-    /**
-     * 选择httpclient请求方式
-     */
     protected RequestBuilder selectRequestMethod(Request request) {
         String method = request.getMethod();
         if (method == null || method.equalsIgnoreCase(HttpConstant.Method.GET)) {
@@ -256,10 +252,7 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         throw new IllegalArgumentException("Illegal HTTP Method " + method);
     }
 
-    /**
-     * 将解析响应的结果封装到page对象里
-     */
-    protected Page handleResponse(Request request, String charset, HttpResponse httpResponse) throws IOException {
+    protected Page handleResponse(Request request, String charset, HttpResponse httpResponse, Task task) throws IOException {
         String content = getContent(charset, httpResponse);
         Page page = new Page();
         page.setRawText(content);
@@ -269,9 +262,6 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         return page;
     }
 
-    /**
-     * 将响应字节流按编码转换成字符串
-     */
     protected String getContent(String charset, HttpResponse httpResponse) throws IOException {
         if (charset == null) {
             byte[] contentBytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
@@ -287,9 +277,6 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         }
     }
 
-    /**
-     * 获取解析到的URL内容的编码
-     */
     protected String getHtmlCharset(HttpResponse httpResponse, byte[] contentBytes) throws IOException {
         String charset;
         // charset

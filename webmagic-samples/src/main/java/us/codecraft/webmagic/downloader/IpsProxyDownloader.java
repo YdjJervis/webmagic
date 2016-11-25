@@ -70,7 +70,9 @@ public class IpsProxyDownloader extends HttpClientDownloader {
         synchronized (this) {
             /*代理IP管理中，没有对应的域名则添加所有代理IP对这个域名的管理*/
             if (!mIpsInfoManageService.isExist(urlHost)) {
-                mIpsInfoManageService.addIpsInfoManageAll(urlHost);
+                Url url = (Url)request.getExtra(BasePageProcessor.URL_EXTRA);
+                String basCode = url.siteCode;
+                mIpsInfoManageService.addIpsInfoManageAll(urlHost, basCode);
             }
 
             List<IpsInfoManage> ipsInfoManageList = mIpsInfoManageService.findIpInfoIsUsing(urlHost);

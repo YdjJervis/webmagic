@@ -12,6 +12,7 @@ public class IpsInfoManage {
     private int id;
     private int ipInfoId;
     private String ipDomain;
+    private String basCode;
     private String ipHost;
     private String ipPort;
     private String ipVerifyUserName;
@@ -50,6 +51,14 @@ public class IpsInfoManage {
 
     public void setIpDomain(String ipDomain) {
         this.ipDomain = ipDomain;
+    }
+
+    public String getBasCode() {
+        return basCode;
+    }
+
+    public void setBasCode(String basCode) {
+        this.basCode = basCode;
     }
 
     public String getUrlHost() {

@@ -78,7 +78,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
 
     @Override
     String extractAsin(Page page) {
-        return page.getUrl().regex(".*/dp/(.*)").get();
+        return page.getUrl().regex(".*/dp/([0-9A-Za-z]*)").get();
     }
 
     @Override

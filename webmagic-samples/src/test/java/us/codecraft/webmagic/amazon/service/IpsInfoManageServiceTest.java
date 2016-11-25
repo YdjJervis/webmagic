@@ -20,7 +20,7 @@ public class IpsInfoManageServiceTest extends SpringTestCase {
 
     @Test
     public void addIpsInfoManageAllTest() {
-        mIpsInfoManageService.addIpsInfoManageAll("www.amazon.co.uk");
+        mIpsInfoManageService.addIpsInfoManageAll("www.amazon.co.uk", null);
     }
 
     @Test

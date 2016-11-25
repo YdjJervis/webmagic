@@ -142,17 +142,17 @@ public class IpsStatService {
     public void switchIp(String ipsType, String urlHost, int statusCode) {
 
         if(ipsType.equals("ipsProxy")) {
-            /*判断当前使用的IP是否使用30秒时间*/
             List<IpsInfoManage> ipsInfoManageList = mIpsInfoManageDao.findIpInfoIsUsing(urlHost);
             Date switchDate = ipsInfoManageList.get(0).getSwitchDate();
+            /*判断当前使用的IP是否使用时间*/
             if(ipsInfoManageList.size() > 0 && switchDate != null) {
                 double useTime = (double)( System.currentTimeMillis() - switchDate.getTime())/(double)1000;
-                if(statusCode == 407 && useTime < 30) {
-                    mLogger.info("出现状态码407,IP没有使用到30s,无需切换IP.");
+                if(statusCode == 407 && useTime < 20) {
+                    mLogger.info("出现状态码407,IP没有使用到20s,无需切换IP.");
                     return;
                 }
-                if(statusCode == 417 && useTime < 60) {
-                    mLogger.info("出现状态码417,IP没有使用到60s,无需切换IP.");
+                if(statusCode == 0 && useTime < 30) {
+                    mLogger.info("出现状态码0,IP没有使用到30s,无需切换IP.");
                     return;
                 }
             }
@@ -163,9 +163,6 @@ public class IpsStatService {
             mIpsInfoManageDao.updateByUrlHost(ipsInfoManage);
             /*固定代理IP切换IP*/
             manualSwitchIpIpsPool(urlHost);
-        } else if(ipsType.equals("abu")) {
-            /*阿布代理IP切换*/
-            manualSwitchIpByAbu();
         }
     }
 

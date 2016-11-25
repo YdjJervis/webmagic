@@ -13,6 +13,8 @@ import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 import us.codecraft.webmagic.samples.amazon.pojo.HtmlResponse;
 import us.codecraft.webmagic.samples.amazon.pojo.IpsInfoManage;
 import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
@@ -136,7 +138,6 @@ public class ParseUtils {
             //httpClient.getParams().setAuthenticationPreemptive(true);
         }
 
-
         // 目标地址
         HttpGet httpGet = new HttpGet(urlStr);
 
@@ -165,6 +166,15 @@ public class ParseUtils {
             httpGet.releaseConnection();
         }
         return htmlResponse;
+    }
+
+    /**
+     * 验证代理可用性，通过亚马逊网站
+     */
+    public boolean validateProxyByAmazon() {
+        boolean isValidate = false;
+
+        return isValidate;
     }
 
     /**
@@ -219,15 +229,32 @@ public class ParseUtils {
         return new String(contentBytes, charset);
     }
 
+    /**
+     * 通过代理IP接口获取代理IP（单个）
+     */
+    public static HttpHost getDynamicsIp(String urlStr) throws IOException {
+        Connection.Response response = Jsoup.connect(urlStr).execute();
+        String proxyIp = null;
+        HttpHost proxyHost = null;
+        if(response != null) {
+            proxyIp = response.body();
+            if(proxyIp != null) {
+                proxyIp = proxyIp.trim();
+                proxyHost = new HttpHost(proxyIp.split(":")[0], Integer.valueOf(proxyIp.split(":")[1]));
+            }
+        }
+        return proxyHost;
+    }
+
     public static void main(String[] args) throws MalformedURLException {
         ParseUtils parseUtils = new ParseUtils();
         IpsInfoManage ipsInfoManage =new IpsInfoManage();
-        ipsInfoManage.setIpHost("104.149.84.131");
+        ipsInfoManage.setIpHost("104.216.201.2");
         ipsInfoManage.setIpPort("8080");
         ipsInfoManage.setIpDomain("US");
-        ipsInfoManage.setIpVerifyUserName("hanyun583745");
-        ipsInfoManage.setIpVerifyPassword("hanyun583745");
-        HtmlResponse htmlResponse = parseUtils.parseHtmlByProxy("https://www.amazon.de/dp/B015DNBF84", ipsInfoManage, "www.amazon.de");
+        ipsInfoManage.setIpVerifyUserName("hanyun753977");
+        ipsInfoManage.setIpVerifyPassword("hanyun753977");
+        HtmlResponse htmlResponse = parseUtils.parseHtmlByProxy("https://www.amazon.com/dp/B01M4G902N", ipsInfoManage, "www.amazon.com");
         System.out.println(htmlResponse.getHtmlContent());
     }
 }
