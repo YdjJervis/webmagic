@@ -88,6 +88,7 @@ public class IpsStatService {
 
     /**
      * 记录切换IP时间，及更新监测状态
+     *
      * @param ipsStat 监测对象
      */
     private void recordSwitchIpAndUpdate(IpsStat ipsStat) {
@@ -106,6 +107,7 @@ public class IpsStatService {
 
     /**
      * 手动切换固定代理IP
+     *
      * @param urlHost url域名
      */
     private void manualSwitchIpIpsPool(String urlHost) {
@@ -135,24 +137,29 @@ public class IpsStatService {
 
     /**
      * IP切换
-     * @param ipsType 代理IP类型
-     * @param urlHost 需解析url的域名
+     *
+     * @param ipsType    代理IP类型
+     * @param urlHost    需解析url的域名
      * @param statusCode 解析URL状态码
      */
     public void switchIp(String ipsType, String urlHost, int statusCode) {
 
-        if(ipsType.equals("ipsProxy")) {
+        if (ipsType.equals("ipsProxy")) {
             List<IpsInfoManage> ipsInfoManageList = mIpsInfoManageDao.findIpInfoIsUsing(urlHost);
             Date switchDate = ipsInfoManageList.get(0).getSwitchDate();
             /*判断当前使用的IP是否使用时间*/
-            if(ipsInfoManageList.size() > 0 && switchDate != null) {
-                double useTime = (double)( System.currentTimeMillis() - switchDate.getTime())/(double)1000;
-                if(statusCode == 407 && useTime < 20) {
+            if (ipsInfoManageList.size() > 0 && switchDate != null) {
+                double useTime = (double) (System.currentTimeMillis() - switchDate.getTime()) / (double) 1000;
+                if (statusCode == 407 && useTime < 20) {
                     mLogger.info("出现状态码407,IP没有使用到20s,无需切换IP.");
                     return;
                 }
-                if(statusCode == 0 && useTime < 30) {
+                if (statusCode == 0 && useTime < 30) {
                     mLogger.info("出现状态码0,IP没有使用到30s,无需切换IP.");
+                    return;
+                }
+                if (statusCode == 402 && useTime < 10) {
+                    mLogger.info("出现状态码402,IP没有使用到30s,无需切换IP.");
                     return;
                 }
             }
@@ -168,13 +175,14 @@ public class IpsStatService {
 
     /**
      * 查询代理类型是否存在，不存在则添加
+     *
      * @param condition 代理类型
      * @return IpsStat对象
      */
     private IpsStat findConditionAndAdd(String condition) {
         /*查询监测切IP信息*/
         IpsStat ipsStat = mIpsStatDao.findByCondition(condition);
-        if(null == ipsStat) {
+        if (null == ipsStat) {
             ipsStat = new IpsStat();
             ipsStat.setIpsStatCondition(condition);
             ipsStat.setIpsStatStatus("0");

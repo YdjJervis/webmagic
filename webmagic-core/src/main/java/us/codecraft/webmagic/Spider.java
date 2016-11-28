@@ -72,6 +72,7 @@ public class Spider implements Runnable, Task {
 
     protected String uuid;
 
+
     protected Scheduler scheduler = new QueueScheduler();
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -302,8 +303,8 @@ public class Spider implements Runnable, Task {
 
     @Override
     public void run() {
-        checkRunningStat();
         initComponent();
+        checkRunningStat();
         logger.info("Spider " + getUUID() + " started!");
         while (!Thread.currentThread().isInterrupted() && stat.get() == STAT_RUNNING) {
             Request request = scheduler.poll(this);

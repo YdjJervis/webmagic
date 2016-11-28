@@ -37,10 +37,11 @@ public class BasePageProcessor implements PageProcessor {
 
     public static final String URL_EXTRA = "url_extra";
 
-    private Set<Integer> mSet = new HashSet<Integer>(){{
+    private Set<Integer> mSet = new HashSet<Integer>() {
+        {
             add(402);
             add(403);
-            add (407);
+            add(407);
             add(417);
             add(429);
             add(503);
@@ -72,7 +73,7 @@ public class BasePageProcessor implements PageProcessor {
     protected BatchAsinService mBatchAsinService;
 
     @Autowired
-    protected  UrlBatchStatService mUrlBatchStatService;
+    protected UrlBatchStatService mUrlBatchStatService;
 
     @Autowired
     protected HttpClientImplDownloader sDownloader;
@@ -89,11 +90,12 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public synchronized void process(Page page) {
         sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
-        if(isNullHtml(page)) {
+        if (isNullHtml(page)) {
             /*通过代理解析url返回内容为空，则将状态码改为402，让其重新解析*/
             sLogger.info("parse " + page.getUrl().get() + " content is empty.");
             page.setStatusCode(402);
         }
+
         /*记录每一批次解析的URL的问题以及对应异常状态码出现的次数*/
         ipsExceptionStatusStat(page);
 
@@ -170,8 +172,8 @@ public class BasePageProcessor implements PageProcessor {
             int statusCode = page.getStatusCode();
             sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
 
-            if(statusCode == 407 || statusCode == 0) {
-                if(page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
+            if (statusCode == 407 || statusCode == 0 || statusCode == 402) {
+                if (page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
                     mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), statusCode);
                 }
             }
@@ -209,7 +211,7 @@ public class BasePageProcessor implements PageProcessor {
         /*
         * 请求表单的Url，调用验证码识别接口
         */
-        if(page.getRequest().getExtra("ipsType") == null) {
+        if (page.getRequest().getExtra("ipsType") == null) {
             String validateCodeJson = getValidateCode(validateUrl, "review");
             ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
             sLogger.info("验证码码结果：" + result);
@@ -253,7 +255,7 @@ public class BasePageProcessor implements PageProcessor {
      * 通过代理下载页面，返回为只有标签没有内容
      */
     private boolean isNullHtml(Page page) {
-        return StringUtils.isEmpty(page.getHtml().xpath("//body").get());
+        return StringUtils.isEmpty(page.getHtml().xpath("//body/html()").get());
     }
 
     /**
@@ -331,15 +333,15 @@ public class BasePageProcessor implements PageProcessor {
         String asinCode = extractAsin(page);
         /*当前url*/
         String url = page.getUrl().get();
-        if(StringUtils.isNotEmpty(asinCode)) {
+        if (StringUtils.isNotEmpty(asinCode)) {
             /*通过asin来查询这个URL所对应的批次信息*/
             List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(asinCode);
             for (BatchAsin batchAsin : batchAsinList) {
                 /*查询批次下的url代理监测信息*/
                 UrlBatchStat urlBatchStat = mUrlBatchStatService.findByBatchAndUrl(batchAsin.batchNumber, url);
-                if(urlBatchStat != null) {
+                if (urlBatchStat != null) {
                     /*存在则更新状态*/
-                    if("correct".equals(parseStatus)) {
+                    if ("correct".equals(parseStatus)) {
                         urlBatchStat.setCorrectTime(urlBatchStat.getCorrectTime() + 1);
                     } else {
                         urlBatchStat.setExceptionTime(urlBatchStat.getExceptionTime() + 1);
@@ -352,7 +354,7 @@ public class BasePageProcessor implements PageProcessor {
                     urlBatchStat.setUrl(url);
                     urlBatchStat.setIsProxy(isProxy);
                     urlBatchStat.setBatchNum(batchAsin.batchNumber);
-                    if("correct".equals(parseStatus)) {
+                    if ("correct".equals(parseStatus)) {
                         urlBatchStat.setCorrectTime(1);
                         urlBatchStat.setExceptionTime(0);
                     } else {

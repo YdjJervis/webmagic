@@ -55,7 +55,7 @@
     </update>
 
     <select id="findByType" resultMap="UrlResultMap" parameterType="int">
-        SELECT * FROM spider_amazon_url WHERE sau_status != 200 AND sau_type = #{0} AND sau_crawling = 0 ORDER BY sau_priority LIMIT 10;
+        SELECT * FROM spider_amazon_url WHERE sau_status != 200 AND sau_type = #{0} AND sau_crawling = 0 ORDER BY sau_priority LIMIT 15;
     </select>
 
     <!-- 根据ASIN码查询全量爬取的URL -->
