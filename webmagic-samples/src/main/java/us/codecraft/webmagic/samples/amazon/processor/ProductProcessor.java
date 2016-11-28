@@ -33,47 +33,42 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             String asinStr = extractAsin(page);
             Asin asin = mAsinService.findByAsin(asinStr);
 
-            String rootAsinUrl = page.getHtml().xpath("//link[@rel='canonical']/@href").get();
-            int index = rootAsinUrl.lastIndexOf("/");
-
-            String rootAsin = rootAsinUrl.substring(index + 1, rootAsinUrl.length());
-
+            String rootAsin = page.getHtml().xpath("//li[@class='swatchAvailable']/@data-dp-url").regex("twister_([0-9a-zA-Z]*)").get();
             if (StringUtils.isEmpty(rootAsin)) {
-                sLogger.warn("未提取到Root Asin：" + page.getUrl().get());
-            } else {
-                sLogger.info("提取出来的Root Asin ：" + rootAsin);
-
-                /* 如果该rootAsin已经存在，那么久把该asin记录修改为
-                1，已经转换成了全量爬取URL状态，
-                2，不需要更新爬取状态 */
-
-                if (mAsinService.haveSameRootAsin(rootAsin)) {
-                    mAsinService.setParsedNotUpdate(asin);
-
-                    /* 二期业务：把所有根节点相同的ASIN的状态改变一下 */
-                    List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(asinStr);
-                    for (BatchAsin batchAsin : batchAsinList) {
-                        batchAsin.rootAsin = rootAsin;
-                        batchAsin.progress = 1;
-                        batchAsin.type = 3;
-                        batchAsin.extra = "SRA";
-                        batchAsin.startTime = batchAsin.finishTime = new Date();
-                    }
-                    mBatchAsinService.updateAll(batchAsinList);
-                }
-
-                asin.saaRootAsin = rootAsin;
-
-                /* root asin已经找到了 */
-                asin.saaCrawledHead = 2;
-
-                /* 找到了根ASIN了，更新asin状态 */
-                mAsinService.update(asin);
-
-                /* 删除爬取的URL */
-                mUrlService.deleteByAsin(asin.saaAsin);
-
+                rootAsin = asinStr;
             }
+            sLogger.info("提取出来的Root Asin ：" + rootAsin);
+
+            /* 如果该rootAsin已经存在，那么久把该asin记录修改为
+            1，已经转换成了全量爬取URL状态，
+            2，不需要更新爬取状态 */
+
+            if (mAsinService.haveSameRootAsin(rootAsin)) {
+                mAsinService.setParsedNotUpdate(asin);
+
+                /* 二期业务：把所有根节点相同的ASIN的状态改变一下 */
+                List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(asinStr);
+                for (BatchAsin batchAsin : batchAsinList) {
+                    batchAsin.rootAsin = rootAsin;
+                    batchAsin.progress = 1;
+                    batchAsin.type = 3;
+                    batchAsin.extra = "SRA";
+                    batchAsin.startTime = batchAsin.finishTime = new Date();
+                }
+                mBatchAsinService.updateAll(batchAsinList);
+            }
+
+            asin.saaRootAsin = rootAsin;
+
+            /* root asin已经找到了 */
+            asin.saaCrawledHead = 2;
+
+            /* 找到了根ASIN了，更新asin状态 */
+            mAsinService.update(asin);
+
+            /* 删除爬取的URL */
+            mUrlService.deleteByAsin(asin.saaAsin);
+
         }
     }
 
