@@ -1,44 +1,55 @@
 package us.codecraft.webmagic.samples.amazon.pojo;
 
+import us.codecraft.webmagic.samples.base.pojo.BasePojo;
+
 /**
- * 商品
+ * @author Jervis
+ * @version V0.20
+ * @Description: 产品 详细信息
+ * @date 2016/11/29
  */
-public class Product {
+public class Product extends BasePojo {
 
-    private String asin;
-    private String store;
-    private String inventory;
-
-    public String getAsin() {
-        return asin;
-    }
-
-    public void setAsin(String asin) {
-        this.asin = asin;
-    }
-
-    public String getStore() {
-        return store;
-    }
-
-    public void setStore(String store) {
-        this.store = store;
-    }
-
-    public String getInventory() {
-        return inventory;
-    }
-
-    public void setInventory(String inventory) {
-        this.inventory = inventory;
-    }
+    public String siteCode;
+    public String rootAsin;
+    public int modelType;
+    public String sellerID;
+    public String sellerName;
+    public String transID;
+    public String transName;
+    public String title;
+    public String price;
+    public String imgUrl;
+    public String reviewNum;
+    public String reviewStar;
+    public String reviewTime;
+    public String replyNum;
+    public String transMode;
+    public String sellerNum;
+    public String addedTime;
+    public String category;
 
     @Override
     public String toString() {
-        return "Product{" +
-                "asin='" + asin + '\'' +
-                ", store='" + store + '\'' +
-                ", inventory='" + inventory + '\'' +
+        return super.toString() + "Product{" +
+                "siteCode='" + siteCode + '\'' +
+                "rootAsin='" + rootAsin + '\'' +
+                ", sellerID='" + sellerID + '\'' +
+                ", sellerName='" + sellerName + '\'' +
+                ", transID='" + transID + '\'' +
+                ", transName='" + transName + '\'' +
+                ", title='" + title + '\'' +
+                ", price='" + price + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
+                ", reviewNum='" + reviewNum + '\'' +
+                ", reviewStar='" + reviewStar + '\'' +
+                ", reviewTime='" + reviewTime + '\'' +
+                ", replyNum='" + replyNum + '\'' +
+                ", transMode='" + transMode + '\'' +
+                ", sellerNum='" + sellerNum + '\'' +
+                ", addedTime='" + addedTime + '\'' +
+                ", category='" + category + '\'' +
                 '}';
     }
+
 }

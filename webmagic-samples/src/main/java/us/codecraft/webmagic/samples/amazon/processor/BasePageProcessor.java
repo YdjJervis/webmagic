@@ -253,7 +253,7 @@ public class BasePageProcessor implements PageProcessor {
      * 通过代理下载页面，返回为只有标签没有内容
      */
     private boolean isNullHtml(Page page) {
-        return StringUtils.isEmpty(page.getHtml().xpath("//body").get());
+        return StringUtils.isEmpty(page.getHtml().xpath("//body/html()").get());
     }
 
     /**
@@ -294,8 +294,8 @@ public class BasePageProcessor implements PageProcessor {
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
-                    .setDownloader(mIpsProxyHttpClientDownloader)
-                    .thread(15);
+                    .setDownloader(mHttpClientImplDownloader)
+                    .thread(5);
 
             for (Url url : urlList) {
                 Request request = new Request(url.url);

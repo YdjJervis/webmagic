@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.Product;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
+import us.codecraft.webmagic.samples.amazon.service.ProductService;
+import us.codecraft.webmagic.samples.amazon.util.ProductExtractor;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
 import java.util.Date;
@@ -25,6 +28,9 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
 
     @Autowired
     private BatchAsinService mBatchAsinService;
+
+    @Autowired
+    private ProductService mProductService;
 
     @Override
     protected void dealOtherPage(Page page) {
@@ -68,6 +74,11 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
 
             /* 删除爬取的URL */
             mUrlService.deleteByAsin(asin.saaAsin);
+
+            /* 三期业务 */
+            Product product = new ProductExtractor(extractSite(page).basCode, rootAsin, page).extract();
+            mProductService.add(product);
+            sLogger.info(product);
 
         }
     }
