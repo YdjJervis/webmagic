@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.PushQueueDao">
+
+    <resultMap id="PushQueueMap" type="PushQueue">
+        <id column="dpq_id" property="id"/>
+        <result column="bo_batch_num" property="batchNum"/>
+        <result column="bec_code" property="customerCode"/>
+        <result column="bp_code" property="platformCode"/>
+        <result column="dpq_status" property="status"/>
+        <result column="dpq_times" property="times"/>
+        <result column="dpq_extra" property="extra"/>
+        <result column="dpq_create_time" property="createtime"/>
+        <result column="dpq_update_time" property="updatetime"/>
+    </resultMap>
+
+    <insert id="add" parameterType="PushQueue">
+        insert into eccangv2.data_push_queue(bo_batch_num,bec_code,bp_code,dpq_status,dpq_times,dpq_extra)
+        values
+        (#{batchNum},#{customerCode},#{platformCode},#{status},#{times},#{extra})
+    </insert>
+
+</mapper>

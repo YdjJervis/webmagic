@@ -1,0 +1,27 @@
+package us.codecraft.webmagic.amazon.service;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import us.codecraft.webmagic.base.SpringTestCase;
+import us.codecraft.webmagic.samples.amazon.pojo.PushQueue;
+import us.codecraft.webmagic.samples.amazon.service.PushQueueService;
+
+public class PushQueueServiceTest extends SpringTestCase {
+
+    @Autowired
+    PushQueueService mService;
+
+    @Test
+    public void testAdd(){
+        PushQueue pushQueue = new PushQueue();
+        pushQueue.batchNum = "Batch0001";
+        pushQueue.customerCode = "Cus001";
+        pushQueue.platformCode = "Plat001";
+        pushQueue.status = 0;
+        pushQueue.times = 3;
+        pushQueue.extra = "Extra001";
+
+        mService.add(pushQueue);
+    }
+
+}

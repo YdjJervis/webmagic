@@ -1,6 +1,5 @@
 package us.codecraft.webmagic.amazon.processor;
 
-import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
@@ -20,7 +19,6 @@ import java.util.regex.Pattern;
  * @Description: 产品跟卖
  * @date 2016/11/4 17:02
  */
-@Service
 public class FollowSellProcessor implements PageProcessor {
 
 
