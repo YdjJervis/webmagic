@@ -38,7 +38,7 @@ public class FollowSellMonitor extends ParseMonitor {
 
         /* 把所有已经转换成URL的监听Review的状态标记为已经转换 */
         for (Url url : urlList) {
-            us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor followSellMonitor = new us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor(url.siteCode, url.saaAsin);
+            us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor followSellMonitor = new us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor(url.siteCode, url.asin);
             us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor dbFollowSellMonitor = mFollowSellMonitorService.findByObject(followSellMonitor);
             dbFollowSellMonitor.parsed = 1;
             mFollowSellMonitorService.update(dbFollowSellMonitor);
@@ -57,10 +57,10 @@ public class FollowSellMonitor extends ParseMonitor {
             // eg: https://www.amazon.com/gp/offer-listing/B0117RFOEG
             Site site = mSiteService.find(sell.siteCode);
             url.url = site.basSite + "/gp/offer-listing/" + sell.asin;
-            url.urlMD5 = UrlUtils.md5(url.url);
+            url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
             url.type = 4;
             url.siteCode = site.basCode;
-            url.saaAsin = sell.asin;
+            url.asin = sell.asin;
             url.priority = sell.priority;
 
             urlList.add(url);

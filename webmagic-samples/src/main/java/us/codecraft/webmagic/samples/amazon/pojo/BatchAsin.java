@@ -12,11 +12,13 @@ import java.util.Date;
  */
 public class BatchAsin extends BasePojo {
 
-    public String siteCode;
     public String batchNumber;
+    public String siteCode;
     public String asin;
     public String rootAsin;
+    public String star = "0-0-1-1-1";
     public int crawled;
+    public int status;
     public float progress;
     public int type;
     public Date startTime;
@@ -25,11 +27,13 @@ public class BatchAsin extends BasePojo {
     @Override
     public String toString() {
         return "BatchAsin{" +
-                "siteCode='" + siteCode + '\'' +
-                ", batchNumber='" + batchNumber + '\'' +
+                "batchNumber='" + batchNumber + '\'' +
+                ", siteCode='" + siteCode + '\'' +
                 ", asin='" + asin + '\'' +
                 ", rootAsin='" + rootAsin + '\'' +
+                ", star='" + star + '\'' +
                 ", crawled=" + crawled +
+                ", status=" + status +
                 ", progress=" + progress +
                 ", type=" + type +
                 ", startTime=" + startTime +

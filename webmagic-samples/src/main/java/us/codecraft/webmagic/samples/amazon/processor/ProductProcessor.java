@@ -4,10 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
-import us.codecraft.webmagic.samples.amazon.pojo.Product;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
 import us.codecraft.webmagic.samples.amazon.service.ProductService;
 import us.codecraft.webmagic.samples.amazon.util.ProductExtractor;
@@ -36,8 +33,9 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
     protected void dealOtherPage(Page page) {
         /* 如果是产品首页 */
         if (Pattern.compile(".*/dp/.*").matcher(page.getUrl().get()).matches()) {
+            Site site = extractSite(page);
             String asinStr = extractAsin(page);
-            Asin asin = mAsinService.findByAsin(asinStr);
+            Asin asin = mAsinService.findByAsin(site.basCode, asinStr);
 
             String rootAsin = page.getHtml().xpath("//li[@class='swatchAvailable']/@data-dp-url").regex("twister_([0-9a-zA-Z]*)").get();
             if (StringUtils.isEmpty(rootAsin)) {
@@ -53,7 +51,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
                 mAsinService.setParsedNotUpdate(asin);
 
                 /* 二期业务：把所有根节点相同的ASIN的状态改变一下 */
-                List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(asinStr);
+                List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, site.basCode, asinStr);
                 for (BatchAsin batchAsin : batchAsinList) {
                     batchAsin.rootAsin = rootAsin;
                     batchAsin.progress = 1;
@@ -64,16 +62,16 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
                 mBatchAsinService.updateAll(batchAsinList);
             }
 
-            asin.saaRootAsin = rootAsin;
+            asin.rootAsin = rootAsin;
 
             /* root asin已经找到了 */
-            asin.saaCrawledHead = 2;
+            asin.crawledHead = 2;
 
             /* 找到了根ASIN了，更新asin状态 */
             mAsinService.update(asin);
 
             /* 删除爬取的URL */
-            mUrlService.deleteByAsin(asin.saaAsin);
+            mUrlService.deleteByAsin(extractSite(page).basCode, asin.asin);
 
             /* 三期业务 */
             Product product = new ProductExtractor(extractSite(page).basCode, rootAsin, page).extract();

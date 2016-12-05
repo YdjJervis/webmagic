@@ -11,8 +11,8 @@
         <result column="sars_total_page" property="sarsTotalPage"/>
         <result column="sars_average_star" property="sarsAverageStar"/>
         <result column="sars_extra" property="extra"/>
-        <result column="sars_create_time" property="createtime"/>
-        <result column="sars_update_time" property="updatetime"/>
+        <result column="sars_create_time" property="createTime"/>
+        <result column="sars_update_time" property="updateTime"/>
     </resultMap>
 
     <insert id="add" parameterType="RequestStat">

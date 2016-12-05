@@ -20,8 +20,8 @@ public class UpdateParseMonitor extends AsinParseMonitor {
         mUrlService.addAll(urlList);
 
         for (Url url : urlList) {
-            url.asin.saaIsUpdatting = 1;
-            mAsinService.udpate(url.asin);
+//            url.asin.saaIsUpdatting = 1;
+//            mAsinService.udpate(url.asin);
         }
     }
 

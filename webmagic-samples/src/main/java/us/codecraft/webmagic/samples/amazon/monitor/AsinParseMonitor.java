@@ -2,16 +2,15 @@ package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.AsinService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jervis
@@ -27,69 +26,54 @@ public class AsinParseMonitor extends ParseMonitor {
     @Autowired
     protected AsinService mAsinService;
 
+    @Autowired
+    private BatchService mBatchService;
+
+    @Autowired
+    private BatchAsinService mBatchAsinService;
+
+    @Autowired
+    private SiteService mSiteService;
+
     @Override
     public void execute() {
         List<Url> urlList = getUrl(true);
         mUrlService.addAll(urlList);
-
-        sLogger.info("更新ASIN状态...更新数量：" + urlList.size());
-        for (Url url : urlList) {
-            if (url.asin != null) {
-                mAsinService.updateStatus(url.asin, false);
-            }
-        }
     }
 
     @Override
     protected List<Url> getUrl(boolean isCrawlAll) {
 
-        List<Asin> asinList;
-        if (isCrawlAll) {
-            asinList = mAsinService.findAll();
-        } else {
-            asinList = mAsinService.findCrawledAll();
-        }
-        sLogger.info("剩余未转换成URL的Asin数量：" + asinList.size());
-
         List<Url> urlList = new ArrayList<Url>();
 
-        for (Asin asin : asinList) {
+        Map<String, Site> siteMap = new HashMap<String, Site>();
+        List<Batch> batchList = mBatchService.findByStatus(0);
+        for (Batch batch : batchList) {
+            List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batch.number);
+            for (BatchAsin batchAsin : batchAsinList) {
 
-            /* 如果当前站点设置了不可爬取，直接进入下一个循环 */
-            if (asin.site.basCrawl != 1) {
-                continue;
-            }
-
-            List<String> filterList;
-
-            /* 更新爬取和全量爬取的过滤器生成策略是不同的 */
-            if (isCrawlAll) {
-                filterList = mAsinService.getFilterWords(asin.saaStar);
-            } else {
-                filterList = mAsinService.getUpdateFilters(asin.saaStar);
-            }
-            sLogger.debug("过滤器列表：" + filterList);
-
-            for (String filter : filterList) {
-
-                Url url = new Url();
-                url.url = asin.site.basSite + "/" + Review.PRODUCT_REVIEWS + "/" + asin.saaAsin;
-                /* 为Url添加过滤器 */
-                url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
-                url.urlMD5 = UrlUtils.md5(url.url);
-                url.siteCode = asin.site.basCode;
-                url.asin = asin;
-                url.priority = asin.saaPriority;
-                url.type = 0;
-
-                /* 如果是更新爬取，他的url类型为2 */
-                if (!isCrawlAll) {
-                    url.type = 2;
+                Site site = siteMap.get(batchAsin.siteCode);
+                if (site == null) {
+                    site = mSiteService.find(batchAsin.siteCode);
+                    siteMap.put(batchAsin.siteCode, site);
+                }
+                List<String> filterList = mAsinService.getUpdateFilters(batchAsin.star);
+                /* 无论是全量爬取还是更新爬取，都生成相同的URL过滤器，然后生成URL */
+                for (String filter : filterList) {
+                    Url url = new Url();
+                    url.batchNum = batchAsin.batchNumber;
+                    url.url = siteMap.get(batchAsin.siteCode).basSite + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
+                    url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
+                    url.urlMD5 = UrlUtils.md5(url.url);
+                    url.siteCode = batchAsin.siteCode;
+                    url.asin = batchAsin.asin;
+                    url.type = batchAsin.type;
+                    urlList.add(url);
                 }
 
-                url.saaAsin = asin.saaAsin;
-
-                urlList.add(url);
+                /* 装换成URL列表后，把爬取的状态改成爬取当中 */
+                batchAsin.status = 1;
+                mBatchAsinService.update(batchAsin);
             }
         }
 

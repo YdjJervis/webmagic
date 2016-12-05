@@ -45,9 +45,9 @@ public class UrlHistoryService {
         return mDao.find(urlMD5).size() > 0;
     }
 
-    public List<Url> findByAsin(String asin){
+    public List<Url> findByAsin(String siteCode, String asin) {
 
-        List<Url> list = mDao.findByAsin(asin);
+        List<Url> list = mDao.findByAsin(siteCode, asin);
         for (Url url : list) {
             url.status = 200;
         }

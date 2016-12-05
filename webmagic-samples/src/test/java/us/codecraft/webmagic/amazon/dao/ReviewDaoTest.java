@@ -30,12 +30,12 @@ public class ReviewDaoTest extends SpringTestCase {
 
     private Review getReview() {
         Review review = new Review();
-        review.saaAsin = "111111";
-        review.sarPersonId = "222222";
-        review.sarReviewId = "333333";
-        review.basCode = "CN";
-        review.sarContent = "天王盖地虎";
-        review.sarVersion = "白虎";
+        review.asin = "111111";
+        review.personId = "222222";
+        review.reviewId = "333333";
+        review.siteCode = "CN";
+        review.content = "天王盖地虎";
+        review.version = "白虎";
         return review;
     }
 

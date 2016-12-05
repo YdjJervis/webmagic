@@ -2,12 +2,10 @@ package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
-import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,23 +36,23 @@ public class RootAsinMonitor extends ParseMonitor {
     protected List<Url> getUrl(boolean isCrawlAll) {
         List<Url> urlList = new ArrayList<Url>();
 
-        List<Asin> asinList = mAsinService.findNotRooted();
+        /*List<Asin> asinList = mAsinService.findNotRooted();
         for (Asin asin : asinList) {
             Url url = new Url();
 
-            url.url = asin.site.basSite + "/dp/" + asin.saaAsin;
+            url.url = asin.site.basSite + "/dp/" + asin.asin;
             url.urlMD5 = UrlUtils.md5(url.url);
             url.type = 3;
             url.siteCode = asin.site.basCode;
             url.priority = asin.saaPriority;
-            url.saaAsin = asin.saaAsin;
+            url.saaAsin = asin.asin;
 
             urlList.add(url);
 
-            /* 设置ASIN为爬取中，不然下个几秒进来后又会转换 */
-            asin.saaCrawledHead = 1;
+            *//* 设置ASIN为爬取中，不然下个几秒进来后又会转换 *//*
+            asin.crawledHead = 1;
             mAsinService.update(asin);
-        }
+        }*/
 
         sLogger.info("新的ASIN转产品首页的URL条数：" + urlList.size());
         return urlList;

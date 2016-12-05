@@ -22,20 +22,18 @@ public interface UrlDao extends BaseDao<Url> {
     List<Url> findByType(int type);
 
     /**
-     * @param asin ASIN码
-     * @return 指定ASIN的Url列表
+     * @return 指定站点的ASIN的Url列表
      */
-    List<Url> findByAsin(String asin);
+    List<Url> findByAsin(String batchNum, String siteCode, String asin);
 
     List<Url> findMonitorUrlList();
 
     /**
-     * @param asin ASIN码
      * @return 指定ASIN的Url列表
      */
-    List<Url> findUpdateCrawl(String asin);
+    List<Url> findUpdateCrawl(String siteCode, String asin);
 
-    void deleteByAsin(String asin);
+    void deleteByAsin(String siteCode, String asin);
 
     /**
      * 重置URL爬取状态
@@ -43,6 +41,8 @@ public interface UrlDao extends BaseDao<Url> {
     void resetStatus();
 
     void deleteByUrlMd5(String urlMd5);
+
+    Url findByUrlMd5(String urlMd5);
 
     /**
      * @param type 0-全量；1-监听；2-更新

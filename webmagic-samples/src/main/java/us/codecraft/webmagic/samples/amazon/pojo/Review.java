@@ -17,61 +17,61 @@ public class Review extends BasePojo {
     /**
      * 站点码
      */
-    public String basCode;
+    public String siteCode;
     /**
      * Asin码
      */
-    public String saaAsin;
+    public String asin;
     /**
      * 根ASIN
      */
-    public String saaRootAsin;
+    public String rootAsin;
     /**
      * 评论者ID
      */
-    public String sarPersonId;
+    public String personId;
     /**
      * 评论时间
      */
-    public String sarTime;
+    public String time;
     /**
      * 评论时间格式化后的时间
      */
-    public Date sarDealTime;
+    public Date dealTime;
     /**
      * 评论者
      */
-    public String sarPerson;
+    public String person;
     /**
      * 评论ID
      */
-    public String sarReviewId;
+    public String reviewId;
     /**
      * 标记是否监控0-no;1-yes
      */
-    public int sarMonitor = 0;
+    public int monitor = 0;
     /**
      * 购买状态
      */
-    public String sarBuyStatus;
+    public String buyStatus;
     /**
      * 评论者打分
      */
-    public int sarStar;
+    public int star;
     /**
      * 购买版本信息
      */
-    public String sarVersion;
+    public String version;
     /**
      * 评论内容
      */
-    public String sarContent;
+    public String content;
     /**
      * 评论标题
      */
-    public String sarTitle;
+    public String title;
 
-    public String sarPageNum;
+    public String pageNum;
 
     /** 二期：优先级 */
     public int priority;
@@ -79,21 +79,22 @@ public class Review extends BasePojo {
     @Override
     public String toString() {
         return "Review{" +
-                "basCode='" + basCode + '\'' +
-                ", saaAsin='" + saaAsin + '\'' +
-                ", saaRootAsin='" + saaRootAsin + '\'' +
-                ", sarPersonId='" + sarPersonId + '\'' +
-                ", sarTime='" + sarTime + '\'' +
-                ", sarDealTime=" + sarDealTime +
-                ", sarPerson='" + sarPerson + '\'' +
-                ", sarReviewId='" + sarReviewId + '\'' +
-                ", sarMonitor=" + sarMonitor +
-                ", sarBuyStatus='" + sarBuyStatus + '\'' +
-                ", sarStar=" + sarStar +
-                ", sarVersion='" + sarVersion + '\'' +
-                ", sarContent='" + sarContent + '\'' +
-                ", sarTitle='" + sarTitle + '\'' +
-                ", sarPageNum='" + sarPageNum + '\'' +
+                "basCode='" + siteCode + '\'' +
+                ", asin='" + asin + '\'' +
+                ", rootAsin='" + rootAsin + '\'' +
+                ", personId='" + personId + '\'' +
+                ", time='" + time + '\'' +
+                ", dealTime=" + dealTime +
+                ", person='" + person + '\'' +
+                ", reviewId='" + reviewId + '\'' +
+                ", monitor=" + monitor +
+                ", buyStatus='" + buyStatus + '\'' +
+                ", star=" + star +
+                ", version='" + version + '\'' +
+                ", content='" + content + '\'' +
+                ", title='" + title + '\'' +
+                ", pageNum='" + pageNum + '\'' +
+                ", priority=" + priority +
                 '}';
     }
 }

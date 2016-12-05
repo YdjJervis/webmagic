@@ -70,63 +70,20 @@ public class AsinService {
         return mAsinDao.findAll();
     }
 
-    /**
-     * Asin转Url的时候调用，爬取每一条Url的时候调用
-     *
-     * @param isCrawlFinish true:爬取完毕，false:Asin已经转换成了Url
-     */
-    public void updateStatus(Asin asin, boolean isCrawlFinish) {
-        mLogger.debug("ASIN状态转换前：" + asin);
-        if (asin == null) return;
-
-        int[] starArray = parseStringArray2IntArray(asin.saaStar.split("-"));
-        int[] statusArray = parseStringArray2IntArray(asin.saaStatus.split("-"));
-
-        for (int i = 0, len = starArray.length; i < len; i++) {
-            if (starArray[i] == 1) {
-                if (isCrawlFinish) {
-                    /*
-                    * 爬取完毕了，状态标记为2
-                    */
-                    statusArray[i] = 2;
-                    asin.saaProgress = 1;
-                } else {
-                    /*
-                    * Asin转换成了Url，代表需要开始爬取了，状态标记为1
-                    */
-                    statusArray[i] = 1;
-                }
-            }
-        }
-
-        asin.saaStatus = getStatusStr(statusArray);
-        asin.saaParsed = 1;
-
-        mLogger.debug("ASIN状态转换后：" + asin);
-        mAsinDao.update(asin);
-    }
-
     public void udpate(Asin asin) {
         mAsinDao.update(asin);
     }
 
-    public Asin findByAsin(String asin) {
-        return mAsinDao.findByAsin(asin);
-    }
-
-    /**
-     * @return 全量爬取已经完毕的Asin列表
-     */
-    public List<Asin> findCrawledAll() {
-        return mAsinDao.findCrawledAll();
+    public Asin findByAsin(String siteCode, String asin) {
+        return mAsinDao.findByAsin(siteCode, asin);
     }
 
     public Asin updateExtra(Asin asin) {
         /* 全量爬取完毕，把需要爬取星级的最后一条评论ReviewID记录到extra字段，方便下次更新爬取的时候使用 */
-        List<Review> reviewList = mReviewService.findLastReview(asin.saaRootAsin);
+        List<Review> reviewList = mReviewService.findLastReview(asin.rootAsin);
 
         /* 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取 */
-        List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin.saaRootAsin);
+        List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin.rootAsin);
 
         /* List转Map */
         Map<Integer, Integer> srcMap = new HashMap<Integer, Integer>();
@@ -136,8 +93,8 @@ public class AsinService {
 
         List<StarReviewMap> mapList = new ArrayList<StarReviewMap>();
         for (Review review : reviewList) {
-            StarReviewMap sRMap = new StarReviewMap(review.sarStar, review.sarReviewId);
-            sRMap.reviewNum = srcMap.get(review.sarStar);
+            StarReviewMap sRMap = new StarReviewMap(review.star, review.reviewId);
+            sRMap.reviewNum = srcMap.get(review.star);
             mapList.add(sRMap);
         }
         asin.extra = new Gson().toJson(mapList);
@@ -150,15 +107,15 @@ public class AsinService {
         mAsinDao.update(asin);
     }
 
-    public void updateAndDeleteUrl(String asinCode) {
+    public void updateAndDeleteUrl(String siteCode, String asinCode) {
         mLogger.warn("该商品已经下架：" + asinCode);
 
         /*标记此ASIN为下架产品*/
-        Asin asin = findByAsin(asinCode);
-        asin.saaOnSale = 0;
+        Asin asin = findByAsin(siteCode, asinCode);
+        asin.onSale = 0;
         update(asin);
         /*删除已经在爬取的URL*/
-        mUrlService.deleteByAsin(asinCode);
+        mUrlService.deleteByAsin(siteCode, asinCode);
     }
 
     /**
@@ -298,20 +255,6 @@ public class AsinService {
     }
 
     /**
-     * 把所有在更新爬取的URL状态修改为未在更新爬取
-     */
-    public void resetUpdating() {
-        mAsinDao.resetUpdating();
-    }
-
-    /**
-     * 查询没有爬取过产品首页的ASIN
-     */
-    public List<Asin> findNotRooted() {
-        return mAsinDao.findNotRooted();
-    }
-
-    /**
      * @param rootAsin 当前爬取的root asin在数据库是否已经存在
      * @return true-存在；false-不存在
      */
@@ -326,27 +269,27 @@ public class AsinService {
      */
     public void setParsedNotUpdate(Asin asin) {
 
-        asin.saaParsed = 1;
-
-        /* 标记为不需要更新爬取，因为有相同root asin的记录会执行更新爬取 */
-        asin.saaNeedUpdatting = 0;
+//        asin.saaParsed = 1;
+//
+//        /* 标记为不需要更新爬取，因为有相同root asin的记录会执行更新爬取 */
+//        asin.saaNeedUpdatting = 0;
 
         /* SRA = same root asin */
         asin.extra = "SRA";
-        asin.saaProgress = 1;
+        asin.progress = 1;
 
         update(asin);
     }
 
-    public boolean isExist(String asin) {
-        return mAsinDao.findByAsin(asin) != null;
+    public boolean isExist(String siteCode, String asin) {
+        return mAsinDao.findByAsin(siteCode, asin) != null;
     }
 
     public void addAll(List<Asin> asinList) {
         List<Asin> newList = new ArrayList<Asin>();
 
         for (Asin asin : asinList) {
-            if (isExist(asin.saaAsin)) {
+            if (isExist(asin.siteCode, asin.asin)) {
                 update(asin);
             } else {
                 newList.add(asin);

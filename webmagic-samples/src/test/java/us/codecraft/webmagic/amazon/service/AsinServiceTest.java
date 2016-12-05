@@ -20,19 +20,14 @@ public class AsinServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void testFindCrawledAll() {
-        System.out.println(mAsinService.findCrawledAll());
-    }
-
-    @Test
     public void testGetFilter() {
-        System.out.println(mAsinService.getUpdateFilters("0-0-1-0-1"));
+        System.out.println(mAsinService.getUpdateFilters("0-0-1-1-1"));
     }
 
     @Test
     public void testUpdate() {
-        Asin asin = mAsinService.findByAsin("B013UEP6HY");
-        asin.saaOnSale = 0;
+        Asin asin = mAsinService.findByAsin("UK", "B01LXA42FB");
+        asin.onSale = 0;
         mAsinService.update(asin);
     }
 }

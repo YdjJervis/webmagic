@@ -15,16 +15,7 @@ import java.util.List;
 @Repository
 public interface AsinDao extends BaseDao<Asin> {
 
-    int updateSyncTime(Asin asin);
-
-    Asin findByAsin(String asin);
-
-    /**
-     * @return 爬取进度为1的Asin列表
-     */
-    List<Asin> findCrawledAll();
-
-    void resetUpdating();
+    Asin findByAsin(String siteCode, String asin);
 
     List<Asin> findNotRooted();
 

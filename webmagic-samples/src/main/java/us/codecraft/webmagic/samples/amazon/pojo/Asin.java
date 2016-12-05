@@ -15,50 +15,35 @@ public class Asin extends BasePojo {
     /**
      * asin码
      */
-    public Site site = new Site();
-    public AsinSource asinSource = new AsinSource();
-    public String saaAsin;
-    public String saaRootAsin;
-    public String saaStar;
+    public String siteCode;
+    public String asin;
+    public String rootAsin;
     /**
      * 爬取状态，0未爬取，1已经爬取，2爬取完毕
      */
-    public String saaStatus = "0-0-0-0-0";
+    public String status = "0-0-0-0-0";
     /**
      * 爬取进度
      */
-    public float saaProgress;
-    /**
-     * 已经转换成URL过
-     */
-    public int saaParsed;
-    public int saaPriority;
-    public int saaNeedUpdatting = 1;
-    public int saaIsUpdatting;
-    public Date saaSyncTime;
+    public float progress;
+    public Date syncTime;
     /**
      * 是否在销售
      */
-    public int saaOnSale = 1;
-    public int saaCrawledHead;
+    public int onSale = 1;
+    public int crawledHead;
 
     @Override
     public String toString() {
         return "Asin{" +
-                "site=" + site +
-                ", asinSource=" + asinSource +
-                ", saaAsin='" + saaAsin + '\'' +
-                ", saaRootAsin='" + saaRootAsin + '\'' +
-                ", saaStar='" + saaStar + '\'' +
-                ", saaStatus='" + saaStatus + '\'' +
-                ", saaProgress=" + saaProgress +
-                ", saaParsed=" + saaParsed +
-                ", saaPriority=" + saaPriority +
-                ", saaNeedUpdatting=" + saaNeedUpdatting +
-                ", saaIsUpdatting=" + saaIsUpdatting +
-                ", saaSyncTime=" + saaSyncTime +
-                ", saaOnSale=" + saaOnSale +
-                ", saaCrawledHead=" + saaCrawledHead +
+                "siteCode='" + siteCode + '\'' +
+                ", asin='" + asin + '\'' +
+                ", rootAsin='" + rootAsin + '\'' +
+                ", status='" + status + '\'' +
+                ", progress=" + progress +
+                ", syncTime=" + syncTime +
+                ", onSale=" + onSale +
+                ", crawledHead=" + crawledHead +
                 '}';
     }
 }

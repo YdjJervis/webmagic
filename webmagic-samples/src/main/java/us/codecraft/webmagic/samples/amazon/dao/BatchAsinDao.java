@@ -17,7 +17,7 @@ public interface BatchAsinDao extends BaseDao<BatchAsin> {
 
     BatchAsin find(BatchAsin batchAsin);
 
-    List<BatchAsin> findAllByAsin(String code);
+    List<BatchAsin> findAllByAsin(String batchNum, String siteCode, String asin);
 
     List<BatchAsin> findAllByBatchNum(String batchNumber);
 }

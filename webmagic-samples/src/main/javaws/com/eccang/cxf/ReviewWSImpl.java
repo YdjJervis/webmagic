@@ -58,8 +58,8 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
         for (ReviewReq.Review review : reviewReq.data) {
             Review parsedReview = new Review();
-            parsedReview.sarReviewId = review.reviewID;
-            parsedReview.basCode = review.siteCode;
+            parsedReview.reviewId = review.reviewID;
+            parsedReview.siteCode = review.siteCode;
             parsedReview.priority = review.priority;
             parsedReviewList.add(parsedReview);
         }
@@ -121,9 +121,9 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
             if (Integer.valueOf(levels[i]) == 1) {
                 Review queryReview = new Review();
-                queryReview.saaAsin = reviewQueryReq.data.asin;
-                queryReview.sarPersonId = reviewQueryReq.data.personID;
-                queryReview.sarStar = 5 - i;
+                queryReview.asin = reviewQueryReq.data.asin;
+                queryReview.personId = reviewQueryReq.data.personID;
+                queryReview.star = 5 - i;
                 List<Review> reviewList = mReviewService.findAll(queryReview);
                 allReviewList.addAll(reviewList);
             }
@@ -132,15 +132,15 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         /* 把查询的Review转换成需要返回的对象 */
         for (Review review : allReviewList) {
             ReviewQueryRsp.Review resultReview = reviewQueryRsp.new Review();
-            resultReview.asin = review.saaAsin;
-            resultReview.siteCode = review.basCode;
-            resultReview.time = review.sarDealTime;
-            resultReview.personID = review.sarPersonId;
-            resultReview.reviewID = review.sarReviewId;
-            resultReview.buyStatus = review.sarBuyStatus;
-            resultReview.star = review.sarStar;
-            resultReview.title = review.sarTitle;
-            resultReview.content = review.sarContent;
+            resultReview.asin = review.asin;
+            resultReview.siteCode = review.siteCode;
+            resultReview.time = review.dealTime;
+            resultReview.personID = review.personId;
+            resultReview.reviewID = review.reviewId;
+            resultReview.buyStatus = review.buyStatus;
+            resultReview.star = review.star;
+            resultReview.title = review.title;
+            resultReview.content = review.content;
             reviewQueryRsp.data.add(resultReview);
         }
 

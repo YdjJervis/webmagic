@@ -97,9 +97,9 @@
 
 
         <!-- 每5秒 把未爬取过首页的的ASIN转换成URL -->
-        <task:scheduled ref="rootAsinMonitor" method="execute" cron="0/5 * * * * ?"/>
-        <!-- 每5秒 爬取一次产品首页URL -->
-        <task:scheduled ref="productProcessor" method="execute" cron="0/5 * * * * ?"/>
+        <!--<task:scheduled ref="rootAsinMonitor" method="execute" cron="0/5 * * * * ?"/>
+        &lt;!&ndash; 每5秒 爬取一次产品首页URL &ndash;&gt;
+        <task:scheduled ref="productProcessor" method="execute" cron="0/5 * * * * ?"/>-->
 
         <!-- 每5秒 爬取一次处在监听状态的URL -->
        <!-- <task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>

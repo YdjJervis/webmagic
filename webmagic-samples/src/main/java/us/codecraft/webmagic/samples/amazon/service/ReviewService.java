@@ -24,7 +24,7 @@ public class ReviewService {
 
     public void add(Review review) {
 
-        if (!isExist(review.sarReviewId)) {
+        if (!isExist(review.reviewId)) {
             mReviewDao.add(review);
         } else {
             mReviewDao.update(review);
@@ -34,15 +34,19 @@ public class ReviewService {
     public void addAll(List<Review> reviewList) {
         List<Review> newList = new ArrayList<Review>();
         for (Review review : reviewList) {
-            if (!isExist(review.sarReviewId)) {
+            if (!isExist(review.reviewId)) {
                 newList.add(review);
             } else {
-                mReviewDao.update(review);
+                update(review);
             }
         }
         if (CollectionUtils.isNotEmpty(newList)) {
             mReviewDao.addAll(newList);
         }
+    }
+
+    public void update(Review review) {
+        mReviewDao.update(review);
     }
 
     public Review findByReviewId(String reviewId) {
@@ -63,6 +67,7 @@ public class ReviewService {
 
     /**
      * 返回给定条件的多有评论
+     *
      * @param review 附带筛选条件的对象
      */
     public List<Review> findAll(Review review) {

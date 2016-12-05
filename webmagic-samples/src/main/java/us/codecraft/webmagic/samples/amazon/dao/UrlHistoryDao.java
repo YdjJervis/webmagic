@@ -15,5 +15,5 @@ import java.util.List;
 @Repository
 public interface UrlHistoryDao extends BaseDao<Url> {
 
-    List<Url> findByAsin(String asin);
+    List<Url> findByAsin(String siteCode, String asin);
 }

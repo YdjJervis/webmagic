@@ -14,6 +14,7 @@ public class AsinPriorityReq extends BaseReqParam {
     public List<Asin> data = new ArrayList<Asin>();
 
     public class Asin {
+        public String siteCode;
         public String asin;
         public int priority;
     }

@@ -39,8 +39,8 @@ public class AsinDaoTest extends SpringTestCase {
         mLogger.info(asinList);
         if(CollectionUtils.isNotEmpty(asinList)){
             for (Asin asin : asinList) {
-                asin.saaStatus = "0-0-0-0-2";
-                asin.updatetime = new Date();
+                asin.status = "0-0-0-0-2";
+                asin.updateTime = new Date();
                 mDao.update(asin);
             }
         }
@@ -52,8 +52,7 @@ public class AsinDaoTest extends SpringTestCase {
 
         if(CollectionUtils.isNotEmpty(asinList)) {
             for (Asin asin : asinList) {
-                asin.saaSyncTime = new Date();
-                mDao.updateSyncTime(asin);
+                asin.syncTime = new Date();
             }
         }
     }

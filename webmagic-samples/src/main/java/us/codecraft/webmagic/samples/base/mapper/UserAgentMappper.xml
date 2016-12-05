@@ -7,11 +7,11 @@
         <result property="id" column="bua_ip"/>
         <result property="userAgent" column="bua_user_agent"/>
         <result property="useCount" column="bua_use_count"/>
-        <result property="updatetime" column="bua_update_time"/>
+        <result property="updateTime" column="bua_update_time"/>
     </resultMap>
 
     <update id="update" parameterType="UserAgent">
-        UPDATE base_user_agent SET bua_use_count = #{useCount},bua_update_time=#{updatetime} WHERE bua_ip=#{id};
+        UPDATE base_user_agent SET bua_use_count = #{useCount} WHERE bua_ip=#{id};
     </update>
 
     <select id="findAll" resultMap="UserAgentResultMap">

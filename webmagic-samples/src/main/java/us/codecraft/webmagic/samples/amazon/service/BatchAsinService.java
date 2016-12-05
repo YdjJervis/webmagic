@@ -58,8 +58,8 @@ public class BatchAsinService {
         return mBatchAsinDao.find(batchAsin) != null;
     }
 
-    public List<BatchAsin> findAllByAsin(String asin) {
-        return mBatchAsinDao.findAllByAsin(asin);
+    public List<BatchAsin> findAllByAsin(String batchNum, String siteCode, String asin) {
+        return mBatchAsinDao.findAllByAsin(batchNum,siteCode, asin);
     }
 
     public List<BatchAsin> findAllByBatchNum(String batchNumber) {

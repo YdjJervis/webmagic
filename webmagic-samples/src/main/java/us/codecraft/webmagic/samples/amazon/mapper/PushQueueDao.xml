@@ -10,8 +10,8 @@
         <result column="dpq_status" property="status"/>
         <result column="dpq_times" property="times"/>
         <result column="dpq_extra" property="extra"/>
-        <result column="dpq_create_time" property="createtime"/>
-        <result column="dpq_update_time" property="updatetime"/>
+        <result column="dpq_create_time" property="createTime"/>
+        <result column="dpq_update_time" property="updateTime"/>
     </resultMap>
 
     <insert id="add" parameterType="PushQueue">

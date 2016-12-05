@@ -10,8 +10,8 @@
         <result column="smfs_parsed" property="parsed"/>
         <result column="smfs_priority" property="priority"/>
         <result column="smfs_extra" property="extra"/>
-        <result column="smfs_create_time" property="createtime"/>
-        <result column="smfs_update_time" property="updatetime"/>
+        <result column="smfs_create_time" property="createTime"/>
+        <result column="smfs_update_time" property="updateTime"/>
 
     </resultMap>
 

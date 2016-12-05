@@ -48,8 +48,12 @@ public class UrlService {
         }
     }
 
-    public void deleteByAsin(String asin) {
-        mUrlDao.deleteByAsin(asin);
+    public void deleteByAsin(String siteCode, String asin) {
+        mUrlDao.deleteByAsin(siteCode, asin);
+    }
+
+    public Url findByUrlMd5(String urlMd5) {
+        return mUrlDao.findByUrlMd5(urlMd5);
     }
 
     public void update(Url url) {
@@ -87,9 +91,10 @@ public class UrlService {
      * yes：把asin的状态更新到爬取完毕，no：ignore
      */
     public void updateAsinCrawledAll(Url url) {
-        List<Url> list = mUrlDao.findByAsin(url.saaAsin);
 
-        mLogger.info("ASIN:" + url.saaAsin + " 对应的URL表记录数：" + list.size());
+        List<Url> list = mUrlDao.findByAsin(url.batchNum, url.siteCode, url.asin);
+
+        mLogger.info("ASIN:" + url.asin + " 对应的URL表记录数：" + list.size());
 
         /* 用过滤器作key，过滤器对应的最大的评论页码作value */
         Map<String, Integer> maxPageMap = new HashMap<String, Integer>();
@@ -129,21 +134,20 @@ public class UrlService {
         }
 
         mLogger.info("最大页码总数：" + maxPage + " 已经爬取的页码：" + crawledList.size());
-        Asin asinObj = mAsinService.findByAsin(url.saaAsin);
-        List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(url.saaAsin);
+        Asin asinObj = mAsinService.findByAsin(url.siteCode, url.asin);
+        List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(url.batchNum, url.siteCode, url.asin);
         /* 先把rootAsin值填进去 */
         for (BatchAsin batchAsin : batchAsinList) {
-            batchAsin.rootAsin = asinObj.saaRootAsin;
+            batchAsin.rootAsin = asinObj.rootAsin;
         }
 
+        Date currentTime = new Date();
         /* 如果 当前ASIN，URL列表集合数量 = 最大页码，表示已经爬取完毕了 */
         if (crawledList.size() == maxPage) {
 
             /* 更新ASIN的extra状态 */
+            asinObj.syncTime = currentTime;
             Asin asin = mAsinService.updateExtra(asinObj);
-
-            /* 更新ASIN的爬取状态状态 */
-            mAsinService.updateStatus(asinObj, true);
 
             /* 爬取完毕，把所有URL移动到历史表 */
             deleteAll(crawledList);
@@ -152,64 +156,58 @@ public class UrlService {
             /* 二期业务：改变详单表extra状态进行更新 */
             for (BatchAsin batchAsin : batchAsinList) {
                 batchAsin.extra = asin.extra;
+                batchAsin.finishTime = currentTime;
                 batchAsin.progress = 1;
             }
         } else {
             /* 一期业务 */
             float progress = 1.0f * crawledList.size() / maxPage;
-            asinObj.saaProgress = progress > 1.0f ? 1.0f : progress;
-            mLogger.info(url.saaAsin + " 的爬取进度：" + asinObj.saaProgress);
-
-            mAsinService.updateStatus(asinObj, false);
+            asinObj.progress = progress > 1.0f ? 1.0f : progress;
+            mLogger.info(url.asin + " 的爬取进度：" + asinObj.progress);
 
             /* 二期业务：改变详单表进度状态进行更新 */
             for (BatchAsin batchAsin : batchAsinList) {
-                batchAsin.progress = asinObj.saaProgress;
+                batchAsin.progress = asinObj.progress;
             }
         }
         /* 更新批次详单表 */
         mBatchAsinService.updateAll(batchAsinList);
 
         /* 二期业务：更新批次单表 */
+        float totalProgress = 0;
+        Batch batch = mBatchService.findByBatchNumber(url.batchNum);
         for (BatchAsin batchAsin : batchAsinList) {
             /* 对批次详单进行更新 */
             if (batchAsin.progress == 1) {
-                batchAsin.finishTime = new Date();
-                /* 调整为更新爬取 */
-                batchAsin.type = 1;
+                batchAsin.finishTime = currentTime;
+                /* 调整为爬取完毕状态 */
+                batchAsin.type = 2;
             }
             if (batchAsin.startTime == null) {
-                batchAsin.startTime = new Date();
+                batchAsin.startTime = currentTime;
             }
 
-            /* 对批次单进行更新 */
-            List<BatchAsin> batchAsinList2 = mBatchAsinService.findAllByBatchNum(batchAsin.batchNumber);
-
-            float progress = 0;
-            /* 计算总的进度值之和 */
-            for (BatchAsin batchAsin2 : batchAsinList2) {
-                progress += batchAsin2.progress;
-            }
+            /* 累加所有详单中的进度 */
+            totalProgress += batchAsin.progress;
 
             /* 计算订单平均进度值 */
-            progress = progress / batchAsinList2.size();
+            totalProgress = totalProgress / batchAsinList.size();
 
-            Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
-            batch.progress = progress;
+            batch.progress = totalProgress;
 
             /* 如果爬取开始，更新开始时间 */
             if (batch.startTime == null) {
-                batch.startTime = new Date();
+                batch.startTime = currentTime;
             }
             /* 如果爬取完毕，更新完毕时间 */
-            if (progress == 1) {
-                batch.finishTime = new Date();
+            if (totalProgress == 1) {
+                batch.finishTime = currentTime;
             }
 
-
-            mBatchService.update(batch);
-
         }
+        /* 计算详单总进度的评价值，更新到总单上去 */
+        batch.progress = totalProgress / batchAsinList.size();
+        mBatchService.update(batch);
 
         /* 再次更新批次详单表 */
         mBatchAsinService.updateAll(batchAsinList);
@@ -232,8 +230,8 @@ public class UrlService {
      * @param asin   ASIN码
      * @param filter Url中的过滤器
      */
-    public void deleteUpdateCrawl(String asin, String filter) {
-        List<Url> list = findUpdateCrawl(asin);
+    public void deleteUpdateCrawl(String siteCode, String asin, String filter) {
+        List<Url> list = findUpdateCrawl(siteCode, asin);
         if (CollectionUtils.isNotEmpty(list)) {
             for (Url url : list) {
                 if (url.url.contains(filter)) {
@@ -244,15 +242,15 @@ public class UrlService {
 
         /*删除后再检查一次更新爬取的Url是否为空，如果为空，就标记
         该ASIN的更新爬取状态为0，表示可以继续下一次的更新爬取了*/
-        if (CollectionUtils.isEmpty(findUpdateCrawl(asin))) {
-            Asin byAsin = mAsinService.findByAsin(asin);
-            byAsin.saaIsUpdatting = 0;
+        if (CollectionUtils.isEmpty(findUpdateCrawl(siteCode, asin))) {
+            Asin byAsin = mAsinService.findByAsin("", asin);
+//            byAsin.saaIsUpdatting = 0;
             mAsinService.udpate(byAsin);
         }
     }
 
-    public List<Url> findUpdateCrawl(String asin) {
-        return mUrlDao.findUpdateCrawl(asin);
+    public List<Url> findUpdateCrawl(String siteCode, String asin) {
+        return mUrlDao.findUpdateCrawl(siteCode, asin);
     }
 
     public boolean isExist(String urlMd5) {
@@ -292,6 +290,6 @@ public class UrlService {
      * 更改监控Review对应URL的优先级
      */
     public void updateMonitorPriority(String reviewID, int priority) {
-        mUrlDao.updateMonitorPriority(reviewID,priority);
+        mUrlDao.updateMonitorPriority(reviewID, priority);
     }
 }

@@ -31,20 +31,16 @@ public class UrlDaoTest extends SpringTestCase {
     private Url getUrl() {
         Url url = new Url();
         url.url = "www.test.com";
-        url.headers = "headers";
-        url.cookies = "cookies";
-        url.otherParams = "otherParams";
         url.siteCode = "CN";
         url.status = 0;
         url.extra = "extra";
         url.parentUrl = "parentUrl";
-        url.postParams = "postParams";
         return url;
     }
 
 
     @Test
-    public void addAllTest(){
+    public void addAllTest() {
 
         List<Url> list = new ArrayList<Url>();
         list.add(getUrl());
@@ -53,8 +49,8 @@ public class UrlDaoTest extends SpringTestCase {
     }
 
     @Test
-    public void testFindByAsin(){
-        mLogger.info(mDao.findByAsin("B00K0A38WM").size());
+    public void testFindByAsin() {
+        mLogger.info(mDao.findByAsin("", "", "B00K0A38WM").size());
     }
 
 }

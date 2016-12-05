@@ -44,7 +44,7 @@ public class ReviewMonitorDaoTest extends SpringTestCase {
         List<ReviewMonitor> list = mDao.find("R3M72LGQOWZPQJ");
         if(CollectionUtils.isNotEmpty(list)){
             for (ReviewMonitor monitor : list) {
-                monitor.updatetime = new Date();
+                monitor.updateTime = new Date();
                 monitor.smrMarked = 0;
                 mDao.update(monitor);
             }

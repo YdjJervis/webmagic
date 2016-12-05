@@ -8,7 +8,7 @@
         <result property="basSite" column="bas_site"/>
         <result property="basName" column="bas_name"/>
         <result property="basCrawl" column="bas_crawl"/>
-        <result property="updatetime" column="bas_update_time"/>
+        <result property="updateTime" column="bas_update_time"/>
     </resultMap>
 
     <select id="find" resultMap="SiteResultMap">

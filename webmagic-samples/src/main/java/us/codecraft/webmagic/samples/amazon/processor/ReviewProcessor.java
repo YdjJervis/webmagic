@@ -31,6 +31,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     protected void dealReview(Page page) {
 
         String currentUrl = page.getUrl().get();
+        Url urlExtra = getUrl(page);
 
         List<Selectable> reviewNodeList = extractReviewNodeList(page);
 
@@ -43,8 +44,8 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         for (Selectable reviewNode : reviewNodeList) {
 
             Review review = extractReviewItem(siteCode, asin, reviewNode);
-            review.saaRootAsin = mAsinService.findByAsin(asin).saaRootAsin;
-            review.sarPageNum = UrlUtils.getValue(currentUrl, "pageNumber");
+            review.rootAsin = mAsinService.findByAsin(siteCode, asin).rootAsin;
+            review.pageNum = UrlUtils.getValue(currentUrl, "pageNumber");
             reviewList.add(review);
         }
 
@@ -59,11 +60,12 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
             sLogger.info(asin + " 评论的最大页码为 " + totalPage);
             for (int i = 2; i <= totalPage; i++) {
                 Url url = new Url();
+                url.batchNum = urlExtra.batchNum;
                 url.siteCode = siteCode;
-                url.saaAsin = asin;
+                url.asin = asin;
                 url.parentUrl = currentUrl;
                 url.url = UrlUtils.setValue(currentUrl, "pageNumber", String.valueOf(i));
-                url.urlMD5 = UrlUtils.md5(url.url);
+                url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
 
                 urlList.add(url);
             }
@@ -110,18 +112,18 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         String content = reviewNode.xpath("//span[@data-hook='review-body']/text()").get();
         String buyStatus = reviewNode.xpath("//span[@data-hook='avp-badge']/text()").get();
 
-        review.basCode = siteCode;
-        review.saaAsin = asin;
-        review.sarStar = star;
-        review.sarTitle = title;
-        review.sarPersonId = personID;
-        review.sarReviewId = reviewId;
-        review.sarPerson = person;
-        review.sarTime = time;
-        review.sarDealTime = ReviewTimeUtil.parse(time, siteCode);
-        review.sarVersion = version;
-        review.sarContent = content;
-        review.sarBuyStatus = buyStatus;
+        review.siteCode = siteCode;
+        review.asin = asin;
+        review.star = star;
+        review.title = title;
+        review.personId = personID;
+        review.reviewId = reviewId;
+        review.person = person;
+        review.time = time;
+        review.dealTime = ReviewTimeUtil.parse(time, siteCode);
+        review.version = version;
+        review.content = content;
+        review.buyStatus = buyStatus;
         sLogger.info(review);
         return review;
     }

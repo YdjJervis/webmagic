@@ -6,29 +6,35 @@
     <resultMap id="UrlResultMap" type="Url">
         <result property="id" column="sauh_id"/>
         <result property="urlMD5" column="sauh_url_md5"/>
+        <result property="batchNum" column="bo_batch_num"/>
         <result property="siteCode" column="bas_code"/>
-        <result property="saaAsin" column="saa_asin"/>
+        <result property="asin" column="saa_asin"/>
         <result property="url" column="sauh_url"/>
         <result property="parentUrl" column="sauh_parent_url"/>
-        <result property="updatetime" column="sauh_update_time"/>
+        <result property="createTime" column="sauh_create_time"/>
+        <result property="updateTime" column="sauh_update_time"/>
     </resultMap>
 
     <insert id="add" parameterType="Url">
-        insert into spider_amazon_url_history(sauh_url_md5,bas_code,saa_asin,sauh_url,sauh_parent_url,sauh_update_time)
-        values(#{urlMD5},#{siteCode},#{saaAsin},#{url},#{parentUrl},CURRENT_TIMESTAMP)
+        insert into spider_amazon_url_history(
+          sauh_url_md5,bo_batch_num,bas_code,saa_asin,sauh_url,sauh_parent_url
+        ) values (
+          #{urlMD5},#{batchNum},#{siteCode},#{asin},#{url},#{parentUrl}
+        )
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
-        INSERT INTO spider_amazon_url_history(sauh_url_md5,bas_code,saa_asin,sauh_url,sauh_parent_url,sauh_update_time)
-        values
+        INSERT INTO spider_amazon_url_history(
+        sauh_url_md5,bo_batch_num,bas_code,saa_asin,sauh_url,sauh_parent_url
+        ) values
         <foreach collection="list" item="item" index="index" separator=",">
             (
             #{item.urlMD5},
+            #{item.batchNum},
             #{item.siteCode},
             #{item.saaAsin},
             #{item.url},
-            #{item.parentUrl},
-            CURRENT_TIMESTAMP
+            #{item.parentUrl}
             )
         </foreach>
     </insert>
@@ -38,7 +44,7 @@
     </select>
 
     <select id="findByAsin" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url_history WHERE saa_asin = #{0};
+        SELECT * FROM spider_amazon_url_history WHERE bas_code = #{0} AND saa_asin = #{0};
     </select>
 
 </mapper>

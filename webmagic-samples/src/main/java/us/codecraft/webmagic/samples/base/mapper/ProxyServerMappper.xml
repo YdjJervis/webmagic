@@ -9,7 +9,7 @@
         <result property="port" column="bps_port"/>
         <result property="useCount" column="bps_use_count"/>
         <result property="status" column="bps_status"/>
-        <result property="updatetime" column="bps_udpate_time"/>
+        <result property="updateTime" column="bps_udpate_time"/>
     </resultMap>
 
     <update id="update" parameterType="ProxyServer">

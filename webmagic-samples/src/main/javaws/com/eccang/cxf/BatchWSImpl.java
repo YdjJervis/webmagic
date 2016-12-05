@@ -60,13 +60,13 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             batchAsinRsp.msg = baseRspParam.msg;
 
             batchAsinRsp.data.number = batchReq.data.number;
-            batchAsinRsp.data.createTime = batch.createtime;
+            batchAsinRsp.data.createTime = batch.createTime;
             batchAsinRsp.data.type = batch.type;
             batchAsinRsp.data.times = batch.times;
             batchAsinRsp.data.startTime = batch.startTime;
             batchAsinRsp.data.finishTime = batch.finishTime;
             batchAsinRsp.data.progress = batch.progress;
-            batchAsinRsp.data.updateTime = batch.updatetime;
+            batchAsinRsp.data.updateTime = batch.updateTime;
 
             List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batchReq.data.number);
             for (BatchAsin batchAsin : batchAsinList) {
@@ -78,7 +78,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 asin.progress = batchAsin.progress;
                 asin.startTime = batchAsin.startTime;
                 asin.finishTime = batchAsin.finishTime;
-                asin.updateTime = batchAsin.updatetime;
+                asin.updateTime = batchAsin.updateTime;
                 batchAsinRsp.data.details.add(asin);
             }
 
@@ -90,13 +90,13 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             batchReviewRsp.msg = baseRspParam.msg;
 
             batchReviewRsp.data.number = batchReq.data.number;
-            batchReviewRsp.data.createTime = batch.createtime;
+            batchReviewRsp.data.createTime = batch.createTime;
             batchReviewRsp.data.type = batch.type;
             batchReviewRsp.data.times = batch.times;
             batchReviewRsp.data.startTime = batch.startTime;
             batchReviewRsp.data.finishTime = batch.finishTime;
             batchReviewRsp.data.progress = batch.progress;
-            batchReviewRsp.data.updateTime = batch.updatetime;
+            batchReviewRsp.data.updateTime = batch.updateTime;
 
             List<BatchReview> batchReviewList = mBatchReviewService.findAllByBatchNum(batchReq.data.number);
             for (BatchReview batchReview : batchReviewList) {
@@ -104,7 +104,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 monitor.siteCode = batchReview.siteCode;
                 monitor.reviewID = batchReview.reviewID;
                 monitor.crawled = batchReview.crawled;
-                monitor.updateTime = batchReview.updatetime;
+                monitor.updateTime = batchReview.updateTime;
                 batchReviewRsp.data.details.add(monitor);
             }
 

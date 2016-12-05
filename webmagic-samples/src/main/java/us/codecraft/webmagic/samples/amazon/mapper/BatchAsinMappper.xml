@@ -5,16 +5,19 @@
 
     <resultMap id="BatchAsinResultMap" type="BatchAsin">
         <result property="id" column="boa_id"/>
-        <result property="siteCode" column="bas_code"/>
         <result property="batchNumber" column="bo_batch_num"/>
+        <result property="siteCode" column="bas_code"/>
         <result property="asin" column="boa_asin"/>
         <result property="rootAsin" column="boa_root_asin"/>
+        <result property="star" column="boa_star"/>
         <result property="crawled" column="boa_crawled"/>
         <result property="progress" column="boa_progress"/>
         <result property="type" column="boa_type"/>
+        <result property="extra" column="boa_extra"/>
         <result property="startTime" column="boa_start_time"/>
         <result property="finishTime" column="boa_finish_time"/>
-        <result property="extra" column="boa_extra"/>
+        <result property="createTime" column="boa_create_time"/>
+        <result property="updateTime" column="boa_update_time"/>
     </resultMap>
 
     <select id="findByCode" resultMap="BatchAsinResultMap">
@@ -22,7 +25,7 @@
     </select>
 
     <select id="findAllByAsin" resultMap="BatchAsinResultMap">
-        SELECT * FROM batch_order_asin WHERE boa_asin = #{0} AND boa_type != 3;
+        SELECT * FROM batch_order_asin WHERE bo_batch_num = #{0} and bas_code = #{1} AND boa_asin = #{2} AND boa_type != 3;
     </select>
 
     <select id="findAllByBatchNum" resultMap="BatchAsinResultMap">
@@ -30,34 +33,33 @@
     </select>
 
     <select id="find" parameterType="BatchAsin" resultMap="BatchAsinResultMap">
-        SELECT * FROM batch_order_asin WHERE bo_batch_num = #{batchNumber} AND boa_asin = #{asin};
+        SELECT * FROM batch_order_asin WHERE bo_batch_num = #{batchNumber} AND bas_code = #{siteCode} AND boa_asin = #{asin};
     </select>
 
     <update id="update" parameterType="BatchAsin">
         UPDATE batch_order_asin SET
-        bas_code = #{siteCode},
-        boa_asin = #{asin},
         boa_root_asin = #{rootAsin},
+        boa_star = #{star},
         boa_crawled = #{crawled},
         boa_progress = #{progress},
         boa_type = #{type},
+        boa_extra = #{extra},
         boa_start_time = #{startTime},
-        boa_finish_time = #{finishTime},
-        boa_extra = #{extra}
+        boa_finish_time = #{finishTime}
         WHERE
-        bo_batch_num = #{batchNumber} AND boa_asin = #{asin};
+        bo_batch_num = #{batchNumber} AND bas_code = #{siteCode} AND boa_asin = #{asin};
     </update>
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO batch_order_asin(
-        bas_code,bo_batch_num,boa_asin,boa_root_asin,boa_crawled,boa_progress,
-        boa_type,boa_start_time,boa_finish_time,boa_extra
+        bo_batch_num,bas_code,boa_asin,boa_root_asin,boa_star,boa_crawled,boa_progress,
+        boa_type,boa_extra,boa_start_time,boa_finish_time
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.siteCode},#{item.batchNumber},#{item.asin},#{item.rootAsin},#{item.crawled},#{item.progress},
-            #{item.type},#{item.startTime},#{item.finishTime},#{item.extra}
+            #{item.batchNumber},#{item.siteCode},#{item.asin},#{item.rootAsin},#{item.star},#{item.crawled},#{item.progress},
+            #{item.type},#{item.extra},#{item.startTime},#{item.finishTime}
             )
         </foreach>
     </insert>

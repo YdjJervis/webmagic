@@ -26,6 +26,7 @@ public class UrlServiceTest extends SpringTestCase {
     public void testAdd() {
 
         Url url = getUrl();
+        url.urlMD5 = "MD5001";
         mUrlService.add(url);
     }
 
@@ -36,15 +37,15 @@ public class UrlServiceTest extends SpringTestCase {
 
         List<Url> urlList = new ArrayList<Url>();
         urlList.add(url);
-        urlList.add(url);
 
         mUrlService.addAll(urlList);
     }
 
     private Url getUrl() {
         Url url = new Url();
+        url.urlMD5 = "Md5002";
         url.siteCode = "CN";
-        url.saaAsin = "B009P4OWJ2";
+        url.asin = "B009P4OWJ2";
         url.status = 0;
         url.priority = 0;
         url.url = "https://www.amazon.cn/product-reviews/B00HYRXT4G";
@@ -55,22 +56,23 @@ public class UrlServiceTest extends SpringTestCase {
 
     @Test
     public void testUpdate() {
-        Url url = getUrl();
+        Url url = mUrlService.findByUrlMd5("8f95a3f8a7e40933");
+        url.batchNum = "BatchNum001";
         mUrlService.update(url);
     }
 
     @Test
     public void testDeleteUpdateCrawl() {
-        mUrlService.deleteUpdateCrawl("B0181YRLT4", "one_star");
+        mUrlService.deleteUpdateCrawl("", "B0181YRLT4", "one_star");
     }
 
     @Test
     public void testDeleteByAsin() {
-        mUrlService.deleteByAsin("B00NZS00OU");
+        mUrlService.deleteByAsin("CN", "B009P4OWJ2");
     }
 
     @Test
-    public void testFind() {
+    public void testFindByType() {
         System.out.println(mUrlService.find(0));
     }
 

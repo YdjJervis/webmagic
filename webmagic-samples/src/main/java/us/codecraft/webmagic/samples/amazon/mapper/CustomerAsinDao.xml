@@ -7,8 +7,8 @@
         <result column="bec_code" property="customerCode"/>
         <result column="saa_asin" property="asin"/>
         <result column="rca_status" property="status"/>
-        <result column="rca_create_time" property="createtime"/>
-        <result column="rca_update_time" property="updatetime"/>
+        <result column="rca_create_time" property="createTime"/>
+        <result column="rca_update_time" property="updateTime"/>
     </resultMap>
 
     <select id="findByCustomerCode" resultMap="CustomerAsinMap">

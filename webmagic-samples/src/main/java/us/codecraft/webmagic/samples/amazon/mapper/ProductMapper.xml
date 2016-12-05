@@ -24,8 +24,8 @@
         <result column="sap_added_time" property="addedTime"/>
         <result column="sap_category" property="category"/>
         <result column="sap_extra" property="extra"/>
-        <result column="sap_create_time" property="createtime"/>
-        <result column="sap_update_time" property="updatetime"/>
+        <result column="sap_create_time" property="createTime"/>
+        <result column="sap_update_time" property="updateTime"/>
 
     </resultMap>
 

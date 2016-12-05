@@ -47,10 +47,10 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
                 sLogger.error("抱歉，没有成功解析颗星数：" + star);
                 return;
             }
-            review.sarStar = Integer.valueOf(star);
-            review.sarTitle = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
-            review.sarTime = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/nobr/text()").get();
-            review.sarContent = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
+            review.star = Integer.valueOf(star);
+            review.title = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
+            review.time = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/nobr/text()").get();
+            review.content = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
 
             sLogger.info(review);
             mReviewService.add(review);

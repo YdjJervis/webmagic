@@ -66,7 +66,7 @@ public class BatchService {
         List<Asin> newList = new ArrayList<Asin>();
 
         for (Asin asin : asinList) {
-            if (mAsinService.isExist(asin.saaAsin)) {
+            if (mAsinService.isExist(asin.siteCode, asin.asin)) {
                 crawledList.add(asin);
             } else {
                 newList.add(asin);
@@ -80,30 +80,31 @@ public class BatchService {
         float progress = 0;
         for (Asin asin : crawledList) {
 
-            Asin byAsin = mAsinService.findByAsin(asin.saaAsin);
+            Asin byAsin = mAsinService.findByAsin(asin.siteCode, asin.asin);
 
-            BatchAsin ba = initBatchAsin(batch, asin);
-            ba.crawled = 1;
+            BatchAsin batchAsin = initBatchAsin(batch, asin);
+            batchAsin.crawled = 1;
 
             /* 如果下架了，批次表进度直接改为100% */
-            if (byAsin.saaOnSale == 0) {
-                ba.progress = 1;
+            if (byAsin.onSale == 0) {
+                batchAsin.progress = 1;
             } else {
-                ba.progress = byAsin.saaProgress;
+                batchAsin.progress = byAsin.progress;
             }
             /* 已经在爬取的ASIN的进度 < 1就标记为全量爬取，否则标记为更新爬取 */
-            ba.type = ba.progress < 1 ? 0 : 1;
-            ba.rootAsin = byAsin.saaRootAsin;
-            ba.extra = byAsin.extra;
-            baList.add(ba);
+            batchAsin.type = batchAsin.progress < 1 ? 0 : 1;
+            batchAsin.rootAsin = byAsin.rootAsin;
+            batchAsin.extra = byAsin.extra;
+            baList.add(batchAsin);
 
-            progress += ba.progress;
+            progress += batchAsin.progress;
         }
 
         mLogger.info("新的批次单明细插入到列表后面...");
         for (Asin asin : newList) {
 
             BatchAsin ba = initBatchAsin(batch, asin);
+            ba.rootAsin = asin.asin;
             baList.add(ba);
         }
 
@@ -117,50 +118,16 @@ public class BatchService {
         /*
          * 添加ASIN批次到ASIN表中。
          * 步骤1，如果一部分不存在ASIN表中，则直接把列表转成ASIN表中的记录；
-         * 步骤2，如果一部分存在，就根据ASIN的爬取状态更新ASIN的优先级或URL的爬取优先级；
          */
         //步骤1
         List<Asin> parsedAsinList = new ArrayList<Asin>();
         mLogger.info("把新的ASIN批次转换成ASIN表记录：" + newList);
         for (Asin asin : newList) {
             Asin parsedAsin = new Asin();
-            parsedAsin.saaAsin = asin.saaAsin;
-            parsedAsin.saaPriority = asin.saaPriority;
-            parsedAsin.saaStar = asin.saaStar;
-            parsedAsin.asinSource = asin.asinSource;
-            parsedAsin.site = asin.site;
-            parsedAsin.asinSource = asin.asinSource;
+            parsedAsin.asin = asin.asin;
             parsedAsinList.add(asin);
         }
         mAsinService.addAll(parsedAsinList);
-
-        //步骤2
-        mLogger.info("已经爬取过的ASIN更改ASIN和URL表状态：" + crawledList);
-        for (Asin asin : crawledList) {
-            Asin parsedAsin = mAsinService.findByAsin(asin.saaAsin);
-            /* 如果新的优先级大于原先的优先级，就更改原来的爬取优先级 */
-            if (asin.saaPriority > parsedAsin.saaPriority) {
-                parsedAsin.saaPriority = asin.saaPriority;
-
-                /* 如果已经转换成URL了，那么还得把所有URL的优先级提升一下 */
-                if (parsedAsin.saaParsed == 1) {
-                    mUrlService.updatePriority(parsedAsin.saaAsin, parsedAsin.saaPriority);
-                }
-
-                mAsinService.update(parsedAsin);
-            }
-
-        }
-
-        /* 把客户-Asin入库关系表relation_customer_asin */
-        List<CustomerAsin> customerAsinList = new ArrayList<CustomerAsin>();
-        for (Asin asin : crawledList) {
-            customerAsinList.add(new CustomerAsin(customerCode, asin.site.basCode, asin.saaAsin));
-        }
-        for (Asin asin : newList) {
-            customerAsinList.add(new CustomerAsin(customerCode, asin.site.basCode, asin.saaAsin));
-        }
-        mCustomerAsinService.addAll(customerAsinList);
 
         return batch;
     }
@@ -183,7 +150,7 @@ public class BatchService {
 
         /* 把已经在监控中的和没有监控中的分开 */
         for (Review review : reviewList) {
-            if (mReviewMonitorService.isExist(review.sarReviewId)) {
+            if (mReviewMonitorService.isExist(review.reviewId)) {
                 monitoringList.add(review);
             } else {
                 newList.add(review);
@@ -213,9 +180,9 @@ public class BatchService {
         /* 把未爬取的 和 已经爬取的 都转换成监控列表入库 */
         List<ReviewMonitor> reviewMonitorList = new ArrayList<ReviewMonitor>();
         for (Review review : newList) {
-            ReviewMonitor reviewMonitor = new ReviewMonitor(review.sarReviewId);
-            reviewMonitor.siteCode = review.basCode;
-            reviewMonitor.smrReviewId = review.sarReviewId;
+            ReviewMonitor reviewMonitor = new ReviewMonitor(review.reviewId);
+            reviewMonitor.siteCode = review.siteCode;
+            reviewMonitor.smrReviewId = review.reviewId;
             reviewMonitor.smrPriority = review.priority;
             reviewMonitorList.add(reviewMonitor);
         }
@@ -223,7 +190,7 @@ public class BatchService {
 
         for (Review review : monitoringList) {
 
-            ReviewMonitor monitor = mReviewMonitorService.findByReviewId(review.sarReviewId);
+            ReviewMonitor monitor = mReviewMonitorService.findByReviewId(review.reviewId);
             if (review.priority > monitor.smrPriority) {
                 monitor.smrPriority = review.priority;
                 if (monitor.smrParsed == 1) {
@@ -238,19 +205,19 @@ public class BatchService {
 
     private BatchReview initBatchReview(Batch batch, Review review) {
         BatchReview batchReview = new BatchReview();
-        batchReview.siteCode = review.basCode;
+        batchReview.siteCode = review.siteCode;
         batchReview.batchNumber = batch.number;
-        batchReview.reviewID = review.sarReviewId;
+        batchReview.reviewID = review.reviewId;
         batchReview.extra = review.extra;
         return batchReview;
     }
 
     private BatchAsin initBatchAsin(Batch batch, Asin asin) {
         BatchAsin ba = new BatchAsin();
-        ba.siteCode = asin.site.basCode;
         ba.batchNumber = batch.number;
-        ba.asin = asin.saaAsin;
-        ba.rootAsin = asin.saaRootAsin;
+        ba.siteCode = asin.siteCode;
+        ba.asin = asin.asin;
+        ba.rootAsin = asin.rootAsin;
         return ba;
     }
 
@@ -275,6 +242,15 @@ public class BatchService {
 
     public void update(Batch batch) {
         mBatchDao.update(batch);
+    }
+
+    public List<Batch> findByStatus(int status) {
+        List<Batch> list = mBatchDao.findByStatus(status);
+        for (Batch batch : list) {
+            batch.status = 1;
+            update(batch);
+        }
+        return list;
     }
 
 }

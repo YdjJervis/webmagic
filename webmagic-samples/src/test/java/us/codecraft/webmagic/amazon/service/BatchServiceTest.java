@@ -28,13 +28,7 @@ public class BatchServiceTest extends SpringTestCase {
         List<ImportAsin> importAsinList = mImportAsinDao.findAll(5);
         for (ImportAsin importAsin : importAsinList) {
             Asin asin = new Asin();
-            asin.saaAsin = importAsin.asin;
-            asin.saaPriority = 0;
-            asin.saaStar = "0-0-1-1-1";
-            asin.site = new Site();
-            asin.asinSource = new AsinSource();
-            asin.asinSource.baasCode = "SYSTEM";
-            asin.site.basCode = importAsin.siteCode;
+            asin.asin = importAsin.asin;
             list.add(asin);
         }
 
@@ -47,8 +41,8 @@ public class BatchServiceTest extends SpringTestCase {
 
         Review review = new Review();
         review.priority = 1;
-        review.sarReviewId = "R2V7LL01LD8CRA";
-        review.basCode = "UK";
+        review.reviewId = "R2V7LL01LD8CRA";
+        review.siteCode = "UK";
 
         list.add(review);
 
@@ -60,5 +54,10 @@ public class BatchServiceTest extends SpringTestCase {
         Batch batch = new Batch();
         batch.number = "fewef";
         mService.add(batch);
+    }
+
+    @Test
+    public void testFindByStatus(){
+        System.out.println(mService.findByStatus(0));
     }
 }

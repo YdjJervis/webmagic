@@ -9,8 +9,8 @@
         <result property="smrMarked" column="smr_marked"/>
         <result property="smrParsed" column="smr_parsed"/>
         <result property="smrPriority" column="smr_priority"/>
-        <result property="createtime" column="smr_create_time"/>
-        <result property="updatetime" column="smr_udpate_time"/>
+        <result property="createTime" column="smr_create_time"/>
+        <result property="updateTime" column="smr_udpate_time"/>
     </resultMap>
 
     <!--添加到监控-->

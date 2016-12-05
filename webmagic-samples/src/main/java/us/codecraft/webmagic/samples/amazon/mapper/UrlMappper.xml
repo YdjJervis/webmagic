@@ -6,66 +6,66 @@
     <resultMap id="UrlResultMap" type="Url">
         <result property="id" column="sau_id"/>
         <result property="urlMD5" column="sau_url_md5"/>
-        <result property="siteCode" column="bas_code"/>
+        <result property="batchNum" column="bo_batch_num"/>
         <result property="type" column="sau_type"/>
-        <result property="saaAsin" column="saa_asin"/>
-        <result property="sauReviewId" column="sau_review_id"/>
+        <result property="siteCode" column="bas_code"/>
+        <result property="asin" column="saa_asin"/>
+        <result property="reviewId" column="sau_review_id"/>
         <result property="status" column="sau_status"/>
-        <result property="sauCrawling" column="sau_crawling"/>
+        <result property="crawling" column="sau_crawling"/>
         <result property="priority" column="sau_priority"/>
         <result property="times" column="sau_times"/>
         <result property="url" column="sau_url"/>
         <result property="parentUrl" column="sau_parent_url"/>
-        <result property="postParams" column="sau_post_params"/>
-        <result property="headers" column="sau_headers"/>
-        <result property="cookies" column="sau_cookies"/>
-        <result property="otherParams" column="sau_other_params"/>
         <result property="extra" column="sau_extra"/>
-        <result property="updatetime" column="sau_update_time"/>
+        <result property="createTime" column="sau_create_time"/>
+        <result property="updateTime" column="sau_update_time"/>
     </resultMap>
 
+
     <insert id="add" parameterType="Url">
-        insert into spider_amazon_url(sau_url_md5,bas_code,sau_type,saa_asin,sau_review_id,
-        sau_status,sau_crawling,sau_priority,sau_times,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra,sau_update_time)
-        values(#{urlMD5},#{siteCode},#{type},#{saaAsin},#{sauReviewId},#{status},#{sauCrawling},#{priority},#{times},#{url},#{parentUrl},#{postParams},#{headers},#{cookies},#{otherParams},#{extra},CURRENT_TIMESTAMP)
+        insert into spider_amazon_url(
+        sau_url_md5,bo_batch_num,sau_type,bas_code,saa_asin,sau_review_id,sau_status,sau_crawling,sau_priority,sau_times,sau_url,sau_parent_url,sau_extra)
+        values(#{urlMD5},#{batchNum},#{type},#{siteCode},#{asin},#{reviewId},#{status},#{crawling},#{priority},#{times},#{url},#{parentUrl},#{extra})
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
-        INSERT INTO spider_amazon_url(sau_url_md5,bas_code,sau_type,saa_asin,sau_review_id,
-        sau_status,sau_crawling,sau_priority,sau_times,sau_url,sau_parent_url,sau_post_params,sau_headers,sau_cookies,sau_other_params,sau_extra,sau_update_time)
+        INSERT INTO spider_amazon_url(
+        sau_url_md5,bo_batch_num,sau_type,bas_code,saa_asin,sau_review_id,sau_status,sau_crawling,sau_priority,sau_times,sau_url,sau_parent_url,sau_extra)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.urlMD5},
-            #{item.siteCode},#{item.type},
-            #{item.saaAsin},#{item.sauReviewId},
-            #{item.status},#{item.sauCrawling},
-            #{item.priority},#{item.times},
-            #{item.url},#{item.parentUrl},
-            #{item.postParams},#{item.headers},
-            #{item.cookies},#{item.otherParams},
-            #{item.extra},CURRENT_TIMESTAMP
+            #{item.urlMD5},#{item.batchNum},#{item.type},#{item.siteCode},#{item.asin},#{item.reviewId},#{item.status},
+            #{item.crawling},#{item.priority},#{item.times},#{item.url},#{item.parentUrl},#{item.extra}
             )
         </foreach>
     </insert>
 
     <update id="update" parameterType="Url">
-        UPDATE spider_amazon_url SET bas_code = #{siteCode},sau_type=#{type},saa_asin=#{saaAsin},sau_review_id=#{sauReviewId},sau_status = #{status},sau_crawling=#{sauCrawling},sau_priority=#{priority},sau_times=#{times},sau_url =
-        #{url},sau_parent_url=#{parentUrl},sau_post_params=#{postParams},sau_headers=#{headers},sau_cookies=#{cookies},sau_other_params=#{otherParams},sau_extra=#{extra},sau_update_time=CURRENT_TIMESTAMP WHERE sau_url_md5 = #{urlMD5}
+        UPDATE spider_amazon_url SET
+        bo_batch_num = #{batchNum},sau_type=#{type},bas_code = #{siteCode},saa_asin=#{asin},sau_review_id=#{reviewId},sau_status = #{status},
+        sau_crawling=#{crawling},sau_priority=#{priority},sau_times=#{times},sau_url = #{url},sau_parent_url=#{parentUrl},sau_extra=#{extra}
+        WHERE sau_url_md5 = #{urlMD5}
     </update>
 
     <select id="findByType" resultMap="UrlResultMap" parameterType="int">
-        SELECT * FROM spider_amazon_url WHERE sau_status != 200 AND sau_type = #{0} AND sau_crawling = 0 ORDER BY sau_priority LIMIT 10;
+        SELECT * FROM spider_amazon_url
+        WHERE
+        sau_status != 200
+        AND sau_type = #{0}
+        AND sau_crawling = 0
+        ORDER BY
+        sau_priority LIMIT 10;
     </select>
 
     <!-- 根据ASIN码查询全量爬取的URL -->
     <select id="findByAsin" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 0;
+        SELECT * FROM spider_amazon_url WHERE bo_batch_num = #{0} and bas_code = #{1} AND saa_asin = #{2} AND sau_type = 0;
     </select>
 
     <!--查询某个ASIN更新爬取的URL列表-->
     <select id="findUpdateCrawl" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE saa_asin = #{0} AND sau_type = 2;
+        SELECT * FROM spider_amazon_url WHERE bas_code = #{0} AND saa_asin = #{1} AND sau_type = 2;
     </select>
 
     <!--查询被监听的的URL列表-->
@@ -80,7 +80,7 @@
     </delete>
 
     <delete id="deleteByAsin" parameterType="String">
-        DELETE FROM spider_amazon_url WHERE saa_asin = #{0};
+        DELETE FROM spider_amazon_url WHERE bas_code = #{0} and saa_asin = #{1};
     </delete>
 
     <delete id="deleteByType" parameterType="int">
@@ -89,6 +89,11 @@
 
     <select id="find" resultMap="UrlResultMap">
         SELECT * FROM spider_amazon_url WHERE sau_url_md5 = #{0};
+    </select>
+
+    <select id="findByUrlMd5" resultMap="UrlResultMap">
+        select * from spider_amazon_url
+        WHERE sau_url_md5 = #{0};
     </select>
 
     <!-- 设置URL的状态为未爬取 -->

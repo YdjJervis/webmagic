@@ -33,22 +33,29 @@ public class ReviewServiceTest extends SpringTestCase {
 
     private Review getReview() {
         Review review = new Review();
-        review.basCode = "CN";
-        review.sarReviewId = "R1UIT94RIP82Q3";
-        review.sarContent = "床前明月光，地上***";
-        review.sarPersonId = "personID001";
-        review.saaAsin = "Asin_00001";
-        review.sarTitle = "AAAA";
+        review.siteCode = "CN";
+        review.reviewId = "R1UIT94RIP82Q3";
+        review.content = "床前明月光，地上***";
+        review.personId = "personID001";
+        review.asin = "Asin_00001";
+        review.title = "AAAA";
         return review;
     }
 
     @Test
     public void testFindLastReview(){
-        System.out.println(mReviewService.findLastReview("B0181YRLT4"));
+        System.out.println(mReviewService.findLastReview("B0169X2S60"));
     }
 
     @Test
     public void testFindStarReviewCount(){
         System.out.println(mReviewService.findStarReviewCount("B01M4G902N"));
+    }
+
+    @Test
+    public void testUpdate(){
+        Review review = mReviewService.findByReviewId("R1UIT94RIP82Q3");
+        review.extra = "Extra001";
+        mReviewService.update(review);
     }
 }

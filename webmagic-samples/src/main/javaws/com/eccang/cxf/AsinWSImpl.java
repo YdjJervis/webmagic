@@ -60,11 +60,8 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         List<Asin> parsedAsinList = new ArrayList<Asin>();
         for (AsinReq.Asin asin : asinReq.data) {
             Asin parsedAsin = new Asin();
-            parsedAsin.site.basCode = asin.siteCode;
-            parsedAsin.saaAsin = asin.asin;
-            parsedAsin.saaStar = asin.star;
-            parsedAsin.saaPriority = asin.priority;
-            parsedAsin.asinSource.baasCode = asinReq.platformCode;
+            parsedAsin.siteCode = asin.siteCode;
+            parsedAsin.asin = asin.asin;
             parsedAsinList.add(parsedAsin);
         }
 
@@ -109,12 +106,12 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
 
         for (AsinQueryReq.Asin asin : asinQueryReq.data) {
-            Asin dbAsin = mAsinService.findByAsin(asin.asin);
+            Asin dbAsin = mAsinService.findByAsin(asin.siteCode, asin.asin);
             AsinQueryRsp.Asin resultAsin = asinQueryRsp.new Asin();
-            resultAsin.asin = dbAsin.saaAsin;
-            resultAsin.onSale = dbAsin.saaOnSale;
-            resultAsin.progress = dbAsin.saaProgress;
-            resultAsin.rootAsin = dbAsin.saaRootAsin;
+            resultAsin.asin = dbAsin.asin;
+            resultAsin.onSale = dbAsin.onSale;
+            resultAsin.progress = dbAsin.progress;
+            resultAsin.rootAsin = dbAsin.rootAsin;
             asinQueryRsp.data.add(resultAsin);
         }
 
@@ -138,16 +135,16 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         /* 改变ASIN表对应记录的优先级 & 改变URL表对应ASIN的优先级 */
         for (AsinPriorityReq.Asin asin : priorityReq.data) {
-            Asin dbAsin = mAsinService.findByAsin(asin.asin);
+            Asin dbAsin = mAsinService.findByAsin(asin.siteCode, asin.asin);
             if (dbAsin != null) {
-                if (asin.priority > dbAsin.saaPriority) {
+                /*if (asin.priority > dbAsin.saaPriority) {
                     priorityRsp.data.changed++;
                     dbAsin.saaPriority = asin.priority;
-                    mUrlService.updatePriority(dbAsin.saaAsin, dbAsin.saaPriority);
+                    mUrlService.updatePriority(dbAsin.asin, dbAsin.saaPriority);
                     mAsinService.update(dbAsin);
                 } else {
                     priorityRsp.data.noChange++;
-                }
+                }*/
             } else {
                 priorityRsp.data.noChange++;
             }

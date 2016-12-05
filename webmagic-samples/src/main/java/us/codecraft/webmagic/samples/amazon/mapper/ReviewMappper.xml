@@ -4,24 +4,24 @@
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.ReviewDao">
 
     <resultMap id="ReviewResultMap" type="Review">
-        <result property="basCode" column="bas_code"/>
-        <result property="saaAsin" column="saa_asin"/>
-        <result property="saaRootAsin" column="saa_root_asin"/>
-        <result property="sarPersonId" column="sar_person_id"/>
-        <result property="sarTime" column="sar_time"/>
-        <result property="sarDealTime" column="sar_deal_time"/>
-        <result property="sarPerson" column="sar_person"/>
-        <result property="sarReviewId" column="sar_review_id"/>
-        <result property="sarMonitor" column="sar_monitor"/>
-        <result property="sarBuyStatus" column="sar_buy_status"/>
-        <result property="sarStar" column="sar_star"/>
-        <result property="sarVersion" column="sar_version"/>
-        <result property="sarTitle" column="sar_title"/>
-        <result property="sarContent" column="sar_content"/>
+        <result property="siteCode" column="bas_code"/>
+        <result property="asin" column="saa_asin"/>
+        <result property="rootAsin" column="saa_root_asin"/>
+        <result property="personId" column="sar_person_id"/>
+        <result property="time" column="sar_time"/>
+        <result property="dealTime" column="sar_deal_time"/>
+        <result property="person" column="sar_person"/>
+        <result property="reviewId" column="sar_review_id"/>
+        <result property="monitor" column="sar_monitor"/>
+        <result property="buyStatus" column="sar_buy_status"/>
+        <result property="star" column="sar_star"/>
+        <result property="version" column="sar_version"/>
+        <result property="title" column="sar_title"/>
+        <result property="content" column="sar_content"/>
         <result property="extra" column="sar_extra"/>
-        <result property="sarPageNum" column="sar_page_num"/>
-        <result property="createtime" column="sar_create_time"/>
-        <result property="updatetime" column="sar_update_time"/>
+        <result property="pageNum" column="sar_page_num"/>
+        <result property="createTime" column="sar_create_time"/>
+        <result property="updateTime" column="sar_update_time"/>
     </resultMap>
 
     <resultMap id="StarReviewCountMap" type="StarReviewCount">
@@ -30,25 +30,31 @@
     </resultMap>
 
     <insert id="add" parameterType="Review">
-        insert into spider_amazon_review(bas_code,
-        saa_asin,saa_root_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num,sar_update_time)
+        insert into spider_amazon_review(
+        bas_code,saa_asin,saa_root_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,
+        sar_version,sar_title,sar_content,sar_extra,sar_page_num)
         values
-        (#{basCode},#{saaAsin},#{saaRootAsin},#{sarPersonId},#{sarTime},#{sarDealTime},#{sarPerson},#{sarReviewId},#{sarMonitor},#{sarBuyStatus},#{sarStar},#{sarVersion},#{sarTitle},#{sarContent},#{extra},#{sarPageNum},CURRENT_TIMESTAMP)
+        (#{siteCode},#{asin},#{rootAsin},#{personId},#{time},#{dealTime},#{person},#{reviewId},#{monitor},#{buyStatus},#{star},#{version},#{title},
+        #{content},#{extra},#{pageNum})
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
         insert into spider_amazon_review
-        (bas_code,saa_asin,saa_root_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,sar_version,sar_title,sar_content,sar_extra,sar_page_num,sar_update_time)
+        (bas_code,saa_asin,saa_root_asin,sar_person_id,sar_time,sar_deal_time,sar_person,sar_review_id,sar_monitor,sar_buy_status,sar_star,
+        sar_version,sar_title,sar_content,sar_extra,sar_page_num)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.basCode},#{item.saaAsin},#{item.saaRootAsin},#{item.sarPersonId},#{item.sarTime},#{item.sarDealTime},#{item.sarPerson},#{item.sarReviewId},#{item.sarMonitor},#{item.sarBuyStatus},#{item.sarStar},#{item.sarVersion},#{item.sarTitle},#{item.sarContent},#{item.extra},#{item.sarPageNum},CURRENT_TIMESTAMP)
+            (#{item.siteCode},#{item.asin},#{item.rootAsin},#{item.personId},#{item.time},#{item.dealTime},#{item.person},#{item.reviewId},
+            #{item.monitor},#{item.buyStatus},#{item.star},#{item.version},#{item.title},#{item.content},#{item.extra},#{item.pageNum})
         </foreach>
     </insert>
 
     <update id="update" parameterType="Review">
         UPDATE spider_amazon_review SET
-        saa_asin=#{saaAsin},saa_root_asin=#{saaRootAsin},sar_person_id=#{sarPersonId},sar_time=#{sarTime},sar_deal_time=#{sarDealTime},sar_person=#{sarPerson},sar_monitor=#{sarMonitor},sar_buy_status=#{sarBuyStatus},sar_star=#{sarStar},sar_version=#{sarVersion},sar_title=#{sarTitle},sar_content=#{sarContent},sar_extra=#{extra},sar_page_num=#{sarPageNum},sar_update_time=CURRENT_TIMESTAMP
-        WHERE sar_review_id=#{sarReviewId}
+        saa_asin=#{asin},saa_root_asin=#{rootAsin},sar_person_id=#{personId},sar_time=#{time},sar_deal_time=#{dealTime},sar_person=#{person},
+        sar_monitor=#{monitor},sar_buy_status=#{buyStatus},sar_star=#{star},sar_version=#{version},sar_title=#{title},sar_content=#{content},
+        sar_extra=#{extra},sar_page_num=#{pageNum}
+        WHERE sar_review_id = #{reviewId}
     </update>
 
     <!--根据评论Id查找Review-->
@@ -67,12 +73,12 @@
     </select>
 
     <select id="findAll" resultMap="ReviewResultMap" parameterType="Review">
-        SELECT * FROM eccang.spider_amazon_review WHERE
+        SELECT * FROM spider_amazon_review WHERE
         saa_asin = #{saaAsin} and
         <if test="sarPersonId != null">
-            sar_person_id = #{sarPersonId} and
+            sar_person_id = #{personId} and
         </if>
-        sar_star = #{sarStar}
+        sar_star = #{star}
 
     </select>
 

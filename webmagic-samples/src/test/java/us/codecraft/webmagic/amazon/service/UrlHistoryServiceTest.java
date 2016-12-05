@@ -19,8 +19,8 @@ public class UrlHistoryServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void testFind(){
-        new ArrayList<Url>().addAll(mService.findByAsin("123123"));
+    public void testFind() {
+        new ArrayList<Url>().addAll(mService.findByAsin("US", "123123"));
         System.out.println();
     }
 }

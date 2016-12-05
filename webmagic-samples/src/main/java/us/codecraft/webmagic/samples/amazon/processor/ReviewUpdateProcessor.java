@@ -47,7 +47,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
         sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 
-        Asin byAsin = mAsinService.findByAsin(asin);
+        Asin byAsin = mAsinService.findByAsin(siteCode, asin);
         List<StarReviewMap> starReviewMapList = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarReviewMap>>() {
         }.getType());
 
@@ -66,7 +66,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         for (Selectable reviewNode : reviewNodeList) {
 
             Review review = extractReviewItem(siteCode, asin, reviewNode);
-            if (lastReviewSet.contains(review.sarReviewId)) {
+            if (lastReviewSet.contains(review.reviewId)) {
                 needCrawlNextPage = false;
                 break;
             }
@@ -89,10 +89,10 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
                 /* 把新的Url放进爬取队列 */
                 Url url = new Url();
-                url.saaAsin = asin;
+                url.asin = asin;
                 url.parentUrl = page.getUrl().get();
                 url.url = nextPageUrl;
-                url.urlMD5 = UrlUtils.md5(nextPageUrl);
+                url.urlMD5 = UrlUtils.md5(url.batchNum + nextPageUrl);
                 url.siteCode = siteCode;
                 url.type = 2;
 
@@ -104,7 +104,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
         if (!needCrawlNextPage) {
             /* 不需要继续翻页，代表该星级的更新爬取已经完成，就删除该星级的Url */
-            mUrlService.deleteUpdateCrawl(asin, filter);
+            mUrlService.deleteUpdateCrawl(siteCode, asin, filter);
         }
     }
 
