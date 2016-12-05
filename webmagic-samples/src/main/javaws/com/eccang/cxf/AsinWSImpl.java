@@ -111,6 +111,9 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         for (AsinQueryReq.Asin asin : asinQueryReq.data) {
             Asin dbAsin = mAsinService.findByAsin(asin.asin);
             AsinQueryRsp.Asin resultAsin = asinQueryRsp.new Asin();
+            if (dbAsin == null) {
+                continue;
+            }
             resultAsin.asin = dbAsin.saaAsin;
             resultAsin.onSale = dbAsin.saaOnSale;
             resultAsin.progress = dbAsin.saaProgress;

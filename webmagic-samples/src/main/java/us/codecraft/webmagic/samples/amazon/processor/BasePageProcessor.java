@@ -17,7 +17,10 @@ import us.codecraft.webmagic.downloader.IpsProxyHttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.util.ValidateProxyUtils;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
+import us.codecraft.webmagic.selector.Html;
+import us.codecraft.webmagic.utils.UrlUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,12 +36,13 @@ import java.util.Set;
 public class BasePageProcessor implements PageProcessor {
 
     Logger sLogger = Logger.getLogger(getClass());
-    private us.codecraft.webmagic.Site mSite = us.codecraft.webmagic.Site.me().setRetryTimes(3).setSleepTime(10 * 1000).setTimeOut(10 * 1000);
+    private us.codecraft.webmagic.Site mSite = us.codecraft.webmagic.Site.me().setRetryTimes(1).setSleepTime(10 * 1000).setTimeOut(10 * 1000);
 
     public static final String URL_EXTRA = "url_extra";
 
     private Set<Integer> mSet = new HashSet<Integer>() {
         {
+            add(0);
             add(402);
             add(403);
             add(407);
@@ -94,6 +98,21 @@ public class BasePageProcessor implements PageProcessor {
             /*通过代理解析url返回内容为空，则将状态码改为402，让其重新解析*/
             sLogger.info("parse " + page.getUrl().get() + " content is empty.");
             page.setStatusCode(402);
+        } else {
+            if (isValidatePage(page)) {
+                IpsInfoManage ipsInfoManage = (IpsInfoManage) page.getRequest().getExtra("proxyIpInfo");
+                sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，需要对代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码");
+                String html = proxyCaptcha(page);
+                if (StringUtils.isNotEmpty(html)) {
+                    page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(html, page.getRequest().getUrl())));
+                    if(StringUtils.isNotEmpty(getValidateUrl(page))) {
+                        sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码失败.");
+                        page.setStatusCode(0);
+                    } else {
+                        sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码成功.");
+                    }
+                }
+            }
         }
 
         /*记录每一批次解析的URL的问题以及对应异常状态码出现的次数*/
@@ -232,6 +251,22 @@ public class BasePageProcessor implements PageProcessor {
         }
     }
 
+    /**
+     * 获取验证码表单请求URL
+     */
+    private String getValidateFormUrl(Page page) {
+        String validateUrl = getValidateUrl(page);
+        String validateCodeJson = getValidateCode(validateUrl, "review");
+        ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
+        sLogger.info("验证码码结果：" + result);
+        /*获取表单参数*/
+        String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
+        String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
+        String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
+        String urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
+        return urlStr;
+    }
+
     private String getValidateUrl(Page page) {
         return page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
     }
@@ -263,6 +298,16 @@ public class BasePageProcessor implements PageProcessor {
      */
     private boolean isReviewPage(Page page) {
         return page.getUrl().get().contains(Review.PRODUCT_REVIEWS);
+    }
+
+    /**
+     * 对代理打码
+     */
+    private String proxyCaptcha(Page page) {
+        IpsInfoManage ipsInfoManage = (IpsInfoManage) page.getRequest().getExtra("proxyIpInfo");
+        String validateFormUrl = getValidateFormUrl(page);
+        ValidateProxyUtils validateProxyUtils = new ValidateProxyUtils();
+        return validateProxyUtils.parseValidUrl(ipsInfoManage.getIpHost(), Integer.valueOf(ipsInfoManage.getIpPort()), ipsInfoManage.getIpVerifyUserName(), ipsInfoManage.getIpVerifyPassword(), validateFormUrl);
     }
 
     /**

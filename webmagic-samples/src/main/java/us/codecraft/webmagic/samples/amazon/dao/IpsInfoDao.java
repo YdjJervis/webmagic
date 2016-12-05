@@ -17,8 +17,6 @@ public interface IpsInfoDao extends BaseDao {
 
     /**
      * 通过id查询ip信息
-     * @param id
-     * @return
      */
     IpsInfo findById(int id);
 
