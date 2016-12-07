@@ -86,26 +86,8 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public synchronized void process(Page page) {
         sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
-        if (isNullHtml(page)) {
-            /*通过代理解析url返回内容为空，则将状态码改为402，让其重新解析*/
-            sLogger.info("parse " + page.getUrl().get() + " content is empty.");
-            page.setStatusCode(402);
-        } else {
-            if (isValidatePage(page)) {
-                IpsInfoManage ipsInfoManage = (IpsInfoManage) page.getRequest().getExtra("proxyIpInfo");
-                sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，需要对代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码");
-                String html = proxyCaptcha(page);
-                if (StringUtils.isNotEmpty(html)) {
-                    page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(html, page.getRequest().getUrl())));
-                    if (StringUtils.isNotEmpty(getValidateUrl(page))) {
-                        sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码失败.");
-                        page.setStatusCode(0);
-                    } else {
-                        sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码成功.");
-                    }
-                }
-            }
-        }
+        page = IsNotNullAndProxyCaptcha(page);
+
         /*记录每一批次解析的URL的问题以及对应异常状态码出现的次数*/
         ipsExceptionStatusStat(page);
 
@@ -360,6 +342,35 @@ public class BasePageProcessor implements PageProcessor {
      */
     private void ipsExceptionStatusStat(Page page) {
         mIpsSwitchManageService.ipsSwitchManageExceptionRecord(page);
+    }
+
+    /**
+     * 判断解析内容是不是为空，如果出现验证码则打码返回结果,更新page对应状态
+     */
+    private Page IsNotNullAndProxyCaptcha(Page page){
+        if (isNullHtml(page)) {
+            /*通过代理解析url返回内容为空，则将状态码改为402，让其重新解析*/
+            sLogger.info("parse " + page.getUrl().get() + " content is empty.");
+            page.setStatusCode(402);
+        } else {
+            if (isValidatePage(page)) {
+                IpsInfoManage ipsInfoManage = (IpsInfoManage) page.getRequest().getExtra("proxyIpInfo");
+                if(ipsInfoManage != null) {
+                    sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，需要对代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码");
+                    String html = proxyCaptcha(page);
+                    if (StringUtils.isNotEmpty(html)) {
+                        page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(html, page.getRequest().getUrl())));
+                        if (StringUtils.isNotEmpty(getValidateUrl(page))) {
+                            sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码失败.");
+                            page.setStatusCode(0);
+                        } else {
+                            sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码成功.");
+                        }
+                    }
+                }
+            }
+        }
+        return page;
     }
 
     /**
