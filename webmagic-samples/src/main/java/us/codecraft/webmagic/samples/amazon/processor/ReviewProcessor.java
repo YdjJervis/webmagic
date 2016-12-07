@@ -55,8 +55,14 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
             reviewList.add(review);
         }
-
-        mReviewService.addAll(reviewList);
+        for (Review review : reviewList) {
+            try {
+                mReviewService.add(review);
+            } catch (Exception e) {
+                System.out.println("============================= insert review exception .");
+                System.out.println(review.toString());
+            }
+        }
 
         /* 当前URL没有pageNumber属性的话 */
         if (StringUtils.isEmpty(UrlUtils.getValue(currentUrl, "pageNumber"))) {

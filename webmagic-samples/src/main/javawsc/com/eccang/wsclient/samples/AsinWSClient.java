@@ -2,13 +2,10 @@ package com.eccang.wsclient.samples;
 
 import com.eccang.pojo.AsinPriorityReq;
 import com.eccang.pojo.AsinQueryReq;
-import com.eccang.pojo.AsinReq;
 import com.eccang.wsclient.asin.AsinWSService;
 import com.google.gson.Gson;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
+import org.springframework.beans.factory.annotation.Autowired;
+import us.codecraft.webmagic.samples.amazon.service.ImportDataService;
 
 /**
  * @author Jervis
@@ -18,8 +15,11 @@ import java.io.IOException;
  */
 public class AsinWSClient {
 
+    @Autowired
+    ImportDataService mImportDataService;
+
     public static void main(String[] args) throws Exception {
-        add();
+        //add();
 //        query();
 //        setPriority();
     }
@@ -47,7 +47,7 @@ public class AsinWSClient {
         queryReq.token = "123456789";
 
         AsinQueryReq.Asin asin = queryReq.new Asin();
-        asin.asin = "B01CN74MU6";
+        asin.asin = "B01M6WRC9R1";
 
         queryReq.data.add(asin);
 
@@ -55,34 +55,27 @@ public class AsinWSClient {
         System.out.println(json);
     }
 
-    private static void add() {
-        AsinReq asinReq = new AsinReq();
-        asinReq.cutomerCode = "EC_001";
-        asinReq.platformCode = "ERP";
-        asinReq.token = "123456789";
-
-        try {
-            String asins = FileUtils.readFileToString(new File("E:\\IDEAWorkingspace\\webmagic_eccang\\webmagic-samples\\src\\main\\javawsc\\com\\eccang\\wsclient\\samples\\asin.text"));
-            String[] asinStr = asins.split("\r\n");
-
-            for (String line : asinStr) {
-                AsinReq.Asin asin = asinReq.new Asin();
-                String[] siteAsin = line.split("\t");
-                asin.asin = siteAsin[1];
-                asin.siteCode = siteAsin[0];
-                asin.priority = 0;
-                asin.star = "0-0-1-1-1";
-                asinReq.data.add(asin);
-            }
-
-            System.out.println(new Gson().toJson(asinReq));
-            String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));
-            System.out.println(json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-    }
+//    private void add() {
+//        AsinReq asinReq = new AsinReq();
+//        asinReq.cutomerCode = "EC_001";
+//        asinReq.platformCode = "ERP";
+//        asinReq.token = "123456789";
+//
+//        List<ImportData> importDataList = mImportDataService.find(null);
+//
+//        for (ImportData importData : importDataList) {
+//            AsinReq.Asin asin = asinReq.new Asin();
+//            asin.asin = importData.getAsin();
+//            asin.siteCode = importData.getSiteCode();
+//            asin.priority = 0;
+//            asin.star = "0-0-1-1-1";
+//            asinReq.data.add(asin);
+//        }
+//
+//        System.out.println(new Gson().toJson(asinReq));
+//        String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));
+//        System.out.println(json);
+//
+//    }
 
 }

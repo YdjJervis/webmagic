@@ -7,11 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
-import us.codecraft.webmagic.samples.amazon.pojo.CustomerAsin;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchService;
-import us.codecraft.webmagic.samples.amazon.service.CustomerAsinService;
+import us.codecraft.webmagic.samples.amazon.service.UrlService;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
@@ -38,6 +37,9 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     @Autowired
     private CustomerAsinService mCustomerAsinService;
 
+
+    @Autowired
+    RelationCustomerAsinService mRelationCustomerAsinService;
 
     public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
@@ -110,10 +112,20 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         asinQueryRsp.status = baseRspParam.status;
         asinQueryRsp.msg = baseRspParam.msg;
 
-
         for (AsinQueryReq.Asin asin : asinQueryReq.data) {
+
+            /*查询对应客户下asin是否存在，不存在则查询下一个asin*/
+            if (!mRelationCustomerAsinService.isExisted(asinQueryReq.cutomerCode ,asin.asin)) {
+                continue;
+            }
             Asin dbAsin = mAsinService.findByAsin(asin.siteCode, asin.asin);
             AsinQueryRsp.Asin resultAsin = asinQueryRsp.new Asin();
+            if (dbAsin == null) {
+                continue;
+            }
+            resultAsin.asin = dbAsin.asin;
+            resultAsin.onSale = dbAsin.onSale;
+            resultAsin.progress = dbAsin.progress;
             resultAsin.asin = dbAsin.rootAsin;
             resultAsin.rootAsin = dbAsin.rootAsin;
             asinQueryRsp.data.add(resultAsin);

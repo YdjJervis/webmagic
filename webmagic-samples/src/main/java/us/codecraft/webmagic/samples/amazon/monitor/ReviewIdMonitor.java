@@ -3,14 +3,8 @@ package us.codecraft.webmagic.samples.amazon.monitor;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.ReviewMonitor;
-import us.codecraft.webmagic.samples.amazon.pojo.Site;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.ReviewMonitorService;
-import us.codecraft.webmagic.samples.amazon.service.ReviewService;
-import us.codecraft.webmagic.samples.amazon.service.SiteService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
@@ -34,6 +28,7 @@ public class ReviewIdMonitor extends ParseMonitor {
     private SiteService mSiteService;
     @Autowired
     private UrlService mUrlService;
+    @Autowired
 
     @Override
     public void execute() {
@@ -56,7 +51,7 @@ public class ReviewIdMonitor extends ParseMonitor {
     protected List<Url> getUrl(boolean isCrawlAll) {
         List<Url> urlList = new ArrayList<Url>();
 
-        List<ReviewMonitor> monitorList = mMonitorService.findAll();
+            List<ReviewMonitor> monitorList = mMonitorService.findAll();
         for (ReviewMonitor monitor : monitorList) {
             Url url = new Url();
             Review review = mReviewService.findByReviewId(monitor.smrReviewId);
@@ -79,5 +74,4 @@ public class ReviewIdMonitor extends ParseMonitor {
         sLogger.info("新添加的review的监听条数：" + urlList.size());
         return urlList;
     }
-
 }

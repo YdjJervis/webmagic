@@ -4,46 +4,104 @@
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.ReviewMonitorDao">
 
     <resultMap id="ReviewMonitorResultMap" type="ReviewMonitor">
-        <result property="smrReviewId" column="smr_review_id"/>
+        <id property="id" column="smr_id"/>
+        <result property="smrReviewId" column="rcr_review_id"/>
+        <result property="customerCode" column="bec_code"/>
+        <result property="status" column="rcr_status"/>
         <result property="siteCode" column="bas_code"/>
-        <result property="smrMarked" column="smr_marked"/>
-        <result property="smrParsed" column="smr_parsed"/>
-        <result property="smrPriority" column="smr_priority"/>
-        <result property="createTime" column="smr_create_time"/>
-        <result property="updateTime" column="smr_udpate_time"/>
+        <result property="smrMarked" column="rcr_marked"/>
+        <result property="smrParsed" column="rcr_parsed"/>
+        <result property="smrPriority" column="rcr_priority"/>
+        <result property="frequency" column="rcr_frequency"/>
+        <result property="finishTime" column="rcr_finish_time"/>
+        <result property="createTime" column="rcr_create_time"/>
+        <result property="updateTime" column="rcr_update_time"/>
     </resultMap>
 
     <!--添加到监控-->
     <insert id="add" parameterType="ReviewMonitor">
-        insert into spider_monitor_review(smr_review_id,bas_code,smr_marked,smr_parsed,smr_priority)
-        values(#{smrReviewId},#{siteCode},#{smrMarked},#{smrParsed},#{smrPriority})
+        insert into relation_customer_review (
+          rcr_review_id,
+          bas_code,
+          rcr_marked,
+          rcr_parsed,
+          rcr_priority,
+          rcr_frequency
+        ) values (
+          #{smrReviewId},
+          #{siteCode},
+          #{smrMarked},
+          #{smrParsed},
+          #{smrPriority},
+          #{frequency}
+        )
     </insert>
 
     <!--根据ReviewId查询记录-->
     <select id="findByReviewId" resultMap="ReviewMonitorResultMap">
-        SELECT * FROM spider_monitor_review
-        WHERE smr_review_id = #{0};
+        SELECT * FROM relation_customer_review
+        WHERE rcr_review_id = #{0};
     </select>
 
     <select id="findAll" resultMap="ReviewMonitorResultMap">
-        SELECT * FROM spider_monitor_review
-        WHERE smr_marked = 1 AND smr_parsed = 0;
+        SELECT * FROM relation_customer_review
+        WHERE rcr_marked = 1 AND rcr_parsed = 0;
+    </select>
+    <select id="findByReviewIdAndCustomerCode" resultMap="ReviewMonitorResultMap">
+        SELECT * FROM relation_customer_review
+        WHERE rcr_review_id = #{0} and bec_code = #{1};
+    </select>
+
+    <select id="findHasFinished" resultMap="ReviewMonitorResultMap">
+        SELECT
+          *
+        FROM
+          relation_customer_review
+        WHERE
+          rcr_status = 2
     </select>
 
     <update id="update" parameterType="ReviewMonitor">
-        UPDATE spider_monitor_review
-        SET bas_code = #{siteCode},smr_marked = #{smrMarked},smr_parsed = #{smrParsed},smr_priority = #{smrPriority}
-        WHERE smr_review_id = #{smrReviewId}
+        UPDATE relation_customer_review
+        SET bas_code = #{siteCode},rcr_marked = #{smrMarked},rcr_parsed = #{smrParsed},rcr_priority = #{smrPriority},rcr_frequency = #{frequency}
+        WHERE rcr_review_id = #{smrReviewId}
+    </update>
+    <update id="updateByReviewIdCustomerCode">
+        UPDATE
+          relation_customer_review
+        SET
+          bec_code = #{customerCode},
+          bas_code = #{siteCode},
+          rcr_status = #{status},
+          rcr_marked = #{smrMarked},
+          rcr_parsed = #{smrParsed},
+          rcr_priority = #{smrPriority},
+          rcr_frequency = #{frequency},
+          rcr_finish_time = #{finishTime}
+        WHERE
+          rcr_review_id = #{smrReviewId} and bec_code = #{customerCode}
     </update>
 
     <insert id="addAll" parameterType="java.util.List">
-        INSERT INTO spider_monitor_review(
-        smr_review_id,bas_code,smr_marked,smr_parsed,smr_priority
+        INSERT INTO relation_customer_review (
+          rcr_review_id,
+          bec_code,
+          bas_code,
+          rcr_marked,
+          rcr_parsed,
+          rcr_priority,
+          rcr_frequency
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.smrReviewId},#{item.siteCode},#{item.smrMarked},#{item.smrParsed},#{item.smrPriority}
+              #{item.smrReviewId},
+              #{item.customerCode},
+              #{item.siteCode},
+              #{item.smrMarked},
+              #{item.smrParsed},
+              #{item.smrPriority},
+              #{item.frequency}
             )
         </foreach>
     </insert>

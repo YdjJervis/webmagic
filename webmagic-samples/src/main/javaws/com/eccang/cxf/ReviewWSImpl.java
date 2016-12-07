@@ -61,6 +61,8 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             parsedReview.reviewId = review.reviewID;
             parsedReview.siteCode = review.siteCode;
             parsedReview.priority = review.priority;
+            parsedReview.frequency = review.frequency;
+            parsedReview.marked = review.marked;
             parsedReviewList.add(parsedReview);
         }
 
@@ -79,7 +81,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         reviewRsp.data.number = batch.number;
         reviewRsp.data.totalCount = batchReviewList.size();
         reviewRsp.data.newCount = newCount;
-        reviewRsp.data.oldCount = batchReviewList.size() - newCount;
+            reviewRsp.data.oldCount = batchReviewList.size() - newCount;
 
         return reviewRsp.toJson();
     }

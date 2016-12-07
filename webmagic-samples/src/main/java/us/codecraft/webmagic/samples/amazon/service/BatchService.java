@@ -158,7 +158,7 @@ public class BatchService {
 
         /* 把已经在监控中的和没有监控中的分开 */
         for (Review review : reviewList) {
-            if (mReviewMonitorService.isExist(review.reviewId)) {
+            if (mReviewMonitorService.isExistInCustomerCode(review.reviewId, customerCode)) {
                 monitoringList.add(review);
             } else {
                 newList.add(review);
@@ -189,22 +189,32 @@ public class BatchService {
         List<ReviewMonitor> reviewMonitorList = new ArrayList<ReviewMonitor>();
         for (Review review : newList) {
             ReviewMonitor reviewMonitor = new ReviewMonitor(review.reviewId);
+            reviewMonitor.customerCode = customerCode;
             reviewMonitor.siteCode = review.siteCode;
             reviewMonitor.smrReviewId = review.reviewId;
             reviewMonitor.smrPriority = review.priority;
+            reviewMonitor.frequency = review.frequency;
             reviewMonitorList.add(reviewMonitor);
         }
         mReviewMonitorService.addAll(reviewMonitorList);
 
         for (Review review : monitoringList) {
-
-            ReviewMonitor monitor = mReviewMonitorService.findByReviewId(review.reviewId);
-            if (review.priority > monitor.smrPriority) {
+            ReviewMonitor monitor = mReviewMonitorService.findByReviewIdCustomerCode(review.reviewId, customerCode);
+            boolean isUpdate = false;
+            if (review.priority != monitor.smrPriority) {
                 monitor.smrPriority = review.priority;
-                if (monitor.smrParsed == 1) {
-                    mUrlService.updateMonitorPriority(monitor.smrReviewId, monitor.smrPriority);
-                }
-                mReviewMonitorService.update(monitor);
+                isUpdate = true;
+            }
+            if (review.frequency != monitor.frequency) {
+                monitor.frequency = review.frequency;
+                isUpdate = true;
+            }
+            if(review.marked != monitor.smrMarked) {
+                monitor.smrMarked = review.marked;
+                isUpdate = true;
+            }
+            if (isUpdate) {
+                mReviewMonitorService.updateByReviewIdCustomerCode(monitor);
             }
         }
 
@@ -232,7 +242,7 @@ public class BatchService {
     /**
      * @param type 0-全量爬取；1-监听爬取
      */
-    private Batch generate(String customerCode, int type) {
+    public Batch generate(String customerCode, int type) {
 
         Batch batch = new Batch();
         /* result like "EC20161110164710555" */

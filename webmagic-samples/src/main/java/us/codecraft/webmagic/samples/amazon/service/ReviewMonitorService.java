@@ -30,6 +30,10 @@ public class ReviewMonitorService {
         mReviewMonitorDao.update(monitor);
     }
 
+    public void updateByReviewIdCustomerCode(ReviewMonitor reviewMonitor) {
+        mReviewMonitorDao.updateByReviewIdCustomerCode(reviewMonitor);
+    }
+
     /**
      * 查询Review监听表中，状态标记为需要监听，并且还没有转换
      * 成Url的列表
@@ -46,6 +50,20 @@ public class ReviewMonitorService {
         return mReviewMonitorDao.findByReviewId(reviewId) != null;
     }
 
+    public ReviewMonitor findByReviewIdCustomerCode(String reviewId, String customerCode) {
+        return mReviewMonitorDao.findByReviewIdAndCustomerCode(reviewId, customerCode);
+    }
+
+    /**
+     * 查询已经完成的数据
+     */
+    public List<ReviewMonitor> findHasFinished() {
+        return mReviewMonitorDao.findHasFinished();
+    }
+
+    public boolean isExistInCustomerCode(String reviewId, String customerCode) {
+        return mReviewMonitorDao.findByReviewIdAndCustomerCode(reviewId, customerCode) != null;
+    }
 
     public void addAll(List<ReviewMonitor> reviewMonitorList) {
 
@@ -59,7 +77,7 @@ public class ReviewMonitorService {
             }
         }
 
-        if(CollectionUtils.isNotEmpty(newList)){
+        if (CollectionUtils.isNotEmpty(newList)) {
             mReviewMonitorDao.addAll(newList);
         }
     }

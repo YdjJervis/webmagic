@@ -38,7 +38,10 @@ public class HttpClientGenerator {
                 .register("https", SSLConnectionSocketFactory.getSocketFactory())
                 .build();
         connectionManager = new PoolingHttpClientConnectionManager(reg);
-        connectionManager.setDefaultMaxPerRoute(100);
+        //设置每个route最大连接数
+        connectionManager.setDefaultMaxPerRoute(400);
+        //连接池总的最大生成连接数
+        connectionManager.setMaxTotal(800);
     }
 
     public HttpClientGenerator setPoolSize(int poolSize) {
@@ -53,7 +56,6 @@ public class HttpClientGenerator {
     private CloseableHttpClient generateClient(Site site, Proxy proxy) {
         CredentialsProvider credsProvider = null;
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
-        
         if(proxy!=null && StringUtils.isNotBlank(proxy.getUser()) && StringUtils.isNotBlank(proxy.getPassword()))
         {
             credsProvider= new BasicCredentialsProvider();
@@ -70,7 +72,8 @@ public class HttpClientGenerator {
                     site.getUsernamePasswordCredentials());//用户名和密码
             httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
         }
-        
+
+
         httpClientBuilder.setConnectionManager(connectionManager);
         if (site != null && site.getUserAgent() != null) {
             httpClientBuilder.setUserAgent(site.getUserAgent());

@@ -4,6 +4,8 @@ import org.springframework.stereotype.Repository;
 import us.codecraft.webmagic.samples.amazon.pojo.PushQueue;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.20
@@ -12,5 +14,8 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
  */
 @Repository
 public interface PushQueueDao extends BaseDao<PushQueue>{
+
+    List<PushQueue> findNeed2Push();
+
 
 }

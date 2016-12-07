@@ -72,6 +72,12 @@ public class Review extends BasePojo {
     /** 二期：优先级 */
     public int priority;
 
+    /** 三期：执行频率 */
+    public int frequency; /*执行频率（h/次）*/
+
+    /** 三期：是否监控*/
+    public int marked;
+
     @Override
     public String toString() {
         return "Review{" +
@@ -90,6 +96,8 @@ public class Review extends BasePojo {
                 ", title='" + title + '\'' +
                 ", pageNum='" + pageNum + '\'' +
                 ", priority=" + priority +
+                ", frequency='" + frequency + '\'' +
+                ", marked='" + marked + '\'' +
                 '}';
     }
 }

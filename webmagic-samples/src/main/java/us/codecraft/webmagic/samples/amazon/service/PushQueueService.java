@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.PushQueueDao;
 import us.codecraft.webmagic.samples.amazon.pojo.PushQueue;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.1
@@ -20,8 +22,19 @@ public class PushQueueService {
     @Autowired
     private PushQueueDao mDao;
 
-    public void add(PushQueue pushQueue){
+    public void add(PushQueue pushQueue) {
         mDao.add(pushQueue);
     }
 
+    public void delete(int id) {
+        mDao.delete(id);
+    }
+
+    public void update(PushQueue pushQueue) {
+        mDao.update(pushQueue);
+    }
+
+    public List<PushQueue> findNeed2Push() {
+        return mDao.findNeed2Push();
+    }
 }

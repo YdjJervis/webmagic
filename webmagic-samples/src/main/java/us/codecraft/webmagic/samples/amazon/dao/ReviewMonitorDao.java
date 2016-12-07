@@ -4,6 +4,8 @@ import org.springframework.stereotype.Repository;
 import us.codecraft.webmagic.samples.amazon.pojo.ReviewMonitor;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.1
@@ -13,5 +15,15 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 @Repository
 public interface ReviewMonitorDao extends BaseDao<ReviewMonitor> {
 
-    ReviewMonitor findByReviewId(String reviewID);
+    ReviewMonitor findByReviewId(String reviewId);
+
+    ReviewMonitor findByReviewIdAndCustomerCode(String reviewId, String customerCode);
+
+    void updateByReviewIdCustomerCode(ReviewMonitor reviewMonitor);
+
+    /**
+     * 查询已经完成的数据
+     */
+    List<ReviewMonitor> findHasFinished();
+
 }

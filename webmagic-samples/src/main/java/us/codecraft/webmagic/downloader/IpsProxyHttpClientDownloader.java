@@ -32,6 +32,7 @@ import us.codecraft.webmagic.samples.amazon.pojo.IpsInfoManage;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.processor.BasePageProcessor;
 import us.codecraft.webmagic.samples.amazon.service.IpsInfoManageService;
+import us.codecraft.webmagic.samples.amazon.service.IpsStatService;
 import us.codecraft.webmagic.samples.amazon.util.ParseUtils;
 import us.codecraft.webmagic.selector.PlainText;
 import us.codecraft.webmagic.utils.HttpConstant;
@@ -58,6 +59,8 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
     @Autowired
     IpsInfoManageService mIpsInfoManageService;
 
+    @Autowired
+    IpsStatService mIpsStatService;
 
     private HttpClientGenerator httpClientGenerator = new HttpClientGenerator();
 
@@ -67,7 +70,6 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         }
         CloseableHttpClient httpClient = null;
         httpClient = httpClientGenerator.getClient(site, proxy);
-
         return httpClient;
     }
 
@@ -89,20 +91,21 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         }
         logger.info("downloading page {}", request.getUrl());
         CloseableHttpResponse httpResponse = null;
-        int statusCode=0;
+        int statusCode = 0;
         HttpHost proxyHost = null;
         Proxy proxy = null;
         Page page = null;
         String urlHost = null;
         CloseableHttpClient closeableHttpClient = null;
+        IpsInfoManage ipsInfoManage = null;
         try {
             /*获取当前是IP池中的IP并将IP配置到请求中*/
             urlHost = getUrlHost(request.getUrl());
-            Url url = (Url)request.getExtra(BasePageProcessor.URL_EXTRA);
+            Url url = (Url) request.getExtra(BasePageProcessor.URL_EXTRA);
             String basCode = url.siteCode;
-            IpsInfoManage ipsInfoManage= getPoxyHost(urlHost, basCode);
+            ipsInfoManage = getPoxyHost(urlHost, basCode);
             logger.info("use proxy {}", ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort());
-            if(ipsInfoManage.getIpVerifyUserName() != null && !"".equals(ipsInfoManage.getIpVerifyUserName())) {
+            if (ipsInfoManage.getIpVerifyUserName() != null && !"".equals(ipsInfoManage.getIpVerifyUserName())) {
                 site.setUsernamePasswordCredentials(new UsernamePasswordCredentials(ipsInfoManage.getIpVerifyUserName(), ipsInfoManage.getIpVerifyPassword()));
             }
             proxyHost = new HttpHost(ipsInfoManage.getIpHost(), Integer.valueOf(ipsInfoManage.getIpPort()));
@@ -117,17 +120,20 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
 
             Long entTime = System.currentTimeMillis();
             logger.info("======================= 固定代理IP(" + proxyHost.getHostName() + ":" + proxyHost.getPort() + ")解析URL，所需要的时间:" + (entTime - startTime) / 1000 + "s.");
-
             statusCode = httpResponse.getStatusLine().getStatusCode();
             request.putExtra(Request.STATUS_CODE, statusCode);
             page = handleResponse(request, charset, httpResponse);
+            logger.info("固定代理IP(" + proxyHost.getHostName() + ":" + proxyHost.getPort() + ")解析URL(" + request.getUrl() + ")，返回状态码：" + statusCode);
+            if(statusCode == 407) {
+                System.out.println(statusCode);
+            }
             if (!statusAccept(acceptStatCode, statusCode)) {
                 page.setStatusCode(statusCode);
                 /*添加可接受的状态码set对象不存在的状态码*/
                 acceptStatCode.add(statusCode);
                 site.setAcceptStatCode(acceptStatCode);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.warn("download page " + request.getUrl() + " error", e);
         } finally {
             try {
@@ -139,11 +145,11 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
                 logger.warn("close response fail", e);
             }
 
-            if(page == null) {
+            if (page == null) {
                 page = new Page();
                 page.setRawText("");
-            } else{
-                if(page.getRawText() == null) {
+            } else {
+                if (page.getRawText() == null) {
                     page.setRawText("");
                 }
             }
@@ -153,6 +159,7 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
             page.setRequest(request);
             page.getRequest().putExtra("ipsType", "ipsProxy");
             page.getRequest().putExtra("host", urlHost);
+            page.getRequest().putExtra("proxyIpInfo", ipsInfoManage);
         }
         return page;
     }
@@ -162,29 +169,32 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
      */
     protected synchronized IpsInfoManage getPoxyHost(String urlHost, String basCode) {
         /*获取当前正在使用的代理IP*/
-        IpsInfoManage ipsInfoManage = new IpsInfoManage();
+        IpsInfoManage ipsInfoManage;
 
         /*代理IP管理中，没有对应的域名则添加所有代理IP对这个域名的管理*/
         if (!mIpsInfoManageService.isExist(urlHost)) {
             mIpsInfoManageService.addIpsInfoManageAll(urlHost, basCode);
         }
-
+        /*查询对应域名下正在使用的IP列表*/
         List<IpsInfoManage> ipsInfoManageList = mIpsInfoManageService.findIpInfoIsUsing(urlHost);
 
-        if (null != ipsInfoManageList && ipsInfoManageList.size() > 0) {
-            /*更新代理IP使用次数及其最后使用时间*/
+        if (null == ipsInfoManageList || ipsInfoManageList.size() == 0) {
+            ipsInfoManage = mIpsStatService.getUsingIp(urlHost);
+        } else {
             ipsInfoManage = ipsInfoManageList.get(0);
-            ipsInfoManage.setLastUsedDate(new Date());
-            ipsInfoManage.setUsedCount(ipsInfoManage.getUsedCount() + 1);
-            mIpsInfoManageService.update(ipsInfoManage);
         }
+
+        /*更新代理IP使用次数及其最后使用时间*/
+        ipsInfoManage.setLastUsedDate(new Date());
+        ipsInfoManage.setUsedCount(ipsInfoManage.getUsedCount() + 1);
+        mIpsInfoManageService.update(ipsInfoManage);
         return ipsInfoManage;
     }
 
     /**
      * 获取url域名
      */
-    protected  String getUrlHost(String url) {
+    protected String getUrlHost(String url) {
         /*获取请求URL的域名*/
         String urlHost;
         try {
@@ -209,7 +219,7 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
     /**
      * 设置httpclient的请求参数（请求头参数，超时时间，代理信息等）
      */
-    protected HttpUriRequest getHttpUriRequest(Request request, Site site, Map<String, String> headers,HttpHost proxy) {
+    protected HttpUriRequest getHttpUriRequest(Request request, Site site, Map<String, String> headers, HttpHost proxy) {
         RequestBuilder requestBuilder = selectRequestMethod(request).setUri(request.getUrl());
         if (headers != null) {
             for (Map.Entry<String, String> headerEntry : headers.entrySet()) {
@@ -221,10 +231,10 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
                 .setSocketTimeout(site.getTimeOut())
                 .setConnectTimeout(site.getTimeOut())
                 .setCookieSpec(CookieSpecs.BEST_MATCH);
-        if (proxy !=null) {
-			requestConfigBuilder.setProxy(proxy);
-			request.putExtra(Request.PROXY, proxy);
-		}
+        if (proxy != null) {
+            requestConfigBuilder.setProxy(proxy);
+            request.putExtra(Request.PROXY, proxy);
+        }
         requestBuilder.setConfig(requestConfigBuilder.build());
         return requestBuilder.build();
     }

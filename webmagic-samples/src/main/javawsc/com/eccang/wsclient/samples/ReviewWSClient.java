@@ -15,8 +15,8 @@ public class ReviewWSClient {
 
     public static void main(String[] args) {
 
-//        add();
-        query();
+        add();
+//        query();
     }
 
     private static void query() {
@@ -43,8 +43,10 @@ public class ReviewWSClient {
 
         ReviewReq.Review review1 = reviewReq.new Review();
         review1.priority = 1;
-        review1.reviewID = "R2V7LL01LD8CRA";
-        review1.siteCode = "UK";
+        review1.reviewID = "R2V7LL01LD8CLX";
+        review1.siteCode = "US";
+        review1.frequency = 3;
+        review1.marked = 1;
 
         reviewReq.data.add(review1);
 

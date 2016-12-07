@@ -4,14 +4,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.samples.amazon.pojo.Batch;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchReview;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.BatchReviewService;
-import us.codecraft.webmagic.samples.amazon.service.BatchService;
-import us.codecraft.webmagic.samples.amazon.service.ReviewService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
 import java.util.Date;
@@ -35,6 +29,8 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
     private BatchReviewService mBatchReviewService;
     @Autowired
     private BatchService mBatchService;
+    @Autowired
+    private ReviewMonitorService mReviewMonitorService;
 
     @Override
     protected void dealOtherPage(Page page) {
@@ -60,10 +56,17 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
             List<BatchReview> batchReviewList = mBatchReviewService.findByReviewID(reviewId);
             for (BatchReview batchReview : batchReviewList) {
                 batchReview.times++;
+                batchReview.status = 2;
+
+                /*更新关系表下的review完成时间*/
+                Batch batch = mBatchService.findByBatchNumber(batchReview.batchNumber);
+                ReviewMonitor reviewMonitor = mReviewMonitorService.findByReviewIdCustomerCode(batchReview.reviewID, batch.customerCode);
+                reviewMonitor.finishTime = new Date();
+                mReviewMonitorService.updateByReviewIdCustomerCode(reviewMonitor);
             }
             mBatchReviewService.updateAll(batchReviewList);
 
-            /* 更新新总单 */
+            /* 更新总单 */
             for (BatchReview batchReview : batchReviewList) {
                 Batch batch = mBatchService.findByBatchNumber(batchReview.batchNumber);
                 batch.times++;

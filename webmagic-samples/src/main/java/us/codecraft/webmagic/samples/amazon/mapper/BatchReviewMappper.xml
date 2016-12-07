@@ -9,6 +9,7 @@
         <result property="batchNumber" column="bo_batch_num"/>
         <result property="reviewID" column="bor_review_id"/>
         <result property="times" column="bor_times"/>
+        <result property="status" column="bor_status"/>
         <result property="crawled" column="bor_crawled"/>
         <result property="extra" column="bor_extra"/>
     </resultMap>
@@ -21,6 +22,7 @@
         UPDATE batch_order_review SET
         bas_code = #{siteCode},
         bor_times = #{times},
+        bor_status = #{status},
         bor_crawled = #{crawled},
         bor_extra = #{extra}
         WHERE
@@ -29,12 +31,12 @@
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO batch_order_review(
-        bas_code,bo_batch_num,bor_review_id,bor_times,bor_crawled,bor_extra
+        bas_code,bo_batch_num,bor_review_id,bor_times,bor_status,bor_crawled,bor_extra
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.siteCode},#{item.batchNumber},#{item.reviewID},#{item.times},#{item.crawled},#{item.extra}
+            #{item.siteCode},#{item.batchNumber},#{item.reviewID},#{item.times},#{item.status},#{item.crawled},#{item.extra}
             )
         </foreach>
     </insert>
