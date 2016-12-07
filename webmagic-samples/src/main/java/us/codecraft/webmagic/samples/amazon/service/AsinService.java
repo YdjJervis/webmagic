@@ -1,7 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
 import com.google.gson.Gson;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,7 +111,6 @@ public class AsinService {
 
         /*标记此ASIN为下架产品*/
         Asin asin = findByAsin(siteCode, asinCode);
-        asin.onSale = 0;
         update(asin);
         /*删除已经在爬取的URL*/
         mUrlService.deleteByAsin(siteCode, asinCode);
@@ -255,14 +253,6 @@ public class AsinService {
     }
 
     /**
-     * @param rootAsin 当前爬取的root asin在数据库是否已经存在
-     * @return true-存在；false-不存在
-     */
-    public boolean haveSameRootAsin(String rootAsin) {
-        return mAsinDao.findByRootAsin(rootAsin).size() > 1;
-    }
-
-    /**
      * 设置为不需要更新爬取。
      * 因为拥有相同root asin的asin会做整个流程，这个
      * asin再做的话就多余了。
@@ -276,28 +266,18 @@ public class AsinService {
 
         /* SRA = same root asin */
         asin.extra = "SRA";
-        asin.progress = 1;
-
         update(asin);
     }
 
-    public boolean isExist(String siteCode, String asin) {
-        return mAsinDao.findByAsin(siteCode, asin) != null;
+    public boolean isExist(String siteCode, String rootAsin) {
+        return mAsinDao.findByAsin(siteCode, rootAsin) != null;
     }
 
-    public void addAll(List<Asin> asinList) {
-        List<Asin> newList = new ArrayList<Asin>();
-
-        for (Asin asin : asinList) {
-            if (isExist(asin.siteCode, asin.asin)) {
-                update(asin);
-            } else {
-                newList.add(asin);
-            }
-        }
-
-        if (CollectionUtils.isNotEmpty(newList)) {
-            mAsinDao.addAll(asinList);
+    public void add(Asin asin) {
+        if (isExist(asin.siteCode, asin.rootAsin)) {
+            update(asin);
+        } else {
+            mAsinDao.add(asin);
         }
     }
 

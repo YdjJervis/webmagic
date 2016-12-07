@@ -58,8 +58,8 @@ public class BatchAsinService {
         return mBatchAsinDao.find(batchAsin) != null;
     }
 
-    public List<BatchAsin> findAllByAsin(String batchNum, String siteCode, String asin) {
-        return mBatchAsinDao.findAllByAsin(batchNum,siteCode, asin);
+    public BatchAsin findAllByAsin(String batchNum, String siteCode, String asin) {
+        return mBatchAsinDao.findAllByAsin(batchNum, siteCode, asin);
     }
 
     public List<BatchAsin> findAllByBatchNum(String batchNumber) {
@@ -72,5 +72,15 @@ public class BatchAsinService {
         }
     }
 
+    public List<BatchAsin> findByStatus(int... status) {
+        List<BatchAsin> list = new ArrayList<BatchAsin>();
+        for (int sta : status) {
+            list.addAll(mBatchAsinDao.findByStatus(sta));
+        }
+        return list;
+    }
 
+    public float findAverageProgress(String batchNumber){
+        return mBatchAsinDao.findAverageProgress(batchNumber);
+    }
 }

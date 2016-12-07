@@ -51,7 +51,7 @@ public class BatchService {
      * @param customerCode 客户码
      * @param asinList     ASIN 列表
      */
-    public Batch addBatch(String customerCode, List<Asin> asinList) {
+    public Batch addBatchTmp(String customerCode, List<Asin> asinList) {
         mLogger.info("开始处理客户的订单：customerCode = " + customerCode);
 
         if (CollectionUtils.isEmpty(asinList)) {
@@ -66,7 +66,7 @@ public class BatchService {
         List<Asin> newList = new ArrayList<Asin>();
 
         for (Asin asin : asinList) {
-            if (mAsinService.isExist(asin.siteCode, asin.asin)) {
+            if (mAsinService.isExist(asin.siteCode, asin.rootAsin)) {
                 crawledList.add(asin);
             } else {
                 newList.add(asin);
@@ -80,17 +80,11 @@ public class BatchService {
         float progress = 0;
         for (Asin asin : crawledList) {
 
-            Asin byAsin = mAsinService.findByAsin(asin.siteCode, asin.asin);
+            Asin byAsin = mAsinService.findByAsin(asin.siteCode, asin.rootAsin);
 
             BatchAsin batchAsin = initBatchAsin(batch, asin);
             batchAsin.crawled = 1;
 
-            /* 如果下架了，批次表进度直接改为100% */
-            if (byAsin.onSale == 0) {
-                batchAsin.progress = 1;
-            } else {
-                batchAsin.progress = byAsin.progress;
-            }
             /* 已经在爬取的ASIN的进度 < 1就标记为全量爬取，否则标记为更新爬取 */
             batchAsin.type = batchAsin.progress < 1 ? 0 : 1;
             batchAsin.rootAsin = byAsin.rootAsin;
@@ -104,7 +98,7 @@ public class BatchService {
         for (Asin asin : newList) {
 
             BatchAsin ba = initBatchAsin(batch, asin);
-            ba.rootAsin = asin.asin;
+            ba.rootAsin = asin.rootAsin;
             baList.add(ba);
         }
 
@@ -124,10 +118,24 @@ public class BatchService {
         mLogger.info("把新的ASIN批次转换成ASIN表记录：" + newList);
         for (Asin asin : newList) {
             Asin parsedAsin = new Asin();
-            parsedAsin.asin = asin.asin;
+            parsedAsin.rootAsin = asin.rootAsin;
             parsedAsinList.add(asin);
         }
-        mAsinService.addAll(parsedAsinList);
+//        mAsinService.addAll(parsedAsinList);
+
+        return batch;
+    }
+
+    public Batch addBatch(String customerCode, List<BatchAsin> batchAsinList){
+
+        Batch batch = generate(customerCode, 0);
+        for (BatchAsin batchAsin : batchAsinList) {
+            batchAsin.batchNumber = batch.number;
+        }
+
+        add(batch);
+
+        mBatchAsinService.addAll(batchAsinList);
 
         return batch;
     }
@@ -216,7 +224,7 @@ public class BatchService {
         BatchAsin ba = new BatchAsin();
         ba.batchNumber = batch.number;
         ba.siteCode = asin.siteCode;
-        ba.asin = asin.asin;
+        ba.asin = asin.rootAsin;
         ba.rootAsin = asin.rootAsin;
         return ba;
     }
@@ -244,8 +252,11 @@ public class BatchService {
         mBatchDao.update(batch);
     }
 
-    public List<Batch> findByStatus(int status) {
-        List<Batch> list = mBatchDao.findByStatus(status);
+    public List<Batch> findByStatus(int...status) {
+        List<Batch> list = new ArrayList<Batch>();
+        for (int sta : status) {
+            list.addAll(mBatchDao.findByStatus(sta));
+        }
         for (Batch batch : list) {
             batch.status = 1;
             update(batch);

@@ -47,16 +47,31 @@ public class AsinParseMonitor extends ParseMonitor {
         List<Url> urlList = new ArrayList<Url>();
 
         Map<String, Site> siteMap = new HashMap<String, Site>();
-        List<Batch> batchList = mBatchService.findByStatus(0);
-        for (Batch batch : batchList) {
-            List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batch.number);
-            for (BatchAsin batchAsin : batchAsinList) {
+        /* 查询未爬取 和 已经爬取首页的 */
+        List<BatchAsin> batchAsinList = mBatchAsinService.findByStatus(0, 2);
+        for (BatchAsin batchAsin : batchAsinList) {
+            Site site = siteMap.get(batchAsin.siteCode);
+            if (site == null) {
+                site = mSiteService.find(batchAsin.siteCode);
+                siteMap.put(batchAsin.siteCode, site);
+            }
 
-                Site site = siteMap.get(batchAsin.siteCode);
-                if (site == null) {
-                    site = mSiteService.find(batchAsin.siteCode);
-                    siteMap.put(batchAsin.siteCode, site);
-                }
+            /* 如果状态为0，表示未爬取首页，那就生成首页的Url */
+            if (batchAsin.status == 0) {
+                Url url = new Url();
+                url.batchNum = batchAsin.batchNumber;
+                url.url = siteMap.get(batchAsin.siteCode).basSite + "/dp/" + batchAsin.asin;
+                url.urlMD5 = UrlUtils.md5(url.url);
+                url.type = 3;
+                url.siteCode = batchAsin.siteCode;
+                url.asin = batchAsin.asin;
+
+                urlList.add(url);
+
+                batchAsin.status = 1;
+                mBatchAsinService.update(batchAsin);
+            } else {/* status == 2 */
+
                 List<String> filterList = mAsinService.getUpdateFilters(batchAsin.star);
                 /* 无论是全量爬取还是更新爬取，都生成相同的URL过滤器，然后生成URL */
                 for (String filter : filterList) {
@@ -75,6 +90,10 @@ public class AsinParseMonitor extends ParseMonitor {
                 batchAsin.status = 1;
                 mBatchAsinService.update(batchAsin);
             }
+
+            Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
+            batch.status = 1;
+            mBatchService.update(batch);
         }
 
         sLogger.info("转换后的URL列表如下：");

@@ -37,7 +37,6 @@ public class ReviewServiceTest extends SpringTestCase {
         review.reviewId = "R1UIT94RIP82Q3";
         review.content = "床前明月光，地上***";
         review.personId = "personID001";
-        review.asin = "Asin_00001";
         review.title = "AAAA";
         return review;
     }

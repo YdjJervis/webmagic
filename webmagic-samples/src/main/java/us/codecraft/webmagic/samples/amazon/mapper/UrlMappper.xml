@@ -106,6 +106,10 @@
         DELETE FROM spider_amazon_url WHERE sau_url_md5 = #{0};
     </delete>
 
+    <delete id="deleteOne">
+        DELETE FROM spider_amazon_url WHERE bo_batch_num = #{0} and bas_code = #{1} and saa_asin = #{2}
+    </delete>
+
     <update id="updatePriority">
         UPDATE spider_amazon_url SET sau_priority = #{1} WHERE saa_asin = #{0};
     </update>

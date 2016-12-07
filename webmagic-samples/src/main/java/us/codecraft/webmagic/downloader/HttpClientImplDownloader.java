@@ -26,6 +26,7 @@ public class HttpClientImplDownloader extends HttpClientDownloader {
     protected void onError(Request request) {
         Url url = (Url) request.getExtra(BasePageProcessor.URL_EXTRA);
         url.crawling = 0;
+        url.status = 0;
         mLogger.warn("HttpClient下载异常，更新URL状态：" + url);
         mUrlService.update(url);
     }

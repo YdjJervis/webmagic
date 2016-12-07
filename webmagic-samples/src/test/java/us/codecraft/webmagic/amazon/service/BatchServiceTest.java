@@ -23,13 +23,14 @@ public class BatchServiceTest extends SpringTestCase {
 
     @Test
     public void testGenerateBatchOrder() {
-        List<Asin> list = new ArrayList<Asin>();
+        List<BatchAsin> list = new ArrayList<BatchAsin>();
 
         List<ImportAsin> importAsinList = mImportAsinDao.findAll(5);
         for (ImportAsin importAsin : importAsinList) {
-            Asin asin = new Asin();
-            asin.asin = importAsin.asin;
-            list.add(asin);
+            BatchAsin batchAsin = new BatchAsin();
+            batchAsin.siteCode = importAsin.siteCode;
+            batchAsin.asin = importAsin.asin;
+            list.add(batchAsin);
         }
 
         mService.addBatch("AA", list);

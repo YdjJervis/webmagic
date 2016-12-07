@@ -18,6 +18,9 @@ public class BatchAsin extends BasePojo {
     public String rootAsin;
     public String star = "0-0-1-1-1";
     public int crawled;
+    /**
+     * 0-未爬取/1-爬取中/2-首页爬取完毕/3-评论爬取完毕
+     */
     public int status;
     public float progress;
     public int type;

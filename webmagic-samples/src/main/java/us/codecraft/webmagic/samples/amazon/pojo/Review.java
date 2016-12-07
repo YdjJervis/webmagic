@@ -19,10 +19,6 @@ public class Review extends BasePojo {
      */
     public String siteCode;
     /**
-     * Asin码
-     */
-    public String asin;
-    /**
      * 根ASIN
      */
     public String rootAsin;
@@ -80,7 +76,6 @@ public class Review extends BasePojo {
     public String toString() {
         return "Review{" +
                 "basCode='" + siteCode + '\'' +
-                ", asin='" + asin + '\'' +
                 ", rootAsin='" + rootAsin + '\'' +
                 ", personId='" + personId + '\'' +
                 ", time='" + time + '\'' +

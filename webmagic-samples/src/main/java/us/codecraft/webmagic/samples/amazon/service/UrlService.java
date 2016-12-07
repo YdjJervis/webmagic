@@ -6,10 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
-import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.Batch;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 import java.util.*;
@@ -37,7 +34,14 @@ public class UrlService {
     @Autowired
     private BatchService mBatchService;
 
+    @Autowired
+    private AsinRootAsinService mAsinRootAsinService;
+
+    @Autowired
+    private CustomerAsinService mCustomerAsinService;
+
     private Logger mLogger = Logger.getLogger(getClass());
+
 
     /**
      * 只做添加Url，若对象的url字段已经存在，则不进行任何处理
@@ -50,6 +54,10 @@ public class UrlService {
 
     public void deleteByAsin(String siteCode, String asin) {
         mUrlDao.deleteByAsin(siteCode, asin);
+    }
+
+    public void deleteOne(String batchNum, String siteCode, String asin) {
+        mUrlDao.deleteOne(batchNum, siteCode, asin);
     }
 
     public Url findByUrlMd5(String urlMd5) {
@@ -99,6 +107,11 @@ public class UrlService {
         /* 用过滤器作key，过滤器对应的最大的评论页码作value */
         Map<String, Integer> maxPageMap = new HashMap<String, Integer>();
 
+        /* 如果暂时不能计算总进度，就返回 */
+        if (!canCalculateProgress(list)) {
+            return;
+        }
+
         for (Url urlLooper : list) {
 
             String filter = UrlUtils.getValue(urlLooper.url, "filterByStar");
@@ -108,8 +121,7 @@ public class UrlService {
                 pn = 1;
             }
 
-            String pageNumStr = UrlUtils.getValue(urlLooper.url, "pageNumber");
-            Integer pageNum = StringUtils.isEmpty(pageNumStr) ? 1 : Integer.valueOf(pageNumStr);
+            int pageNum = getPageNum(urlLooper.url);
 
             if (pageNum >= pn) {
                 maxPageMap.put(filter, pageNum);
@@ -134,83 +146,89 @@ public class UrlService {
         }
 
         mLogger.info("最大页码总数：" + maxPage + " 已经爬取的页码：" + crawledList.size());
-        Asin asinObj = mAsinService.findByAsin(url.siteCode, url.asin);
-        List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(url.batchNum, url.siteCode, url.asin);
-        /* 先把rootAsin值填进去 */
-        for (BatchAsin batchAsin : batchAsinList) {
-            batchAsin.rootAsin = asinObj.rootAsin;
+
+        /* 从数据库获取一些必要对象 */
+        Asin asinObj = mAsinService.findByAsin(url.siteCode, mAsinRootAsinService.findByAsin(url.asin).rootAsin);
+        Batch batch = mBatchService.findByBatchNumber(url.batchNum);
+        BatchAsin dbBtchAsin = mBatchAsinService.findAllByAsin(url.batchNum, url.siteCode, url.asin);
+        Date currentTime = new Date();
+
+        /* 更新几个变量值 */
+        dbBtchAsin.rootAsin = asinObj.rootAsin;
+        if (dbBtchAsin.startTime == null) {
+            dbBtchAsin.startTime = currentTime;
         }
 
-        Date currentTime = new Date();
         /* 如果 当前ASIN，URL列表集合数量 = 最大页码，表示已经爬取完毕了 */
         if (crawledList.size() == maxPage) {
-
-            /* 更新ASIN的extra状态 */
-            asinObj.syncTime = currentTime;
-            Asin asin = mAsinService.updateExtra(asinObj);
 
             /* 爬取完毕，把所有URL移动到历史表 */
             deleteAll(crawledList);
             mHistoryService.addAll(crawledList);
 
-            /* 二期业务：改变详单表extra状态进行更新 */
-            for (BatchAsin batchAsin : batchAsinList) {
-                batchAsin.extra = asin.extra;
-                batchAsin.finishTime = currentTime;
-                batchAsin.progress = 1;
-            }
+            /* 更新ASIN的extra状态 */
+            Asin asin = mAsinService.updateExtra(asinObj);
+            /* 二期业务：更新详单表字段 */
+            dbBtchAsin.extra = asin.extra;
+            dbBtchAsin.finishTime = currentTime;
+            dbBtchAsin.progress = 1;
+            dbBtchAsin.type = 2;
+            dbBtchAsin.status = 3;
+
+            /* 更新客户-Asin关系的同步时间 */
+            mLogger.info("同步客户关系表记录时间：" + batch.customerCode + " " + dbBtchAsin.siteCode + " " + dbBtchAsin.asin);
+            CustomerAsin customerAsin = mCustomerAsinService.find(new CustomerAsin(batch.customerCode, dbBtchAsin.siteCode, dbBtchAsin.asin));
+            customerAsin.syncTime = currentTime;
+            mCustomerAsinService.update(customerAsin);
+
         } else {
-            /* 一期业务 */
-            float progress = 1.0f * crawledList.size() / maxPage;
-            asinObj.progress = progress > 1.0f ? 1.0f : progress;
-            mLogger.info(url.asin + " 的爬取进度：" + asinObj.progress);
-
-            /* 二期业务：改变详单表进度状态进行更新 */
-            for (BatchAsin batchAsin : batchAsinList) {
-                batchAsin.progress = asinObj.progress;
-            }
+            /* 二期业务：改变详单表单条记录的进度状态 */
+            dbBtchAsin.progress = 1.0f * crawledList.size() / maxPage;
         }
+
         /* 更新批次详单表 */
-        mBatchAsinService.updateAll(batchAsinList);
+        mBatchAsinService.update(dbBtchAsin);
 
-        /* 二期业务：更新批次单表 */
-        float totalProgress = 0;
-        Batch batch = mBatchService.findByBatchNumber(url.batchNum);
-        for (BatchAsin batchAsin : batchAsinList) {
-            /* 对批次详单进行更新 */
-            if (batchAsin.progress == 1) {
-                batchAsin.finishTime = currentTime;
-                /* 调整为爬取完毕状态 */
-                batchAsin.type = 2;
-            }
-            if (batchAsin.startTime == null) {
-                batchAsin.startTime = currentTime;
-            }
-
-            /* 累加所有详单中的进度 */
-            totalProgress += batchAsin.progress;
-
-            /* 计算订单平均进度值 */
-            totalProgress = totalProgress / batchAsinList.size();
-
-            batch.progress = totalProgress;
-
-            /* 如果爬取开始，更新开始时间 */
-            if (batch.startTime == null) {
-                batch.startTime = currentTime;
-            }
-            /* 如果爬取完毕，更新完毕时间 */
-            if (totalProgress == 1) {
-                batch.finishTime = currentTime;
-            }
-
+        /*如果爬取开始，更新开始时间 */
+        if (batch.startTime == null) {
+            batch.startTime = currentTime;
         }
-        /* 计算详单总进度的评价值，更新到总单上去 */
-        batch.progress = totalProgress / batchAsinList.size();
+
+        /*计算详单总进度的评价值，更新到总单上去 */
+        batch.progress = mBatchAsinService.findAverageProgress(url.batchNum);
+
+        /*如果爬取完毕，更新完毕时间 */
+        if (batch.progress == 1) {
+            batch.finishTime = currentTime;
+            batch.status = 2;
+        }
+
         mBatchService.update(batch);
 
-        /* 再次更新批次详单表 */
-        mBatchAsinService.updateAll(batchAsinList);
+    }
+
+
+    /**
+     * 包含所有过滤器的Url列表中，如果页码为空的那一页恰好状态码不为200，
+     * 说明没有爬取过那个过滤器的第一页，就没法计算所有过滤器的总页码，
+     * 也就没法统计总进度，那就不去统了。
+     */
+    private boolean canCalculateProgress(List<Url> list) {
+        for (Url url : list) {
+            if (getPageNum(url.url) == 1 && url.status != 200) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @return 页码
+     */
+    public int getPageNum(String url) {
+        String pageNumStr = UrlUtils.getValue(url, "pageNumber");
+        int pageNum = StringUtils.isEmpty(pageNumStr) ? 1 : Integer.valueOf(pageNumStr);
+        return pageNum;
     }
 
     /**

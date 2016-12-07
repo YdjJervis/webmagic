@@ -65,7 +65,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         List<Review> reviewList = new ArrayList<Review>();
         for (Selectable reviewNode : reviewNodeList) {
 
-            Review review = extractReviewItem(siteCode, asin, reviewNode);
+            Review review = extractReviewItem(siteCode, reviewNode);
             if (lastReviewSet.contains(review.reviewId)) {
                 needCrawlNextPage = false;
                 break;

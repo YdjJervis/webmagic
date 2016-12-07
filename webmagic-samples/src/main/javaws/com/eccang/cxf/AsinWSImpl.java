@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.CustomerAsin;
 import us.codecraft.webmagic.samples.amazon.service.AsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.amazon.service.CustomerAsinService;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     private AsinService mAsinService;
 
     @Autowired
-    private UrlService mUrlService;
+    private CustomerAsinService mCustomerAsinService;
+
 
     public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
@@ -56,30 +58,34 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         asinRsp.status = baseRspParam.status;
         asinRsp.msg = baseRspParam.msg;
 
-        /* 把Json里面的列表转换成业务需要的列表 */
-        List<Asin> parsedAsinList = new ArrayList<Asin>();
+        /* 转换成批次Asin批次详单表 */
+        List<BatchAsin> parsedBatchAsinList = new ArrayList<BatchAsin>();
         for (AsinReq.Asin asin : asinReq.data) {
-            Asin parsedAsin = new Asin();
-            parsedAsin.siteCode = asin.siteCode;
-            parsedAsin.asin = asin.asin;
-            parsedAsinList.add(parsedAsin);
+            BatchAsin batchAsin = new BatchAsin();
+            batchAsin.siteCode = asin.siteCode;
+            batchAsin.asin = asin.asin;
+            batchAsin.star = asin.star;
+            parsedBatchAsinList.add(batchAsin);
         }
-
-        Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedAsinList);
+        Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedBatchAsinList);
 
         /* 统计新添加的ASIN的个数 */
         List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batch.number);
-        int newCount = 0;
-        for (BatchAsin batchAsin : batchAsinList) {
-            if (batchAsin.crawled == 0) {
-                newCount++;
-            }
-        }
-
         asinRsp.data.number = batch.number;
         asinRsp.data.totalCount = batchAsinList.size();
-        asinRsp.data.newCount = newCount;
-        asinRsp.data.oldCount = batchAsinList.size() - newCount;
+        asinRsp.data.newCount = batchAsinList.size();
+        asinRsp.data.oldCount = 0;
+
+        /* 把ASIN和客户的关系统计起来 */
+        List<CustomerAsin> customerAsinList = new ArrayList<CustomerAsin>();
+        for (AsinReq.Asin asin : asinReq.data) {
+            CustomerAsin customerAsin = new CustomerAsin();
+            customerAsin.customerCode = asinReq.cutomerCode;
+            customerAsin.siteCode = asin.siteCode;
+            customerAsin.asin = asin.asin;
+            customerAsinList.add(customerAsin);
+        }
+        mCustomerAsinService.addAll(customerAsinList);
 
         return asinRsp.toJson();
     }
@@ -108,9 +114,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         for (AsinQueryReq.Asin asin : asinQueryReq.data) {
             Asin dbAsin = mAsinService.findByAsin(asin.siteCode, asin.asin);
             AsinQueryRsp.Asin resultAsin = asinQueryRsp.new Asin();
-            resultAsin.asin = dbAsin.asin;
-            resultAsin.onSale = dbAsin.onSale;
-            resultAsin.progress = dbAsin.progress;
+            resultAsin.asin = dbAsin.rootAsin;
             resultAsin.rootAsin = dbAsin.rootAsin;
             asinQueryRsp.data.add(resultAsin);
         }

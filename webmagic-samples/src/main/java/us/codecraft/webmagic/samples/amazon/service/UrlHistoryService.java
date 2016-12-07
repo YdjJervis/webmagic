@@ -32,12 +32,7 @@ public class UrlHistoryService {
             }
         }
         if (CollectionUtils.isNotEmpty(newList)) {
-            try {
-                mDao.addAll(newList);
-            } catch (Exception e) {
-                mLogger.warn("历史URL重复，影响不大，打印出来快叫爬虫的检查");
-                mLogger.warn(newList);
-            }
+            mDao.addAll(newList);
         }
     }
 

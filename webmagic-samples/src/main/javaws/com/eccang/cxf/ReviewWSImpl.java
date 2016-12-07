@@ -121,7 +121,6 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
             if (Integer.valueOf(levels[i]) == 1) {
                 Review queryReview = new Review();
-                queryReview.asin = reviewQueryReq.data.asin;
                 queryReview.personId = reviewQueryReq.data.personID;
                 queryReview.star = 5 - i;
                 List<Review> reviewList = mReviewService.findAll(queryReview);
@@ -132,7 +131,6 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         /* 把查询的Review转换成需要返回的对象 */
         for (Review review : allReviewList) {
             ReviewQueryRsp.Review resultReview = reviewQueryRsp.new Review();
-            resultReview.asin = review.asin;
             resultReview.siteCode = review.siteCode;
             resultReview.time = review.dealTime;
             resultReview.personID = review.personId;

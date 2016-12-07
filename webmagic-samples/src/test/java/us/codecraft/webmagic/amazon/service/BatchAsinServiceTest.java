@@ -55,11 +55,14 @@ public class BatchAsinServiceTest extends SpringTestCase {
 
     @Test
     public void testUpdate() {
-        List<BatchAsin> list = mService.findAllByAsin("", "US", "ASIN001");
-        for (BatchAsin batchAsin : list) {
-            batchAsin.crawled = 1;
-            mService.update(batchAsin);
-        }
+        BatchAsin batchAsin = mService.findAllByAsin("", "US", "ASIN001");
+        batchAsin.crawled = 1;
+        mService.update(batchAsin);
+    }
+
+    @Test
+    public void testAverageProgress(){
+        System.out.println(mService.findAverageProgress("EC20161207095939826"));
     }
 
 }

@@ -6,17 +6,10 @@
     <resultMap id="AsinResultMap" type="Asin">
         <id property="id" column="saa_id"/>
         <result property="siteCode" column="bas_code"/>
-        <result property="asin" column="saa_asin"/>
-        <result property="rootAsin" column="saa_root_asin"/>
-        <result property="onSale" column="saa_on_sale"/>
-        <result property="crawledHead" column="saa_crawled_head"/>
-        <result property="status" column="saa_status"/>
-        <result property="progress" column="saa_progress"/>
+        <result property="rootAsin" column="rar_root_asin"/>
         <result property="extra" column="saa_extra"/>
-        <result property="syncTime" column="saa_sync_time"/>
         <result property="createTime" column="saa_create_time"/>
         <result property="updateTime" column="saa_update_time"/>
-
     </resultMap>
 
     <select id="findAll" resultMap="AsinResultMap">
@@ -26,40 +19,22 @@
     <!--更新爬取状态和URL转换状态-->
     <update id="update" parameterType="Asin">
         UPDATE spider_amazon_asin
-        SET
-        saa_root_asin=#{rootAsin},saa_on_sale = #{onSale},saa_crawled_head=#{crawledHead},saa_status = #{status},
-        saa_progress=#{progress},saa_extra=#{extra}
-        WHERE
-        bas_code = #{siteCode} and saa_asin = #{asin}
+        SET saa_extra=#{extra} WHERE
+        bas_code = #{siteCode} and rar_root_asin = #{rootAsin}
     </update>
 
     <select id="findByAsin" resultMap="AsinResultMap">
-        select * from spider_amazon_asin
-        WHERE
-        bas_code = #{0} and saa_asin = #{1}
-    </select>
-
-    <select id="findByRootAsin" resultMap="AsinResultMap">
         select * from spider_amazon_asin WHERE
-        saa_root_asin = #{0};
+        bas_code = #{0} and rar_root_asin = #{1}
     </select>
 
-    <!-- 查询没有爬取过产品首页的ASIN -->
-    <select id="findNotRooted" resultMap="AsinResultMap">
-        WHERE asin.saa_crawled_head = 0 LIMIT 1000;
-    </select>
-
-    <!-- 添加ASIN列表 -->
-    <insert id="addAll" parameterType="java.util.List">
+    <insert id="add">
         INSERT INTO spider_amazon_asin(
-        bas_code,saa_asin,saa_root_asin,saa_on_sale,saa_crawled_head,saa_status,saa_progress,saa_extra
+        bas_code,rar_root_asin,saa_extra
+        ) VALUES (
+        #{siteCode},#{rootAsin},#{extra}
         )
-        VALUES
-        <foreach collection="list" item="item" index="index" separator=",">(
-            #{item.siteCode},#{item.asin},#{item.rootAsin},#{item.onSale},#{item.crawledHead},#{item.status},
-            #{item.progress},#{item.extra}
-            )
-        </foreach>
     </insert>
+
 
 </mapper>

@@ -5,8 +5,10 @@
     <resultMap id="CustomerAsinMap" type="CustomerAsin">
         <result column="rca_id" property="id"/>
         <result column="bec_code" property="customerCode"/>
+        <result column="bas_code" property="siteCode"/>
         <result column="saa_asin" property="asin"/>
         <result column="rca_status" property="status"/>
+        <result column="rca_sync_time" property="syncTime"/>
         <result column="rca_create_time" property="createTime"/>
         <result column="rca_update_time" property="updateTime"/>
     </resultMap>
@@ -17,24 +19,24 @@
 
     <update id="update" parameterType="CustomerAsin">
         UPDATE relation_customer_asin SET
-        rca_status = #{status}
+        rca_status = #{status},rca_sync_time = #{syncTime}
         where
-        bec_code = #{customerCode} and saa_asin = #{asin}
+        bec_code = #{customerCode} and bas_code = #{siteCode} and saa_asin = #{asin}
     </update>
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO relation_customer_asin(
-        bec_code,saa_asin,rca_status
+        bec_code,bas_code,saa_asin,rca_status,rca_sync_time
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.customerCode},#{item.asin},#{item.status}
+            #{item.customerCode},#{item.siteCode},#{item.asin},#{item.status},#{item.syncTime}
             )
         </foreach>
     </insert>
 
     <select id="findByObject" resultMap="CustomerAsinMap">
-        select * from relation_customer_asin WHERE bec_code = #{customerCode} and saa_asin = #{asin};
+        select * from relation_customer_asin WHERE bec_code = #{customerCode} and bas_code = #{siteCode} and saa_asin = #{asin};
     </select>
 </mapper>

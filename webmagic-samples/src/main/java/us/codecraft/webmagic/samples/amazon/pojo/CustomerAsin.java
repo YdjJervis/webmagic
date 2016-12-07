@@ -2,6 +2,8 @@ package us.codecraft.webmagic.samples.amazon.pojo;
 
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
+import java.util.Date;
+
 /**
  * @author Jervis
  * @version V0.20
@@ -14,6 +16,7 @@ public class CustomerAsin extends BasePojo {
     public String siteCode;
     public String asin;
     public int status = 1;
+    public Date syncTime;
 
     public CustomerAsin() {
     }
@@ -24,12 +27,4 @@ public class CustomerAsin extends BasePojo {
         this.asin = asin;
     }
 
-    @Override
-    public String toString() {
-        return "CustomerAsin{" +
-                "customerCode='" + customerCode + '\'' +
-                ", asin='" + asin + '\'' +
-                ", status=" + status +
-                '}';
-    }
 }

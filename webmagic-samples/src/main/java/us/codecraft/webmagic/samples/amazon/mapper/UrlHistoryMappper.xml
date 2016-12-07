@@ -32,7 +32,7 @@
             #{item.urlMD5},
             #{item.batchNum},
             #{item.siteCode},
-            #{item.saaAsin},
+            #{item.asin},
             #{item.url},
             #{item.parentUrl}
             )

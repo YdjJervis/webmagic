@@ -27,7 +27,6 @@ public class AsinServiceTest extends SpringTestCase {
     @Test
     public void testUpdate() {
         Asin asin = mAsinService.findByAsin("UK", "B01LXA42FB");
-        asin.onSale = 0;
         mAsinService.update(asin);
     }
 }

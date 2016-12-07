@@ -5,12 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
-import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
-import us.codecraft.webmagic.samples.amazon.service.ProductService;
-import us.codecraft.webmagic.samples.amazon.util.ProductExtractor;
+import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,13 +27,22 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
     @Autowired
     private ProductService mProductService;
 
+    @Autowired
+    private AsinRootAsinService mAsinRootAsinService;
+
+    @Autowired
+    private UrlHistoryService mHistoryService;
+
+    @Autowired
+    private AsinService mAsinService;
+
     @Override
     protected void dealOtherPage(Page page) {
         /* 如果是产品首页 */
         if (Pattern.compile(".*/dp/.*").matcher(page.getUrl().get()).matches()) {
+            Url url = getUrl(page);
             Site site = extractSite(page);
             String asinStr = extractAsin(page);
-            Asin asin = mAsinService.findByAsin(site.basCode, asinStr);
 
             String rootAsin = page.getHtml().xpath("//li[@class='swatchAvailable']/@data-dp-url").regex("twister_([0-9a-zA-Z]*)").get();
             if (StringUtils.isEmpty(rootAsin)) {
@@ -43,14 +50,32 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             }
             sLogger.info("提取出来的Root Asin ：" + rootAsin);
 
-            /* 如果该rootAsin已经存在，那么久把该asin记录修改为
-            1，已经转换成了全量爬取URL状态，
-            2，不需要更新爬取状态 */
+            /* 把Asin和RootAsin的关系连接上 */
+            AsinRootAsin asinRootAsin = new AsinRootAsin();
+            asinRootAsin.asin = asinStr;
+            asinRootAsin.rootAsin = rootAsin;
+            mAsinRootAsinService.add(asinRootAsin);
 
-            if (mAsinService.haveSameRootAsin(rootAsin)) {
+            /* 改变批次详单 */
+            BatchAsin dbBatchAsin = mBatchAsinService.findAllByAsin(url.batchNum, site.basCode, asinStr);
+            dbBatchAsin.status = 2;
+            mBatchAsinService.update(dbBatchAsin);
+
+            /* 添加Asin到归档 */
+            Asin asin = new Asin();
+            asin.siteCode = site.basCode;
+            asin.rootAsin = rootAsin;
+            mAsinService.add(asin);
+
+            /**
+             * 如果该rootAsin已经存在，那么久把该asin记录做如下修改：
+             * 1，已经转换成了全量爬取URL状态，
+             * 2，不需要更新爬取状态
+             */
+            /*if (mAsinService.haveSameRootAsin(rootAsin)) {
                 mAsinService.setParsedNotUpdate(asin);
 
-                /* 二期业务：把所有根节点相同的ASIN的状态改变一下 */
+                *//* 二期业务：把所有根节点相同的ASIN的状态改变一下 *//*
                 List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, site.basCode, asinStr);
                 for (BatchAsin batchAsin : batchAsinList) {
                     batchAsin.rootAsin = rootAsin;
@@ -60,23 +85,19 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
                     batchAsin.startTime = batchAsin.finishTime = new Date();
                 }
                 mBatchAsinService.updateAll(batchAsinList);
-            }
-
-            asin.rootAsin = rootAsin;
-
-            /* root asin已经找到了 */
-            asin.crawledHead = 2;
-
-            /* 找到了根ASIN了，更新asin状态 */
-            mAsinService.update(asin);
+            }*/
 
             /* 删除爬取的URL */
-            mUrlService.deleteByAsin(extractSite(page).basCode, asin.asin);
+            mUrlService.deleteOne(url.batchNum, site.basCode, asinStr);
+            /* 添加到历史表 */
+            List<Url> urlList = new ArrayList<Url>();
+            urlList.add(url);
+            mHistoryService.addAll(urlList);
 
             /* 三期业务 */
-            Product product = new ProductExtractor(extractSite(page).basCode, rootAsin, page).extract();
+            /*Product product = new ProductExtractor(extractSite(page).basCode, rootAsin, page).extract();
             mProductService.add(product);
-            sLogger.info(product);
+            sLogger.info(product);*/
 
         }
     }

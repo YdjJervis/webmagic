@@ -4,8 +4,6 @@ import org.springframework.stereotype.Repository;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
-import java.util.List;
-
 /**
  * @author Jervis
  * @version V0.1
@@ -17,7 +15,4 @@ public interface AsinDao extends BaseDao<Asin> {
 
     Asin findByAsin(String siteCode, String asin);
 
-    List<Asin> findNotRooted();
-
-    List<Asin> findByRootAsin(String rootAsin);
 }

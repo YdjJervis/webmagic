@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
+import us.codecraft.webmagic.samples.amazon.service.AsinRootAsinService;
 import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 import us.codecraft.webmagic.samples.amazon.util.ReviewTimeUtil;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
@@ -27,6 +28,9 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     @Autowired
     protected ReviewService mReviewService;
 
+    @Autowired
+    private AsinRootAsinService mAsinRootAsinService;
+
     @Override
     protected void dealReview(Page page) {
 
@@ -43,9 +47,12 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         List<Review> reviewList = new ArrayList<Review>();
         for (Selectable reviewNode : reviewNodeList) {
 
-            Review review = extractReviewItem(siteCode, asin, reviewNode);
-            review.rootAsin = mAsinService.findByAsin(siteCode, asin).rootAsin;
-            review.pageNum = UrlUtils.getValue(currentUrl, "pageNumber");
+            Review review = extractReviewItem(siteCode, reviewNode);
+            review.rootAsin = mAsinRootAsinService.findByAsin(asin).rootAsin;
+            String pageNum = UrlUtils.getValue(currentUrl, "pageNumber");
+            review.pageNum = StringUtils.isEmpty(pageNum) ? "1" : pageNum;
+            sLogger.info(review);
+
             reviewList.add(review);
         }
 
@@ -100,7 +107,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     /**
      * 抽取单条评论
      */
-    Review extractReviewItem(String siteCode, String asin, Selectable reviewNode) {
+    Review extractReviewItem(String siteCode, Selectable reviewNode) {
         Review review = new Review();
         int star = Integer.valueOf(reviewNode.xpath("//*[@data-hook='review-star-rating']/@class").regex(".*-([0-5]).*").get());//提取星级
         String title = reviewNode.xpath("//a[@data-hook='review-title']/text()").get();
@@ -113,7 +120,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         String buyStatus = reviewNode.xpath("//span[@data-hook='avp-badge']/text()").get();
 
         review.siteCode = siteCode;
-        review.asin = asin;
         review.star = star;
         review.title = title;
         review.personId = personID;
@@ -124,7 +130,6 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         review.version = version;
         review.content = content;
         review.buyStatus = buyStatus;
-        sLogger.info(review);
         return review;
     }
 

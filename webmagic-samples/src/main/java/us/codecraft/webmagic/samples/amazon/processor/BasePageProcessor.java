@@ -99,7 +99,7 @@ public class BasePageProcessor implements PageProcessor {
         ipsExceptionStatusStat(page);
 
         /*监测对应URL的代理使用情况*/
-        statUrlProxy(page);
+//        statUrlProxy(page);
 
         updateUrlStatus(page);
 
@@ -149,16 +149,14 @@ public class BasePageProcessor implements PageProcessor {
     private void dealPageNotFound(Page page) {
 
         Site site = extractSite(page);
-        String asinCode = extractAsin(page);
-        mAsinService.updateAndDeleteUrl(site.basCode, asinCode);
+        String asin = extractAsin(page);
+        mAsinService.updateAndDeleteUrl(site.basCode, asin);
 
         /* 二期业务：如果页面不存在，就把所有的记录的进度更新成1，type改成1(全量爬取完毕) */
-        List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, site.basCode, asinCode);
-        for (BatchAsin batchAsin : batchAsinList) {
-            batchAsin.progress = 1;
-            batchAsin.type = 1;
-        }
-        mBatchAsinService.updateAll(batchAsinList);
+        BatchAsin batchAsin = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, site.basCode, asin);
+        batchAsin.progress = 1;
+        batchAsin.type = 1;
+        mBatchAsinService.update(batchAsin);
 
     }
 
@@ -339,34 +337,32 @@ public class BasePageProcessor implements PageProcessor {
         String url = page.getUrl().get();
         if (StringUtils.isNotEmpty(asinCode)) {
             /*通过asin来查询这个URL所对应的批次信息*/
-            List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(getUrl(page).siteCode, asinCode, asinCode);
-            for (BatchAsin batchAsin : batchAsinList) {
-                /*查询批次下的url代理监测信息*/
-                UrlBatchStat urlBatchStat = mUrlBatchStatService.findByBatchAndUrl(batchAsin.batchNumber, url);
-                if (urlBatchStat != null) {
-                    /*存在则更新状态*/
-                    if ("correct".equals(parseStatus)) {
-                        urlBatchStat.setCorrectTime(urlBatchStat.getCorrectTime() + 1);
-                    } else {
-                        urlBatchStat.setExceptionTime(urlBatchStat.getExceptionTime() + 1);
-                    }
-                    /*更新正确次数或异常次数*/
-                    mUrlBatchStatService.updateById(urlBatchStat);
+            BatchAsin batchAsin = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, getUrl(page).siteCode, asinCode);
+            /*查询批次下的url代理监测信息*/
+            UrlBatchStat urlBatchStat = mUrlBatchStatService.findByBatchAndUrl(batchAsin.batchNumber, url);
+            if (urlBatchStat != null) {
+                /*存在则更新状态*/
+                if ("correct".equals(parseStatus)) {
+                    urlBatchStat.setCorrectTime(urlBatchStat.getCorrectTime() + 1);
                 } else {
-                    /*不存在则添加*/
-                    urlBatchStat = new UrlBatchStat();
-                    urlBatchStat.setUrl(url);
-                    urlBatchStat.setIsProxy(isProxy);
-                    urlBatchStat.setBatchNum(batchAsin.batchNumber);
-                    if ("correct".equals(parseStatus)) {
-                        urlBatchStat.setCorrectTime(1);
-                        urlBatchStat.setExceptionTime(0);
-                    } else {
-                        urlBatchStat.setCorrectTime(0);
-                        urlBatchStat.setExceptionTime(1);
-                    }
-                    mUrlBatchStatService.addOne(urlBatchStat);
+                    urlBatchStat.setExceptionTime(urlBatchStat.getExceptionTime() + 1);
                 }
+                /*更新正确次数或异常次数*/
+                mUrlBatchStatService.updateById(urlBatchStat);
+            } else {
+                /*不存在则添加*/
+                urlBatchStat = new UrlBatchStat();
+                urlBatchStat.setUrl(url);
+                urlBatchStat.setIsProxy(isProxy);
+                urlBatchStat.setBatchNum(batchAsin.batchNumber);
+                if ("correct".equals(parseStatus)) {
+                    urlBatchStat.setCorrectTime(1);
+                    urlBatchStat.setExceptionTime(0);
+                } else {
+                    urlBatchStat.setCorrectTime(0);
+                    urlBatchStat.setExceptionTime(1);
+                }
+                mUrlBatchStatService.addOne(urlBatchStat);
             }
         }
     }
