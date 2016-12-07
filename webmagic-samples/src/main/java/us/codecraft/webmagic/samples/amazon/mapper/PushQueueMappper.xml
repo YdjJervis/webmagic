@@ -23,24 +23,24 @@
     <delete id="delete" parameterType="int">
         DELETE FROM data_push_queue
         WHERE
-          dpq_id = #{0}
+        dpq_id = #{0}
     </delete>
 
     <update id="update" parameterType="PushQueue">
         UPDATE
-          data_push_queue
+        data_push_queue
         SET
-          bo_batch_num = #{batchNum},
-          bec_code = #{customerCode},
-          bp_code = #{platformCode},
-          dpq_status = #{status},
-          dpq_times = #{times},
-          dpq_extra = #{extra},
-          dpq_update_time = CURRENT_TIMESTAMP
+        bo_batch_num = #{batchNum},
+        bec_code = #{customerCode},
+        bp_code = #{platformCode},
+        dpq_status = #{status},
+        dpq_times = #{times},
+        dpq_extra = #{extra},
+        dpq_update_time = CURRENT_TIMESTAMP
         WHERE
-          dpq_id = #{id}
+        dpq_id = #{id}
     </update>
-    
+
     <select id="findNeed2Push" resultMap="PushQueueMap">
       SELECT
         *

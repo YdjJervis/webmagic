@@ -38,8 +38,6 @@ public class CustomerAsinService {
         for (CustomerAsin customerAsin : customerAsinList) {
             if (!isExist(customerAsin)) {
                 newList.add(customerAsin);
-            }else{
-                update(customerAsin);
             }
         }
 

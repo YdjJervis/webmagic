@@ -4,13 +4,8 @@ import com.eccang.pojo.*;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.Batch;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
-import us.codecraft.webmagic.samples.amazon.service.AsinService;
-import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
-import us.codecraft.webmagic.samples.amazon.service.BatchService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.service.*;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
@@ -37,9 +32,12 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     @Autowired
     private CustomerAsinService mCustomerAsinService;
 
+    @Autowired
+    private NoSellService mNoSellService;
 
     @Autowired
-    RelationCustomerAsinService mRelationCustomerAsinService;
+    private AsinRootAsinService mAsinRootAsinService;
+
 
     public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
@@ -62,21 +60,43 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         /* 转换成批次Asin批次详单表 */
         List<BatchAsin> parsedBatchAsinList = new ArrayList<BatchAsin>();
+
+        /* 分开已经爬取的和没爬去的数量 */
+
+        int crawledNum = 0;
         for (AsinReq.Asin asin : asinReq.data) {
+
             BatchAsin batchAsin = new BatchAsin();
             batchAsin.siteCode = asin.siteCode;
             batchAsin.asin = asin.asin;
             batchAsin.star = asin.star;
+
+            AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin.asin);
+            /* 已经爬取过的商品，把爬取完成的大字段同步过来 */
+            if (asinRootAsin != null) {
+                crawledNum++;
+                setCrawledStatus(batchAsin);
+                batchAsin.extra = mAsinService.findByAsin(asin.siteCode, asinRootAsin.rootAsin).extra;
+                batchAsin.rootAsin = asinRootAsin.rootAsin;
+            }
+
+            /* 已经下架的商品也设置成爬取完毕的状态 */
+            if (mNoSellService.isExist(new Asin(asin.siteCode, asin.asin))) {
+                crawledNum++;
+                setCrawledStatus(batchAsin);
+            }
+
             parsedBatchAsinList.add(batchAsin);
         }
+
         Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedBatchAsinList);
 
         /* 统计新添加的ASIN的个数 */
         List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batch.number);
         asinRsp.data.number = batch.number;
         asinRsp.data.totalCount = batchAsinList.size();
-        asinRsp.data.newCount = batchAsinList.size();
-        asinRsp.data.oldCount = 0;
+        asinRsp.data.newCount = batchAsinList.size() - crawledNum;
+        asinRsp.data.oldCount = crawledNum;
 
         /* 把ASIN和客户的关系统计起来 */
         List<CustomerAsin> customerAsinList = new ArrayList<CustomerAsin>();
@@ -90,6 +110,16 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         mCustomerAsinService.addAll(customerAsinList);
 
         return asinRsp.toJson();
+    }
+
+    /**
+     * 设置成已经爬取状态
+     */
+    private void setCrawledStatus(BatchAsin batchAsin) {
+        batchAsin.crawled = 1;
+        batchAsin.status = 3;
+        batchAsin.progress = 1;
+        batchAsin.type = 2;
     }
 
     @Override
@@ -112,20 +142,10 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         asinQueryRsp.status = baseRspParam.status;
         asinQueryRsp.msg = baseRspParam.msg;
 
-        for (AsinQueryReq.Asin asin : asinQueryReq.data) {
 
-            /*查询对应客户下asin是否存在，不存在则查询下一个asin*/
-            if (!mRelationCustomerAsinService.isExisted(asinQueryReq.cutomerCode ,asin.asin)) {
-                continue;
-            }
+        for (AsinQueryReq.Asin asin : asinQueryReq.data) {
             Asin dbAsin = mAsinService.findByAsin(asin.siteCode, asin.asin);
             AsinQueryRsp.Asin resultAsin = asinQueryRsp.new Asin();
-            if (dbAsin == null) {
-                continue;
-            }
-            resultAsin.asin = dbAsin.asin;
-            resultAsin.onSale = dbAsin.onSale;
-            resultAsin.progress = dbAsin.progress;
             resultAsin.asin = dbAsin.rootAsin;
             resultAsin.rootAsin = dbAsin.rootAsin;
             asinQueryRsp.data.add(resultAsin);

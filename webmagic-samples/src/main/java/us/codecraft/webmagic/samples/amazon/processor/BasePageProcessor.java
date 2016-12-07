@@ -91,6 +91,9 @@ public class BasePageProcessor implements PageProcessor {
     @Autowired
     private IpsProxyHttpClientDownloader mIpsProxyHttpClientDownloader;
 
+    @Autowired
+    private NoSellService mNoSellService;
+
     @Override
     public synchronized void process(Page page) {
         sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
@@ -176,6 +179,9 @@ public class BasePageProcessor implements PageProcessor {
         batchAsin.progress = 1;
         batchAsin.type = 1;
         mBatchAsinService.update(batchAsin);
+
+        /* 添加到下架表里 */
+        mNoSellService.add(new Asin(site.basCode, asin));
 
     }
 

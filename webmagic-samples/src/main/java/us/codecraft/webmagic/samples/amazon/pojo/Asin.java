@@ -16,6 +16,14 @@ public class Asin extends BasePojo {
     public String siteCode;
     public String rootAsin;
 
+    public Asin() {
+    }
+
+    public Asin(String siteCode, String rootAsin) {
+        this.siteCode = siteCode;
+        this.rootAsin = rootAsin;
+    }
+
     @Override
     public String toString() {
         return "Asin{" +
