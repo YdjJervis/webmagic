@@ -3,15 +3,15 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.ReviewMonitorDao">
 
-    <resultMap id="ReviewMonitorResultMap" type="ReviewMonitor">
-        <id property="id" column="smr_id"/>
-        <result property="smrReviewId" column="rcr_review_id"/>
+    <resultMap id="ReviewMonitorResultMap" type="CustomerReview">
+        <id property="id" column="rcr_id"/>
+        <result property="reviewId" column="rcr_review_id"/>
         <result property="customerCode" column="bec_code"/>
         <result property="status" column="rcr_status"/>
         <result property="siteCode" column="bas_code"/>
-        <result property="smrMarked" column="rcr_marked"/>
-        <result property="smrParsed" column="rcr_parsed"/>
-        <result property="smrPriority" column="rcr_priority"/>
+        <result property="marked" column="rcr_marked"/>
+        <result property="parsed" column="rcr_parsed"/>
+        <result property="priority" column="rcr_priority"/>
         <result property="frequency" column="rcr_frequency"/>
         <result property="finishTime" column="rcr_finish_time"/>
         <result property="createTime" column="rcr_create_time"/>
@@ -19,7 +19,7 @@
     </resultMap>
 
     <!--添加到监控-->
-    <insert id="add" parameterType="ReviewMonitor">
+    <insert id="add" parameterType="CustomerReview">
         insert into relation_customer_review (
           rcr_review_id,
           bas_code,
@@ -28,11 +28,11 @@
           rcr_priority,
           rcr_frequency
         ) values (
-          #{smrReviewId},
+          #{reviewId},
           #{siteCode},
-          #{smrMarked},
-          #{smrParsed},
-          #{smrPriority},
+          #{marked},
+          #{parsed},
+          #{priority},
           #{frequency}
         )
     </insert>
@@ -52,19 +52,15 @@
         WHERE rcr_review_id = #{0} and bec_code = #{1};
     </select>
 
-    <select id="findHasFinished" resultMap="ReviewMonitorResultMap">
-        SELECT
-          *
-        FROM
-          relation_customer_review
-        WHERE
-          rcr_status = 2
+    <select id="findNeedGenerateBatch" resultMap="ReviewMonitorResultMap">
+        SELECT * FROM relation_customer_review
+        WHERE rcr_status = 2 AND CURRENT_TIMESTAMP - rcr_finish_time > rcr_frequency * 1000 * 3600
     </select>
 
-    <update id="update" parameterType="ReviewMonitor">
+    <update id="update" parameterType="CustomerReview">
         UPDATE relation_customer_review
-        SET bas_code = #{siteCode},rcr_marked = #{smrMarked},rcr_parsed = #{smrParsed},rcr_priority = #{smrPriority},rcr_frequency = #{frequency}
-        WHERE rcr_review_id = #{smrReviewId}
+        SET bas_code = #{siteCode},rcr_marked = #{marked},rcr_parsed = #{parsed},rcr_priority = #{priority},rcr_frequency = #{frequency}
+        WHERE rcr_review_id = #{reviewId}
     </update>
     <update id="updateByReviewIdCustomerCode">
         UPDATE
@@ -73,35 +69,35 @@
           bec_code = #{customerCode},
           bas_code = #{siteCode},
           rcr_status = #{status},
-          rcr_marked = #{smrMarked},
-          rcr_parsed = #{smrParsed},
-          rcr_priority = #{smrPriority},
+          rcr_marked = #{marked},
+          rcr_parsed = #{parsed},
+          rcr_priority = #{priority},
           rcr_frequency = #{frequency},
           rcr_finish_time = #{finishTime}
         WHERE
-          rcr_review_id = #{smrReviewId} and bec_code = #{customerCode}
+          rcr_review_id = #{reviewId} and bec_code = #{customerCode}
     </update>
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO relation_customer_review (
-          rcr_review_id,
-          bec_code,
-          bas_code,
-          rcr_marked,
-          rcr_parsed,
-          rcr_priority,
-          rcr_frequency
+        rcr_review_id,
+        bec_code,
+        bas_code,
+        rcr_marked,
+        rcr_parsed,
+        rcr_priority,
+        rcr_frequency
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-              #{item.smrReviewId},
-              #{item.customerCode},
-              #{item.siteCode},
-              #{item.smrMarked},
-              #{item.smrParsed},
-              #{item.smrPriority},
-              #{item.frequency}
+            #{item.reviewId},
+            #{item.customerCode},
+            #{item.siteCode},
+            #{item.marked},
+            #{item.parsed},
+            #{item.priority},
+            #{item.frequency}
             )
         </foreach>
     </insert>

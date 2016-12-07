@@ -81,7 +81,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         reviewRsp.data.number = batch.number;
         reviewRsp.data.totalCount = batchReviewList.size();
         reviewRsp.data.newCount = newCount;
-            reviewRsp.data.oldCount = batchReviewList.size() - newCount;
+        reviewRsp.data.oldCount = batchReviewList.size() - newCount;
 
         return reviewRsp.toJson();
     }

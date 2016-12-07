@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
 import us.codecraft.webmagic.samples.amazon.dao.ReviewMonitorDao;
-import us.codecraft.webmagic.samples.amazon.pojo.ReviewMonitor;
+import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Jervis
  */
-public class ReviewMonitorDaoTest extends SpringTestCase {
+public class CustomerReviewDaoTest extends SpringTestCase {
 
     @Autowired
     private ReviewMonitorDao mDao;
@@ -25,7 +25,7 @@ public class ReviewMonitorDaoTest extends SpringTestCase {
 
     @Test
     public void addTest() {
-        ReviewMonitor monitor = new ReviewMonitor("reviewID_001");
+        CustomerReview monitor = new CustomerReview("reviewID_001");
         mDao.add(monitor);
     }
 
@@ -41,11 +41,11 @@ public class ReviewMonitorDaoTest extends SpringTestCase {
 
     @Test
     public void updateTest(){
-        List<ReviewMonitor> list = mDao.find("R3M72LGQOWZPQJ");
+        List<CustomerReview> list = mDao.find("R3M72LGQOWZPQJ");
         if(CollectionUtils.isNotEmpty(list)){
-            for (ReviewMonitor monitor : list) {
+            for (CustomerReview monitor : list) {
                 monitor.updateTime = new Date();
-                monitor.smrMarked = 0;
+                monitor.marked = 0;
                 mDao.update(monitor);
             }
         }

@@ -30,7 +30,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
     @Autowired
     private BatchService mBatchService;
     @Autowired
-    private ReviewMonitorService mReviewMonitorService;
+    private CustomerReviewService mCustomerReviewService;
 
     @Override
     protected void dealOtherPage(Page page) {
@@ -60,9 +60,9 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
 
                 /*更新关系表下的review完成时间*/
                 Batch batch = mBatchService.findByBatchNumber(batchReview.batchNumber);
-                ReviewMonitor reviewMonitor = mReviewMonitorService.findByReviewIdCustomerCode(batchReview.reviewID, batch.customerCode);
-                reviewMonitor.finishTime = new Date();
-                mReviewMonitorService.updateByReviewIdCustomerCode(reviewMonitor);
+                CustomerReview customerReview = mCustomerReviewService.findByReviewIdCustomerCode(batchReview.reviewID, batch.customerCode);
+                customerReview.finishTime = new Date();
+                mCustomerReviewService.updateByReviewIdCustomerCode(customerReview);
             }
             mBatchReviewService.updateAll(batchReviewList);
 

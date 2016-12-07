@@ -21,7 +21,7 @@ import java.util.List;
 public class ReviewIdMonitor extends ParseMonitor {
 
     @Autowired
-    private ReviewMonitorService mMonitorService;
+    private CustomerReviewService mMonitorService;
     @Autowired
     private ReviewService mReviewService;
     @Autowired
@@ -40,8 +40,8 @@ public class ReviewIdMonitor extends ParseMonitor {
         /* 把所有已经转换成URL的监听Review的状态标记为已经转换 */
         for (Url url : urlList) {
             if (StringUtils.isNotEmpty(url.reviewId)) {
-                ReviewMonitor monitor = mMonitorService.findByReviewId(url.reviewId);
-                monitor.smrParsed = 1;
+                CustomerReview monitor = mMonitorService.findByReviewId(url.reviewId);
+                monitor.parsed = 1;
                 mMonitorService.update(monitor);
             }
         }
@@ -51,22 +51,22 @@ public class ReviewIdMonitor extends ParseMonitor {
     protected List<Url> getUrl(boolean isCrawlAll) {
         List<Url> urlList = new ArrayList<Url>();
 
-            List<ReviewMonitor> monitorList = mMonitorService.findAll();
-        for (ReviewMonitor monitor : monitorList) {
+            List<CustomerReview> monitorList = mMonitorService.findAll();
+        for (CustomerReview monitor : monitorList) {
             Url url = new Url();
-            Review review = mReviewService.findByReviewId(monitor.smrReviewId);
+            Review review = mReviewService.findByReviewId(monitor.reviewId);
 
             if (review == null) {
                 continue;
             }
 
             Site site = mSiteService.find(review.siteCode);
-            url.url = site.basSite + "/gp/customer-reviews/" + monitor.smrReviewId;
+            url.url = site.basSite + "/gp/customer-reviews/" + monitor.reviewId;
             url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
             url.type = 1;
             url.siteCode = site.basCode;
-            url.reviewId = monitor.smrReviewId;
-            url.priority = monitor.smrPriority;
+            url.reviewId = monitor.reviewId;
+            url.priority = monitor.priority;
 
             urlList.add(url);
         }

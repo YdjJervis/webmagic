@@ -1,7 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.dao;
 
 import org.springframework.stereotype.Repository;
-import us.codecraft.webmagic.samples.amazon.pojo.ReviewMonitor;
+import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
 import java.util.List;
@@ -13,17 +13,17 @@ import java.util.List;
  * @date 2016/10/11 18:00
  */
 @Repository
-public interface ReviewMonitorDao extends BaseDao<ReviewMonitor> {
+public interface ReviewMonitorDao extends BaseDao<CustomerReview> {
 
-    ReviewMonitor findByReviewId(String reviewId);
+    CustomerReview findByReviewId(String reviewId);
 
-    ReviewMonitor findByReviewIdAndCustomerCode(String reviewId, String customerCode);
+    CustomerReview findByReviewIdAndCustomerCode(String reviewId, String customerCode);
 
-    void updateByReviewIdCustomerCode(ReviewMonitor reviewMonitor);
+    void updateByReviewIdCustomerCode(CustomerReview customerReview);
 
     /**
      * 查询已经完成的数据
      */
-    List<ReviewMonitor> findHasFinished();
+    List<CustomerReview> findNeedGenerateBatch();
 
 }

@@ -36,7 +36,7 @@ public class BatchService {
     private UrlService mUrlService;
 
     @Autowired
-    private ReviewMonitorService mReviewMonitorService;
+    private CustomerReviewService mCustomerReviewService;
 
     @Autowired
     private BatchReviewService mBatchReviewService;
@@ -158,7 +158,7 @@ public class BatchService {
 
         /* 把已经在监控中的和没有监控中的分开 */
         for (Review review : reviewList) {
-            if (mReviewMonitorService.isExistInCustomerCode(review.reviewId, customerCode)) {
+            if (mCustomerReviewService.isExistInCustomerCode(review.reviewId, customerCode)) {
                 monitoringList.add(review);
             } else {
                 newList.add(review);
@@ -167,54 +167,54 @@ public class BatchService {
 
         mLogger.info("监控的Review列表大小：新的 " + newList.size() + " 已经在监控的 " + monitoringList.size());
         /* 生成批次单详情列表，已经爬取过的和未爬取的做不同的处理 */
-        List<BatchReview> brList = new ArrayList<BatchReview>();
+        List<BatchReview> batchReviewList = new ArrayList<BatchReview>();
 
         /* 已爬取的 转换成批次详单*/
         for (Review review : monitoringList) {
             BatchReview batchReview = initBatchReview(batch, review);
             batchReview.crawled = 1;
-            brList.add(batchReview);
+            batchReviewList.add(batchReview);
         }
 
         /* 未爬取的 转换成批次详单*/
         for (Review review : newList) {
             BatchReview batchReview = initBatchReview(batch, review);
-            brList.add(batchReview);
+            batchReviewList.add(batchReview);
         }
 
-        mBatchReviewService.addAll(brList);
+        mBatchReviewService.addAll(batchReviewList);
         add(batch);
 
         /* 把未爬取的 和 已经爬取的 都转换成监控列表入库 */
-        List<ReviewMonitor> reviewMonitorList = new ArrayList<ReviewMonitor>();
+        List<CustomerReview> customerReviewList = new ArrayList<CustomerReview>();
         for (Review review : newList) {
-            ReviewMonitor reviewMonitor = new ReviewMonitor(review.reviewId);
-            reviewMonitor.customerCode = customerCode;
-            reviewMonitor.siteCode = review.siteCode;
-            reviewMonitor.smrReviewId = review.reviewId;
-            reviewMonitor.smrPriority = review.priority;
-            reviewMonitor.frequency = review.frequency;
-            reviewMonitorList.add(reviewMonitor);
+            CustomerReview customerReview = new CustomerReview(review.reviewId);
+            customerReview.customerCode = customerCode;
+            customerReview.siteCode = review.siteCode;
+            customerReview.reviewId = review.reviewId;
+            customerReview.priority = review.priority;
+            customerReview.frequency = review.frequency;
+            customerReviewList.add(customerReview);
         }
-        mReviewMonitorService.addAll(reviewMonitorList);
+        mCustomerReviewService.addAll(customerReviewList);
 
         for (Review review : monitoringList) {
-            ReviewMonitor monitor = mReviewMonitorService.findByReviewIdCustomerCode(review.reviewId, customerCode);
+            CustomerReview monitor = mCustomerReviewService.findByReviewIdCustomerCode(review.reviewId, customerCode);
             boolean isUpdate = false;
-            if (review.priority != monitor.smrPriority) {
-                monitor.smrPriority = review.priority;
+            if (review.priority != monitor.priority) {
+                monitor.priority = review.priority;
                 isUpdate = true;
             }
             if (review.frequency != monitor.frequency) {
                 monitor.frequency = review.frequency;
                 isUpdate = true;
             }
-            if(review.marked != monitor.smrMarked) {
-                monitor.smrMarked = review.marked;
+            if(review.marked != monitor.marked) {
+                monitor.marked = review.marked;
                 isUpdate = true;
             }
             if (isUpdate) {
-                mReviewMonitorService.updateByReviewIdCustomerCode(monitor);
+                mCustomerReviewService.updateByReviewIdCustomerCode(monitor);
             }
         }
 
