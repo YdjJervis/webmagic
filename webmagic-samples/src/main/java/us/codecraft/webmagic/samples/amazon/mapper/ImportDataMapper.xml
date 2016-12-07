@@ -20,6 +20,6 @@
           *
         FROM
           test_asin_source
-        limit 4000
+        limit 10
     </select>
 </mapper>

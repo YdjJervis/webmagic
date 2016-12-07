@@ -22,7 +22,6 @@ import us.codecraft.webmagic.samples.base.service.UserAgentService;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.utils.UrlUtils;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,17 +39,7 @@ public class BasePageProcessor implements PageProcessor {
 
     public static final String URL_EXTRA = "url_extra";
 
-    private Set<Integer> mSet = new HashSet<Integer>() {
-        {
-            add(0);
-            add(402);
-            add(403);
-            add(407);
-            add(417);
-            add(429);
-            add(503);
-        }
-    };
+    private Set<Integer> mSet = Sets.newHashSet(0, 200, 402, 403, 404, 407, 417, 429, 503);
 
     @Autowired
     protected UrlService mUrlService;
@@ -108,7 +97,7 @@ public class BasePageProcessor implements PageProcessor {
                 String html = proxyCaptcha(page);
                 if (StringUtils.isNotEmpty(html)) {
                     page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(html, page.getRequest().getUrl())));
-                    if(StringUtils.isNotEmpty(getValidateUrl(page))) {
+                    if (StringUtils.isNotEmpty(getValidateUrl(page))) {
                         sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码失败.");
                         page.setStatusCode(0);
                     } else {
@@ -147,7 +136,7 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public us.codecraft.webmagic.Site getSite() {
         sLogger.info("getSite()::");
-        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(Sets.newHashSet(200, 402, 403, 404, 407, 417, 429, 503));
+        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(mSet);
         return mSite;
     }
 
