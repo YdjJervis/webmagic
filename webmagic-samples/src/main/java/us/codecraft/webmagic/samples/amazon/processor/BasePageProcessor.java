@@ -242,8 +242,7 @@ public class BasePageProcessor implements PageProcessor {
         String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
         String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
         String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
-        String urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
-        return urlStr;
+        return domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
     }
 
     private String getValidateUrl(Page page) {

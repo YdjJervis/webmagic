@@ -49,7 +49,7 @@ public class GenerateBatchMonitor implements ScheduledTask {
         /*筛选出需要生成批次的数据*/
         for (ReviewMonitor reviewMonitor : reviewMonitorList) {
             /*计算上一次完成时间与当前时间间隔*/
-            Long sleepTime = (new Date().getTime() - reviewMonitor.finishTime.getTime()) / (1000 * 60 * 60);
+            double sleepTime = (double)(new Date().getTime() - reviewMonitor.finishTime.getTime()) / (1000 * 60 * 60);
             if (reviewMonitor.status == 2 && sleepTime > reviewMonitor.frequency) {
                 need2GenerateBatchList.add(reviewMonitor);
                 /*统计需要生成新的批次号的客户码*/
@@ -103,5 +103,6 @@ public class GenerateBatchMonitor implements ScheduledTask {
             }
         }
 
+        /*更新客户review关系中的看爬取状态为未爬取*/
     }
 }
