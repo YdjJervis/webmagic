@@ -72,6 +72,10 @@ public class BatchGenerateMonitor implements ScheduledTask {
                 batchReview.batchNumber = batch.number;
                 batchReview.siteCode = customerReview.siteCode;
                 needAddList.add(batchReview);
+
+                /*将重新生成批次的customer-review关系表的数据爬取状态更新为未爬取*/
+                customerReview.status = 0;
+                mCustomerReviewService.updateByReviewIdCustomerCode(customerReview);
             }
 
             /*添加创建详单信息*/
