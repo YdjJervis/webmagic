@@ -9,6 +9,7 @@ import us.codecraft.webmagic.samples.amazon.service.*;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,6 +71,8 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             batchAsin.siteCode = asin.siteCode;
             batchAsin.asin = asin.asin;
             batchAsin.star = asin.star;
+            batchAsin.type = 0;
+            batchAsin.status = 0;
 
             AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin.asin);
             /* 已经爬取过的商品，把爬取完成的大字段同步过来 */
@@ -84,12 +87,28 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             if (mNoSellService.isExist(new Asin(asin.siteCode, asin.asin))) {
                 crawledNum++;
                 setCrawledStatus(batchAsin);
+                batchAsin.type = 0;
             }
 
             parsedBatchAsinList.add(batchAsin);
         }
 
-        Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedBatchAsinList);
+        Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedBatchAsinList, 0);
+
+        /* 全部都是之前已经爬取过的，就直接跟新批次号各个状态 */
+        boolean isAllCrawled = true;
+        for (BatchAsin batchAsin : parsedBatchAsinList) {
+            if (batchAsin.crawled == 0) {
+                isAllCrawled = false;
+                break;
+            }
+        }
+        if (isAllCrawled) {
+            batch.startTime = batch.finishTime = new Date();
+            batch.status = 2;
+            batch.progress = 1;
+            mBatchService.update(batch);
+        }
 
         /* 统计新添加的ASIN的个数 */
         List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batch.number);
@@ -117,9 +136,9 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
      */
     private void setCrawledStatus(BatchAsin batchAsin) {
         batchAsin.crawled = 1;
-        batchAsin.status = 3;
+        batchAsin.status = 4;
         batchAsin.progress = 1;
-        batchAsin.type = 2;
+        batchAsin.type = 1;
     }
 
     @Override

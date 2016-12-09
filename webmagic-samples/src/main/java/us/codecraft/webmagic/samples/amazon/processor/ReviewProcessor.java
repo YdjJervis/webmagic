@@ -153,7 +153,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     @Override
     public void execute() {
         sLogger.info("开始执行Review爬取任务...");
-        List<Url> urlList = mUrlService.find(0);
+        List<Url> urlList = mUrlService.find(1);
         startToCrawl(urlList);
     }
 }

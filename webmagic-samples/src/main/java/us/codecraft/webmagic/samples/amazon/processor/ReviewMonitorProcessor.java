@@ -60,7 +60,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
 
                 /*更新关系表下的review完成时间*/
                 Batch batch = mBatchService.findByBatchNumber(batchReview.batchNumber);
-                CustomerReview customerReview = mCustomerReviewService.findByReviewIdCustomerCode(batchReview.reviewID, batch.customerCode);
+                CustomerReview customerReview = mCustomerReviewService.findCustomerReview(batch.customerCode, batchReview.reviewID);
                 customerReview.finishTime = new Date();
                 mCustomerReviewService.updateByReviewIdCustomerCode(customerReview);
             }

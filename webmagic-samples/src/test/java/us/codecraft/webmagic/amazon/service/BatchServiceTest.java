@@ -33,21 +33,7 @@ public class BatchServiceTest extends SpringTestCase {
             list.add(batchAsin);
         }
 
-        mService.addBatch("AA", list);
-    }
-
-    @Test
-    public void testReviewMonitorBatch() {
-        List<Review> list = new ArrayList<Review>();
-
-        Review review = new Review();
-        review.priority = 1;
-        review.reviewId = "R2V7LL01LD8CRA";
-        review.siteCode = "UK";
-
-        list.add(review);
-
-        mService.addMonitor("BB", list);
+        mService.addBatch("AA", list, 0);
     }
 
     @Test
@@ -58,7 +44,7 @@ public class BatchServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void testFindByStatus(){
+    public void testFindByStatus() {
         System.out.println(mService.findByStatus(0));
     }
 }

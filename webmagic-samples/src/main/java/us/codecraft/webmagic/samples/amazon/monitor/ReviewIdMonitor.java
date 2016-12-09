@@ -28,7 +28,6 @@ public class ReviewIdMonitor extends ParseMonitor {
     private SiteService mSiteService;
     @Autowired
     private UrlService mUrlService;
-    @Autowired
 
     @Override
     public void execute() {
@@ -40,7 +39,7 @@ public class ReviewIdMonitor extends ParseMonitor {
         /* 把所有已经转换成URL的监听Review的状态标记为已经转换 */
         for (Url url : urlList) {
             if (StringUtils.isNotEmpty(url.reviewId)) {
-                CustomerReview monitor = mMonitorService.findByReviewId(url.reviewId);
+                CustomerReview monitor = mMonitorService.findCustomerReview("",url.reviewId);
                 monitor.parsed = 1;
                 mMonitorService.update(monitor);
             }
@@ -51,7 +50,7 @@ public class ReviewIdMonitor extends ParseMonitor {
     protected List<Url> getUrl(boolean isCrawlAll) {
         List<Url> urlList = new ArrayList<Url>();
 
-            List<CustomerReview> monitorList = mMonitorService.findAll();
+        List<CustomerReview> monitorList = mMonitorService.findAll();
         for (CustomerReview monitor : monitorList) {
             Url url = new Url();
             Review review = mReviewService.findByReviewId(monitor.reviewId);

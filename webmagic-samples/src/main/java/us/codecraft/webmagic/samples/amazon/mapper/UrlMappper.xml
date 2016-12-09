@@ -60,7 +60,7 @@
 
     <!-- 根据ASIN码查询全量爬取的URL -->
     <select id="findByAsin" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE bo_batch_num = #{0} and bas_code = #{1} AND saa_asin = #{2} AND sau_type = 0;
+        SELECT * FROM spider_amazon_url WHERE bo_batch_num = #{0} and bas_code = #{1} AND saa_asin = #{2} AND sau_type = 1;
     </select>
 
     <!--查询某个ASIN更新爬取的URL列表-->
@@ -94,6 +94,11 @@
     <select id="findByUrlMd5" resultMap="UrlResultMap">
         select * from spider_amazon_url
         WHERE sau_url_md5 = #{0};
+    </select>
+
+    <select id="findByBatchNum" resultMap="UrlResultMap">
+        select * from spider_amazon_url
+        WHERE bo_batch_num = #{0};
     </select>
 
     <!-- 设置URL的状态为未爬取 -->

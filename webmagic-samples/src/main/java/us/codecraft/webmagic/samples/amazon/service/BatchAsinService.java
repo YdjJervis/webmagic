@@ -72,15 +72,28 @@ public class BatchAsinService {
         }
     }
 
-    public List<BatchAsin> findByStatus(int... status) {
-        List<BatchAsin> list = new ArrayList<BatchAsin>();
-        for (int sta : status) {
-            list.addAll(mBatchAsinDao.findByStatus(sta));
-        }
-        return list;
+    public List<BatchAsin> findByStatus(int status) {
+        return mBatchAsinDao.findByStatus(status);
+    }
+
+    /**
+     * @return 没有爬取首页的详单列表
+     */
+    public List<BatchAsin> findNotCrawledMainPage(){
+        return mBatchAsinDao.findNotCrawledMainPage();
+    }
+
+    public List<BatchAsin> findNotCrawledReview(){
+        return mBatchAsinDao.findNotCrawledReview();
+    }
+
+    public List<BatchAsin> findNotUpdatedReview(){
+        return mBatchAsinDao.findNotUpdatedReview();
     }
 
     public float findAverageProgress(String batchNumber){
         return mBatchAsinDao.findAverageProgress(batchNumber);
     }
+
+
 }

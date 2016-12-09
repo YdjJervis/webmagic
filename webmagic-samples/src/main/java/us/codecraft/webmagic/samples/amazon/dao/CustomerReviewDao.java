@@ -13,11 +13,9 @@ import java.util.List;
  * @date 2016/10/11 18:00
  */
 @Repository
-public interface ReviewMonitorDao extends BaseDao<CustomerReview> {
+public interface CustomerReviewDao extends BaseDao<CustomerReview> {
 
-    CustomerReview findByReviewId(String reviewId);
-
-    CustomerReview findByReviewIdAndCustomerCode(String reviewId, String customerCode);
+    CustomerReview findCustomerReview(String customerCode, String reviewId);
 
     void updateByReviewIdCustomerCode(CustomerReview customerReview);
 

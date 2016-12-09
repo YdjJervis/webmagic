@@ -16,6 +16,8 @@ public class CustomerAsin extends BasePojo {
     public String siteCode;
     public String asin;
     public int status = 1;
+    public int priority;
+    public String star;
     public Date syncTime;
 
     public CustomerAsin() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.ReviewMonitorDao">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.CustomerReviewDao">
 
     <resultMap id="ReviewMonitorResultMap" type="CustomerReview">
         <id property="id" column="rcr_id"/>
@@ -22,34 +22,34 @@
     <insert id="add" parameterType="CustomerReview">
         insert into relation_customer_review (
           rcr_review_id,
+          bec_code,
           bas_code,
           rcr_marked,
           rcr_parsed,
           rcr_priority,
-          rcr_frequency
+          rcr_frequency,
+          rcr_finish_time
         ) values (
           #{reviewId},
+          #{customerCode},
           #{siteCode},
           #{marked},
           #{parsed},
           #{priority},
-          #{frequency}
+          #{frequency},
+          #{finishTime}
         )
     </insert>
 
     <!--根据ReviewId查询记录-->
-    <select id="findByReviewId" resultMap="ReviewMonitorResultMap">
+    <select id="findCustomerReview" resultMap="ReviewMonitorResultMap">
         SELECT * FROM relation_customer_review
-        WHERE rcr_review_id = #{0};
+        WHERE bec_code = #{0} and rcr_review_id = #{1};
     </select>
 
     <select id="findAll" resultMap="ReviewMonitorResultMap">
         SELECT * FROM relation_customer_review
         WHERE rcr_marked = 1 AND rcr_parsed = 0;
-    </select>
-    <select id="findByReviewIdAndCustomerCode" resultMap="ReviewMonitorResultMap">
-        SELECT * FROM relation_customer_review
-        WHERE rcr_review_id = #{0} and bec_code = #{1};
     </select>
 
     <select id="findNeedGenerateBatch" resultMap="ReviewMonitorResultMap">

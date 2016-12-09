@@ -59,6 +59,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             /* 改变批次详单 */
             BatchAsin dbBatchAsin = mBatchAsinService.findAllByAsin(url.batchNum, site.basCode, asinStr);
             dbBatchAsin.status = 2;
+            dbBatchAsin.type = 1;
             mBatchAsinService.update(dbBatchAsin);
 
             /* 添加Asin到归档 */
@@ -66,26 +67,6 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             asin.siteCode = site.basCode;
             asin.rootAsin = rootAsin;
             mAsinService.add(asin);
-
-            /**
-             * 如果该rootAsin已经存在，那么久把该asin记录做如下修改：
-             * 1，已经转换成了全量爬取URL状态，
-             * 2，不需要更新爬取状态
-             */
-            /*if (mAsinService.haveSameRootAsin(rootAsin)) {
-                mAsinService.setParsedNotUpdate(asin);
-
-                *//* 二期业务：把所有根节点相同的ASIN的状态改变一下 *//*
-                List<BatchAsin> batchAsinList = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, site.basCode, asinStr);
-                for (BatchAsin batchAsin : batchAsinList) {
-                    batchAsin.rootAsin = rootAsin;
-                    batchAsin.progress = 1;
-                    batchAsin.type = 3;
-                    batchAsin.extra = "SRA";
-                    batchAsin.startTime = batchAsin.finishTime = new Date();
-                }
-                mBatchAsinService.updateAll(batchAsinList);
-            }*/
 
             /* 删除爬取的URL */
             mUrlService.deleteOne(url.batchNum, site.basCode, asinStr);
@@ -110,7 +91,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
     @Override
     public void execute() {
         sLogger.info("开始执行Root Asin爬取任务...");
-        List<Url> urlList = mUrlService.find(3);
+        List<Url> urlList = mUrlService.find(0);
         startToCrawl(urlList);
     }
 }

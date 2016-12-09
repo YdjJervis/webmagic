@@ -46,6 +46,18 @@
         SELECT SUM(boa_progress)/COUNT(*) FROM batch_order_asin WHERE bo_batch_num = #{0};
     </select>
 
+    <select id="findNotCrawledMainPage" resultMap="BatchAsinResultMap">
+        SELECT * FROM batch_order_asin WHERE boa_status = 0 and boa_type = 0;
+    </select>
+
+    <select id="findNotCrawledReview" resultMap="BatchAsinResultMap">
+        SELECT * FROM batch_order_asin WHERE boa_status = 2 and boa_type = 1;
+    </select>
+
+    <select id="findNotUpdatedReview" resultMap="BatchAsinResultMap">
+        SELECT * FROM batch_order_asin WHERE boa_status = 4 and boa_type = 2;
+    </select>
+
     <update id="update" parameterType="BatchAsin">
         UPDATE batch_order_asin SET
         boa_root_asin = #{rootAsin},

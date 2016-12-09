@@ -19,7 +19,7 @@ public class CustomerReviewServiceTest extends SpringTestCase {
 
     @Test
     public void testUpdate(){
-        CustomerReview monitor = mCustomerReviewService.findByReviewId("123");
+        CustomerReview monitor = mCustomerReviewService.findCustomerReview("","123");
         monitor.marked = 0;
         monitor.parsed = 1;
         mCustomerReviewService.update(monitor);

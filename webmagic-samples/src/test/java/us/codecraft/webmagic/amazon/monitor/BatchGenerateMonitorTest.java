@@ -20,4 +20,9 @@ public class BatchGenerateMonitorTest extends SpringTestCase {
         mBatchGenerateMonitor.generateReviewMonitorBatch();
     }
 
+    @Test
+    public void generateReviewUpdateBatch() {
+        mBatchGenerateMonitor.generateReviewUpdateBatch();
+    }
+
 }

@@ -24,4 +24,10 @@ public interface BatchAsinDao extends BaseDao<BatchAsin> {
     List<BatchAsin> findByStatus(int sta);
 
     float findAverageProgress(String batchNumber);
+
+    List<BatchAsin> findNotCrawledMainPage();
+
+    List<BatchAsin> findNotCrawledReview();
+
+    List<BatchAsin> findNotUpdatedReview();
 }

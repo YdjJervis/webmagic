@@ -55,4 +55,7 @@ public class CustomerAsinService {
     }
 
 
+    public List<CustomerAsin> findNeedGenerateBatch() {
+        return mCustomerAsinDao.findNeedGenerateBatch();
+    }
 }

@@ -22,6 +22,7 @@ import us.codecraft.webmagic.samples.base.service.UserAgentService;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.utils.UrlUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +40,8 @@ public class BasePageProcessor implements PageProcessor {
 
     public static final String URL_EXTRA = "url_extra";
 
-    private Set<Integer> mSet = Sets.newHashSet(0, 200, 402, 403, 404, 407, 417, 429, 503);
+    private Set<Integer> mSet = Sets.newHashSet(0, 402, 403, 404, 407, 417, 429, 503);
+    private Set<Integer> mDealSet = Sets.newHashSet(0, 200, 402, 403, 404, 407, 417, 429, 503);
 
     @Autowired
     protected UrlService mUrlService;
@@ -118,7 +120,7 @@ public class BasePageProcessor implements PageProcessor {
     @Override
     public us.codecraft.webmagic.Site getSite() {
         sLogger.info("getSite()::");
-        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(mSet);
+        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(mDealSet);
         return mSite;
     }
 
@@ -145,10 +147,11 @@ public class BasePageProcessor implements PageProcessor {
         String asin = extractAsin(page);
         mAsinService.updateAndDeleteUrl(site.basCode, asin);
 
-        /* 二期业务：如果页面不存在，就把所有的记录的进度更新成1，type改成1(全量爬取完毕) */
+        /* 二期业务：如果页面不存在，就把所有的记录的进度更新成1，type改成2(全量爬取完毕) */
         BatchAsin batchAsin = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, site.basCode, asin);
+        batchAsin.status = 4;
         batchAsin.progress = 1;
-        batchAsin.type = 1;
+        batchAsin.finishTime = new Date();
         mBatchAsinService.update(batchAsin);
 
         /* 添加到下架表里 */
@@ -346,7 +349,7 @@ public class BasePageProcessor implements PageProcessor {
     /**
      * 判断解析内容是不是为空，如果出现验证码则打码返回结果,更新page对应状态
      */
-    private Page IsNotNullAndProxyCaptcha(Page page){
+    private Page IsNotNullAndProxyCaptcha(Page page) {
         if (isNullHtml(page)) {
             /*通过代理解析url返回内容为空，则将状态码改为402，让其重新解析*/
             sLogger.info("parse " + page.getUrl().get() + " content is empty.");
@@ -354,7 +357,7 @@ public class BasePageProcessor implements PageProcessor {
         } else {
             if (isValidatePage(page)) {
                 IpsInfoManage ipsInfoManage = (IpsInfoManage) page.getRequest().getExtra("proxyIpInfo");
-                if(ipsInfoManage != null) {
+                if (ipsInfoManage != null) {
                     sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，需要对代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码");
                     String html = proxyCaptcha(page);
                     if (StringUtils.isNotEmpty(html)) {

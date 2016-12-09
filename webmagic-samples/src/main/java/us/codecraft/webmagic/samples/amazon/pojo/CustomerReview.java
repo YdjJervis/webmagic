@@ -17,7 +17,7 @@ public class CustomerReview extends BasePojo {
     /**
      * 对应客户下的review状态
      */
-    public int status;
+    public int status = 2;
     public String siteCode;
     public int marked = 1;
     public int parsed;

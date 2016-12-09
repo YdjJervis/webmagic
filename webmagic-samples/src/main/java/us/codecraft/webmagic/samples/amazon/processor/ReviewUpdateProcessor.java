@@ -7,19 +7,12 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
-import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.AsinService;
-import us.codecraft.webmagic.samples.amazon.service.UrlService;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 import us.codecraft.webmagic.selector.Selectable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Jervis
@@ -33,10 +26,23 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
     @Autowired
     private UrlService mUrlService;
     @Autowired
+    private UrlHistoryService mUrlHistoryService;
+    @Autowired
     private AsinService mAsinService;
+    @Autowired
+    private AsinRootAsinService mAsinRootAsinService;
+    @Autowired
+    private BatchService mBatchService;
 
     @Override
     protected void dealReview(Page page) {
+
+        Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
+        /* 更改开始爬取的时间 */
+        Date currentTime = new Date();
+        if (batch.startTime == null) {
+            batch.startTime = currentTime;
+        }
 
         String filter = UrlUtils.getValue(page.getUrl().get(), "filterByStar");
 
@@ -47,9 +53,12 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
         sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 
-        Asin byAsin = mAsinService.findByAsin(siteCode, asin);
-        List<StarReviewMap> starReviewMapList = new Gson().fromJson(byAsin.extra, new TypeToken<List<StarReviewMap>>() {
+        AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin);
+        Asin dbAsin = mAsinService.findByAsin(siteCode, asinRootAsin.rootAsin);
+        List<StarReviewMap> starReviewMapList = new Gson().fromJson(dbAsin.extra, new TypeToken<List<StarReviewMap>>() {
         }.getType());
+        sLogger.info("全量爬取时候的星级对应的最后评论：");
+        sLogger.info(dbAsin.extra);
 
         /* 把所有星级评论的ID加入Set集合 */
         Set<String> lastReviewSet = new HashSet<String>();
@@ -103,9 +112,32 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         }
 
         if (!needCrawlNextPage) {
-            /* 不需要继续翻页，代表该星级的更新爬取已经完成，就删除该星级的Url */
-            mUrlService.deleteUpdateCrawl(siteCode, asin, filter);
+            /* 不需要继续翻页，删除该星级对应的Url */
+            List<Url> updateCrawlList = mUrlService.findUpdateCrawl(siteCode, asin);
+            List<Url> deleteList = new ArrayList<Url>();
+
+            /* 找出该过滤器的所有URL */
+            for (Url url : updateCrawlList) {
+                if (url.url.contains(filter)) {
+                    deleteList.add(url);
+                }
+            }
+
+            /* 添加到历史表 */
+            mUrlHistoryService.addAll(deleteList);
+
+            /* 删除爬取表 */
+            for (Url url : deleteList) {
+                mUrlService.deleteOne(url.batchNum, url.siteCode, url.asin);
+            }
         }
+
+        /* 如果这个批次没有URL了，那就把该批次改成爬取完成状态 */
+        if (mUrlService.findByBatchNum(getUrl(page).batchNum).size() == 0) {
+            batch.status = 6;
+            batch.finishTime = currentTime;
+        }
+        mBatchService.update(batch);
     }
 
     @Override

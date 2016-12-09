@@ -172,8 +172,7 @@ public class UrlService {
             dbBtchAsin.extra = asin.extra;
             dbBtchAsin.finishTime = currentTime;
             dbBtchAsin.progress = 1;
-            dbBtchAsin.type = 2;
-            dbBtchAsin.status = 3;
+            dbBtchAsin.status = 4;
 
             /* 更新客户-Asin关系的同步时间 */
             mLogger.info("同步客户关系表记录时间：" + batch.customerCode + " " + dbBtchAsin.siteCode + " " + dbBtchAsin.asin);
@@ -242,31 +241,6 @@ public class UrlService {
         return mUrlDao.findMonitorUrlList();
     }
 
-    /**
-     * 某个星级的更新爬取完毕，删除该星级该过滤器的所有更新爬取的链接
-     *
-     * @param asin   ASIN码
-     * @param filter Url中的过滤器
-     */
-    public void deleteUpdateCrawl(String siteCode, String asin, String filter) {
-        List<Url> list = findUpdateCrawl(siteCode, asin);
-        if (CollectionUtils.isNotEmpty(list)) {
-            for (Url url : list) {
-                if (url.url.contains(filter)) {
-                    mUrlDao.delete(url.id);
-                }
-            }
-        }
-
-        /*删除后再检查一次更新爬取的Url是否为空，如果为空，就标记
-        该ASIN的更新爬取状态为0，表示可以继续下一次的更新爬取了*/
-        if (CollectionUtils.isEmpty(findUpdateCrawl(siteCode, asin))) {
-            Asin byAsin = mAsinService.findByAsin("", asin);
-//            byAsin.saaIsUpdatting = 0;
-            mAsinService.udpate(byAsin);
-        }
-    }
-
     public List<Url> findUpdateCrawl(String siteCode, String asin) {
         return mUrlDao.findUpdateCrawl(siteCode, asin);
     }
@@ -309,5 +283,9 @@ public class UrlService {
      */
     public void updateMonitorPriority(String reviewID, int priority) {
         mUrlDao.updateMonitorPriority(reviewID, priority);
+    }
+
+    public List<Url> findByBatchNum(String batchNumber){
+        return mUrlDao.findByBatchNum(batchNumber);
     }
 }

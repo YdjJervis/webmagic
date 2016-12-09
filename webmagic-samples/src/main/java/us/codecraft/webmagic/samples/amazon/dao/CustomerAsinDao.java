@@ -18,4 +18,6 @@ public interface CustomerAsinDao extends BaseDao<CustomerAsin> {
     List<CustomerAsin> findByCustomerCode(String customerCode);
 
     CustomerAsin findByObject(CustomerAsin customerAsin);
+
+    List<CustomerAsin> findNeedGenerateBatch();
 }

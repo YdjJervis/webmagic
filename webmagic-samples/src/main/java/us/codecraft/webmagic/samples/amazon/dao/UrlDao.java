@@ -57,4 +57,6 @@ public interface UrlDao extends BaseDao<Url> {
     void updateMonitorPriority(String reviewID, int priority);
 
     void deleteOne(String batchNum, String siteCode, String asin);
+
+    List<Url> findByBatchNum(String batchNumber);
 }

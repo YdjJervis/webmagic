@@ -69,10 +69,6 @@ public class AsinService {
         return mAsinDao.findAll();
     }
 
-    public void udpate(Asin asin) {
-        mAsinDao.update(asin);
-    }
-
     public Asin findByAsin(String siteCode, String asin) {
         return mAsinDao.findByAsin(siteCode, asin);
     }

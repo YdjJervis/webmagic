@@ -6,11 +6,9 @@ import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import us.codecraft.webmagic.samples.amazon.pojo.Batch;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchReview;
+import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.service.BatchReviewService;
-import us.codecraft.webmagic.samples.amazon.service.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.CustomerReviewService;
 import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 
 import javax.jws.WebService;
@@ -27,13 +25,10 @@ import java.util.List;
 public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
     @Autowired
-    private BatchService mBatchService;
-
-    @Autowired
-    private BatchReviewService mBatchReviewService;
-
-    @Autowired
     private ReviewService mReviewService;
+
+    @Autowired
+    private CustomerReviewService mCustomerReviewService;
 
     public String addToMonitor(String json) {
         BaseRspParam baseRspParam = auth(json);
@@ -54,34 +49,26 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         reviewRsp.status = baseRspParam.status;
         reviewRsp.msg = baseRspParam.msg;
 
-        List<Review> parsedReviewList = new ArrayList<Review>();
-
+        int crawledNum = 0;
+        List<CustomerReview> customerReviewList = new ArrayList<CustomerReview>();
         for (ReviewReq.Review review : reviewReq.data) {
-            Review parsedReview = new Review();
-            parsedReview.reviewId = review.reviewID;
-            parsedReview.siteCode = review.siteCode;
-            parsedReview.priority = review.priority;
-            parsedReview.frequency = review.frequency;
-            parsedReview.marked = review.marked;
-            parsedReviewList.add(parsedReview);
-        }
+            CustomerReview customerReview = new CustomerReview();
+            customerReview.customerCode = reviewReq.cutomerCode;
+            customerReview.siteCode = review.siteCode;
+            customerReview.reviewId = review.reviewID;
+            customerReview.priority = review.priority;
+            customerReview.frequency = review.frequency;
 
-        Batch batch = mBatchService.addMonitor(reviewRsp.cutomerCode, parsedReviewList);
-
-        List<BatchReview> batchReviewList = mBatchReviewService.findAllByBatchNum(batch.number);
-
-        /* 统计新添加的ASIN的个数 */
-        int newCount = 0;
-        for (BatchReview batchReview : batchReviewList) {
-            if (batchReview.crawled == 0) {
-                newCount++;
+            if (mCustomerReviewService.isExist(reviewReq.cutomerCode, review.reviewID)) {
+                crawledNum++;
             }
         }
 
-        reviewRsp.data.number = batch.number;
-        reviewRsp.data.totalCount = batchReviewList.size();
-        reviewRsp.data.newCount = newCount;
-        reviewRsp.data.oldCount = batchReviewList.size() - newCount;
+        mCustomerReviewService.addAll(customerReviewList);
+
+        reviewRsp.data.totalCount = customerReviewList.size();
+        reviewRsp.data.newCount = customerReviewList.size() - crawledNum;
+        reviewRsp.data.oldCount = crawledNum;
 
         return reviewRsp.toJson();
     }

@@ -3,7 +3,7 @@ package us.codecraft.webmagic.samples.amazon.service;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.dao.ReviewMonitorDao;
+import us.codecraft.webmagic.samples.amazon.dao.CustomerReviewDao;
 import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
 
 import java.util.ArrayList;
@@ -19,19 +19,19 @@ import java.util.List;
 public class CustomerReviewService {
 
     @Autowired
-    ReviewMonitorDao mReviewMonitorDao;
+    CustomerReviewDao mCustomerReviewDao;
 
     public void add(String reviewId) {
         CustomerReview customerReview = new CustomerReview(reviewId);
-        mReviewMonitorDao.add(customerReview);
+        mCustomerReviewDao.add(customerReview);
     }
 
     public void update(CustomerReview monitor) {
-        mReviewMonitorDao.update(monitor);
+        mCustomerReviewDao.update(monitor);
     }
 
     public void updateByReviewIdCustomerCode(CustomerReview customerReview) {
-        mReviewMonitorDao.updateByReviewIdCustomerCode(customerReview);
+        mCustomerReviewDao.updateByReviewIdCustomerCode(customerReview);
     }
 
     /**
@@ -39,30 +39,22 @@ public class CustomerReviewService {
      * 成Url的列表
      */
     public List<CustomerReview> findAll() {
-        return mReviewMonitorDao.findAll();
+        return mCustomerReviewDao.findAll();
     }
 
-    public CustomerReview findByReviewId(String reviewId) {
-        return mReviewMonitorDao.findByReviewId(reviewId);
+    public CustomerReview findCustomerReview(String customerCode, String reviewId) {
+        return mCustomerReviewDao.findCustomerReview(customerCode, reviewId);
     }
 
-    public boolean isExist(String reviewId) {
-        return mReviewMonitorDao.findByReviewId(reviewId) != null;
-    }
-
-    public CustomerReview findByReviewIdCustomerCode(String reviewId, String customerCode) {
-        return mReviewMonitorDao.findByReviewIdAndCustomerCode(reviewId, customerCode);
+    public boolean isExist(String customerCode, String reviewId) {
+        return findCustomerReview(customerCode, reviewId) != null;
     }
 
     /**
      * 查询已经完成的数据
      */
     public List<CustomerReview> findNeedGenerateBatch() {
-        return mReviewMonitorDao.findNeedGenerateBatch();
-    }
-
-    public boolean isExistInCustomerCode(String reviewId, String customerCode) {
-        return mReviewMonitorDao.findByReviewIdAndCustomerCode(reviewId, customerCode) != null;
+        return mCustomerReviewDao.findNeedGenerateBatch();
     }
 
     public void addAll(List<CustomerReview> customerReviewList) {
@@ -70,7 +62,7 @@ public class CustomerReviewService {
         List<CustomerReview> newList = new ArrayList<CustomerReview>();
 
         for (CustomerReview monitor : customerReviewList) {
-            if (!isExist(monitor.reviewId)) {
+            if (!isExist(monitor.customerCode, monitor.reviewId)) {
                 newList.add(monitor);
             } else {
                 update(monitor);
@@ -78,7 +70,7 @@ public class CustomerReviewService {
         }
 
         if (CollectionUtils.isNotEmpty(newList)) {
-            mReviewMonitorDao.addAll(newList);
+            mCustomerReviewDao.addAll(newList);
         }
     }
 }

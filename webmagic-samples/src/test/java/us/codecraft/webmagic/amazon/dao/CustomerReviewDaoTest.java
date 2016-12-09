@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
-import us.codecraft.webmagic.samples.amazon.dao.ReviewMonitorDao;
+import us.codecraft.webmagic.samples.amazon.dao.CustomerReviewDao;
 import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
 
 import java.util.Date;
@@ -19,7 +19,7 @@ import java.util.List;
 public class CustomerReviewDaoTest extends SpringTestCase {
 
     @Autowired
-    private ReviewMonitorDao mDao;
+    private CustomerReviewDao mDao;
 
     private Logger mLogger = Logger.getLogger(getClass());
 

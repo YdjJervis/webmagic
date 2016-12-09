@@ -1,13 +1,10 @@
 package us.codecraft.webmagic.samples.amazon.monitor;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.pojo.Batch;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchReview;
-import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
-import us.codecraft.webmagic.samples.amazon.service.BatchReviewService;
-import us.codecraft.webmagic.samples.amazon.service.BatchService;
-import us.codecraft.webmagic.samples.amazon.service.CustomerReviewService;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
 import java.util.*;
@@ -21,41 +18,37 @@ import java.util.*;
 @Service
 public class BatchGenerateMonitor implements ScheduledTask {
 
+    private Logger mLogger = Logger.getLogger(getClass());
     @Autowired
-    CustomerReviewService mCustomerReviewService;
+    private CustomerAsinService mCustomerAsinService;
     @Autowired
-    BatchService mBatchService;
+    private CustomerReviewService mCustomerReviewService;
     @Autowired
-    BatchReviewService mBatchReviewService;
+    private BatchService mBatchService;
+    @Autowired
+    private BatchReviewService mBatchReviewService;
+    @Autowired
+    private NoSellService mNoSellService;
 
     @Override
     public void execute() {
         generateReviewMonitorBatch();
+        generateReviewUpdateBatch();
     }
 
     /**
-     * 自动生成新的批次
+     * 每个客户取一批满足条件的Review生成批次单号
      */
     public void generateReviewMonitorBatch() {
-        /*通过客户码分组*/
-        Map<String, List<CustomerReview>> customerListMap = new HashMap<String, List<CustomerReview>>();
 
         /*查询已经完成的客户关系review数据*/
         List<CustomerReview> customerReviewList = mCustomerReviewService.findNeedGenerateBatch();
+        mLogger.info("需要生成新批次号的总量：" + customerReviewList.size());
 
         /*按客户码分组*/
-        for (CustomerReview customerReview : customerReviewList) {
-            if (customerListMap.get(customerReview.customerCode) == null) {
-                List<CustomerReview> list = new ArrayList<CustomerReview>();
-                list.add(customerReview);
-                customerListMap.put(customerReview.customerCode, list);
-            } else {
-                customerListMap.get(customerReview.customerCode).add(customerReview);
-            }
-        }
+        Map<String, List<CustomerReview>> customerListMap = initCustomerListMap(customerReviewList);
 
         /*生成总单与详单*/
-        List<BatchReview> needAddList;
         for (String customerCode : customerListMap.keySet()) {
 
             List<CustomerReview> rmList = customerListMap.get(customerCode);
@@ -64,10 +57,9 @@ public class BatchGenerateMonitor implements ScheduledTask {
             mBatchService.add(batch);
 
             /*将批次单号与review建立关系*/
-            needAddList = new ArrayList<BatchReview>();
-            BatchReview batchReview;
+            List<BatchReview> needAddList = new ArrayList<BatchReview>();
             for (CustomerReview customerReview : rmList) {
-                batchReview = new BatchReview();
+                BatchReview batchReview = new BatchReview();
                 batchReview.reviewID = customerReview.reviewId;
                 batchReview.batchNumber = batch.number;
                 batchReview.siteCode = customerReview.siteCode;
@@ -77,10 +69,78 @@ public class BatchGenerateMonitor implements ScheduledTask {
                 customerReview.status = 0;
                 mCustomerReviewService.updateByReviewIdCustomerCode(customerReview);
             }
-
+            mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
             /*添加创建详单信息*/
             mBatchReviewService.addAll(needAddList);
+
+            mLogger.info("生成Review监控批次：成功");
         }
 
+    }
+
+    /**
+     * 每个客户取一批满足条件的Asin生成批次单号
+     */
+    public void generateReviewUpdateBatch() {
+
+        /*查询已经完成的客户关系review数据*/
+        List<CustomerAsin> customerAsinList = mCustomerAsinService.findNeedGenerateBatch();
+        /* 去掉已经下架的记录，不需要更新爬取 */
+        for (CustomerAsin customerAsin : customerAsinList) {
+            if (mNoSellService.isExist(new Asin(customerAsin.siteCode, customerAsin.asin))) {
+                customerAsinList.remove(customerAsin);
+            }
+        }
+
+        mLogger.info("需要生成新批次号的总量：" + customerAsinList.size());
+
+        /*按客户码分组*/
+        Map<String, List<CustomerAsin>> customerListMap = initCustomerListMap(customerAsinList);
+
+        /*生成总单与详单*/
+        for (String customerCode : customerListMap.keySet()) {
+
+            List<CustomerAsin> rmList = customerListMap.get(customerCode);
+
+            /*将批次单号与Asin建立关系*/
+            List<BatchAsin> needAddList = new ArrayList<BatchAsin>();
+
+            for (CustomerAsin customerAsin : rmList) {
+
+                BatchAsin batchAsin = new BatchAsin();
+                batchAsin.siteCode = customerAsin.siteCode;
+                batchAsin.asin = customerAsin.asin;
+                batchAsin.star = customerAsin.star;
+                batchAsin.type = 1;
+                needAddList.add(batchAsin);
+
+            }
+
+            mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
+            /*添加创建详单信息*/
+            mBatchService.addBatch(customerCode, needAddList, 2);
+
+            mLogger.info("生成Review更新爬取批次：成功");
+        }
+    }
+
+    private <T> Map<String, List<T>> initCustomerListMap(List<T> srcList) {
+        Map<String, List<T>> customerListMap = new HashMap<String, List<T>>();
+
+        for (T item : srcList) {
+            String customerCode = "";
+            if (item instanceof CustomerReview) {
+                customerCode = ((CustomerReview) item).customerCode;
+            } else if (item instanceof CustomerAsin) {
+                customerCode = ((CustomerAsin) item).customerCode;
+            }
+
+            if (customerListMap.get(customerCode) == null) {
+                customerListMap.put(customerCode, new ArrayList<T>());
+            }
+
+            customerListMap.get(customerCode).add(item);
+        }
+        return customerListMap;
     }
 }
