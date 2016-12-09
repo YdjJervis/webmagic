@@ -31,7 +31,7 @@ public interface UrlDao extends BaseDao<Url> {
     /**
      * @return 指定ASIN的Url列表
      */
-    List<Url> findUpdateCrawl(String siteCode, String asin);
+    List<Url> findUpdateCrawl(String batchNum, String siteCode, String asin);
 
     void deleteByAsin(String siteCode, String asin);
 

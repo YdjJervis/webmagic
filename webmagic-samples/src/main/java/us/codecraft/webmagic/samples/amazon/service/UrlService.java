@@ -56,8 +56,8 @@ public class UrlService {
         mUrlDao.deleteByAsin(siteCode, asin);
     }
 
-    public void deleteOne(String batchNum, String siteCode, String asin) {
-        mUrlDao.deleteOne(batchNum, siteCode, asin);
+    public void deleteByUrlMd5(String urlMd5) {
+        mUrlDao.deleteByUrlMd5(urlMd5);
     }
 
     public Url findByUrlMd5(String urlMd5) {
@@ -241,8 +241,8 @@ public class UrlService {
         return mUrlDao.findMonitorUrlList();
     }
 
-    public List<Url> findUpdateCrawl(String siteCode, String asin) {
-        return mUrlDao.findUpdateCrawl(siteCode, asin);
+    public List<Url> findUpdateCrawl(String batchNum, String siteCode, String asin) {
+        return mUrlDao.findUpdateCrawl(batchNum, siteCode, asin);
     }
 
     public boolean isExist(String urlMd5) {
@@ -260,7 +260,7 @@ public class UrlService {
 
     public void deleteAll(List<Url> urlList) {
         for (Url url : urlList) {
-            mUrlDao.deleteByUrlMd5(url.urlMD5);
+            deleteByUrlMd5(url.urlMD5);
         }
     }
 
@@ -285,7 +285,7 @@ public class UrlService {
         mUrlDao.updateMonitorPriority(reviewID, priority);
     }
 
-    public List<Url> findByBatchNum(String batchNumber){
+    public List<Url> findByBatchNum(String batchNumber) {
         return mUrlDao.findByBatchNum(batchNumber);
     }
 }

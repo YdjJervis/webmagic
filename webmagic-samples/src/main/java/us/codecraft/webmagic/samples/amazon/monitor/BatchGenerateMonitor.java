@@ -111,7 +111,9 @@ public class BatchGenerateMonitor implements ScheduledTask {
                 batchAsin.siteCode = customerAsin.siteCode;
                 batchAsin.asin = customerAsin.asin;
                 batchAsin.star = customerAsin.star;
-                batchAsin.type = 1;
+                batchAsin.type = 2;
+                batchAsin.status = 4;
+                batchAsin.crawled = 1;
                 needAddList.add(batchAsin);
 
             }

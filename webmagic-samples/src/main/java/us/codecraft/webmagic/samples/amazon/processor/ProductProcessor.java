@@ -69,7 +69,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             mAsinService.add(asin);
 
             /* 删除爬取的URL */
-            mUrlService.deleteOne(url.batchNum, site.basCode, asinStr);
+            mUrlService.deleteByUrlMd5(getUrl(page).urlMD5);
             /* 添加到历史表 */
             List<Url> urlList = new ArrayList<Url>();
             urlList.add(url);

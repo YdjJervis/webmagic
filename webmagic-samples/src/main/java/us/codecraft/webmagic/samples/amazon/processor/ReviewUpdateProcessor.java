@@ -33,6 +33,8 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
     private AsinRootAsinService mAsinRootAsinService;
     @Autowired
     private BatchService mBatchService;
+    @Autowired
+    private BatchAsinService mBatchAsinService;
 
     @Override
     protected void dealReview(Page page) {
@@ -113,7 +115,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
         if (!needCrawlNextPage) {
             /* 不需要继续翻页，删除该星级对应的Url */
-            List<Url> updateCrawlList = mUrlService.findUpdateCrawl(siteCode, asin);
+            List<Url> updateCrawlList = mUrlService.findUpdateCrawl(getUrl(page).batchNum, siteCode, asin);
             List<Url> deleteList = new ArrayList<Url>();
 
             /* 找出该过滤器的所有URL */
@@ -122,19 +124,26 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                     deleteList.add(url);
                 }
             }
+            sLogger.info("需要删除的URL数量：" + deleteList.size() + " 该批次该站点该ASIN对应的URL总量：" + updateCrawlList.size());
+            if (updateCrawlList.removeAll(deleteList) && updateCrawlList.size() == 0) {
+                BatchAsin dbBatchAsin = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, siteCode, asin);
+                dbBatchAsin.status = 6;
+                dbBatchAsin.progress = 1;
+            }
 
             /* 添加到历史表 */
             mUrlHistoryService.addAll(deleteList);
-
             /* 删除爬取表 */
             for (Url url : deleteList) {
-                mUrlService.deleteOne(url.batchNum, url.siteCode, url.asin);
+                mUrlService.deleteByUrlMd5(url.urlMD5);
             }
         }
 
+        batch.progress = mBatchAsinService.findAverageProgress(getUrl(page).batchNum);
+
         /* 如果这个批次没有URL了，那就把该批次改成爬取完成状态 */
         if (mUrlService.findByBatchNum(getUrl(page).batchNum).size() == 0) {
-            batch.status = 6;
+            batch.status = 2;
             batch.finishTime = currentTime;
         }
         mBatchService.update(batch);

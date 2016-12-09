@@ -109,8 +109,15 @@ public class BatchParseUrlMonitor extends ParseMonitor {
         }
 
         /* 把需要更新爬取的爬取的批次详单转换更新爬取的URL，并改变爬取类型为更新爬取 */
-        /*batchAsinList = mBatchAsinService.findNotUpdatedReview();
+        batchAsinList = mBatchAsinService.findNotUpdatedReview();
         for (BatchAsin batchAsin : batchAsinList) {
+
+            Site site = siteMap.get(batchAsin.siteCode);
+            if (site == null) {
+                site = mSiteService.find(batchAsin.siteCode);
+                siteMap.put(batchAsin.siteCode, site);
+            }
+
             List<String> filterList = mAsinService.getUpdateFilters(batchAsin.star);
             for (String filter : filterList) {
                 Url url = new Url();
@@ -129,7 +136,7 @@ public class BatchParseUrlMonitor extends ParseMonitor {
             Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
             batch.status = 1;
             mBatchService.update(batch);
-        }*/
+        }
 
         return urlList;
     }

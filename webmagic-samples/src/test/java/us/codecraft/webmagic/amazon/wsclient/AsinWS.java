@@ -22,7 +22,7 @@ import java.util.List;
 public class AsinWS extends SpringTestCase {
 
     @Autowired
-    ImportDataService mImportDataService;
+    private ImportDataService mImportDataService;
 
     @Test
     public void testChangePriority() {

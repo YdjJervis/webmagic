@@ -65,7 +65,7 @@
 
     <!--查询某个ASIN更新爬取的URL列表-->
     <select id="findUpdateCrawl" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url WHERE bas_code = #{0} AND saa_asin = #{1} AND sau_type = 2;
+        SELECT * FROM spider_amazon_url WHERE bo_batch_num = #{0} AND bas_code = #{1} AND saa_asin = #{2} AND sau_type = 2;
     </select>
 
     <!--查询被监听的的URL列表-->
