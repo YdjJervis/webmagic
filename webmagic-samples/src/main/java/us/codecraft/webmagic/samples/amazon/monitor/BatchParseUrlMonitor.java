@@ -59,13 +59,8 @@ public class BatchParseUrlMonitor extends ParseMonitor {
             }
 
             Url url = new Url();
-            url.batchNum = batchAsin.batchNumber;
             url.url = siteMap.get(batchAsin.siteCode).basSite + "/dp/" + batchAsin.asin;
-            url.urlMD5 = UrlUtils.md5(url.url);
-            url.siteCode = batchAsin.siteCode;
-            url.asin = batchAsin.asin;
-            url.type = batchAsin.type;
-            urlList.add(url);
+            initUrl(batchAsin, url);
 
             /* 装换成URL列表后，把爬取的状态改成爬取当中 */
             batchAsin.status = 1;
@@ -89,13 +84,9 @@ public class BatchParseUrlMonitor extends ParseMonitor {
             List<String> filterList = mAsinService.getUpdateFilters(batchAsin.star);
             for (String filter : filterList) {
                 Url url = new Url();
-                url.batchNum = batchAsin.batchNumber;
                 url.url = siteMap.get(batchAsin.siteCode).basSite + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
                 url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
-                url.urlMD5 = UrlUtils.md5(url.url);
-                url.siteCode = batchAsin.siteCode;
-                url.asin = batchAsin.asin;
-                url.type = batchAsin.type;
+                initUrl(batchAsin, url);
                 urlList.add(url);
             }
 
@@ -121,13 +112,9 @@ public class BatchParseUrlMonitor extends ParseMonitor {
             List<String> filterList = mAsinService.getUpdateFilters(batchAsin.star);
             for (String filter : filterList) {
                 Url url = new Url();
-                url.batchNum = batchAsin.batchNumber;
                 url.url = siteMap.get(batchAsin.siteCode).basSite + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
                 url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
-                url.urlMD5 = UrlUtils.md5(url.url);
-                url.siteCode = batchAsin.siteCode;
-                url.asin = batchAsin.asin;
-                url.type = batchAsin.type;
+                initUrl(batchAsin, url);
                 urlList.add(url);
             }
             batchAsin.status = 5;
@@ -139,6 +126,14 @@ public class BatchParseUrlMonitor extends ParseMonitor {
         }
 
         return urlList;
+    }
+
+    private void initUrl(BatchAsin batchAsin, Url url) {
+        url.batchNum = batchAsin.batchNumber;
+        url.urlMD5 = UrlUtils.md5(batchAsin.batchNumber + url.url);
+        url.siteCode = batchAsin.siteCode;
+        url.asin = batchAsin.asin;
+        url.type = batchAsin.type;
     }
 
 }

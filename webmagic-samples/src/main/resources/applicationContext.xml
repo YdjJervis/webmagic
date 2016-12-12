@@ -90,28 +90,24 @@
 
     <!--配置定时任务-->
     <task:scheduled-tasks>
-        <!-- 每5秒 把未转换成URL的ASIN转成URL -->
-        <!-- 每5秒 取一次需要爬取评论的URL -->
+        <!-- 批次转Url(包括全量和更新) -->
         <task:scheduled ref="batchParseUrlMonitor" method="execute" cron="0/10 * * * * ?"/>
-        <task:scheduled ref="reviewProcessor" method="execute" cron="0/15 * * * * ?"/>
-
-        <!-- 每5秒 把未爬取过首页的的ASIN转换成URL -->
-        <!-- 每5秒 爬取一次产品首页URL -->
-        <!--<task:scheduled ref="rootAsinMonitor" method="execute" cron="0/5 * * * * ?"/>-->
         <task:scheduled ref="productProcessor" method="execute" cron="0/5 * * * * ?"/>
+        <task:scheduled ref="reviewProcessor" method="execute" cron="0/15 * * * * ?"/>
+        <task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/>
 
-        <!-- 每5秒 爬取一次处在监听状态的URL -->
-        <!-- 每30秒 检测一次被监听的Review是否状态有变化 -->
+        <!-- 生成批次(包括跟新爬取的批次和Review监控的批次) -->
+        <task:scheduled ref="batchGenerateMonitor" method="execute" cron="0/5 * * * * ?"/>
+
+        <!-- Review监控 -->
         <!--<task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>
         <task:scheduled ref="reviewIdMonitor" method="execute" cron="0/30 * * * * ?"/>-->
 
-        <!-- 每5秒 检测是否需要爬取需要更新的ASIN -->
-        <task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/>
-
         <!--统计给定一批ASIN的评论总数和评论的页码数-->
-        <!-- 测试log日志 -->
         <!--<task:scheduled ref="reviewStatProcessor" method="execute" cron="0/10 * * * * ?"/>-->
-        <task:scheduled ref="loggerTestTask" method="execute" cron="0/5 * * * * ?" />
+
+        <!-- 测试日志 -->
+        <!--<task:scheduled ref="loggerTestTask" method="execute" cron="0/5 * * * * ?" />-->
     </task:scheduled-tasks>
 
 </beans>

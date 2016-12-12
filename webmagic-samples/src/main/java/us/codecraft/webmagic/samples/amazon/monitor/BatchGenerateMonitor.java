@@ -83,6 +83,8 @@ public class BatchGenerateMonitor implements ScheduledTask {
      */
     public void generateReviewUpdateBatch() {
 
+        Date currentTime = new Date();
+
         /*查询已经完成的客户关系review数据*/
         List<CustomerAsin> customerAsinList = mCustomerAsinService.findNeedGenerateBatch();
         /* 去掉已经下架的记录，不需要更新爬取 */
@@ -90,6 +92,8 @@ public class BatchGenerateMonitor implements ScheduledTask {
             if (mNoSellService.isExist(new Asin(customerAsin.siteCode, customerAsin.asin))) {
                 customerAsinList.remove(customerAsin);
             }
+            customerAsin.syncTime = currentTime;
+            mCustomerAsinService.update(customerAsin);
         }
 
         mLogger.info("需要生成新批次号的总量：" + customerAsinList.size());

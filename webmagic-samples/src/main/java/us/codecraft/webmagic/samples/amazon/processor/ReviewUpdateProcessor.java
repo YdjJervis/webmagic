@@ -62,7 +62,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         sLogger.info("全量爬取时候的星级对应的最后评论：");
         sLogger.info(dbAsin.extra);
 
-        /* 把所有星级评论的ID加入Set集合 */
+        /* 把最后一次爬取的所有星级和对应的最后一条评论的ID加入Set集合 */
         Set<String> lastReviewSet = new HashSet<String>();
         if (CollectionUtils.isNotEmpty(starReviewMapList)) {
             for (StarReviewMap map : starReviewMapList) {
@@ -85,6 +85,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         }
         mReviewService.addAll(reviewList);
 
+        /* 判断能否生成下一页URL并生成 */
         if (needCrawlNextPage) {
             /* 提取页码，若为空，就设置成 1 */
             String pageNum = UrlUtils.getValue(page.getUrl().get(), "pageNumber");
@@ -129,6 +130,10 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                 BatchAsin dbBatchAsin = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, siteCode, asin);
                 dbBatchAsin.status = 6;
                 dbBatchAsin.progress = 1;
+                mBatchAsinService.update(dbBatchAsin);
+
+                /* 更新Asin大字段(星级：评论ID)数据 */
+                mAsinService.updateExtra(dbAsin);
             }
 
             /* 添加到历史表 */
@@ -137,6 +142,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
             for (Url url : deleteList) {
                 mUrlService.deleteByUrlMd5(url.urlMD5);
             }
+
         }
 
         batch.progress = mBatchAsinService.findAverageProgress(getUrl(page).batchNum);

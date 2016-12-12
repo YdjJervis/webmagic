@@ -44,6 +44,6 @@
 
     <select id="findNeedGenerateBatch" resultMap="CustomerAsinMap">
         SELECT * FROM relation_customer_asin
-        WHERE rca_status = 1 AND CURRENT_TIMESTAMP - rca_sync_time > 1
+        WHERE rca_status = 1 AND CURRENT_TIMESTAMP - rca_sync_time > 5 * 60
     </select>
 </mapper>
