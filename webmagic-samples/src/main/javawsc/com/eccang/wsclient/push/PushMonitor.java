@@ -18,7 +18,7 @@ import java.util.List;
 public class PushMonitor implements ScheduledTask{
 
     @Autowired
-    pushTask mPushTask;
+    PushTask mPushTask;
 
     @Autowired
     PushQueueService mPushQueueService;

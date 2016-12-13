@@ -18,7 +18,7 @@ import us.codecraft.webmagic.samples.amazon.service.PushQueueService;
  * @date 2016/12/5 18:59
  */
 @Service
-public class pushTask {
+public class PushTask {
 
     @Autowired
     private PushQueueService mPushQueueService;
