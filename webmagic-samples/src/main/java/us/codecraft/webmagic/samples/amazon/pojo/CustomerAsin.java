@@ -17,6 +17,7 @@ public class CustomerAsin extends BasePojo {
     public String asin;
     public int status = 1;
     public int priority;
+    public int frequency;
     public String star;
     public Date syncTime;
 

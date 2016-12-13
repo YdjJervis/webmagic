@@ -115,12 +115,12 @@ public class BatchGenerateMonitor implements ScheduledTask {
                 BatchAsin batchAsin = new BatchAsin();
                 batchAsin.siteCode = customerAsin.siteCode;
                 batchAsin.asin = customerAsin.asin;
+                batchAsin.priority = customerAsin.priority;
                 batchAsin.star = customerAsin.star;
                 batchAsin.type = 2;
                 batchAsin.status = 4;
                 batchAsin.crawled = 1;
                 needAddList.add(batchAsin);
-
             }
 
             mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());

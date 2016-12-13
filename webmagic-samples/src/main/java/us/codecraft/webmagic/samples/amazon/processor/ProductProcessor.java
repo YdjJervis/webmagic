@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
@@ -91,7 +92,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
     @Override
     public void execute() {
         sLogger.info("开始执行Root Asin爬取任务...");
-        List<Url> urlList = mUrlService.find(0);
+        List<Url> urlList = mUrlService.find(R.CrawlType.REVIEW_MAIN_PAGE);
         startToCrawl(urlList);
     }
 }

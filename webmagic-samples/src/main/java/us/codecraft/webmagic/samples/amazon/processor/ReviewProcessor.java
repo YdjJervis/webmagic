@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.AsinRootAsinService;
@@ -153,7 +154,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     @Override
     public void execute() {
         sLogger.info("开始执行Review爬取任务...");
-        List<Url> urlList = mUrlService.find(1);
+        List<Url> urlList = mUrlService.find(R.CrawlType.REVIEW_ALL);
         startToCrawl(urlList);
     }
 }

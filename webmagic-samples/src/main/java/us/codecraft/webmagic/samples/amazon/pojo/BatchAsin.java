@@ -16,6 +16,7 @@ public class BatchAsin extends BasePojo {
     public String siteCode;
     public String asin;
     public String rootAsin;
+    public int priority;
     public String star = "0-0-1-1-1";
     public int crawled;
     /**
@@ -34,6 +35,7 @@ public class BatchAsin extends BasePojo {
                 ", siteCode='" + siteCode + '\'' +
                 ", asin='" + asin + '\'' +
                 ", rootAsin='" + rootAsin + '\'' +
+                ", priority=" + priority +
                 ", star='" + star + '\'' +
                 ", crawled=" + crawled +
                 ", status=" + status +

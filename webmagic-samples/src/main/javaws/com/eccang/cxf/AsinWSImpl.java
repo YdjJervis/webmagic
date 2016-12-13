@@ -39,7 +39,6 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     @Autowired
     private AsinRootAsinService mAsinRootAsinService;
 
-
     public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
 
@@ -62,8 +61,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         /* 转换成批次Asin批次详单表 */
         List<BatchAsin> parsedBatchAsinList = new ArrayList<BatchAsin>();
 
-        /* 分开已经爬取的和没爬去的数量 */
-
+        /* 分开已经爬取的和没爬取的数量 */
         int crawledNum = 0;
         for (AsinReq.Asin asin : asinReq.data) {
 
@@ -124,6 +122,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             customerAsin.customerCode = asinReq.cutomerCode;
             customerAsin.siteCode = asin.siteCode;
             customerAsin.asin = asin.asin;
+            customerAsin.star = asin.star;
             customerAsinList.add(customerAsin);
         }
         mCustomerAsinService.addAll(customerAsinList);

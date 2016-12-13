@@ -9,6 +9,7 @@
         <result property="siteCode" column="bas_code"/>
         <result property="asin" column="boa_asin"/>
         <result property="rootAsin" column="boa_root_asin"/>
+        <result property="priority" column="boa_priority"/>
         <result property="star" column="boa_star"/>
         <result property="crawled" column="boa_crawled"/>
         <result property="status" column="boa_status"/>
@@ -61,6 +62,7 @@
     <update id="update" parameterType="BatchAsin">
         UPDATE batch_order_asin SET
         boa_root_asin = #{rootAsin},
+        boa_priority = #{priority},
         boa_star = #{star},
         boa_crawled = #{crawled},
         boa_status = #{status},
@@ -75,13 +77,13 @@
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO batch_order_asin(
-        bo_batch_num,bas_code,boa_asin,boa_root_asin,boa_star,boa_crawled,boa_status,boa_progress,
+        bo_batch_num,bas_code,boa_asin,boa_root_asin,boa_priority,boa_star,boa_crawled,boa_status,boa_progress,
         boa_type,boa_extra,boa_start_time,boa_finish_time
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.batchNumber},#{item.siteCode},#{item.asin},#{item.rootAsin},#{item.star},#{item.crawled},#{item.status},#{item.progress},
+            #{item.batchNumber},#{item.siteCode},#{item.asin},#{item.rootAsin},#{priority},#{item.star},#{item.crawled},#{item.status},#{item.progress},
             #{item.type},#{item.extra},#{item.startTime},#{item.finishTime}
             )
         </foreach>

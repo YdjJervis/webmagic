@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
@@ -158,7 +159,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
     @Override
     public void execute() {
         sLogger.info("开始执行更新爬取...");
-        List<Url> urlList = mUrlService.find(2);
+        List<Url> urlList = mUrlService.find(R.CrawlType.REVIEW_UPDATE);
         startToCrawl(urlList);
     }
 
