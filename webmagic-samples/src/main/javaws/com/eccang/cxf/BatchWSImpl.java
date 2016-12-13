@@ -89,8 +89,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             batchReviewRsp.status = baseRspParam.status;
             batchReviewRsp.msg = baseRspParam.msg;
 
-            batchReviewRsp.data.number = batchReq.data.number;
             batchReviewRsp.data.createTime = batch.createTime;
+            batchReviewRsp.data.number = batchReq.data.number;
             batchReviewRsp.data.type = batch.type;
             batchReviewRsp.data.times = batch.times;
             batchReviewRsp.data.startTime = batch.startTime;

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class BatchReviewRsp extends BaseRspParam {
 
-    public Batch data;
+    public Batch data = new Batch();
 
     public class Batch {
 

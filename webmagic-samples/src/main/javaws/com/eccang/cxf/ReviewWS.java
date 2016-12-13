@@ -2,6 +2,7 @@ package com.eccang.cxf;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 /**
  * @author Jervis
@@ -10,6 +11,7 @@ import javax.jws.WebService;
  * @date 2016/11/17 11:49
  */
 @WebService
+@SOAPBinding(style = SOAPBinding.Style.RPC)
 public interface ReviewWS extends SpiderWS{
 
     @WebMethod
@@ -17,4 +19,17 @@ public interface ReviewWS extends SpiderWS{
 
     @WebMethod
     String getReviews(String asinJson);
+
+    @WebMethod
+    String setPriority(String json);
+
+    @WebMethod
+    String setReviewMonitor(String json);
+
+    @WebMethod
+    String setFrequency(String json);
+
+    @WebMethod
+    String updateCustomerReview(String json);
+
 }

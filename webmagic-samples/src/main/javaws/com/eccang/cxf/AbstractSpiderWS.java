@@ -35,8 +35,16 @@ public abstract class AbstractSpiderWS implements SpiderWS {
     public BaseRspParam auth(String json) {
         sLogger.info(json);
         BaseReqParam baseReqParam = new Gson().fromJson(json, BaseReqParam.class);
-
         BaseRspParam baseRspParam = new BaseRspParam();
+
+        if (baseReqParam == null) {
+            sLogger.warn("Param is null.");
+            baseRspParam.setSuccess(false);
+            baseRspParam.status = 413;
+            baseRspParam.msg = "接受到的参数为空.";
+            return baseRspParam;
+        }
+
         baseRspParam.cutomerCode = baseReqParam.cutomerCode;
 
         /* 授权信息必须存在 */

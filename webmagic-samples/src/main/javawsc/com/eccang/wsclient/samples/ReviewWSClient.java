@@ -27,7 +27,7 @@ public class ReviewWSClient {
         queryReq.token = "123456789";
 
         ReviewQueryReq.Asin asin = queryReq.new Asin();
-        asin.asin = "B01864FHOK";
+        asin.asin = "R2V7LL01LD8CLG";
         queryReq.data = asin;
 
         String json = new ReviewWSService().getReviewWSPort().getReviews(new Gson().toJson(queryReq));
@@ -42,10 +42,10 @@ public class ReviewWSClient {
         reviewReq.token = "123456789";
 
         ReviewReq.Review review1 = reviewReq.new Review();
-        review1.priority = 1;
-        review1.reviewID = "R2V7LL01LD8CLX";
+        review1.priority = 2;
+        review1.reviewID = "R2V7LL01LD8CXX";
         review1.siteCode = "US";
-        review1.frequency = 3;
+        review1.frequency = 1;
         review1.marked = 1;
 
         reviewReq.data.add(review1);

@@ -73,7 +73,7 @@
 
     <select id="findAll" resultMap="ReviewResultMap" parameterType="Review">
         SELECT * FROM spider_amazon_review WHERE
-        <if test="sarPersonId != null">
+        <if test="personId != null">
             sar_person_id = #{personId} and
         </if>
         sar_star = #{star}

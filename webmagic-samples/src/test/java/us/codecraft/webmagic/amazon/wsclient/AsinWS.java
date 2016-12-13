@@ -33,7 +33,8 @@ public class AsinWS extends SpringTestCase {
 
         AsinPriorityReq.Asin asin = priorityReq.new Asin();
         asin.priority = 1;
-        asin.asin = "B01M70JMIJ";
+        asin.asin = "B01LXA42FB";
+        asin.siteCode = "UK";
 
         priorityReq.data.add(asin);
 
@@ -49,7 +50,8 @@ public class AsinWS extends SpringTestCase {
         queryReq.token = "123456789";
 
         AsinQueryReq.Asin asin = queryReq.new Asin();
-        asin.asin = "B01M6WRC9R1";
+        asin.asin = "B01LXA42FB";
+        asin.siteCode = "UK";
 
         queryReq.data.add(asin);
 

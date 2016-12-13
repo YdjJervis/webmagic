@@ -2,6 +2,7 @@ package com.eccang.cxf;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 /**
  * @author Jervis
@@ -10,6 +11,7 @@ import javax.jws.WebService;
  * @date 2016/11/17 11:49
  */
 @WebService
+@SOAPBinding(style = SOAPBinding.Style.RPC)
 public interface AsinWS extends SpiderWS{
 
     /**

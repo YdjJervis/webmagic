@@ -37,12 +37,12 @@ public class ListTest extends TestCase {
 
     @Test
     public void testRemoveAll(){
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<String>();
         list.add("A");
         list.add("B");
         list.add("C");
 
-        List<String> list2 = new ArrayList<>();
+        List<String> list2 = new ArrayList<String>();
         list2.add("A");
         list2.add("B");
         list.removeAll(list2);

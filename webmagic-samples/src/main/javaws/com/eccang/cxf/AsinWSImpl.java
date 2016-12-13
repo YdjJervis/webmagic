@@ -160,12 +160,33 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         asinQueryRsp.status = baseRspParam.status;
         asinQueryRsp.msg = baseRspParam.msg;
 
-
+        CustomerAsin customerAsin;
         for (AsinQueryReq.Asin asin : asinQueryReq.data) {
-            Asin dbAsin = mAsinService.findByAsin(asin.siteCode, asin.asin);
+            /*查询客户-ASIN关系表中的数据*/
+            customerAsin = new CustomerAsin(asinQueryReq.cutomerCode, asin.siteCode, asin.asin);
+            CustomerAsin customerAsin1 = mCustomerAsinService.find(customerAsin);
+            /*查询asin对应的rootAsin*/
+            AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin.asin);
+            Asin dbAsin;
             AsinQueryRsp.Asin resultAsin = asinQueryRsp.new Asin();
+            if (asinRootAsin != null) {
+                /*通过rootAsin与siteCode查询基础数据*/
+                dbAsin = mAsinService.findByAsin(asin.siteCode, asinRootAsin.rootAsin);
+                resultAsin.onSale = 1;
+            } else {
+                /*根rootAsin不存在：1.asin下架；2.asin还没有爬取过*/
+                dbAsin = new Asin();
+                dbAsin.siteCode = asin.siteCode;
+                dbAsin.rootAsin = asin.asin;
+                if (mNoSellService.isExist(dbAsin)) {
+                    resultAsin.onSale = 0;
+                } else {
+                    resultAsin.onSale = 1;
+                }
+            }
             resultAsin.asin = dbAsin.rootAsin;
             resultAsin.rootAsin = dbAsin.rootAsin;
+//            resultAsin.progress = customerAsin1.progress;
             asinQueryRsp.data.add(resultAsin);
         }
 
@@ -187,20 +208,17 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         priorityRsp.status = baseRspParam.status;
         priorityRsp.msg = baseRspParam.msg;
 
-        /* 改变ASIN表对应记录的优先级 & 改变URL表对应ASIN的优先级 */
+        /*改变customer-asin关系表中的优先级即可*/
+        CustomerAsin customerAsin;
         for (AsinPriorityReq.Asin asin : priorityReq.data) {
-            Asin dbAsin = mAsinService.findByAsin(asin.siteCode, asin.asin);
-            if (dbAsin != null) {
-                /*if (asin.priority > dbAsin.saaPriority) {
-                    priorityRsp.data.changed++;
-                    dbAsin.saaPriority = asin.priority;
-                    mUrlService.updatePriority(dbAsin.asin, dbAsin.saaPriority);
-                    mAsinService.update(dbAsin);
-                } else {
-                    priorityRsp.data.noChange++;
-                }*/
-            } else {
+            customerAsin = new CustomerAsin(baseRspParam.cutomerCode, asin.siteCode, asin.asin);
+            customerAsin = mCustomerAsinService.find(customerAsin);
+            if (customerAsin.priority == asin.priority) {
                 priorityRsp.data.noChange++;
+            } else {
+                customerAsin.priority = asin.priority;
+                mCustomerAsinService.update(customerAsin);
+                priorityRsp.data.changed++;
             }
         }
 

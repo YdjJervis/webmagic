@@ -69,6 +69,4 @@ public class CustomerReviewService {
             mCustomerReviewDao.addAll(newList);
         }
     }
-
-
 }

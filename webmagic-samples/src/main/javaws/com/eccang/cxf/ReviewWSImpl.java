@@ -23,7 +23,6 @@ import java.util.List;
  */
 @WebService
 public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
-
     @Autowired
     private ReviewService mReviewService;
 
@@ -53,17 +52,14 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         List<CustomerReview> customerReviewList = new ArrayList<CustomerReview>();
         for (ReviewReq.Review review : reviewReq.data) {
             CustomerReview customerReview = new CustomerReview();
-            customerReview.customerCode = reviewReq.cutomerCode;
-            customerReview.siteCode = review.siteCode;
             customerReview.reviewId = review.reviewID;
+            customerReview.siteCode = review.siteCode;
             customerReview.priority = review.priority;
             customerReview.frequency = review.frequency;
-
             if (mCustomerReviewService.isExist(reviewReq.cutomerCode, review.reviewID)) {
                 crawledNum++;
             }
         }
-
         mCustomerReviewService.addAll(customerReviewList);
 
         reviewRsp.data.totalCount = customerReviewList.size();
@@ -83,6 +79,11 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         ReviewQueryReq reviewQueryReq = new Gson().fromJson(asinJson, ReviewQueryReq.class);
+        if (reviewQueryReq.data == null) {
+            baseRspParam.status = 413;
+            baseRspParam.msg = "Asin数据为空";
+            return baseRspParam.toJson();
+        }
 
         /* 初始化返回头信息 */
         ReviewQueryRsp reviewQueryRsp = new ReviewQueryRsp();
@@ -133,4 +134,152 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
         return reviewQueryRsp.toJson();
     }
+
+    /**
+     * 设置监听review的优先级
+     */
+    @Override
+    public String setPriority(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        CustomerReviewUpdateReq customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
+        if (CollectionUtils.isEmpty(customerReviewUpdateReq.data)) {
+            baseRspParam.status = 413;
+            baseRspParam.msg = "数据列表为空";
+            return baseRspParam.toJson();
+        }
+
+        CustomerReviewUpdateRsp customerReviewUpdateRsp = new CustomerReviewUpdateRsp();
+        customerReviewUpdateRsp.cutomerCode = customerReviewUpdateReq.cutomerCode;
+        customerReviewUpdateRsp.status = baseRspParam.status;
+        customerReviewUpdateRsp.msg = baseRspParam.msg;
+
+        for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
+            CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
+            if (customerReview.priority == data.priority) {
+                customerReviewUpdateRsp.data.noChange++;
+            } else {
+                data.priority = customerReview.priority;
+                mCustomerReviewService.update(data);
+                customerReviewUpdateRsp.data.changed++;
+            }
+        }
+        return customerReviewUpdateRsp.toJson();
+    }
+
+    /**
+     * 设置监听review是否开启或关闭
+     */
+    @Override
+    public String setReviewMonitor(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        CustomerReviewUpdateReq customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
+        if (CollectionUtils.isEmpty(customerReviewUpdateReq.data)) {
+            baseRspParam.status = 413;
+            baseRspParam.msg = "数据列表为空";
+            return baseRspParam.toJson();
+        }
+
+        CustomerReviewUpdateRsp customerReviewUpdateRsp = new CustomerReviewUpdateRsp();
+        customerReviewUpdateRsp.cutomerCode = customerReviewUpdateReq.cutomerCode;
+        customerReviewUpdateRsp.status = baseRspParam.status;
+        customerReviewUpdateRsp.msg = baseRspParam.msg;
+
+        for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
+            CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
+            if (customerReview.status == data.status) {
+                customerReviewUpdateRsp.data.noChange++;
+            } else {
+                data.status = customerReview.status;
+                mCustomerReviewService.update(data);
+                customerReviewUpdateRsp.data.changed++;
+            }
+        }
+        return customerReviewUpdateRsp.toJson();
+    }
+
+    /**
+     * 更新监听Review的监听频率（h/次）
+     */
+    @Override
+    public String setFrequency(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        CustomerReviewUpdateReq customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
+        if (CollectionUtils.isEmpty(customerReviewUpdateReq.data)) {
+            baseRspParam.status = 413;
+            baseRspParam.msg = "数据列表为空";
+            return baseRspParam.toJson();
+        }
+
+        CustomerReviewUpdateRsp customerReviewUpdateRsp = new CustomerReviewUpdateRsp();
+        customerReviewUpdateRsp.cutomerCode = customerReviewUpdateReq.cutomerCode;
+        customerReviewUpdateRsp.status = baseRspParam.status;
+        customerReviewUpdateRsp.msg = baseRspParam.msg;
+
+        for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
+            CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
+            if (customerReview.frequency == data.frequency) {
+                customerReviewUpdateRsp.data.noChange++;
+            } else {
+                data.frequency = customerReview.frequency;
+                mCustomerReviewService.update(data);
+                customerReviewUpdateRsp.data.changed++;
+            }
+        }
+        return customerReviewUpdateRsp.toJson();
+    }
+
+    /**
+     * 更新更新监听Review的状态
+     */
+    public String updateCustomerReview(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        CustomerReviewUpdateReq customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
+        if (CollectionUtils.isEmpty(customerReviewUpdateReq.data)) {
+            baseRspParam.status = 413;
+            baseRspParam.msg = "数据列表为空";
+            return baseRspParam.toJson();
+        }
+
+        CustomerReviewUpdateRsp customerReviewUpdateRsp = new CustomerReviewUpdateRsp();
+        customerReviewUpdateRsp.cutomerCode = customerReviewUpdateReq.cutomerCode;
+        customerReviewUpdateRsp.status = baseRspParam.status;
+        customerReviewUpdateRsp.msg = baseRspParam.msg;
+
+        for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
+            CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
+            if (customerReview.frequency == data.frequency &&
+                    customerReview.priority == data.priority &&
+                    customerReview.status == data.status) {
+                customerReviewUpdateRsp.data.noChange++;
+            } else {
+                data.priority = customerReview.priority;
+                data.frequency = customerReview.frequency;
+                data.status = customerReview.status;
+                mCustomerReviewService.update(data);
+                customerReviewUpdateRsp.data.changed++;
+            }
+        }
+        return customerReviewUpdateRsp.toJson();
+    }
+
 }
