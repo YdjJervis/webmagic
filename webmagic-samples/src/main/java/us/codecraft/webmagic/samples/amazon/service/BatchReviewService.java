@@ -46,8 +46,8 @@ public class BatchReviewService {
         return mBatchReviewDao.find(batchAsin) != null;
     }
 
-    public List<BatchReview> findByReviewID(String reviewID) {
-        return mBatchReviewDao.findByReviewID(reviewID);
+    public BatchReview findByReviewID(String batchNum, String reviewID) {
+        return mBatchReviewDao.findByReviewID(batchNum, reviewID);
     }
 
     public void updateAll(List<BatchReview> batchReviewList) {
@@ -58,5 +58,13 @@ public class BatchReviewService {
 
     public List<BatchReview> findAllByBatchNum(String number) {
         return mBatchReviewDao.findAllByBatchNum(number);
+    }
+
+    public List<BatchReview> findNotCrawled() {
+        return mBatchReviewDao.findNotCrawled();
+    }
+
+    public float findAverageProgress(String batchNum) {
+        return mBatchReviewDao.findAverageProgress(batchNum);
     }
 }

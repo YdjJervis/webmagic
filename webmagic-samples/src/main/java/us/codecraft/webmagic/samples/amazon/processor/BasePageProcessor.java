@@ -141,7 +141,7 @@ public class BasePageProcessor implements PageProcessor {
     /**
      * 处理不工作的页面。eg:下架页面
      */
-    private void dealPageNotFound(Page page) {
+    void dealPageNotFound(Page page) {
 
         Site site = extractSite(page);
         String asin = extractAsin(page);

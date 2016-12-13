@@ -4,14 +4,16 @@
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.BatchReviewDao">
 
     <resultMap id="BatchReviewResultMap" type="BatchReview">
-        <result property="id" column="bor_id"/>
-        <result property="siteCode" column="bas_code"/>
+        <id property="id" column="bor_id"/>
         <result property="batchNumber" column="bo_batch_num"/>
+        <result property="siteCode" column="bas_code"/>
         <result property="reviewID" column="bor_review_id"/>
-        <result property="times" column="bor_times"/>
+        <result property="type" column="bor_type"/>
         <result property="status" column="bor_status"/>
-        <result property="crawled" column="bor_crawled"/>
+        <result property="priority" column="bor_priority"/>
         <result property="extra" column="bor_extra"/>
+        <result property="createTime" column="bor_create_time"/>
+        <result property="updateTime" column="bor_update_time"/>
     </resultMap>
 
     <select id="find" parameterType="BatchReview" resultMap="BatchReviewResultMap">
@@ -21,9 +23,9 @@
     <update id="update" parameterType="BatchReview">
         UPDATE batch_order_review SET
         bas_code = #{siteCode},
-        bor_times = #{times},
+        bor_type = #{type},
         bor_status = #{status},
-        bor_crawled = #{crawled},
+        bor_priority = #{priority},
         bor_extra = #{extra}
         WHERE
         bo_batch_num = #{batchNumber} AND bor_review_id = #{reviewID};
@@ -31,22 +33,31 @@
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO batch_order_review(
-        bas_code,bo_batch_num,bor_review_id,bor_times,bor_status,bor_crawled,bor_extra
+        bo_batch_num,bas_code,bor_review_id,bor_type,bor_status,bor_priority,bor_extra
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.siteCode},#{item.batchNumber},#{item.reviewID},#{item.times},#{item.status},#{item.crawled},#{item.extra}
+            #{item.batchNumber},#{item.siteCode},#{item.reviewID},#{item.type},#{item.status},#{item.priority},#{item.extra}
             )
         </foreach>
     </insert>
 
     <select id="findByReviewID" resultMap="BatchReviewResultMap">
-        SELECT * FROM batch_order_review WHERE bor_review_id = #{0};
+        SELECT * FROM batch_order_review WHERE bo_batch_num = #{0} and bor_review_id = #{1};
     </select>
 
     <select id="findAllByBatchNum" resultMap="BatchReviewResultMap">
         select * from batch_order_review WHERE bo_batch_num = #{0};
+    </select>
+
+    <select id="findNotCrawled" resultMap="BatchReviewResultMap">
+        select * from batch_order_review WHERE bor_status = 0;
+    </select>
+
+    <!-- 查询某个单号的平均进度 -->
+    <select id="findAverageProgress" resultType="float">
+        SELECT SUM(bor_status)/COUNT(*)/2 FROM batch_order_review WHERE bo_batch_num = #{0};
     </select>
 
 </mapper>

@@ -100,8 +100,8 @@
         <task:scheduled ref="batchGenerateMonitor" method="execute" cron="0/5 * * * * ?"/>
 
         <!-- Review监控 -->
-        <!--<task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>
-        <task:scheduled ref="reviewIdMonitor" method="execute" cron="0/30 * * * * ?"/>-->
+        <task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>
+        <task:scheduled ref="reviewMonitor" method="execute" cron="0/30 * * * * ?"/>
 
         <!--统计给定一批ASIN的评论总数和评论的页码数-->
         <!--<task:scheduled ref="reviewStatProcessor" method="execute" cron="0/10 * * * * ?"/>-->

@@ -36,6 +36,12 @@ public class UrlHistoryService {
         }
     }
 
+    public void add(Url url) {
+        if (!isExist(url.urlMD5)) {
+            mDao.add(url);
+        }
+    }
+
     public boolean isExist(String urlMD5) {
         return mDao.find(urlMD5).size() > 0;
     }

@@ -80,4 +80,9 @@ public class UrlServiceTest extends SpringTestCase {
     public void testUpdatePriority() {
         mUrlService.updatePriority("B01LZK517R", 8);
     }
+
+    @Test
+    public void testDeleteByUrlMd5(){
+        mUrlService.deleteByUrlMd5("f30bd0a8a50aeb71");
+    }
 }

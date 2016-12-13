@@ -41,6 +41,7 @@ public class BatchGenerateMonitor implements ScheduledTask {
      */
     public void generateReviewMonitorBatch() {
 
+        Date currentTime = new Date();
         /*查询已经完成的客户关系review数据*/
         List<CustomerReview> customerReviewList = mCustomerReviewService.findNeedGenerateBatch();
         mLogger.info("需要生成新批次号的总量：" + customerReviewList.size());
@@ -63,11 +64,11 @@ public class BatchGenerateMonitor implements ScheduledTask {
                 batchReview.reviewID = customerReview.reviewId;
                 batchReview.batchNumber = batch.number;
                 batchReview.siteCode = customerReview.siteCode;
+                batchReview.type = 4;
                 needAddList.add(batchReview);
 
-                /*将重新生成批次的customer-review关系表的数据爬取状态更新为未爬取*/
-                customerReview.status = 0;
-                mCustomerReviewService.updateByReviewIdCustomerCode(customerReview);
+                customerReview.finishTime = currentTime;
+                mCustomerReviewService.update(customerReview);
             }
             mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
             /*添加创建详单信息*/

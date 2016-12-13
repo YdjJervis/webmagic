@@ -15,17 +15,16 @@ public class CustomerReview extends BasePojo {
     public String reviewId;
     public String customerCode;
     /**
-     * 对应客户下的review状态
+     * 是否是开启状态。1-是/0-否
      */
     public int status = 2;
     public String siteCode;
-    public int marked = 1;
-    public int parsed;
     public int priority;
     /**
      * 执行频率（h/次）
      */
     public int frequency;
+    public int times;
     public Date finishTime;
 
     public CustomerReview() {
@@ -42,10 +41,9 @@ public class CustomerReview extends BasePojo {
                 ", customerCode='" + customerCode + '\'' +
                 ", status=" + status +
                 ", siteCode='" + siteCode + '\'' +
-                ", marked=" + marked +
-                ", parsed=" + parsed +
                 ", priority=" + priority +
                 ", frequency=" + frequency +
+                ", times=" + times +
                 ", finishTime=" + finishTime +
                 '}';
     }

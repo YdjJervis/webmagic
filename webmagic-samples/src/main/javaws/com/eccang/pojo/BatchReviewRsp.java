@@ -31,7 +31,6 @@ public class BatchReviewRsp extends BaseRspParam {
         public String siteCode;
         public String reviewID;
         public int times;
-        public int crawled;
         public Date updateTime;
     }
 }

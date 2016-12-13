@@ -71,9 +71,10 @@
     <!--查询被监听的的URL列表-->
     <select id="findMonitorUrlList" resultMap="UrlResultMap">
         SELECT * FROM spider_amazon_url
-        WHERE sau_type = 1 AND sau_crawling = 0 AND CURRENT_TIMESTAMP - sau_update_time > (sau_priority + 1) * 7200
+        WHERE sau_type = 4 AND sau_crawling = 0 AND CURRENT_TIMESTAMP - sau_update_time > 0
         ORDER BY sau_times,sau_priority LIMIT 10;
     </select>
+    <!--(sau_priority + 1) * 7200-->
 
     <delete id="delete" parameterType="int">
         DELETE FROM spider_amazon_url WHERE sau_id = #{0};

@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * @author Jervis
  * @version V0.1
- * @Description: Asin对象转Url对象的监听器，会心跳监听ASIN表的变化
+ * @Description: 批次转换Review全量爬取和更新爬取的URL
  * @date 2016/10/11
  */
 @Service

@@ -23,4 +23,12 @@ public class UrlHistoryServiceTest extends SpringTestCase {
         new ArrayList<Url>().addAll(mService.findByAsin("US", "123123"));
         System.out.println();
     }
+
+    @Test
+    public void testAdd() {
+        Url url = new Url();
+        url.urlMD5 = "c809cffd211d195b";
+        url.siteCode = "us";
+        mService.add(url);
+    }
 }

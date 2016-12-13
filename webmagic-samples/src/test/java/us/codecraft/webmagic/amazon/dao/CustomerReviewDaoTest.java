@@ -45,7 +45,6 @@ public class CustomerReviewDaoTest extends SpringTestCase {
         if(CollectionUtils.isNotEmpty(list)){
             for (CustomerReview monitor : list) {
                 monitor.updateTime = new Date();
-                monitor.marked = 0;
                 mDao.update(monitor);
             }
         }

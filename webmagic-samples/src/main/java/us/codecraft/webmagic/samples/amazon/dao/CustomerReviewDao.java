@@ -17,8 +17,6 @@ public interface CustomerReviewDao extends BaseDao<CustomerReview> {
 
     CustomerReview findCustomerReview(String customerCode, String reviewId);
 
-    void updateByReviewIdCustomerCode(CustomerReview customerReview);
-
     /**
      * 查询已经完成的数据
      */

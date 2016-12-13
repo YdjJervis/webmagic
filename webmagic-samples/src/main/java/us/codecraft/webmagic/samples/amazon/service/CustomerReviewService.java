@@ -26,12 +26,8 @@ public class CustomerReviewService {
         mCustomerReviewDao.add(customerReview);
     }
 
-    public void update(CustomerReview monitor) {
-        mCustomerReviewDao.update(monitor);
-    }
-
-    public void updateByReviewIdCustomerCode(CustomerReview customerReview) {
-        mCustomerReviewDao.updateByReviewIdCustomerCode(customerReview);
+    public void update(CustomerReview customerReview) {
+        mCustomerReviewDao.update(customerReview);
     }
 
     /**
@@ -73,4 +69,6 @@ public class CustomerReviewService {
             mCustomerReviewDao.addAll(newList);
         }
     }
+
+
 }

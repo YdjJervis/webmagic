@@ -10,20 +10,22 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
  */
 public class BatchReview extends BasePojo {
 
-    public String siteCode;
     public String batchNumber;
+    public String siteCode;
     public String reviewID;
-    public int times;
+    public int type;
     public int status;
-    public int crawled;
+    public int priority;
 
     @Override
     public String toString() {
         return "BatchReview{" +
-                "siteCode='" + siteCode + '\'' +
-                ", batchNumber='" + batchNumber + '\'' +
+                "batchNumber='" + batchNumber + '\'' +
+                ", siteCode='" + siteCode + '\'' +
                 ", reviewID='" + reviewID + '\'' +
-                ", times=" + times +
+                ", type=" + type +
+                ", status=" + status +
+                ", priority=" + priority +
                 '}';
     }
 }

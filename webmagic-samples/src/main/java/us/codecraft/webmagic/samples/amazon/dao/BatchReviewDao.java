@@ -13,12 +13,15 @@ import java.util.List;
  * @date 2016/11/10 14:45
  */
 @Repository
-public interface BatchReviewDao extends BaseDao<BatchReview>{
+public interface BatchReviewDao extends BaseDao<BatchReview> {
 
     BatchReview find(BatchReview batchAsin);
 
-    List<BatchReview> findByReviewID(String reviewID);
+    BatchReview findByReviewID(String batchNum, String reviewID);
 
     List<BatchReview> findAllByBatchNum(String batchNumber);
 
+    List<BatchReview> findNotCrawled();
+
+    float findAverageProgress(String batchNum);
 }

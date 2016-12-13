@@ -21,7 +21,7 @@ import java.util.List;
 public class ReviewMonitorProcessor extends BasePageProcessor implements ScheduledTask {
 
     @Autowired
-    private UrlService mUrlService;
+    private UrlHistoryService mUrlHistoryService;
     @Autowired
     private ReviewService mReviewService;
 
@@ -35,6 +35,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
     @Override
     protected void dealOtherPage(Page page) {
         if (page.getUrl().get().contains("customer-reviews")) {
+
             String reviewId = page.getUrl().regex(".*customer-reviews/(.*)").get();
             Review review = mReviewService.findByReviewId(reviewId);
 
@@ -49,42 +50,51 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
             review.content = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
 
             sLogger.info(review);
-            mReviewService.add(review);
+            mReviewService.update(review);
 
-            /* 二期业务 */
-            /* 更新详单 */
-            List<BatchReview> batchReviewList = mBatchReviewService.findByReviewID(reviewId);
-            for (BatchReview batchReview : batchReviewList) {
-                batchReview.times++;
-                batchReview.status = 2;
-
-                /*更新关系表下的review完成时间*/
-                Batch batch = mBatchService.findByBatchNumber(batchReview.batchNumber);
-                CustomerReview customerReview = mCustomerReviewService.findCustomerReview(batch.customerCode, batchReview.reviewID);
-                customerReview.finishTime = new Date();
-                mCustomerReviewService.updateByReviewIdCustomerCode(customerReview);
-            }
-            mBatchReviewService.updateAll(batchReviewList);
-
-            /* 更新总单 */
-            for (BatchReview batchReview : batchReviewList) {
-                Batch batch = mBatchService.findByBatchNumber(batchReview.batchNumber);
-                batch.times++;
-                if (batch.startTime == null) {
-                    batch.startTime = new Date();
-                }
-                mBatchService.update(batch);
-            }
-
+            updateBatchStatus(page);
         }
     }
 
+    private void updateBatchStatus(Page page) {
+        String reviewId = page.getUrl().regex(".*customer-reviews/(.*)").get();
+        /* 二期业务 */
+        /* 更新详单 */
+        BatchReview batchReview = mBatchReviewService.findByReviewID(getUrl(page).batchNum, reviewId);
+        batchReview.status = 2;
+        mBatchReviewService.update(batchReview);
+
+        /* 更新批次总单的状态 */
+        Batch batch = mBatchService.findByBatchNumber(batchReview.batchNumber);
+
+        Date currentTime = new Date();
+        if (batch.startTime == null) {
+            batch.startTime = currentTime;
+        }
+        float progress = mBatchReviewService.findAverageProgress(batchReview.batchNumber);
+        batch.progress = progress;
+        if (progress == 1) {
+            batch.finishTime = currentTime;
+            batch.status = 2;
+        } else {
+            batch.status = 1;
+        }
+        mBatchService.update(batch);
+
+        /* 跟新客户-Review关系记录状态 */
+        CustomerReview customerReview = mCustomerReviewService.findCustomerReview(batch.customerCode, reviewId);
+        customerReview.times++;
+        customerReview.finishTime = currentTime;
+        mCustomerReviewService.update(customerReview);
+
+        /* URL归档到历史表 */
+        mUrlService.deleteByUrlMd5(getUrl(page).urlMD5);
+        mUrlHistoryService.add(getUrl(page));
+    }
+
     @Override
-    protected boolean needUpdateStatus() {
-        /* 更新成200状态后，还怎么继续监听呢，所以不需要更新状态码，只累计爬取次数
-         * 根据次数和优先级取当前需要爬取哪些监听的URL，缓解一次获取所有URL的程序爬
-         * 取压力。 */
-        return false;
+    void dealPageNotFound(Page page) {
+        updateBatchStatus(page);
     }
 
     @Override

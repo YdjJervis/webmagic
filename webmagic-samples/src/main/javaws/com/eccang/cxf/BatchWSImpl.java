@@ -103,7 +103,6 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 BatchReviewRsp.ReviewMonitor monitor = batchReviewRsp.new ReviewMonitor();
                 monitor.siteCode = batchReview.siteCode;
                 monitor.reviewID = batchReview.reviewID;
-                monitor.crawled = batchReview.crawled;
                 monitor.updateTime = batchReview.updateTime;
                 batchReviewRsp.data.details.add(monitor);
             }
