@@ -4,6 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.ReviewDao;
+import us.codecraft.webmagic.samples.amazon.pojo.BatchAsinExtra;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewCount;
 
@@ -79,7 +80,7 @@ public class ReviewService {
      * @param rootAsin 根ASIN
      * @param star 星级
      */
-    public List<Review> findAll(String rootAsin, int star) {
+    public List<BatchAsinExtra> findAll(String rootAsin, int star) {
         return mReviewDao.findAllByStar(rootAsin,star);
     }
 

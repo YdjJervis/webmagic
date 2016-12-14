@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.service;
 
+import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -42,6 +43,9 @@ public class UrlService {
 
     @Autowired
     private PushQueueService mPushQueueService;
+
+    @Autowired
+    private ReviewService mReviewService;
 
     private Logger mLogger = Logger.getLogger(getClass());
 
@@ -172,7 +176,12 @@ public class UrlService {
             /* 更新ASIN的extra状态 */
             Asin asin = mAsinService.updateExtra(asinObj);
             /* 二期业务：更新详单表字段 */
-            dbBtchAsin.extra = asin.extra;
+            List<BatchAsinExtra> batchAsinExtraList = new ArrayList<>();
+            List<Integer> starList = mBatchAsinService.getStarArray(dbBtchAsin.star);
+            for (Integer star : starList) {
+                batchAsinExtraList.addAll(mReviewService.findAll(asin.rootAsin, star));
+            }
+            dbBtchAsin.extra = new Gson().toJson(batchAsinExtraList);
             dbBtchAsin.finishTime = currentTime;
             dbBtchAsin.progress = 1;
             dbBtchAsin.status = 4;

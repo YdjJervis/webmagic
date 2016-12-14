@@ -23,6 +23,11 @@
         <result property="updateTime" column="sar_update_time"/>
     </resultMap>
 
+    <resultMap id="BatchAsinExtraResultMap" type="BatchAsinExtra">
+        <result property="reviewID" column="sar_review_id"/>
+        <result property="star" column="sar_star"/>
+    </resultMap>
+
     <resultMap id="StarReviewCountMap" type="StarReviewCount">
         <result property="star" column="sar_star"/>
         <result property="count" column="count"/>
@@ -80,8 +85,8 @@
     </select>
 
     <!-- 根据RootASIN和星级查询Review列表 -->
-    <select id="findAllByStar" resultMap="ReviewResultMap">
-        SELECT * FROM spider_amazon_review WHERE
+    <select id="findAllByStar" resultMap="BatchAsinExtraResultMap">
+        SELECT sar_review_id,sar_star FROM spider_amazon_review WHERE
             rar_root_asin = #{0} and sar_star = #{1} order by sar_deal_time DESC;
     </select>
 </mapper>

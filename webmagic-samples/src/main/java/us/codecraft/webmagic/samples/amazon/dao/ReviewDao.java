@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.dao;
 
 import org.springframework.stereotype.Repository;
+import us.codecraft.webmagic.samples.amazon.pojo.BatchAsinExtra;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewCount;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
@@ -24,5 +25,5 @@ public interface ReviewDao extends BaseDao<Review> {
 
     List<Review> findAll(Review review);
 
-    List<Review> findAllByStar(String rootAsin, int star);
+    List<BatchAsinExtra> findAllByStar(String rootAsin, int star);
 }
