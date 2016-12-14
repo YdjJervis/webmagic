@@ -2,6 +2,7 @@ package us.codecraft.webmagic.amazon.grammar;
 
 import junit.framework.TestCase;
 import org.junit.Test;
+import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,5 +49,23 @@ public class ListTest extends TestCase {
         list.removeAll(list2);
 
         System.out.println(list);
+    }
+
+    @Test
+    public void testRemoveItem(){
+        List<StarReviewMap> mapList = new ArrayList<StarReviewMap>();
+
+        StarReviewMap map = new StarReviewMap(1,"Review001");
+        StarReviewMap map2 = new StarReviewMap(2,"Review002");
+
+        mapList.add(map);
+        mapList.add(map2);
+
+        StarReviewMap map3 = new StarReviewMap(1,"Review001");
+        mapList.remove(map);
+
+        System.out.println(mapList);
+
+        /* 测试总结：remove是根据地址remove的，上面的String类型能Remove是因为复用了对象池 */
     }
 }

@@ -57,4 +57,9 @@ public class ReviewServiceTest extends SpringTestCase {
         review.extra = "Extra001";
         mReviewService.update(review);
     }
+
+    @Test
+    public void testFindAll(){
+        System.out.println(mReviewService.findAll("B01G38UKDO", 3));
+    }
 }

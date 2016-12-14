@@ -79,4 +79,9 @@
         sar_star = #{star}
     </select>
 
+    <!-- 根据RootASIN和星级查询Review列表 -->
+    <select id="findAllByStar" resultMap="ReviewResultMap">
+        SELECT * FROM spider_amazon_review WHERE
+            rar_root_asin = #{0} and sar_star = #{1} order by sar_deal_time DESC;
+    </select>
 </mapper>

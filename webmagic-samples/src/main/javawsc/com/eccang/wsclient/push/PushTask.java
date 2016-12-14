@@ -80,7 +80,6 @@ public class PushTask {
         PushDataReq pushDataReq = new PushDataReq();
         /*生成公共请求参数*/
         pushDataReq.setCustomerCode(batch.customerCode);
-        pushDataReq.setPlatformCode(batch.platformCode);
         pushDataReq.setToken(api.token);
 
         /*查询需要推送的具体数据，并将数据封装在Data对象里*/

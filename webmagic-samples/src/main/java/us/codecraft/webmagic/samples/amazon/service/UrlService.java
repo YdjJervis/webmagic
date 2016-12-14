@@ -40,6 +40,9 @@ public class UrlService {
     @Autowired
     private CustomerAsinService mCustomerAsinService;
 
+    @Autowired
+    private PushQueueService mPushQueueService;
+
     private Logger mLogger = Logger.getLogger(getClass());
 
 
@@ -200,6 +203,9 @@ public class UrlService {
         if (batch.progress == 1) {
             batch.finishTime = currentTime;
             batch.status = 2;
+
+            /* 全量爬取完毕，放进推送队列 */
+            mPushQueueService.add(batch.number);
         }
 
         mBatchService.update(batch);

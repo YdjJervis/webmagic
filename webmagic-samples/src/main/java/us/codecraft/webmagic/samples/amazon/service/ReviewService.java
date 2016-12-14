@@ -74,4 +74,13 @@ public class ReviewService {
         return mReviewDao.findAll(review);
     }
 
+    /**
+     * 根据指定根ASIN和星级的所有评论
+     * @param rootAsin 根ASIN
+     * @param star 星级
+     */
+    public List<Review> findAll(String rootAsin, int star) {
+        return mReviewDao.findAllByStar(rootAsin,star);
+    }
+
 }

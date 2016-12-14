@@ -26,6 +26,12 @@ public class PushQueueService {
         mDao.add(pushQueue);
     }
 
+    public void add(String batchNumber) {
+        PushQueue pushQueue = new PushQueue();
+        pushQueue.batchNum = batchNumber;
+        add(pushQueue);
+    }
+
     public void delete(int id) {
         mDao.delete(id);
     }
@@ -37,4 +43,5 @@ public class PushQueueService {
     public List<PushQueue> findNeed2Push() {
         return mDao.findNeed2Push();
     }
+
 }

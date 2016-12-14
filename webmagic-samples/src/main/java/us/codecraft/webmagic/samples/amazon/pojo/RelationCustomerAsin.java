@@ -12,7 +12,6 @@ public class RelationCustomerAsin {
 
     private int id;
     private String customerCode; /*客户码*/
-    private String platformCode; /*平台码*/
     private String siteCode; /*站点码*/
     private String asin;
     private String rootAsin;
@@ -34,14 +33,6 @@ public class RelationCustomerAsin {
 
     public void setCustomerCode(String customerCode) {
         this.customerCode = customerCode;
-    }
-
-    public String getPlatformCode() {
-        return platformCode;
-    }
-
-    public void setPlatformCode(String platformCode) {
-        this.platformCode = platformCode;
     }
 
     public String getSiteCode() {

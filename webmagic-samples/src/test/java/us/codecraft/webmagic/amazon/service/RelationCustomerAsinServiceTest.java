@@ -26,7 +26,6 @@ public class RelationCustomerAsinServiceTest extends SpringTestCase {
     public void add() {
         RelationCustomerAsin relationCustomerAsin = new RelationCustomerAsin();
         relationCustomerAsin.setCustomerCode("EC_001");
-        relationCustomerAsin.setPlatformCode("ERP");
         relationCustomerAsin.setSiteCode("US");
         relationCustomerAsin.setAsin("B01M6WRC9R");
         relationCustomerAsin.setRootAsin("B01LY3AMY8");
@@ -45,7 +44,6 @@ public class RelationCustomerAsinServiceTest extends SpringTestCase {
         for (int i = 0; i < 2; i++) {
             relation = new RelationCustomerAsin();
             relation.setCustomerCode("EC_001" + i);
-            relation.setPlatformCode("ERP");
             relation.setSiteCode("US");
             relation.setAsin("B01M6WRC9R");
             relation.setRootAsin("B01LY3AMY8");
@@ -72,7 +70,6 @@ public class RelationCustomerAsinServiceTest extends SpringTestCase {
         RelationCustomerAsin relationCustomerAsin = new RelationCustomerAsin();
         relationCustomerAsin.setId(7);
         relationCustomerAsin.setCustomerCode("EC_007");
-        relationCustomerAsin.setPlatformCode("ERP");
         relationCustomerAsin.setSiteCode("CN");
         relationCustomerAsin.setAsin("B01M6WRC9R");
         relationCustomerAsin.setRootAsin("B01LY3AMY8");
