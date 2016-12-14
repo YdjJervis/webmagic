@@ -17,8 +17,6 @@ public class PushQueueServiceTest extends SpringTestCase {
     public void testAdd() {
         PushQueue pushQueue = new PushQueue();
         pushQueue.batchNum = "Batch0001";
-        pushQueue.customerCode = "Cus001";
-        pushQueue.platformCode = "Plat001";
         pushQueue.status = 0;
         pushQueue.times = 3;
         pushQueue.extra = "Extra001";
@@ -36,8 +34,6 @@ public class PushQueueServiceTest extends SpringTestCase {
         PushQueue pushQueue = new PushQueue();
         pushQueue.id = 1;
         pushQueue.batchNum = "Batch0001";
-        pushQueue.customerCode = "Cus001";
-        pushQueue.platformCode = "Plat001";
         pushQueue.status = 0;
         pushQueue.times = 2;
         pushQueue.extra = "Extra001";

@@ -11,8 +11,6 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 public class PushQueue extends BasePojo{
 
     public String batchNum;
-    public String customerCode;
-    public String platformCode;
     /**
      * 推送状态。0-未推送/1-推送中/2-推送成功/3-推送失败
      */

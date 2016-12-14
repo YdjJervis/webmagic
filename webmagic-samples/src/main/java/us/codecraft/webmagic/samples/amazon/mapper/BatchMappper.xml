@@ -7,6 +7,7 @@
         <result property="id" column="bo_id"/>
         <result property="number" column="bo_batch_num"/>
         <result property="customerCode" column="bec_code"/>
+        <result property="platformCode" column="bp_code"/>
         <result property="isImport" column="bo_import"/>
         <result property="type" column="bo_type"/>
         <result property="status" column="bo_status"/>
@@ -21,9 +22,9 @@
 
     <insert id="add" parameterType="Batch">
         INSERT INTO batch_order
-        (bo_batch_num,bec_code,bo_import,bo_type,bo_status,bo_times,bo_start_time,bo_finish_time,bo_progress,bo_extra)
+        (bo_batch_num,bec_code,bp_code,bo_import,bo_type,bo_status,bo_times,bo_start_time,bo_finish_time,bo_progress,bo_extra)
         VALUES
-        (#{number},#{customerCode},#{isImport},#{type},#{status},#{times},#{startTime},#{finishTime},#{progress},#{extra})
+        (#{number},#{customerCode},#{platformCode},#{isImport},#{type},#{status},#{times},#{startTime},#{finishTime},#{progress},#{extra})
     </insert>
 
     <select id="findByBatchNumber" resultMap="BatchResultMap">
@@ -38,9 +39,10 @@
 
     <update id="update" parameterType="Batch">
         UPDATE batch_order SET
-        bec_code = #{customerCode},bo_import = #{isImport},bo_type = #{type},bo_status = #{status},bo_times = #{times},bo_start_time = #{startTime},
-        bo_progress = #{progress},bo_finish_time = #{finishTime},bo_extra = #{extra}
-        WHERE bo_batch_num = #{number}
+            bec_code = #{customerCode},bp_code = #{platformCode},bo_import = #{isImport},bo_type = #{type},bo_status = #{status},
+            bo_times = #{times},bo_start_time = #{startTime},bo_progress = #{progress},bo_finish_time = #{finishTime},bo_extra = #{extra}
+        WHERE
+            bo_batch_num = #{number}
     </update>
 
 </mapper>

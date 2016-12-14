@@ -29,7 +29,6 @@ public class PushTask {
     @Autowired
     private APIService mAPIService;
 
-
     private Logger sLogger = Logger.getLogger(getClass());
 
     void startTask(PushQueue pushQueue) {
@@ -72,17 +71,17 @@ public class PushTask {
      */
     private PushDataReq getNeedPushData(PushQueue pushQueue) {
 
+        /*查询需要推送的批次信息*/
+        Batch batch = mBatchService.findByBatchNumber(pushQueue.batchNum);
+
         /*查询客户对应的token*/
-        API api = mAPIService.findByCode(pushQueue.customerCode);
+        API api = mAPIService.findByCode(batch.customerCode);
 
         PushDataReq pushDataReq = new PushDataReq();
         /*生成公共请求参数*/
-        pushDataReq.setCustomerCode(pushQueue.customerCode);
-        pushDataReq.setPlatformCode(pushQueue.platformCode);
+        pushDataReq.setCustomerCode(batch.customerCode);
+        pushDataReq.setPlatformCode(batch.platformCode);
         pushDataReq.setToken(api.token);
-
-        /*查询需要推送的批次信息*/
-        Batch batch = mBatchService.findByBatchNumber(pushQueue.batchNum);
 
         /*查询需要推送的具体数据，并将数据封装在Data对象里*/
         PushDataReq.Data data = getPushData(batch.customerCode, batch.type);
