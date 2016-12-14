@@ -69,6 +69,8 @@ public class BatchParseUrlMonitor extends ParseMonitor {
             Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
             batch.status = 1;
             mBatchService.update(batch);
+
+            urlList.add(url);
         }
 
         /* 把需要全量爬取的批次详单转换成全量爬取的URL，并改变爬取类型为全量爬取 */

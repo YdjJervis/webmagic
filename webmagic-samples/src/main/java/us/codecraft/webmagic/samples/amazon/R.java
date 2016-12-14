@@ -3,8 +3,11 @@ package us.codecraft.webmagic.samples.amazon;
 /**
  * 常量定义类
  */
-public class R {
+public final class R {
 
+    /**
+     * URL 爬取类型
+     */
     public static final class CrawlType {
         /**
          * 爬取首页
@@ -22,6 +25,16 @@ public class R {
          * Review监听爬取
          */
         public static final int REVIEW_MONITOR = 4;
+    }
+
+    /**
+     * 客户-ASIN 关系的设置
+     */
+    public static final class AsinSetting {
+        /**
+         * 更新频率爬取
+         */
+        public static final int UPDATE_FREQUENCY = 24;
     }
 
 

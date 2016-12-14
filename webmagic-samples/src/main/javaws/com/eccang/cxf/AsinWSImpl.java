@@ -4,6 +4,7 @@ import com.eccang.pojo.*;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.*;
 
@@ -123,6 +124,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             customerAsin.siteCode = asin.siteCode;
             customerAsin.asin = asin.asin;
             customerAsin.star = asin.star;
+            customerAsin.frequency = R.AsinSetting.UPDATE_FREQUENCY;
             customerAsinList.add(customerAsin);
         }
         mCustomerAsinService.addAll(customerAsinList);

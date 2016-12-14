@@ -12,8 +12,8 @@
         <result property="status" column="bo_status"/>
         <result property="times" column="bo_times"/>
         <result property="startTime" column="bo_start_time"/>
-        <result property="finishTime" column="bo_finish_time"/>
         <result property="progress" column="bo_progress"/>
+        <result property="finishTime" column="bo_finish_time"/>
         <result property="extra" column="bo_extra"/>
         <result property="createTime" column="bo_create_time"/>
         <result property="updateTime" column="bo_update_time"/>
@@ -38,8 +38,8 @@
 
     <update id="update" parameterType="Batch">
         UPDATE batch_order SET
-        bec_code = #{customerCode},#{isImport},bo_type = #{type},bo_status = #{status},bo_times = #{times},bo_start_time = #{startTime},
-        bo_finish_time = #{finishTime},bo_progress = #{progress},bo_extra = #{extra}
+        bec_code = #{customerCode},bo_import = #{isImport},bo_type = #{type},bo_status = #{status},bo_times = #{times},bo_start_time = #{startTime},
+        bo_progress = #{progress},bo_finish_time = #{finishTime},bo_extra = #{extra}
         WHERE bo_batch_num = #{number}
     </update>
 

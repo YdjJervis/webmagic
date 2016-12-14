@@ -47,4 +47,11 @@ public class BatchServiceTest extends SpringTestCase {
     public void testFindByStatus() {
         System.out.println(mService.findByStatus(0));
     }
+
+    @Test
+    public void testUpdate() {
+        Batch batch = mService.findByBatchNumber("EC20161214111211328");
+        batch.progress = 1;
+        mService.update(batch);
+    }
 }
