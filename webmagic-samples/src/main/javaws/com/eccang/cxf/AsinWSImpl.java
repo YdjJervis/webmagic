@@ -91,7 +91,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             parsedBatchAsinList.add(batchAsin);
         }
 
-        Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedBatchAsinList, 0);
+        Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedBatchAsinList, 0, 1);
 
         /* 全部都是之前已经爬取过的，就直接跟新批次号各个状态 */
         boolean isAllCrawled = true;

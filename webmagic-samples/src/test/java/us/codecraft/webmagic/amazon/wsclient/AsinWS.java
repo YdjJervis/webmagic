@@ -73,7 +73,7 @@ public class AsinWS extends SpringTestCase {
             asin.asin = importData.getAsin();
             asin.siteCode = importData.getSiteCode();
             asin.priority = 0;
-            asin.star = "0-0-1-1-1";
+            asin.star = "0-1-1-1-1";
             asinReq.data.add(asin);
         }
 

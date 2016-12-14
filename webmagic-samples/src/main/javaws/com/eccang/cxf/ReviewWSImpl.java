@@ -23,6 +23,7 @@ import java.util.List;
  */
 @WebService
 public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
+
     @Autowired
     private ReviewService mReviewService;
 
@@ -49,11 +50,14 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         reviewRsp.msg = baseRspParam.msg;
 
         int crawledNum = 0;
+        /* 把客户和Review的关系保存起来 */
         List<CustomerReview> customerReviewList = new ArrayList<CustomerReview>();
         for (ReviewReq.Review review : reviewReq.data) {
             CustomerReview customerReview = new CustomerReview();
-            customerReview.reviewId = review.reviewID;
+            customerReview.customerCode = reviewReq.cutomerCode;
             customerReview.siteCode = review.siteCode;
+            customerReview.asin = review.asin;
+            customerReview.reviewId = review.reviewID;
             customerReview.priority = review.priority;
             customerReview.frequency = review.frequency;
             if (mCustomerReviewService.isExist(reviewReq.cutomerCode, review.reviewID)) {

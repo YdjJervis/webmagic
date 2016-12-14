@@ -125,7 +125,7 @@ public class BatchGenerateMonitor implements ScheduledTask {
 
             mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
             /*添加创建详单信息*/
-            mBatchService.addBatch(customerCode, needAddList, 2);
+            mBatchService.addBatch(customerCode, needAddList, 2, 0);
 
             mLogger.info("生成Review更新爬取批次：成功");
         }

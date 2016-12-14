@@ -17,6 +17,7 @@ public class ReviewReq extends BaseReqParam {
 
     public class Review {
         public String siteCode;
+        public String asin;
         public String reviewID;
         public int frequency;
         public int marked;

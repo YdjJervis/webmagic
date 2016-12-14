@@ -83,7 +83,7 @@
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.batchNumber},#{item.siteCode},#{item.asin},#{item.rootAsin},#{priority},#{item.star},#{item.crawled},#{item.status},#{item.progress},
+            #{item.batchNumber},#{item.siteCode},#{item.asin},#{item.rootAsin},#{item.priority},#{item.star},#{item.crawled},#{item.status},#{item.progress},
             #{item.type},#{item.extra},#{item.startTime},#{item.finishTime}
             )
         </foreach>

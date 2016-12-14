@@ -14,6 +14,7 @@ public class Batch extends BasePojo {
 
     public String number;
     public String customerCode;
+    public int isImport;
     public int type;
     public int status;
     public int times;

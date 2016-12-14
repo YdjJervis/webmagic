@@ -32,11 +32,13 @@ public class BatchService {
      * 添加Asin批次。
      * 1，生成批次总单；
      * 2，生成批次详单。
+     *
      * @param type 0-Review全量爬取；1-监听爬取;2-Review更新爬取
      */
-    public Batch addBatch(String customerCode, List<BatchAsin> batchAsinList,int type) {
+    public Batch addBatch(String customerCode, List<BatchAsin> batchAsinList, int type, int isImport) {
 
         Batch batch = generate(customerCode, type);
+        batch.isImport = isImport;
         for (BatchAsin batchAsin : batchAsinList) {
             batchAsin.batchNumber = batch.number;
         }
