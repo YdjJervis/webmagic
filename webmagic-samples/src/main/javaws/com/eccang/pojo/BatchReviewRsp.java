@@ -1,7 +1,6 @@
 package com.eccang.pojo;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,13 +16,13 @@ public class BatchReviewRsp extends BaseRspParam {
     public class Batch {
 
         public String number;
-        public Date createTime;
+        public String createTime;
         public int type;
         public int times;
-        public Date startTime;
-        public Date finishTime;
+        public String startTime;
+        public String finishTime;
         public double progress;
-        public Date updateTime;
+        public String updateTime;
         public List<ReviewMonitor> details = new ArrayList<ReviewMonitor>();
     }
 
@@ -31,6 +30,6 @@ public class BatchReviewRsp extends BaseRspParam {
         public String siteCode;
         public String reviewID;
         public int times;
-        public Date updateTime;
+        public String updateTime;
     }
 }

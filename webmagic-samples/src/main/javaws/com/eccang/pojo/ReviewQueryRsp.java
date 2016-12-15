@@ -1,14 +1,13 @@
 package com.eccang.pojo;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
  * @author Jervis
  * @version V0.20
  * @Description: Review查询返回
- * @date 2016/11/21 16:52
+ * @String 2016/11/21 16:52
  */
 public class ReviewQueryRsp extends BaseRspParam {
 
@@ -20,7 +19,7 @@ public class ReviewQueryRsp extends BaseRspParam {
     public class Review {
         public String siteCode;
         public String asin;
-        public Date time;
+        public String time;
         public String personID;
         public String reviewID;
         public String buyStatus;

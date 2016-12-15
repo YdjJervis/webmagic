@@ -19,7 +19,7 @@ public class CustomerReview extends BasePojo {
     /**
      * 是否是开启状态。1-是/0-否
      */
-    public int status = 2;
+    public int status = 1;
     public int priority;
     /**
      * 执行频率（h/次）

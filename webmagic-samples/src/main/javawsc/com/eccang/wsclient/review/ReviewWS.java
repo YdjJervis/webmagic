@@ -5,9 +5,8 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
 
 
 /**
@@ -17,6 +16,7 @@ import javax.xml.ws.ResponseWrapper;
  * 
  */
 @WebService(name = "ReviewWS", targetNamespace = "http://cxf.eccang.com/")
+@SOAPBinding(style = SOAPBinding.Style.RPC)
 @XmlSeeAlso({
     ObjectFactory.class
 })
@@ -30,11 +30,9 @@ public interface ReviewWS {
      *     returns java.lang.String
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getReviews", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.GetReviews")
-    @ResponseWrapper(localName = "getReviewsResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.GetReviewsResponse")
+    @WebResult(partName = "return")
     public String getReviews(
-        @WebParam(name = "arg0", targetNamespace = "")
+        @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
     /**
@@ -44,11 +42,21 @@ public interface ReviewWS {
      *     returns java.lang.String
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "addToMonitor", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.AddToMonitor")
-    @ResponseWrapper(localName = "addToMonitorResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.AddToMonitorResponse")
+    @WebResult(partName = "return")
     public String addToMonitor(
-        @WebParam(name = "arg0", targetNamespace = "")
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String updateCustomerReview(
+        @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
     /**
@@ -58,11 +66,45 @@ public interface ReviewWS {
      *     returns com.eccang.wsclient.review.BaseRspParam
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "auth", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.Auth")
-    @ResponseWrapper(localName = "authResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.review.AuthResponse")
+    @WebResult(partName = "return")
     public BaseRspParam auth(
-        @WebParam(name = "arg0", targetNamespace = "")
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String setFrequency(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String setReviewMonitor(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String setPriority(
+        @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
 }

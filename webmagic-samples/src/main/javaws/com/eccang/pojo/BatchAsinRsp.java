@@ -1,7 +1,6 @@
 package com.eccang.pojo;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,17 +11,17 @@ import java.util.List;
  */
 public class BatchAsinRsp extends BaseRspParam {
 
-    public Batch data;
+    public Batch data = new Batch();
 
     public class Batch {
         public String number;
-        public Date createTime;
+        public String createTime;
         public int type;
         public int times;
-        public Date startTime;
-        public Date finishTime;
+        public String startTime;
+        public String finishTime;
         public double progress;
-        public Date updateTime;
+        public String updateTime;
         public List<Asin> details = new ArrayList<Asin>();
 
     }
@@ -33,9 +32,9 @@ public class BatchAsinRsp extends BaseRspParam {
         public String rootAsin;
         public int crawled;
         public double progress;
-        public Date startTime;
-        public Date finishTime;
-        public Date updateTime;
+        public String startTime;
+        public String finishTime;
+        public String updateTime;
 
     }
 }

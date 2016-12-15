@@ -1,15 +1,20 @@
 package com.eccang.wsclient.push;
 
+import com.eccang.wsclient.api.Ec_Service;
+import com.eccang.wsclient.asin.BaseRspParam;
 import com.eccang.wsclient.pojo.PushDataReq;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.pojo.API;
-import us.codecraft.webmagic.samples.amazon.pojo.Batch;
-import us.codecraft.webmagic.samples.amazon.pojo.PushQueue;
-import us.codecraft.webmagic.samples.amazon.service.APIService;
-import us.codecraft.webmagic.samples.amazon.service.BatchService;
-import us.codecraft.webmagic.samples.amazon.service.PushQueueService;
+import org.springframework.transaction.annotation.Transactional;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.service.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hardy
@@ -18,6 +23,7 @@ import us.codecraft.webmagic.samples.amazon.service.PushQueueService;
  * @date 2016/12/5 18:59
  */
 @Service
+@Transactional
 public class PushTask {
 
     @Autowired
@@ -29,6 +35,15 @@ public class PushTask {
     @Autowired
     private APIService mAPIService;
 
+    @Autowired
+    private BatchAsinService mBatchAsinService;
+
+    @Autowired
+    private BatchReviewService mBatchReviewService;
+
+    @Autowired
+    private CustomerReviewService mCustomerReviewService;
+
     private Logger sLogger = Logger.getLogger(getClass());
 
     void startTask(PushQueue pushQueue) {
@@ -37,12 +52,14 @@ public class PushTask {
         pushQueue.times += 1;
         mPushQueueService.update(pushQueue);
         /*获取这个批次下关联的数据*/
-
-
-        /*查询当前批次下的批次状态信息*/
-        Batch batch = mBatchService.findByBatchNumber(pushQueue.batchNum);
+        PushDataReq pushDataReq = getNeedPushData(pushQueue);
         /*推送*/
-        boolean isSuccess = push(batch);
+        boolean isSuccess = true;
+        if (pushDataReq.getData().getAsins().size() > 0) {
+            isSuccess = push(pushDataReq);
+        } else {
+            sLogger.info("批次号为(" + pushQueue.batchNum + ")没有数据变化，无需推送数据.");
+        }
         /*判断推送成功或失败*/
         pushQueue.status = isSuccess ? 2 : 3;
         /*更新已经完成的批次表中的状态（推送次数，推送是否完成）*/
@@ -52,14 +69,21 @@ public class PushTask {
     /**
      * 推送批次完成信息
      */
-    private boolean push(Batch batch) {
+    private boolean push(PushDataReq pushDataReq) {
         boolean pushResult = false;
         try {
             /*通过客户码，判断调用推送接口的方式*/
-            System.out.println("推送已经完成的批量信息.");
-
-            System.out.println(batch);
-            pushResult = true;
+            sLogger.info("推送已经完成的批量信息.");
+            String response = "";
+            if (pushDataReq.getCustomerCode().equals("EC_001")) {
+                response = new Ec_Service().getEcSOAP().pushMessage(pushDataReq.getCustomerCode(), pushDataReq.getPlatformCode(), pushDataReq.getToken(), new Gson().toJson(pushDataReq.getData()));
+            } else {
+                sLogger.info("客户（" + pushDataReq.getCustomerCode() + "）" + "没有对接推送接口.");
+            }
+            BaseRspParam baseRspParam = new Gson().fromJson(response, BaseRspParam.class);
+            if (baseRspParam.getStatus() == 200) {
+                pushResult = true;
+            }
         } catch (Exception e) {
             sLogger.info(e);
         }
@@ -83,7 +107,7 @@ public class PushTask {
         pushDataReq.setToken(api.token);
 
         /*查询需要推送的具体数据，并将数据封装在Data对象里*/
-        PushDataReq.Data data = getPushData(batch.customerCode, batch.type);
+        PushDataReq.Data data = getPushData(batch, batch.type);
 
         /*将查询到的数据封装在请求pushDataReq对象里*/
         pushDataReq.setData(data);
@@ -92,24 +116,81 @@ public class PushTask {
     }
 
     /**
-     * 通过不同的业务来封闭需要推送的数据
+     * 通过不同的业务来封装需要推送的数据
      */
-    private PushDataReq.Data getPushData(String batchNum, int type) {
+    private PushDataReq.Data getPushData(Batch batch, int type) {
 
         PushDataReq.Data data = new PushDataReq.Data();
-        data.setBatchNum(batchNum);
+        data.setBatchNum(batch.number);
         data.setType(String.valueOf(type));
 
         if (type == 0) {
             /*全量爬取，只需要返回批次单号*/
             return data;
         } else if (type == 1) {
-
+            /*review监听爬取*/
+            data.setAsins(getPushReviewsMonitor(batch));
         } else if (type == 2) {
-
+            /*更新爬取*/
+            data.setAsins(getPushAsinsUpdate(batch));
         }
-
         return data;
+    }
+
+    /**
+     * 获取更新爬取的变化数据信息
+     */
+    private List<PushDataReq.Data.Asin> getPushAsinsUpdate(Batch batch) {
+        List<PushDataReq.Data.Asin> asins = new ArrayList<PushDataReq.Data.Asin>();
+        /*查询这个批次下的所有的asin*/
+        List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batch.number);
+        PushDataReq.Data.Asin asin;
+        for (BatchAsin batchAsin : batchAsinList) {
+            /*每条asin的大字段信息*/
+            String extra = batchAsin.extra;
+            if (StringUtils.isNotEmpty(extra)) {
+                asin = new PushDataReq.Data.Asin();
+                asin.setAsin(batchAsin.asin);
+                asin.setSiteCode(batchAsin.siteCode);
+                /*将大字段里的信息转换成对象集合*/
+                List<PushDataReq.Data.Asin.Review> reviewList = new Gson().fromJson(extra, new TypeToken<List<PushDataReq.Data.Asin.Review>>() {
+                }.getType());
+                asin.setReviews(reviewList);
+                asins.add(asin);
+            }
+        }
+        return asins;
+    }
+
+    /**
+     * 获取review监听爬取变化的数据
+     */
+    private List<PushDataReq.Data.Asin> getPushReviewsMonitor(Batch batch) {
+        List<PushDataReq.Data.Asin> asins = new ArrayList<PushDataReq.Data.Asin>();
+        /*查询当前批次下的所有的监听的review*/
+        List<BatchReview> batchReviewList = mBatchReviewService.findAllByBatchNum(batch.number);
+
+        /*监听review中，发生变化的review集合*/
+        List<PushDataReq.Data.Asin.Review> reviewList = new ArrayList<PushDataReq.Data.Asin.Review>();
+
+        PushDataReq.Data.Asin asin;
+        for (BatchReview batchReview : batchReviewList) {
+            String extra = batchReview.extra;
+            if (StringUtils.isNotEmpty(extra)) {
+                /*查询对应客户下的review信息*/
+                CustomerReview customerReview = mCustomerReviewService.findCustomerReview(batch.customerCode, batchReview.reviewID);
+                String asinStr = customerReview.asin;
+                asin = new PushDataReq.Data.Asin();
+                asin.setAsin(asinStr);
+                asin.setSiteCode(customerReview.siteCode);
+                /*将大字段里的信息转换成对象集合*/
+                PushDataReq.Data.Asin.Review review = new Gson().fromJson(extra, PushDataReq.Data.Asin.Review.class);
+                reviewList.add(review);
+                asin.setReviews(reviewList);
+                asins.add(asin);
+            }
+        }
+        return asins;
     }
 
 }

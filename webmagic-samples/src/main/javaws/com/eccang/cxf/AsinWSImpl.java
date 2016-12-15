@@ -142,6 +142,10 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         batchAsin.type = 1;
     }
 
+    /**
+     * 获取ASIN的信息
+     * 此功能暂时不可用
+     */
     @Override
     public String getAsins(String json) {
         BaseRspParam baseRspParam = auth(json);
@@ -164,9 +168,11 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         CustomerAsin customerAsin;
         for (AsinQueryReq.Asin asin : asinQueryReq.data) {
-            /*查询客户-ASIN关系表中的数据*/
-            customerAsin = new CustomerAsin(asinQueryReq.cutomerCode, asin.siteCode, asin.asin);
-            CustomerAsin customerAsin1 = mCustomerAsinService.find(customerAsin);
+            /*查询Batch-ASIN关系表中的数据*/
+            //运行状态获取暂时有疑问
+
+//            customerAsin = new CustomerAsin(asinQueryReq.cutomerCode, asin.siteCode, asin.asin);
+//            CustomerAsin customerAsin1 = mBatchAsinService.find
             /*查询asin对应的rootAsin*/
             AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin.asin);
             Asin dbAsin;
@@ -188,7 +194,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             }
             resultAsin.asin = dbAsin.rootAsin;
             resultAsin.rootAsin = dbAsin.rootAsin;
-//            resultAsin.progress = customerAsin1.progress;
+            resultAsin.progress = 0;//有疑问
             asinQueryRsp.data.add(resultAsin);
         }
 
@@ -215,12 +221,17 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         for (AsinPriorityReq.Asin asin : priorityReq.data) {
             customerAsin = new CustomerAsin(baseRspParam.cutomerCode, asin.siteCode, asin.asin);
             customerAsin = mCustomerAsinService.find(customerAsin);
-            if (customerAsin.priority == asin.priority) {
-                priorityRsp.data.noChange++;
+            if(customerAsin != null) {
+                if (customerAsin.priority == asin.priority) {
+                    priorityRsp.data.noChange++;
+                } else {
+                    customerAsin.priority = asin.priority;
+                    mCustomerAsinService.update(customerAsin);
+                    priorityRsp.data.changed++;
+                }
             } else {
-                customerAsin.priority = asin.priority;
-                mCustomerAsinService.update(customerAsin);
-                priorityRsp.data.changed++;
+                /*不存在的asin*/
+                priorityRsp.data.noChange++;
             }
         }
 

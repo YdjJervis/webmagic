@@ -14,7 +14,8 @@ import com.google.gson.Gson;
 public class ReviewWSClient {
 
     public static void main(String[] args) {
-
+//        setPriority();
+//        setFrequency();
         add();
 //        query();
     }
@@ -43,14 +44,49 @@ public class ReviewWSClient {
 
         ReviewReq.Review review1 = reviewReq.new Review();
         review1.priority = 2;
-        review1.reviewID = "R2V7LL01LD8CXX";
+        review1.reviewId = "R2V7LL01LD8CLG";
         review1.siteCode = "US";
-        review1.frequency = 1;
+        review1.asin = "B0181YRLT4";
+        review1.frequency = 2;
         review1.marked = 1;
 
         reviewReq.data.add(review1);
 
         String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq));
+        System.out.println(json);
+    }
+
+    public static void setFrequency() {
+        ReviewReq reviewReq = new ReviewReq();
+
+        reviewReq.cutomerCode = "EC_001";
+        reviewReq.platformCode = "ERP";
+        reviewReq.token = "123456789";
+
+        ReviewReq.Review review1 = reviewReq.new Review();
+        review1.reviewId = "R2V7LL01LD8CLG";
+        review1.frequency = 3;
+
+        reviewReq.data.add(review1);
+
+        String json = new ReviewWSService().getReviewWSPort().setFrequency(new Gson().toJson(reviewReq));
+        System.out.println(json);
+    }
+
+    public static void setPriority() {
+        ReviewReq reviewReq = new ReviewReq();
+
+        reviewReq.cutomerCode = "EC_001";
+        reviewReq.platformCode = "ERP";
+        reviewReq.token = "123456789";
+
+        ReviewReq.Review review1 = reviewReq.new Review();
+        review1.reviewId = "R2V7LL01LD8CLG";
+        review1.priority = 3;
+
+        reviewReq.data.add(review1);
+
+        String json = new ReviewWSService().getReviewWSPort().setPriority(new Gson().toJson(reviewReq));
         System.out.println(json);
     }
 }

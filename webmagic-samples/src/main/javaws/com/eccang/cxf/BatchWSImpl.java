@@ -12,6 +12,7 @@ import us.codecraft.webmagic.samples.amazon.pojo.BatchReview;
 import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchReviewService;
 import us.codecraft.webmagic.samples.amazon.service.BatchService;
+import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -53,20 +54,20 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             return baseRspParam.toJson();
         }
 
-        if (batch.type == 0) {
+        if (batch.type == 0 || batch.type == 2) {
             BatchAsinRsp batchAsinRsp = new BatchAsinRsp();
             batchAsinRsp.cutomerCode = baseRspParam.cutomerCode;
             batchAsinRsp.status = baseRspParam.status;
             batchAsinRsp.msg = baseRspParam.msg;
 
             batchAsinRsp.data.number = batchReq.data.number;
-            batchAsinRsp.data.createTime = batch.createTime;
+            batchAsinRsp.data.createTime = DateUtils.format(batch.createTime);
             batchAsinRsp.data.type = batch.type;
             batchAsinRsp.data.times = batch.times;
-            batchAsinRsp.data.startTime = batch.startTime;
-            batchAsinRsp.data.finishTime = batch.finishTime;
+            batchAsinRsp.data.startTime = DateUtils.format(batch.startTime);
+            batchAsinRsp.data.finishTime = DateUtils.format(batch.finishTime);
             batchAsinRsp.data.progress = batch.progress;
-            batchAsinRsp.data.updateTime = batch.updateTime;
+            batchAsinRsp.data.updateTime = DateUtils.format(batch.updateTime);
 
             List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batchReq.data.number);
             for (BatchAsin batchAsin : batchAsinList) {
@@ -76,9 +77,9 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 asin.rootAsin = batchAsin.rootAsin;
                 asin.crawled = batchAsin.crawled;
                 asin.progress = batchAsin.progress;
-                asin.startTime = batchAsin.startTime;
-                asin.finishTime = batchAsin.finishTime;
-                asin.updateTime = batchAsin.updateTime;
+                asin.startTime = DateUtils.format(batchAsin.startTime);
+                asin.finishTime = DateUtils.format(batchAsin.finishTime);
+                asin.updateTime = DateUtils.format(batchAsin.updateTime);
                 batchAsinRsp.data.details.add(asin);
             }
 
@@ -89,27 +90,26 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             batchReviewRsp.status = baseRspParam.status;
             batchReviewRsp.msg = baseRspParam.msg;
 
-            batchReviewRsp.data.createTime = batch.createTime;
+            batchReviewRsp.data.createTime = DateUtils.format(batch.createTime);
             batchReviewRsp.data.number = batchReq.data.number;
             batchReviewRsp.data.type = batch.type;
             batchReviewRsp.data.times = batch.times;
-            batchReviewRsp.data.startTime = batch.startTime;
-            batchReviewRsp.data.finishTime = batch.finishTime;
+            batchReviewRsp.data.startTime = DateUtils.format(batch.startTime);
+            batchReviewRsp.data.finishTime = DateUtils.format(batch.finishTime);
             batchReviewRsp.data.progress = batch.progress;
-            batchReviewRsp.data.updateTime = batch.updateTime;
+            batchReviewRsp.data.updateTime = DateUtils.format(batch.updateTime);
 
             List<BatchReview> batchReviewList = mBatchReviewService.findAllByBatchNum(batchReq.data.number);
             for (BatchReview batchReview : batchReviewList) {
                 BatchReviewRsp.ReviewMonitor monitor = batchReviewRsp.new ReviewMonitor();
                 monitor.siteCode = batchReview.siteCode;
                 monitor.reviewID = batchReview.reviewID;
-                monitor.updateTime = batchReview.updateTime;
+                monitor.updateTime = DateUtils.format(batchReview.updateTime);
                 batchReviewRsp.data.details.add(monitor);
             }
 
             return batchReviewRsp.toJson();
         }
-
         return null;
     }
 }

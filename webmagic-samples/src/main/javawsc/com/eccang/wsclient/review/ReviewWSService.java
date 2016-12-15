@@ -1,14 +1,10 @@
 
 package com.eccang.wsclient.review;
 
+import javax.xml.namespace.QName;
+import javax.xml.ws.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -17,7 +13,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "ReviewWSService", targetNamespace = "http://cxf.eccang.com/", wsdlLocation = "http://localhost:8080/eccang/ws/review?wsdl")
+@WebServiceClient(name = "ReviewWSService", targetNamespace = "http://cxf.eccang.com/", wsdlLocation = "http://192.168.100.109:8080/eccang/ws/review?wsdl")
 public class ReviewWSService
     extends Service
 {
@@ -30,7 +26,7 @@ public class ReviewWSService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8080/eccang/ws/review?wsdl");
+            url = new URL("http://192.168.100.109:8080/eccang/ws/review?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

@@ -15,7 +15,7 @@ import java.util.List;
  * @date 2016/12/12 10:25
  */
 @Service
-public class PushMonitor implements ScheduledTask{
+public class PushMonitor implements ScheduledTask {
 
     @Autowired
     PushTask mPushTask;

@@ -10,6 +10,7 @@ import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.service.CustomerReviewService;
 import us.codecraft.webmagic.samples.amazon.service.ReviewService;
+import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
@@ -57,12 +58,13 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             customerReview.customerCode = reviewReq.cutomerCode;
             customerReview.siteCode = review.siteCode;
             customerReview.asin = review.asin;
-            customerReview.reviewId = review.reviewID;
+            customerReview.reviewId = review.reviewId;
             customerReview.priority = review.priority;
             customerReview.frequency = review.frequency;
-            if (mCustomerReviewService.isExist(reviewReq.cutomerCode, review.reviewID)) {
+            if (mCustomerReviewService.isExist(reviewReq.cutomerCode, review.reviewId)) {
                 crawledNum++;
             }
+            customerReviewList.add(customerReview);
         }
         mCustomerReviewService.addAll(customerReviewList);
 
@@ -126,7 +128,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         for (Review review : allReviewList) {
             ReviewQueryRsp.Review resultReview = reviewQueryRsp.new Review();
             resultReview.siteCode = review.siteCode;
-            resultReview.time = review.dealTime;
+            resultReview.time = DateUtils.format(review.dealTime);
             resultReview.personID = review.personId;
             resultReview.reviewID = review.reviewId;
             resultReview.buyStatus = review.buyStatus;

@@ -5,8 +5,8 @@ import java.util.List;
 /**
  * @author Hardy
  * @version V0.2
- * 推送数据对象
- * 2016/12/13 14:41
+ *          推送数据对象
+ *          2016/12/13 14:41
  */
 public class PushDataReq {
 
@@ -63,7 +63,7 @@ public class PushDataReq {
 
         private String type;
         private String batchNum;
-        private List<Asins> asins;
+        private List<Asin> asins;
 
         public String getType() {
             return type;
@@ -81,15 +81,15 @@ public class PushDataReq {
             this.batchNum = batchNum;
         }
 
-        public List<Asins> getAsins() {
+        public List<Asin> getAsins() {
             return asins;
         }
 
-        public void setAsins(List<Asins> asins) {
+        public void setAsins(List<Asin> asins) {
             this.asins = asins;
         }
 
-        public static class Asins {
+        public static class Asin {
             /**
              * asin : B0181YRLT4
              * rootAsin : B0181YRLT4
@@ -97,8 +97,8 @@ public class PushDataReq {
              */
 
             private String asin;
-            private String rootAsin;
-            private List<Reviews> reviews;
+            private String siteCode;
+            private List<Review> reviews;
 
             public String getAsin() {
                 return asin;
@@ -108,23 +108,23 @@ public class PushDataReq {
                 this.asin = asin;
             }
 
-            public String getRootAsin() {
-                return rootAsin;
+            public String getSiteCode() {
+                return siteCode;
             }
 
-            public void setRootAsin(String rootAsin) {
-                this.rootAsin = rootAsin;
+            public void setSiteCode(String siteCode) {
+                this.siteCode = siteCode;
             }
 
-            public List<Reviews> getReviews() {
+            public List<Review> getReviews() {
                 return reviews;
             }
 
-            public void setReviews(List<Reviews> reviews) {
+            public void setReviews(List<Review> reviews) {
                 this.reviews = reviews;
             }
 
-            public static class Reviews {
+            public static class Review {
                 /**
                  * reviewId : R2V7LL01LD8CLX
                  * siteCode : US
@@ -132,7 +132,6 @@ public class PushDataReq {
                  */
 
                 private String reviewId;
-                private String siteCode;
                 private String star;
 
                 public String getReviewId() {
@@ -141,14 +140,6 @@ public class PushDataReq {
 
                 public void setReviewId(String reviewId) {
                     this.reviewId = reviewId;
-                }
-
-                public String getSiteCode() {
-                    return siteCode;
-                }
-
-                public void setSiteCode(String siteCode) {
-                    this.siteCode = siteCode;
                 }
 
                 public String getStar() {
