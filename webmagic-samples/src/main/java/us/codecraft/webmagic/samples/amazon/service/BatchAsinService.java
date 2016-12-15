@@ -97,7 +97,7 @@ public class BatchAsinService {
 
     public List<Integer> getStarArray(String starExp) {
         String[] split = starExp.split("-");
-        List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<Integer>();
 
         for (int i = 0; i < split.length; i++) {
             if (split[i].equals("1")) {

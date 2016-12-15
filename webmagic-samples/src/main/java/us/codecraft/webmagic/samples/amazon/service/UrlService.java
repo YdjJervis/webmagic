@@ -223,7 +223,7 @@ public class UrlService {
      * @return 大字段数据
      */
     public String getBatchAsinExtra(BatchAsin batchAsin, String rootAsin) {
-        List<BatchAsinExtra> batchAsinExtraList = new ArrayList<>();
+        List<BatchAsinExtra> batchAsinExtraList = new ArrayList<BatchAsinExtra>();
         List<Integer> starList = mBatchAsinService.getStarArray(batchAsin.star);
         for (Integer star : starList) {
             batchAsinExtraList.addAll(mReviewService.findAll(rootAsin, star));
