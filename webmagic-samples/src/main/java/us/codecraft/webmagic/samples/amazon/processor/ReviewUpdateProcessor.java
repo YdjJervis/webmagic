@@ -36,6 +36,8 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
     private BatchService mBatchService;
     @Autowired
     private BatchAsinService mBatchAsinService;
+    @Autowired
+    private PushQueueService mPushQueueService;
 
     @Override
     protected void dealReview(Page page) {
@@ -134,7 +136,14 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                 mBatchAsinService.update(dbBatchAsin);
 
                 /* 更新Asin大字段(星级：评论ID)数据 */
-                mAsinService.updateExtra(dbAsin);
+                Asin asinObj = mAsinService.updateExtra(dbAsin);
+
+                /* 改变大字段的值 */
+                dbBatchAsin.extra = mUrlService.getBatchAsinExtra(dbBatchAsin, asinObj.rootAsin);
+                mBatchAsinService.update(dbBatchAsin);
+
+                /* 更新爬取完毕，放进推送队列 */
+                mPushQueueService.add(batch.number);
             }
 
             /* 添加到历史表 */

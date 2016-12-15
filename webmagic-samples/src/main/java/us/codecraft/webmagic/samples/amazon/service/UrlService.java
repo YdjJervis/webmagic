@@ -175,13 +175,9 @@ public class UrlService {
 
             /* 更新ASIN的extra状态 */
             Asin asin = mAsinService.updateExtra(asinObj);
+
             /* 二期业务：更新详单表字段 */
-            List<BatchAsinExtra> batchAsinExtraList = new ArrayList<>();
-            List<Integer> starList = mBatchAsinService.getStarArray(dbBtchAsin.star);
-            for (Integer star : starList) {
-                batchAsinExtraList.addAll(mReviewService.findAll(asin.rootAsin, star));
-            }
-            dbBtchAsin.extra = new Gson().toJson(batchAsinExtraList);
+            dbBtchAsin.extra = getBatchAsinExtra(dbBtchAsin, asin.rootAsin);
             dbBtchAsin.finishTime = currentTime;
             dbBtchAsin.progress = 1;
             dbBtchAsin.status = 4;
@@ -219,6 +215,20 @@ public class UrlService {
 
         mBatchService.update(batch);
 
+    }
+
+    /**
+     * @param batchAsin 单条批次详单
+     * @param rootAsin 根ASIN码
+     * @return 大字段数据
+     */
+    public String getBatchAsinExtra(BatchAsin batchAsin, String rootAsin) {
+        List<BatchAsinExtra> batchAsinExtraList = new ArrayList<>();
+        List<Integer> starList = mBatchAsinService.getStarArray(batchAsin.star);
+        for (Integer star : starList) {
+            batchAsinExtraList.addAll(mReviewService.findAll(rootAsin, star));
+        }
+        return new Gson().toJson(batchAsinExtraList);
     }
 
 

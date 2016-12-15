@@ -31,6 +31,8 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
     private BatchService mBatchService;
     @Autowired
     private CustomerReviewService mCustomerReviewService;
+    @Autowired
+    private PushQueueService mPushQueueService;
 
     @Override
     protected void dealOtherPage(Page page) {
@@ -76,12 +78,15 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
         if (progress == 1) {
             batch.finishTime = currentTime;
             batch.status = 2;
+
+            /* 监控批次完成，把批次放进推送队列 */
+            mPushQueueService.add(batch.number);
         } else {
             batch.status = 1;
         }
         mBatchService.update(batch);
 
-        /* 跟新客户-Review关系记录状态 */
+        /* 更新客户-Review关系记录状态 */
         CustomerReview customerReview = mCustomerReviewService.findCustomerReview(batch.customerCode, reviewId);
         customerReview.times++;
         customerReview.finishTime = currentTime;
