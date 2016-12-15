@@ -1,5 +1,6 @@
 package com.eccang.cxf;
 
+import com.eccang.R;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.CustomerAsinReq;
 import com.eccang.pojo.CustomerAsinRsp;
@@ -37,14 +38,20 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
         customerAsinRsp.status = baseRspParam.status;
         customerAsinRsp.msg = baseRspParam.msg;
 
-        for (CustomerAsinReq.Asin asin : customerAsinReq.data) {
-            CustomerAsin customerAsin = new CustomerAsin(customerAsinRsp.cutomerCode, asin.siteCode, asin.asin);
-            if ("open".equals(asin.crawl.trim())) {
-                customerAsin.status = 1;
-            } else if ("close".equals(asin.crawl.trim())) {
-                customerAsin.status = 0;
+        try {
+            for (CustomerAsinReq.Asin asin : customerAsinReq.data) {
+                CustomerAsin customerAsin = new CustomerAsin(customerAsinRsp.cutomerCode, asin.siteCode, asin.asin);
+                if ("open".equals(asin.crawl.trim())) {
+                    customerAsin.status = 1;
+                } else if ("close".equals(asin.crawl.trim())) {
+                    customerAsin.status = 0;
+                }
+                mCustomerAsinService.update(customerAsin);
             }
-            mCustomerAsinService.update(customerAsin);
+        } catch (Exception e) {
+            sLogger.error(e);
+            customerAsinRsp.status = R.HttpStatus.SERVER_EXCEPTION;
+            customerAsinRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
         }
 
         return customerAsinRsp.toJson();

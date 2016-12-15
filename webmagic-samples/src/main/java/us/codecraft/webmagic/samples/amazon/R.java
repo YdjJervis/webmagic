@@ -27,15 +27,5 @@ public final class R {
         public static final int REVIEW_MONITOR = 4;
     }
 
-    /**
-     * 客户-ASIN 关系的设置
-     */
-    public static final class AsinSetting {
-        /**
-         * 更新频率爬取
-         */
-        public static final int UPDATE_FREQUENCY = 24;
-    }
-
 
 }

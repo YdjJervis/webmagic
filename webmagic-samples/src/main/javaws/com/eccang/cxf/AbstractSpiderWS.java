@@ -1,5 +1,6 @@
 package com.eccang.cxf;
 
+import com.eccang.R;
 import com.eccang.pojo.BaseReqParam;
 import com.eccang.pojo.BaseRspParam;
 import com.google.gson.Gson;
@@ -40,8 +41,8 @@ public abstract class AbstractSpiderWS implements SpiderWS {
         if (baseReqParam == null) {
             sLogger.warn("Param is null.");
             baseRspParam.setSuccess(false);
-            baseRspParam.status = 413;
-            baseRspParam.msg = "接受到的参数为空.";
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.EMPTY_PARAM;
             return baseRspParam;
         }
 
@@ -53,8 +54,8 @@ public abstract class AbstractSpiderWS implements SpiderWS {
             sLogger.warn("permission info is not complete !!!");
             sLogger.warn(baseReqParam);
             baseRspParam.setSuccess(false);
-            baseRspParam.status = 401;
-            baseRspParam.msg = "授权信息不完整";
+            baseRspParam.status = R.HttpStatus.AUTH_FAILURE;
+            baseRspParam.msg = R.RequestMsg.AUTH_INFO;
             return baseRspParam;
         }
 
@@ -63,15 +64,15 @@ public abstract class AbstractSpiderWS implements SpiderWS {
         if (customer == null) {
             sLogger.warn("customer is not exist !!!");
             baseRspParam.setSuccess(false);
-            baseRspParam.status = 401;
-            baseRspParam.msg = "客户不存在";
+            baseRspParam.status = R.HttpStatus.AUTH_FAILURE;
+            baseRspParam.msg = R.RequestMsg.CUSTOMER_WRONG;
             return baseRspParam;
         }
         if (customer.status == 0) {
             sLogger.warn("customer is limited !!!");
             baseRspParam.setSuccess(false);
-            baseRspParam.status = 401;
-            baseRspParam.msg = "客户没有被启用";
+            baseRspParam.status = R.HttpStatus.AUTH_FAILURE;
+            baseRspParam.msg = R.RequestMsg.CUSTOMER_NOT_OPEN;
         }
 
         /* API授权校验 */
@@ -79,22 +80,22 @@ public abstract class AbstractSpiderWS implements SpiderWS {
         if (api == null) {
             sLogger.warn("api is not exist !!!");
             baseRspParam.setSuccess(false);
-            baseRspParam.status = 401;
-            baseRspParam.msg = "没有进行API授权";
+            baseRspParam.status = R.HttpStatus.AUTH_FAILURE;
+            baseRspParam.msg = R.RequestMsg.API_NOT_AUTH;
             return baseRspParam;
         }
         if (api.status == 0) {
             sLogger.warn("api is limited !!!");
             baseRspParam.setSuccess(false);
-            baseRspParam.status = 401;
-            baseRspParam.msg = "API授权状态未启用";
+            baseRspParam.status = R.HttpStatus.AUTH_FAILURE;
+            baseRspParam.msg = R.RequestMsg.API_NOT_OPEN;
             return baseRspParam;
         }
         if (!api.token.equals(baseReqParam.token)) {
             sLogger.warn("api is limited !!!");
             baseRspParam.setSuccess(false);
-            baseRspParam.status = 401;
-            baseRspParam.msg = "Token错误,授权失败";
+            baseRspParam.status = R.HttpStatus.AUTH_FAILURE;
+            baseRspParam.msg = R.RequestMsg.TOKEN_ERROR;
             return baseRspParam;
         }
 
@@ -103,21 +104,21 @@ public abstract class AbstractSpiderWS implements SpiderWS {
         if (platform == null) {
             sLogger.warn("platform is not exist !!!");
             baseRspParam.setSuccess(false);
-            baseRspParam.status = 401;
-            baseRspParam.msg = "没有此平台";
+            baseRspParam.status = R.HttpStatus.AUTH_FAILURE;
+            baseRspParam.msg = R.RequestMsg.WRONG_PLATFORM;
             return baseRspParam;
         }
         if (platform.status == 0) {
             sLogger.warn("platform is not exist !!!");
             baseRspParam.setSuccess(false);
-            baseRspParam.status = 401;
-            baseRspParam.msg = "当前平台无法调用该接口";
+            baseRspParam.status = R.HttpStatus.AUTH_FAILURE;
+            baseRspParam.msg = R.RequestMsg.PLATFORM_CANNOT_CALL;
             return baseRspParam;
         }
 
         baseRspParam.setSuccess(true);
-        baseRspParam.status = 200;
-        baseRspParam.msg = "操作成功";
+        baseRspParam.status = R.HttpStatus.SUCCESS;
+        baseRspParam.msg = R.RequestMsg.SUCCESS;
 
         return baseRspParam;
     }
