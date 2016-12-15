@@ -2,6 +2,7 @@ package com.eccang.cxf;
 
 import com.eccang.R;
 import com.eccang.pojo.*;
+import com.eccang.util.RegexUtil;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
@@ -40,12 +41,29 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         ReviewReq reviewReq = new Gson().fromJson(json, ReviewReq.class);
+
+        /* 参数验证阶段 */
+        boolean isParamQualified = true;
         if (CollectionUtils.isEmpty(reviewReq.data)) {
+            isParamQualified = false;
+        }
+        for (ReviewReq.Review review : reviewReq.data) {
+            if (StringUtils.isEmpty(review.asin)
+                    || RegexUtil.isSiteCodeQualified(review.siteCode)
+                    || RegexUtil.isFrequencyQualified(review.frequency)
+                    || RegexUtil.isPriorityQualified(review.priority)
+                    || RegexUtil.isReviewIdQualified(review.reviewId)) {
+                isParamQualified = false;
+                break;
+            }
+        }
+        if (!isParamQualified) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = "Review列表为空";
+            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
             return baseRspParam.toJson();
         }
 
+        /* 逻辑处理阶段 */
         ReviewRsp reviewRsp = new ReviewRsp();
         reviewRsp.cutomerCode = reviewReq.cutomerCode;
         reviewRsp.status = baseRspParam.status;
@@ -93,7 +111,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
         ReviewQueryReq reviewQueryReq = new Gson().fromJson(asinJson, ReviewQueryReq.class);
         if (reviewQueryReq.data == null) {
-            baseRspParam.status = 413;
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = "Asin数据为空";
             return baseRspParam.toJson();
         }
@@ -166,9 +184,21 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         CustomerReviewUpdateReq customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
+
+        /* 参数验证阶段 */
+        boolean isParamQualified = true;
         if (CollectionUtils.isEmpty(customerReviewUpdateReq.data)) {
+            isParamQualified = false;
+        }
+        for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
+            if (!RegexUtil.isReviewIdQualified(customerReview.reviewId)
+                    || !RegexUtil.isPriorityQualified(customerReview.priority)) {
+                isParamQualified = false;
+            }
+        }
+        if (!isParamQualified) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = "数据列表为空";
+            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
             return baseRspParam.toJson();
         }
 
@@ -208,11 +238,23 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         CustomerReviewUpdateReq customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
+        /* 参数验证阶段 */
+        boolean isParamQualified = true;
         if (CollectionUtils.isEmpty(customerReviewUpdateReq.data)) {
+            isParamQualified = false;
+        }
+        for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
+            if (!RegexUtil.isReviewIdQualified(customerReview.reviewId)
+                    || !RegexUtil.isMonitorStatusQualified(customerReview.status)) {
+                isParamQualified = false;
+            }
+        }
+        if (!isParamQualified) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = "数据列表为空";
+            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
             return baseRspParam.toJson();
         }
+
 
         CustomerReviewUpdateRsp customerReviewUpdateRsp = new CustomerReviewUpdateRsp();
         customerReviewUpdateRsp.cutomerCode = customerReviewUpdateReq.cutomerCode;
@@ -250,9 +292,20 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         CustomerReviewUpdateReq customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
+        /* 参数验证阶段 */
+        boolean isParamQualified = true;
         if (CollectionUtils.isEmpty(customerReviewUpdateReq.data)) {
+            isParamQualified = false;
+        }
+        for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
+            if (!RegexUtil.isReviewIdQualified(customerReview.reviewId)
+                    || !RegexUtil.isFrequencyQualified(customerReview.frequency)) {
+                isParamQualified = false;
+            }
+        }
+        if (!isParamQualified) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = "数据列表为空";
+            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
             return baseRspParam.toJson();
         }
 
@@ -291,9 +344,20 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         CustomerReviewUpdateReq customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
+        /* 参数验证阶段 */
+        boolean isParamQualified = true;
         if (CollectionUtils.isEmpty(customerReviewUpdateReq.data)) {
+            isParamQualified = false;
+        }
+        for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
+            if (!RegexUtil.isReviewIdQualified(customerReview.reviewId)
+                    || !RegexUtil.isMonitorStatusQualified(customerReview.status)) {
+                isParamQualified = false;
+            }
+        }
+        if (!isParamQualified) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = "数据列表为空";
+            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
             return baseRspParam.toJson();
         }
 

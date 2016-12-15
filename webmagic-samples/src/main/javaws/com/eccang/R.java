@@ -36,8 +36,7 @@ public final class R {
         public static final String SUCCESS = "操作成功";
         public static final String SERVER_EXCEPTION = "服务器异常";
 
-
-        public static final String ASIN_LIST_EMPTY = "Asin列表为空";
+        public static final String LIST_PARAM_WRONG = "数据列表参数不正确";
 
     }
 }
