@@ -96,7 +96,7 @@ public class BasePageProcessor implements PageProcessor {
         /*监测对应URL的代理使用情况*/
         //statUrlProxy(page);
 
-        updateUrlStatus(page);
+        updateUrlStatus(page,true);
 
         if (isPage404(page)) {
             dealPageNotFound(page);
@@ -166,7 +166,7 @@ public class BasePageProcessor implements PageProcessor {
     /**
      * @param page 更新Url爬取状态,成功或失败
      */
-    private void updateUrlStatus(Page page) {
+    private void updateUrlStatus(Page page, boolean needTimeAdd) {
         Url url = getUrl(page);
 
         if (needUpdateStatus()) {
@@ -183,7 +183,9 @@ public class BasePageProcessor implements PageProcessor {
         }
 
         url.crawling = 0;
-        url.times++;
+        if (needTimeAdd) {
+            url.times++;
+        }
         sLogger.info("改变状态后的Url对象：" + url);
 
         mUrlService.update(url);
@@ -191,7 +193,7 @@ public class BasePageProcessor implements PageProcessor {
 
     private void dealValidate(Page page) {
 
-        String validateUrl = getValidateUrl(page);
+        String validateUrl = getValidateImgUrl(page);
 
         if (StringUtils.isNotEmpty(validateUrl)) {
             if (page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
@@ -199,13 +201,10 @@ public class BasePageProcessor implements PageProcessor {
             }
         }
 
-        sLogger.warn("身份验证,准备保存验证码...网页状态码：" + page.getStatusCode());
+        sLogger.warn("出现验证码：" + page.getUrl() + "  " + page.getStatusCode());
 
         /*保存图片验证码*/
         //PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
-
-        /* 当需要验证码时，page的状态码还是200，不符合我们的逻辑，所以修改一下 */
-//        page.setStatusCode(401);
 
         Request request;
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
@@ -213,31 +212,20 @@ public class BasePageProcessor implements PageProcessor {
         * 请求表单的Url，调用验证码识别接口
         */
         if (page.getRequest().getExtra("ipsType") == null) {
-            String validateCodeJson = getValidateCode(validateUrl, "review");
-            ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
-            sLogger.info("验证码码结果：" + result);
-
-            /*获取表单参数*/
-            String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
-            String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
-            String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
-            String urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
-            sLogger.info("验证表单：" + urlStr);
-            request = new Request(urlStr);
+            request = new Request(getValidatedUrl(page));
             request.putExtra(URL_EXTRA, url);
             page.addTargetRequest(request);
-        } else {
-            sLogger.info("================ 使用代理出现验证码，将响应的状态码修改为0.");
-            page.setStatusCode(0);
-            updateUrlStatus(page);
         }
+        /* 当需要验证码时，page的状态码还是200，不符合我们的逻辑，所以修改一下 */
+        page.setStatusCode(0);
+        updateUrlStatus(page,false);
     }
 
     /**
      * 获取验证码表单请求URL
      */
-    private String getValidateFormUrl(Page page) {
-        String validateUrl = getValidateUrl(page);
+    private String getValidatedUrl(Page page) {
+        String validateUrl = getValidateImgUrl(page);
         String validateCodeJson = getValidateCode(validateUrl, "review");
         ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
         sLogger.info("验证码码结果：" + result);
@@ -245,10 +233,16 @@ public class BasePageProcessor implements PageProcessor {
         String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
         String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
         String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
-        return domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
+        String urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
+        sLogger.info("验证表单：" + urlStr);
+
+        return urlStr;
     }
 
-    private String getValidateUrl(Page page) {
+    /**
+     * @return 验证码图片地址
+     */
+    private String getValidateImgUrl(Page page) {
         return page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
     }
 
@@ -257,7 +251,7 @@ public class BasePageProcessor implements PageProcessor {
      * 只有通过判断时候包好验证码图片元素来判断是否是验证码页面。
      */
     private boolean isValidatePage(Page page) {
-        return StringUtils.isNotEmpty(getValidateUrl(page)) || page.getUrl().get().contains("validateCaptcha");
+        return StringUtils.isNotEmpty(getValidateImgUrl(page)) || page.getUrl().get().contains("validateCaptcha");
     }
 
     /**
@@ -286,7 +280,7 @@ public class BasePageProcessor implements PageProcessor {
      */
     private String proxyCaptcha(Page page) {
         IpsInfoManage ipsInfoManage = (IpsInfoManage) page.getRequest().getExtra("proxyIpInfo");
-        String validateFormUrl = getValidateFormUrl(page);
+        String validateFormUrl = getValidatedUrl(page);
         ValidateProxyUtils validateProxyUtils = new ValidateProxyUtils();
         return validateProxyUtils.parseValidUrl(ipsInfoManage.getIpHost(), Integer.valueOf(ipsInfoManage.getIpPort()), ipsInfoManage.getIpVerifyUserName(), ipsInfoManage.getIpVerifyPassword(), validateFormUrl);
     }
@@ -362,7 +356,7 @@ public class BasePageProcessor implements PageProcessor {
                     String html = proxyCaptcha(page);
                     if (StringUtils.isNotEmpty(html)) {
                         page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(html, page.getRequest().getUrl())));
-                        if (StringUtils.isNotEmpty(getValidateUrl(page))) {
+                        if (StringUtils.isNotEmpty(getValidateImgUrl(page))) {
                             sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码失败.");
                             page.setStatusCode(0);
                         } else {

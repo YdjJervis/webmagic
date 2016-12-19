@@ -111,14 +111,14 @@ public class UrlService {
 
         mLogger.info("ASIN:" + url.asin + " 对应的URL表记录数：" + list.size());
 
-        /* 用过滤器作key，过滤器对应的最大的评论页码作value */
-        Map<String, Integer> maxPageMap = new HashMap<String, Integer>();
-
         /* 如果暂时不能计算总进度，就返回 */
         if (!canCalculateProgress(list)) {
+            mLogger.info(url.asin+" 暂时不能统计进度");
             return;
         }
 
+        /* 用过滤器作key，过滤器对应的最大的评论页码作value */
+        Map<String, Integer> maxPageMap = new HashMap<String, Integer>();
         for (Url urlLooper : list) {
 
             String filter = UrlUtils.getValue(urlLooper.url, "filterByStar");

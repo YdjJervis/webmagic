@@ -109,7 +109,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                 url.url = nextPageUrl;
                 url.urlMD5 = UrlUtils.md5(url.batchNum + nextPageUrl);
                 url.siteCode = siteCode;
-                url.type = 2;
+                url.type = R.CrawlType.REVIEW_UPDATE;
 
                 mUrlService.add(url);
             } else {

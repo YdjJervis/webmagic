@@ -75,6 +75,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
             for (int i = 2; i <= totalPage; i++) {
                 Url url = new Url();
                 url.batchNum = urlExtra.batchNum;
+                url.type = R.CrawlType.REVIEW_ALL;
                 url.siteCode = siteCode;
                 url.asin = asin;
                 url.parentUrl = currentUrl;
