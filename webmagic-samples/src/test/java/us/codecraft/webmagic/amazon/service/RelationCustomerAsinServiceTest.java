@@ -29,7 +29,7 @@ public class RelationCustomerAsinServiceTest extends SpringTestCase {
         relationCustomerAsin.setSiteCode("US");
         relationCustomerAsin.setAsin("B01M6WRC9R");
         relationCustomerAsin.setRootAsin("B01LY3AMY8");
-        relationCustomerAsin.setStatus(1);
+        relationCustomerAsin.setCrawl(1);
         mRelationCustomerAsinService.add(relationCustomerAsin);
         System.out.println(relationCustomerAsin);
     }
@@ -47,7 +47,7 @@ public class RelationCustomerAsinServiceTest extends SpringTestCase {
             relation.setSiteCode("US");
             relation.setAsin("B01M6WRC9R");
             relation.setRootAsin("B01LY3AMY8");
-            relation.setStatus(1);
+            relation.setCrawl(1);
             relationCustomerAsinList.add(relation);
         }
         mRelationCustomerAsinService.addAll(relationCustomerAsinList);
@@ -73,7 +73,7 @@ public class RelationCustomerAsinServiceTest extends SpringTestCase {
         relationCustomerAsin.setSiteCode("CN");
         relationCustomerAsin.setAsin("B01M6WRC9R");
         relationCustomerAsin.setRootAsin("B01LY3AMY8");
-        relationCustomerAsin.setStatus(0);
+        relationCustomerAsin.setCrawl(0);
         mRelationCustomerAsinService.updateById(relationCustomerAsin);
     }
 

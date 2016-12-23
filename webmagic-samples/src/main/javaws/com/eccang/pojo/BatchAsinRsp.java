@@ -31,7 +31,7 @@ public class BatchAsinRsp extends BaseRspParam {
         public String siteCode;
         public String asin;
         public String rootAsin;
-        public int status;
+        public int isChanged;
         public double progress;
         public String startTime;
         public String finishTime;

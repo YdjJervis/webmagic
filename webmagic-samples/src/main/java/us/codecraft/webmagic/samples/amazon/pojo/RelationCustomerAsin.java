@@ -15,7 +15,7 @@ public class RelationCustomerAsin {
     private String siteCode; /*站点码*/
     private String asin;
     private String rootAsin;
-    private int status; /*是否是开启状态。1-是/0-否*/
+    private int crawl; /*是否是开启状态。1-是/0-否*/
     private Date createDate;
     private Date updateDate;
 
@@ -59,12 +59,12 @@ public class RelationCustomerAsin {
         this.rootAsin = rootAsin;
     }
 
-    public int getStatus() {
-        return status;
+    public int getCrawl() {
+        return crawl;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setCrawl(int crawl) {
+        this.crawl = crawl;
     }
 
     public Date getCreateDate() {

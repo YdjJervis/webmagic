@@ -102,13 +102,11 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
 
                 List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batchReq.data.number);
                 for (BatchAsin batchAsin : batchAsinList) {
-                    CustomerAsin customerAsin = new CustomerAsin(baseRspParam.cutomerCode, batchAsin.siteCode, batchAsin.asin);
-                    customerAsin = mCustomerAsinService.find(customerAsin);
                     BatchAsinRsp.Asin asin = batchAsinRsp.new Asin();
                     asin.siteCode = batchAsin.siteCode;
                     asin.asin = batchAsin.asin;
                     asin.rootAsin = batchAsin.rootAsin == null ? "" : batchAsin.rootAsin;
-                    asin.status = customerAsin.status;
+                    asin.isChanged = 1;
                     asin.progress = batchAsin.progress;
                     asin.startTime = DateUtils.format(batchAsin.startTime);
                     asin.finishTime = DateUtils.format(batchAsin.finishTime);
@@ -145,7 +143,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                     BatchReviewRsp.ReviewMonitor monitor = batchReviewRsp.new ReviewMonitor();
                     monitor.siteCode = batchReview.siteCode;
                     monitor.reviewID = batchReview.reviewID;
-                    monitor.status = customerReview.status;
+                    monitor.isChanged = 1;
+                    monitor.progress =  batchReview.status == 2 ? 0 : 1;
                     monitor.asin = customerReview.asin;
                     monitor.updateTime = DateUtils.format(batchReview.updateTime);
                     batchReviewRsp.data.details.add(monitor);

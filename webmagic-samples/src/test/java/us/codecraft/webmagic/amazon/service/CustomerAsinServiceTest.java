@@ -33,7 +33,7 @@ public class CustomerAsinServiceTest extends SpringTestCase {
         customerAsin.customerCode = system;
         customerAsin.siteCode = "US";
         customerAsin.asin = asin;
-        customerAsin.status = 0;
+        customerAsin.crawl = 0;
         return customerAsin;
     }
 

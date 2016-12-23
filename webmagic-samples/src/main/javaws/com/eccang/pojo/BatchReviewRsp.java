@@ -30,7 +30,8 @@ public class BatchReviewRsp extends BaseRspParam {
     public class ReviewMonitor {
         public String siteCode;
         public String asin;
-        public int status;
+        public int isChanged;
+        public double progress;
         public String reviewID;
         public int times;
         public String updateTime;

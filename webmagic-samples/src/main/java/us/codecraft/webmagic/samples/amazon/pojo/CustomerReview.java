@@ -20,7 +20,7 @@ public class CustomerReview extends BasePojo {
     /**
      * 是否是开启状态。1-是/0-否
      */
-    public int status = 1;
+    public int crawl = 1;
     public int priority;
     /**
      * 执行频率（h/次）
@@ -44,7 +44,7 @@ public class CustomerReview extends BasePojo {
                 ", asin='" + asin + '\'' +
                 ", reviewId='" + reviewId + '\'' +
                 ", onSell=" + onSell +
-                ", status=" + status +
+                ", crawl=" + crawl +
                 ", priority=" + priority +
                 ", frequency=" + frequency +
                 ", times=" + times +

@@ -7,7 +7,7 @@
         <result column="bas_code" property="siteCode" />
         <result column="saa_asin" property="asin" />
         <result column="saa_root_asin" property="rootAsin" />
-        <result column="rca_status" property="status" />
+        <result column="rca_crawl" property="crawl" />
         <result column="rca_create_time" property="createDate" />
         <result column="rca_update_time" property="updateDate" />
     </resultMap>
@@ -18,13 +18,13 @@
           bas_code,
           saa_asin,
           saa_root_asin,
-          rca_status
+          rca_crawl
         ) VALUES (
           #{customerCode},
           #{siteCode},
           #{asin},
           #{rootAsin},
-          #{status}
+          #{crawl}
         )
     </insert>
 
@@ -34,7 +34,7 @@
             bas_code,
             saa_asin,
             saa_root_asin,
-            rca_status
+            rca_crawl
         ) VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -42,7 +42,7 @@
                 #{item.siteCode},
                 #{item.asin},
                 #{item.rootAsin},
-                #{item.status}
+                #{item.crawl}
             )
         </foreach>
     </insert>
@@ -55,7 +55,7 @@
           bas_code = #{siteCode},
           saa_asin = #{asin},
           saa_root_asin = #{rootAsin},
-          rca_status = #{status}
+          rca_crawl = #{crawl}
         WHERE
           rca_id = #{id}
     </update>
@@ -72,7 +72,7 @@
           bas_code,
           saa_asin,
           saa_root_asin,
-          rca_status,
+          rca_crawl,
           rca_create_time,
           rca_update_time
         FROM
@@ -88,7 +88,7 @@
           bas_code,
           saa_asin,
           saa_root_asin,
-          rca_status,
+          rca_crawl,
           rca_create_time,
           rca_update_time
         FROM

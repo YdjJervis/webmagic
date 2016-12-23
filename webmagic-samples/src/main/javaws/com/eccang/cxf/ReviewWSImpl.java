@@ -463,7 +463,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 return baseRspParam.toJson();
             }
 
-            if (!RegexUtil.isMonitorStatusQualified(customerReview.status)) {
+            if (!RegexUtil.isMonitorStatusQualified(customerReview.crawl)) {
                 /*校验状态*/
                 baseRspParam.msg = R.RequestMsg.PARAMETER_STATUS_ERROR;
                 return baseRspParam.toJson();
@@ -486,10 +486,10 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                     return customerReviewUpdateRsp.toJson();
                 }
 
-                if (customerReview.status == data.status) {
+                if (customerReview.crawl == data.crawl) {
                     customerReviewUpdateRsp.data.noChange++;
                 } else {
-                    data.status = customerReview.status;
+                    data.crawl = customerReview.crawl;
                     mCustomerReviewService.update(data);
                     customerReviewUpdateRsp.data.changed++;
                 }
@@ -598,7 +598,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
         for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
             if (!RegexUtil.isReviewIdQualified(customerReview.reviewId)
-                    || !RegexUtil.isMonitorStatusQualified(customerReview.status)) {
+                    || !RegexUtil.isMonitorStatusQualified(customerReview.crawl)) {
                 isParamQualified = false;
             }
         }
@@ -618,12 +618,12 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
                 if (customerReview.frequency == data.frequency &&
                         customerReview.priority == data.priority &&
-                        customerReview.status == data.status) {
+                        customerReview.crawl == data.crawl) {
                     customerReviewUpdateRsp.data.noChange++;
                 } else {
                     data.priority = customerReview.priority;
                     data.frequency = customerReview.frequency;
-                    data.status = customerReview.status;
+                    data.crawl = customerReview.crawl;
                     mCustomerReviewService.update(data);
                     customerReviewUpdateRsp.data.changed++;
                 }

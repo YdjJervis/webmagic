@@ -17,7 +17,7 @@ public class CustomerReviewUpdateReq extends BaseReqParam {
         public String customerCode;
         public String reviewId;
         public int priority;
-        public int status;
+        public int crawl;
         public int frequency;
     }
 }

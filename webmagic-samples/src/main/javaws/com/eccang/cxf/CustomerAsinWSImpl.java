@@ -75,9 +75,9 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
                 CustomerAsin customerAsin = new CustomerAsin(customerAsinRsp.cutomerCode, asin.siteCode, asin.asin);
                 customerAsin = mCustomerAsinService.find(customerAsin);
                 if ("open".equals(asin.crawl.trim())) {
-                    customerAsin.status = 1;
+                    customerAsin.crawl = 1;
                 } else {
-                    customerAsin.status = 0;
+                    customerAsin.crawl = 0;
                 }
                 mCustomerAsinService.update(customerAsin);
             }
