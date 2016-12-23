@@ -670,6 +670,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             review.createTime = DateUtils.format(customerReview.createTime);
             review.updateTime = DateUtils.format(customerReview.updateTime);
             customerReviewRsp.reviewsList.add(review);
+
         }
 
         return customerReviewRsp.toJson();
