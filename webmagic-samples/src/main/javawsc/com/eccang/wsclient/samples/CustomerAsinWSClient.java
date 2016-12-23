@@ -20,11 +20,18 @@ public class CustomerAsinWSClient {
         asinReq.token = "123456789";
 
         CustomerAsinReq.Asin asin = asinReq.new Asin();
-        asin.asin = "B01LXA42FB";
-        asin.siteCode = "UK";
-        asin.crawl = "open";
 
-        asinReq.data.add(asin);
+//        asin.asin = "B01LXA42XX";
+//        asin.siteCode = "US";
+//        asin.crawl = "close";
+//        asinReq.data.add(null);
+
+        CustomerAsinReq.Asin asin1 = asinReq.new Asin();
+
+        asin1.asin = "B01LXA42XU";
+        asin1.siteCode = "US";
+        asin1.crawl = "open";
+        asinReq.data.add(asin1);
 
         String result = new CustomerAsinWSService().getCustomerAsinWSPort().setCrawl(new Gson().toJson(asinReq));
         System.out.println(result);

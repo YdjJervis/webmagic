@@ -24,7 +24,7 @@ public final class R {
     }
 
     public static final class RequestMsg{
-        public static final String EMPTY_PARAM = "接受到的参数为空.";
+        public static final String EMPTY_PARAM = "接受到的参数为空";
         public static final String AUTH_INFO = "授权信息不完整";
         public static final String CUSTOMER_WRONG = "客户不存在";
         public static final String CUSTOMER_NOT_OPEN = "客户没有被启用";
@@ -38,5 +38,55 @@ public final class R {
 
         public static final String LIST_PARAM_WRONG = "数据列表参数不正确";
 
+        public static final String PARAMETER_FORMAT_ERROR = "参数格式不正确";
+
+        public static final String PARAMETER_ASIN_SITECODE_ERROR = "数据列表中，没有传入正确的站点码";
+
+        public static final String PARAMETER_ASIN_STAR_ERROR = "数据列表中,没有传入的爬取星级表达式不正确";
+
+        public static final String PARAMETER_ASIN_PRIORITY_ERROR = "数据列表中,爬取优先级取值不正确,其范围应该为[0,4]";
+
+        public static final String PARAMETER_ASIN_FORMAT_ERROR = "数据列表格式不正确";
+
+        public static final String PARAMETER_ASIN_NULL_ERROR = "数据列表内容为空";
+
+        public static final String PARAMETER_ASIN_LIST_ERROR = "请求Asin中传存在空的Asin码";
+
+        public static final String PARAMETER_ASIN_LIST_ASIN_ERROR = "数据列表中存在空数据";
+
+        public static final String PARAMETER_CRAWL_STATUS_ERROR = "爬取状态设置格式有误，爬取状态为\"open\"或\"close\"";
+
+        public static final String PARAMETER_BATCH_NULL_ERROR = "查询的批次对象为空";
+
+        public static final String PARAMETER_BATCH_NUM_ERROR = "查询的批次对象中的批次号为空";
+
+        public static final String PARAMETER_REVIEW_ASIN_ERROR = "请求的Review中存在空的Asin码";
+
+        public static final String PARAMETER_REVIEW_FREQUENCY_ERROR = "数据列表中,爬取频率取值不正确,其范围应该为大于0";
+
+        public static final String PARAMETER_REVIEW_NULL_ERROR = "请求的Review中存在空的ReviewId";
+
+        public static final String PARAMETER_STATUS_ERROR = "状态设置格式有误，正确范围为[0,1]";
+
+        public static final String PARAMETER_ASIN_EMPTY__ERROR = "客户下，Asin不存在";
+
+        public static final String PARAMETER_ASIN_NOT_WORK__ERROR = "此Asin还没有开始爬取";
+
+        public static final String PARAMETER_REVIEW_NOT_EXIST__ERROR = "此评论不存在";
+
+        public static final String EXCEEDS_LIMIT = "数据超出限制";
+
+    }
+
+    /** 业务代码 */
+    public static final class BusinessCode {
+        public static final String ASIN_SPIDER = "AS";/** 爬取asin */
+        public static final String MONITOR_SPIDER = "MS"; /** 监听review */
+    }
+
+    /** 业务统计 */
+    public static final class BusinessInfo {
+        public static final String USABLENUM = "usableNum"; /*可用数*/
+        public static final String HASUSEDNUM = "hasUsedNum"; /*已用数*/
     }
 }

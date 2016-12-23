@@ -7,4 +7,11 @@ package com.eccang.pojo;
  * @date 2016/11/23 16:18
  */
 public class CustomerAsinRsp extends BaseRspParam {
+
+    public BusinessInfo data = new BusinessInfo();
+
+    public class BusinessInfo {
+        public int usableNum; /*可用asin数*/
+        public int hasUsedNum; /*已用数*/
+    }
 }

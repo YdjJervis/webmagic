@@ -13,5 +13,7 @@ public class CustomerReviewUpdateRsp extends BaseRspParam {
     public class Effect {
         public int changed;
         public int noChange;
+        public int usableNum; /*可用数*/
+        public int hasUsedNum; /*已用数*/
     }
 }

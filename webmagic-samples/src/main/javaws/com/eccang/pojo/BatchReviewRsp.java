@@ -28,6 +28,8 @@ public class BatchReviewRsp extends BaseRspParam {
 
     public class ReviewMonitor {
         public String siteCode;
+        public String asin;
+        public int crawled;
         public String reviewID;
         public int times;
         public String updateTime;

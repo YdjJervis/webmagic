@@ -2,7 +2,9 @@ package us.codecraft.webmagic.samples.amazon.pojo;
 
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Jervis
@@ -26,6 +28,10 @@ public class Review extends BasePojo {
      * 评论者ID
      */
     public String personId;
+    /**
+     * 是否是经验买家
+     */
+    public String experience;
     /**
      * 评论时间
      */
@@ -54,6 +60,12 @@ public class Review extends BasePojo {
      * 评论者打分
      */
     public int star;
+
+    /**
+     *星级集合
+     */
+    public List<Integer> starList = new ArrayList<>();
+
     /**
      * 购买版本信息
      */
@@ -67,7 +79,9 @@ public class Review extends BasePojo {
      */
     public String title;
 
-    public String pageNum;
+    public int pageNum;
+
+    public int pageSize;
 
     /** 二期：优先级 */
     public int priority;
@@ -95,6 +109,7 @@ public class Review extends BasePojo {
                 ", content='" + content + '\'' +
                 ", title='" + title + '\'' +
                 ", pageNum='" + pageNum + '\'' +
+                ", pageSize='" + pageSize + '\'' +
                 ", priority=" + priority +
                 ", frequency='" + frequency + '\'' +
                 ", marked='" + marked + '\'' +

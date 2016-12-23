@@ -13,7 +13,7 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 @Repository
 public interface AsinRootAsinDao extends BaseDao<AsinRootAsin> {
 
-    AsinRootAsin findByRelation(String asin,String rootAsin);
+    AsinRootAsin findByRelation(String asin,String rootAsin, String siteCode);
 
-    AsinRootAsin findByAsin(String asin);
+    AsinRootAsin findByAsin(String asin, String siteCode);
 }

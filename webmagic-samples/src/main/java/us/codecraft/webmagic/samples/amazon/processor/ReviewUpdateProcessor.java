@@ -58,7 +58,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
         sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 
-        AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin);
+        AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin, siteCode);
         Asin dbAsin = mAsinService.findByAsin(siteCode, asinRootAsin.rootAsin);
         List<StarReviewMap> starReviewMapList = new Gson().fromJson(dbAsin.extra, new TypeToken<List<StarReviewMap>>() {
         }.getType());

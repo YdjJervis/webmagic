@@ -6,12 +6,17 @@ import com.eccang.pojo.CustomerAsinReq;
 import com.eccang.pojo.CustomerAsinRsp;
 import com.eccang.util.RegexUtil;
 import com.google.gson.Gson;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.pojo.CustomerAsin;
 import us.codecraft.webmagic.samples.amazon.service.CustomerAsinService;
+import us.codecraft.webmagic.samples.amazon.service.CustomerBusinessService;
 
 import javax.jws.WebService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jervis
@@ -25,6 +30,9 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
     @Autowired
     private CustomerAsinService mCustomerAsinService;
 
+    @Autowired
+    private CustomerBusinessService mCustomerBusinessService;
+
     @Override
     public String setCrawl(String jsonArray) {
 
@@ -34,19 +42,25 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
         }
 
         /* 参数验证阶段 */
-        boolean isParamQualified = true;
-        CustomerAsinReq customerAsinReq = new Gson().fromJson(jsonArray, CustomerAsinReq.class);
-        for (CustomerAsinReq.Asin asin : customerAsinReq.data) {
-            if (StringUtils.isEmpty(asin.asin)
-                    || !RegexUtil.isSiteCodeQualified(asin.siteCode)
-                    || !RegexUtil.isCrawlStatusQualified(asin.crawl)) {
-                isParamQualified = false;
-                break;
-            }
-        }
-        if (!isParamQualified) {
+        CustomerAsinReq customerAsinReq;
+        try {
+            customerAsinReq = new Gson().fromJson(jsonArray, CustomerAsinReq.class);
+        } catch (Exception e) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_FORMAT_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        if (CollectionUtils.isEmpty(customerAsinReq.data)) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        Map<String, String> checkResult = checkData(customerAsinReq.data);
+        if (checkResult.get(IS_SUCCESS).equalsIgnoreCase("0")) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = checkResult.get(MESSAGE);
             return baseRspParam.toJson();
         }
 
@@ -59,6 +73,7 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
         try {
             for (CustomerAsinReq.Asin asin : customerAsinReq.data) {
                 CustomerAsin customerAsin = new CustomerAsin(customerAsinRsp.cutomerCode, asin.siteCode, asin.asin);
+                customerAsin = mCustomerAsinService.find(customerAsin);
                 if ("open".equals(asin.crawl.trim())) {
                     customerAsin.status = 1;
                 } else {
@@ -66,6 +81,10 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
                 }
                 mCustomerAsinService.update(customerAsin);
             }
+            /*可用asin的数据量*/
+            Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerAsinRsp.cutomerCode, R.BusinessCode.ASIN_SPIDER);
+            customerAsinRsp.data.usableNum = result.get(R.BusinessInfo.USABLENUM);
+            customerAsinRsp.data.hasUsedNum = result.get(R.BusinessInfo.HASUSEDNUM);
         } catch (Exception e) {
             sLogger.error(e);
             customerAsinRsp.status = R.HttpStatus.SERVER_EXCEPTION;
@@ -75,4 +94,37 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
         return customerAsinRsp.toJson();
     }
 
+    /**
+     * 校验数据
+     */
+    private Map<String, String> checkData(List<CustomerAsinReq.Asin> asins) {
+        Map<String, String> result = new HashMap<>();
+
+        for (CustomerAsinReq.Asin asin : asins) {
+            result.put(IS_SUCCESS, "0");
+
+            if (asin == null) {
+                result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_ASIN_LIST_ASIN_ERROR);
+                return result;
+            }
+
+            if (StringUtils.isEmpty(asin.asin)) {
+                result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_ASIN_LIST_ERROR);
+                return result;
+            }
+
+            if (!RegexUtil.isSiteCodeQualified(asin.siteCode)) {
+                result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR);
+                return result;
+            }
+
+            if (!RegexUtil.isCrawlStatusQualified(asin.crawl)) {
+                result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_CRAWL_STATUS_ERROR);
+                return result;
+            }
+        }
+        result.put(IS_SUCCESS, "1");
+        result.put(AsinWSImpl.MESSAGE, R.RequestMsg.SUCCESS);
+        return result;
+    }
 }

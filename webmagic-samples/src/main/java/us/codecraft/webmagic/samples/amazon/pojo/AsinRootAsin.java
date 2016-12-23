@@ -10,6 +10,7 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
  */
 public class AsinRootAsin extends BasePojo{
 
+    public String siteCode;
     public String asin;
     public String rootAsin;
 

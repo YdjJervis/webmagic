@@ -76,6 +76,17 @@ public class ReviewService {
     }
 
     /**
+     * 返回给定条件的评论数据
+     */
+    public int findAllCount(Review review) {
+        return mReviewDao.findAllCount(review);
+    }
+
+    public List<Review> findByIdAndRootAsin(String reviewId, String rootAsin) {
+        return mReviewDao.findByIdAndRootAsin(reviewId, rootAsin);
+    }
+
+    /**
      * 根据指定根ASIN和星级的所有评论
      * @param rootAsin 根ASIN
      * @param star 星级

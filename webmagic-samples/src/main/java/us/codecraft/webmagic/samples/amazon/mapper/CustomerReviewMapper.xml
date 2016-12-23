@@ -39,6 +39,11 @@
         WHERE rcr_status = 1 AND CURRENT_TIMESTAMP - rcr_finish_time > rcr_frequency * 3600
     </select>
 
+    <select id="findCustomerReviewIsOpen" resultMap="CustomerReviewResultMap">
+        SELECT * FROM relation_customer_review
+        WHERE rcr_status = 1 AND bec_code = #{0}
+    </select>
+
     <update id="update" parameterType="CustomerReview">
         UPDATE
           relation_customer_review

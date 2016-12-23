@@ -47,4 +47,8 @@
         SELECT * FROM relation_customer_asin
         WHERE rca_status = 1 AND CURRENT_TIMESTAMP - rca_sync_time > rca_frequency * 3600;
     </select>
+
+    <select id="findByCustomerCodeIsOpen" resultMap="CustomerAsinMap">
+        select * from relation_customer_asin WHERE bec_code = #{0} AND rca_status = 1
+    </select>
 </mapper>

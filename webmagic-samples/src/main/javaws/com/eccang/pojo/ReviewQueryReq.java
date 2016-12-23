@@ -12,6 +12,8 @@ public class ReviewQueryReq extends BaseReqParam {
 
     public class Asin {
         public String asin;
+        public String reviewId;
+        public String siteCode;
         public String level;
         public String experience;
         public String personID;

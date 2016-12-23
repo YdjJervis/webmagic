@@ -13,14 +13,13 @@ import java.util.List;
  */
 public class ReviewReq extends BaseReqParam {
 
-    public List<Review> data = new ArrayList<Review>();
+    public List<Review> data = new ArrayList<>();
 
     public class Review {
         public String siteCode;
         public String asin;
         public String reviewId;
         public int frequency;
-        public int marked;
         public int priority;
     }
 

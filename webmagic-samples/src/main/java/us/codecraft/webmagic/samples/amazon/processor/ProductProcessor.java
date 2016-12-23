@@ -54,6 +54,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             /* 把Asin和RootAsin的关系连接上 */
             AsinRootAsin asinRootAsin = new AsinRootAsin();
             asinRootAsin.asin = asinStr;
+            asinRootAsin.siteCode = url.siteCode;
             asinRootAsin.rootAsin = rootAsin;
             mAsinRootAsinService.add(asinRootAsin);
 

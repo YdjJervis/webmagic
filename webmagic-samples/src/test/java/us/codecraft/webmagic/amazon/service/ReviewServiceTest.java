@@ -15,7 +15,7 @@ public class ReviewServiceTest extends SpringTestCase {
     ReviewService mReviewService;
 
     @Test
-    public void addTest(){
+    public void addTest() {
 
         Review review = getReview();
 
@@ -23,7 +23,7 @@ public class ReviewServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void addAllTest(){
+    public void addAllTest() {
 
         Review review = getReview();
         List<Review> list = new ArrayList<Review>();
@@ -42,24 +42,59 @@ public class ReviewServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void testFindLastReview(){
+    public void testFindLastReview() {
         System.out.println(mReviewService.findLastReview("B0169X2S60"));
     }
 
     @Test
-    public void testFindStarReviewCount(){
+    public void testFindStarReviewCount() {
         System.out.println(mReviewService.findStarReviewCount("B01M4G902N"));
     }
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         Review review = mReviewService.findByReviewId("R1UIT94RIP82Q3");
         review.extra = "Extra001";
         mReviewService.update(review);
     }
 
     @Test
-    public void testFindAll(){
+    public void testFindAll() {
         System.out.println(mReviewService.findAll("B01G38UKDO", 3));
+    }
+
+    @Test
+    public void findAll() {
+        Review review = new Review();
+        review.rootAsin = "B0181YRLT4";
+        review.siteCode = "CN";
+        review.pageNum = 0;
+        review.pageSize = 5;
+        review.starList.add(1);
+        review.starList.add(2);
+        List<Review> reviews = mReviewService.findAll(review);
+
+        for (Review review1 : reviews) {
+            System.out.println(review1);
+        }
+
+    }
+
+    @Test
+    public void findAllCount() {
+        Review review = new Review();
+        review.rootAsin = "B0181YRLT4";
+        review.siteCode = "CN";
+        review.starList.add(2);
+        review.starList.add(1);
+        System.out.println(mReviewService.findAllCount(review));
+    }
+
+    @Test
+    public void findByIdAndRootAsinTest() {
+        List<Review> reviews = mReviewService.findByIdAndRootAsin("asdfsad", "B0181YRLT4");
+        for (Review review : reviews) {
+            System.out.println(review);
+        }
     }
 }

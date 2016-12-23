@@ -4,6 +4,7 @@
 
     <resultMap id="AsinRootAsinMap" type="AsinRootAsin">
         <id column="rar_id" property="id"/>
+        <result column="bas_code" property="siteCode"/>
         <result column="rar_asin" property="asin"/>
         <result column="rar_root_asin" property="rootAsin"/>
         <result column="rar_create_time" property="createTime"/>
@@ -12,19 +13,19 @@
 
     <insert id="add" parameterType="AsinRootAsin">
         INSERT INTO relation_asin_rootasin(
-        rar_asin,rar_root_asin
+        bas_code,rar_asin,rar_root_asin
         ) VALUES (
-        #{asin},#{rootAsin}
+        #{siteCode},#{asin},#{rootAsin}
         )
     </insert>
 
     <select id="findByRelation" resultMap="AsinRootAsinMap">
         select * from relation_asin_rootasin WHERE
-        rar_asin = #{0} AND rar_root_asin = #{1};
+        rar_asin = #{0} AND rar_root_asin = #{1} AND bas_code = #{2}
     </select>
 
     <select id="findByAsin" resultMap="AsinRootAsinMap">
         select * from relation_asin_rootasin WHERE
-        rar_asin = #{0}
+        rar_asin = #{0} AND bas_code = #{1}
     </select>
 </mapper>

@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.amazon.grammar;
 
+import com.eccang.pojo.BaseReqParam;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import junit.framework.TestCase;
@@ -30,7 +31,7 @@ public class GsonTest extends TestCase {
 
     @Test
     public void test2Object() {
-        RequestStat stat = new Gson().fromJson("", RequestStat.class);
+        BaseReqParam stat = new Gson().fromJson("{\"data\":[],\"cutomerCode\":\"EC_001\",\"platformCode\":\"ERP\",\"token\":\"123456789\"}", BaseReqParam.class);
         System.out.println(stat);
     }
 

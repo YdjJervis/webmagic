@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class CustomerReviewUpdateReq extends BaseReqParam {
 
-    public List<CustomerReview> data = new ArrayList<CustomerReview>();
+    public List<CustomerReview> data = new ArrayList<>();
 
     public class CustomerReview{
         public String customerCode;

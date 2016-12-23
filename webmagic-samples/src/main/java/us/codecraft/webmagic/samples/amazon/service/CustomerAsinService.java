@@ -58,4 +58,8 @@ public class CustomerAsinService {
     public List<CustomerAsin> findNeedGenerateBatch() {
         return mCustomerAsinDao.findNeedGenerateBatch();
     }
+
+    public List<CustomerAsin> findByCustomerCodeIsOpen(String customerCode) {
+        return mCustomerAsinDao.findByCustomerCodeIsOpen(customerCode);
+    }
 }

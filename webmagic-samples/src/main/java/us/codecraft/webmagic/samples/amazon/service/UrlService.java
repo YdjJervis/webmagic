@@ -155,7 +155,7 @@ public class UrlService {
         mLogger.info("最大页码总数：" + maxPage + " 已经爬取的页码：" + crawledList.size());
 
         /* 从数据库获取一些必要对象 */
-        Asin asinObj = mAsinService.findByAsin(url.siteCode, mAsinRootAsinService.findByAsin(url.asin).rootAsin);
+        Asin asinObj = mAsinService.findByAsin(url.siteCode, mAsinRootAsinService.findByAsin(url.asin, url.siteCode).rootAsin);
         Batch batch = mBatchService.findByBatchNumber(url.batchNum);
         BatchAsin dbBtchAsin = mBatchAsinService.findAllByAsin(url.batchNum, url.siteCode, url.asin);
         Date currentTime = new Date();

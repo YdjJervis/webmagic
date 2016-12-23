@@ -14,26 +14,20 @@
             http://cxf.apache.org/schemas/core.xsd">
 
     <!-- 第二种发布方式：带有接口的发布 -->
-    <jaxws:server id="testWS" serviceClass="com.eccang.cxf.TestWS" address="/test">
-        <jaxws:serviceBean>
-            <bean class="com.eccang.cxf.TestWSImpl"/>
-        </jaxws:serviceBean>
-        <!-- 加入请求的消息拦截器 -->
-        <jaxws:inInterceptors>
-            <bean class="com.eccang.intercepter.ECRequestIntercepter"/>
-        </jaxws:inInterceptors>
-        <!-- 加入响应的消息拦截器 -->
-        <jaxws:outInterceptors>
-            <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
-        </jaxws:outInterceptors>
-    </jaxws:server>
-
     <!-- id:唯一标示 serviceClass：接口类型 address：服务的请求url-->
     <jaxws:server id="asinWS" serviceClass="com.eccang.cxf.AsinWS" address="/asin">
         <jaxws:serviceBean>
             <!-- 服务的实现类 -->
             <bean class="com.eccang.cxf.AsinWSImpl"/>
         </jaxws:serviceBean>
+        <!-- 加入请求的消息拦截器 -->
+        <jaxws:inInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+        </jaxws:inInterceptors>
+        <!-- 加入响应的消息拦截器 -->
+        <jaxws:outInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+        </jaxws:outInterceptors>
     </jaxws:server>
 
     <jaxws:server id="reviewWS" serviceClass="com.eccang.cxf.ReviewWS" address="/review">
@@ -54,7 +48,11 @@
         </jaxws:serviceBean>
     </jaxws:server>
 
-
+    <jaxws:server id="customerBusinessWS" serviceClass="com.eccang.cxf.CustomerBusinessWS" address="/customerBusiness">
+        <jaxws:serviceBean>
+            <bean class="com.eccang.cxf.CustomerBusinessWSImpl"/>
+        </jaxws:serviceBean>
+    </jaxws:server>
 
 </beans>
 

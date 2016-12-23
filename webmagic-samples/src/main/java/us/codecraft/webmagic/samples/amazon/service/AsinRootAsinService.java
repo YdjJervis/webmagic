@@ -20,16 +20,16 @@ public class AsinRootAsinService {
     @Autowired
     private AsinRootAsinDao mDao;
 
-    public AsinRootAsin find(String asin, String rootAsin) {
-        return mDao.findByRelation(asin, rootAsin);
+    public AsinRootAsin find(String asin, String rootAsin, String siteCode) {
+        return mDao.findByRelation(asin, rootAsin, siteCode);
     }
 
-    public AsinRootAsin findByAsin(String asin){
-        return mDao.findByAsin(asin);
+    public AsinRootAsin findByAsin(String asin, String siteCode){
+        return mDao.findByAsin(asin, siteCode);
     }
 
     public void add(AsinRootAsin asinRootAsin) {
-        if (find(asinRootAsin.asin, asinRootAsin.rootAsin) == null) {
+        if (find(asinRootAsin.asin, asinRootAsin.rootAsin, asinRootAsin.siteCode) == null) {
             mDao.add(asinRootAsin);
         }
     }

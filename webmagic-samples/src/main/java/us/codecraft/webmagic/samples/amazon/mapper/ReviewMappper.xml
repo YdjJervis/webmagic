@@ -78,15 +78,58 @@
 
     <select id="findAll" resultMap="ReviewResultMap" parameterType="Review">
         SELECT * FROM spider_amazon_review WHERE
+        rar_root_asin = #{rootAsin} and
         <if test="personId != null">
             sar_person_id = #{personId} and
         </if>
-        sar_star = #{star}
+        <if test='experience != null'>
+            <choose>
+              <when test='experience.equals("yes")'>
+                sar_buy_status is not null and
+              </when>
+              <otherwise>
+                  sar_buy_status is null and
+              </otherwise>
+            </choose>
+        </if>
+        sar_star in
+        <foreach collection="starList" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        LIMIT #{pageNum},#{pageSize}
+    </select>
+
+    <select id="findAllCount" resultType="int" parameterType="Review">
+        SELECT COUNT(*) FROM spider_amazon_review WHERE
+        rar_root_asin = #{rootAsin} and
+        <if test="personId != null">
+            sar_person_id = #{personId} and
+        </if>
+        <if test='experience != null'>
+            <choose>
+                <when test='experience.equals("yes")'>
+                    sar_buy_status is not null and
+                </when>
+                <otherwise>
+                    sar_buy_status is null and
+                </otherwise>
+            </choose>
+        </if>
+        sar_star in
+        <foreach collection="starList" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
     </select>
 
     <!-- 根据RootASIN和星级查询Review列表 -->
     <select id="findAllByStar" resultMap="BatchAsinExtraResultMap">
         SELECT sar_review_id,sar_star FROM spider_amazon_review WHERE
             rar_root_asin = #{0} and sar_star = #{1} order by sar_deal_time DESC;
+    </select>
+
+    <select id="findByIdAndRootAsin" resultMap="ReviewResultMap">
+          SELECT * FROM spider_amazon_review
+          WHERE
+          sar_review_id = #{0} AND rar_root_asin = #{1}
     </select>
 </mapper>

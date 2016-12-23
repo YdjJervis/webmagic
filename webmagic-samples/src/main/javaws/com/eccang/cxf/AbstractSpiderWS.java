@@ -31,18 +31,31 @@ public abstract class AbstractSpiderWS implements SpiderWS {
     @Autowired
     private PlatformService mPlatformService;
 
+    static final String IS_SUCCESS = "isSuccess";
+    static final String MESSAGE = "message";
+
     protected Logger sLogger = Logger.getLogger(getClass());
 
     public BaseRspParam auth(String json) {
         sLogger.info(json);
-        BaseReqParam baseReqParam = new Gson().fromJson(json, BaseReqParam.class);
         BaseRspParam baseRspParam = new BaseRspParam();
 
-        if (baseReqParam == null) {
+        if (StringUtils.isEmpty(json)) {
             sLogger.warn("Param is null.");
             baseRspParam.setSuccess(false);
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.EMPTY_PARAM;
+            return baseRspParam;
+        }
+
+        BaseReqParam baseReqParam;
+        try {
+            baseReqParam = new Gson().fromJson(json, BaseReqParam.class);
+        } catch (Exception e) {
+            sLogger.warn("Parameter format error.");
+            baseRspParam.setSuccess(false);
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
             return baseRspParam;
         }
 

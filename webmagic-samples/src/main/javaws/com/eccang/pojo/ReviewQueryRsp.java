@@ -22,6 +22,8 @@ public class ReviewQueryRsp extends BaseRspParam {
         public String time;
         public String personID;
         public String reviewID;
+        public String person;
+        public String version;
         public String buyStatus;
         public int star;
         public String title;

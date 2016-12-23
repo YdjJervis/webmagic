@@ -25,5 +25,9 @@ public interface ReviewDao extends BaseDao<Review> {
 
     List<Review> findAll(Review review);
 
+    List<Review> findByIdAndRootAsin(String reviewId, String rootAsin);
+
+    int findAllCount(Review review);
+
     List<BatchAsinExtra> findAllByStar(String rootAsin, int star);
 }

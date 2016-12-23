@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.BusinessDao">
+    <resultMap id="BusinessMap" type="Business">
+        <id column="besb_id" property="id" />
+        <result column="besb_code" property="businessCode" />
+        <result column="besb_name" property="businessName" />
+        <result column="besb_status" property="status" />
+        <result column="besb_create_date" property="createDate" />
+        <result column="besb_update_date" property="updateDate" />
+    </resultMap>
+
+    <insert id="addOne" parameterType="Business">
+        INSERT INTO base_eccang_spider_business (
+          besb_code,
+          besb_name,
+          besb_status,
+        ) VALUES (
+          #{businessCode},
+          #{businessName},
+          #{status}
+        )
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO base_eccang_spider_business (
+          besb_code,
+          besb_name,
+          besb_status,
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+          (
+            #{item.businessCode},
+            #{item.businessName},
+            #{item.status}
+          )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="Business">
+        UPDATE
+          base_eccang_spider_business
+        SET
+          besb_name = #{businessName},
+          besb_status = #{status}
+        WHERE
+          besb_code = #{businessCode}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM base_eccang_spider_business
+        WHERE besb_code = #{businessCode}
+    </delete>
+
+    <select id="findAll" resultMap="BusinessMap">
+        SELECT * FROM base_eccang_spider_business
+    </select>
+
+    <select id="findByCode" resultMap="BusinessMap">
+        SELECT * FROM base_eccang_spider_business
+        WHERE besb_code = #{businessCode}
+    </select>
+</mapper>

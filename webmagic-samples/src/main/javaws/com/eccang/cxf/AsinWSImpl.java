@@ -11,9 +11,7 @@ import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.*;
 
 import javax.jws.WebService;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Jervis
@@ -42,6 +40,9 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     @Autowired
     private AsinRootAsinService mAsinRootAsinService;
 
+    @Autowired
+    private CustomerBusinessService mCustomerBusinessService;
+
     public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
 
@@ -49,24 +50,27 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             return baseRspParam.toJson();
         }
 
-        AsinReq asinReq = new Gson().fromJson(json, AsinReq.class);
-        /* 参数验证阶段 */
-        boolean isParamQualified = true;
-        if (CollectionUtils.isEmpty(asinReq.data)) {
-            isParamQualified = false;
-        }
-        for (AsinReq.Asin asin : asinReq.data) {
-            if (StringUtils.isEmpty(asin.asin)
-                    || !RegexUtil.isSiteCodeQualified(asin.siteCode)
-                    || !RegexUtil.isStarRegex(asin.star)
-                    || !RegexUtil.isPriorityQualified(asin.priority)) {
-                isParamQualified = false;
-                break;
-            }
-        }
-        if (!isParamQualified) {
+        AsinReq asinReq;
+        try {
+            asinReq = new Gson().fromJson(json, AsinReq.class);
+        } catch (Exception e) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_FORMAT_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        /* 参数验证阶段 */
+        if (CollectionUtils.isEmpty(asinReq.data)) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        Map<String, String> checkResult = checkAsinData(asinReq.data, 1);
+
+        if (checkResult.get(IS_SUCCESS).equalsIgnoreCase("0")) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = checkResult.get(MESSAGE);
             return baseRspParam.toJson();
         }
 
@@ -91,12 +95,13 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 batchAsin.type = 0;
                 batchAsin.status = 0;
 
-                AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin.asin);
+                AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin.asin, asin.siteCode);
                 /* 已经爬取过的商品，把爬取完成的大字段同步过来 */
                 if (asinRootAsin != null) {
                     crawledNum++;
                     setCrawledStatus(batchAsin);
-                    batchAsin.extra = mAsinService.findByAsin(asin.siteCode, asinRootAsin.rootAsin).extra;
+                    Asin asin1 = mAsinService.findByAsin(asin.siteCode, asinRootAsin.rootAsin);
+                    batchAsin.extra = asin1.extra;
                     batchAsin.rootAsin = asinRootAsin.rootAsin;
                 }
 
@@ -112,7 +117,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
             Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedBatchAsinList, 0, 1);
 
-            /* 全部都是之前已经爬取过的，就直接跟新批次号各个状态 */
+            /* 全部都是之前已经爬取过的，就直接更新新批次号各个状态 */
             boolean isAllCrawled = true;
             for (BatchAsin batchAsin : parsedBatchAsinList) {
                 if (batchAsin.crawled == 0) {
@@ -152,17 +157,11 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             asinRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
         }
 
-        return asinRsp.toJson();
-    }
+        Map<String, Integer> businessInfo = mCustomerBusinessService.getBusinessInfo(asinReq.cutomerCode, R.BusinessCode.ASIN_SPIDER);
+        asinRsp.data.usableNum = businessInfo.get(R.BusinessInfo.USABLENUM);
+        asinRsp.data.hasUsedNum = businessInfo.get(R.BusinessInfo.HASUSEDNUM);
 
-    /**
-     * 设置成已经爬取状态
-     */
-    private void setCrawledStatus(BatchAsin batchAsin) {
-        batchAsin.crawled = 1;
-        batchAsin.status = 4;
-        batchAsin.progress = 1;
-        batchAsin.type = 1;
+        return asinRsp.toJson();
     }
 
     /**
@@ -177,23 +176,28 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             return baseRspParam.toJson();
         }
 
-        AsinQueryReq asinQueryReq = new Gson().fromJson(json, AsinQueryReq.class);
+        AsinQueryReq asinQueryReq;
+        AsinReq asinReq;
+        try {
+            asinQueryReq = new Gson().fromJson(json, AsinQueryReq.class);
+            asinReq = new Gson().fromJson(json, AsinReq.class);
+        } catch (Exception e) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_FORMAT_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        if (CollectionUtils.isEmpty(asinQueryReq.data)) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            return baseRspParam.toJson();
+        }
 
         /* 参数验证阶段 */
-        boolean isParamQualified = true;
-        if (CollectionUtils.isEmpty(asinQueryReq.data)) {
-            isParamQualified = false;
-        }
-        for (AsinQueryReq.Asin asin : asinQueryReq.data) {
-            if (StringUtils.isEmpty(asin.asin)
-                    || !RegexUtil.isSiteCodeQualified(asin.siteCode)) {
-                isParamQualified = false;
-                break;
-            }
-        }
-        if (!isParamQualified) {
+        Map<String, String> checkResult = checkAsinData(asinReq.data, 3);
+        if (checkResult.get(IS_SUCCESS).equalsIgnoreCase("0")) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
+            baseRspParam.msg = checkResult.get(MESSAGE);
             return baseRspParam.toJson();
         }
 
@@ -204,29 +208,37 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         asinQueryRsp.msg = baseRspParam.msg;
 
         try {
+            CustomerAsin customerAsin;
             for (AsinQueryReq.Asin asin : asinQueryReq.data) {
+                customerAsin = new CustomerAsin(baseRspParam.cutomerCode, asin.siteCode, asin.asin);
+                customerAsin = mCustomerAsinService.find(customerAsin);
+
+                if (customerAsin == null) {
+                    sLogger.info("客户（" + baseRspParam.cutomerCode + "）下，不存在asin (" + asin.asin + ").");
+                    continue;
+                }
 
                 /*查询asin对应的rootAsin*/
-                AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin.asin);
+                AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin.asin, asin.siteCode);
                 Asin dbAsin;
                 AsinQueryRsp.Asin resultAsin = asinQueryRsp.new Asin();
                 if (asinRootAsin != null) {
-                    /*通过rootAsin与siteCode查询基础数据*/
-                    dbAsin = mAsinService.findByAsin(asin.siteCode, asinRootAsin.rootAsin);
+                    /*查询asin的爬取情况（批次asin表中）*/
+
                     resultAsin.onSale = 1;
                 } else {
                     /*根rootAsin不存在：1.asin下架；2.asin还没有爬取过*/
                     dbAsin = new Asin();
                     dbAsin.siteCode = asin.siteCode;
-                    dbAsin.rootAsin = asin.asin;
+                    dbAsin.rootAsin = asinRootAsin.rootAsin;
                     if (mNoSellService.isExist(dbAsin)) {
                         resultAsin.onSale = 0;
                     } else {
                         resultAsin.onSale = 1;
                     }
                 }
-                resultAsin.asin = dbAsin.rootAsin;
-                resultAsin.rootAsin = dbAsin.rootAsin;
+                resultAsin.asin = asin.asin;
+                resultAsin.rootAsin = "";
                 resultAsin.progress = 0;//有疑问
                 asinQueryRsp.data.add(resultAsin);
             }
@@ -239,6 +251,62 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         return asinQueryRsp.toJson();
     }
 
+    /**
+     * 设置成已经爬取状态
+     */
+    private void setCrawledStatus(BatchAsin batchAsin) {
+        batchAsin.crawled = 1;
+        batchAsin.status = 4;
+        batchAsin.progress = 1;
+        batchAsin.type = 1;
+    }
+
+    /**
+     * 校验asin列表中的数据
+     * 1:asin导入校验
+     * 2：修改asin优先级
+     * 3:asin的查询
+     */
+    private Map<String, String> checkAsinData(List<AsinReq.Asin> asins, int type) {
+        Map<String, String> result = new HashMap<>();
+
+        for (AsinReq.Asin asin : asins) {
+            result.put(AsinWSImpl.IS_SUCCESS, "0");
+            if (asin == null) {
+                result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_ASIN_LIST_ASIN_ERROR);
+                return result;
+            }
+
+            if (StringUtils.isEmpty(asin.asin)) {
+                result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_ASIN_LIST_ERROR);
+                return result;
+            }
+
+            if (!RegexUtil.isSiteCodeQualified(asin.siteCode)) {
+                result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR);
+                return result;
+            }
+
+            if (type == 1) {
+                if (!RegexUtil.isStarRegex(asin.star)) {
+                    result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_ASIN_STAR_ERROR);
+                    return result;
+                }
+            }
+
+            if (type == 1 || type == 2) {
+                if (!RegexUtil.isPriorityQualified(asin.priority)) {
+                    result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR);
+                    return result;
+                }
+            }
+        }
+
+        result.put(AsinWSImpl.IS_SUCCESS, "1");
+        result.put(AsinWSImpl.MESSAGE, R.RequestMsg.SUCCESS);
+        return result;
+    }
+
     @Override
     public String setPriority(String jsonArray) {
         BaseRspParam baseRspParam = auth(jsonArray);
@@ -247,26 +315,32 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             return baseRspParam.toJson();
         }
 
-        AsinPriorityReq priorityReq = new Gson().fromJson(jsonArray, AsinPriorityReq.class);
-
-        /* 参数验证阶段 */
-        boolean isParamQualified = true;
-        if (CollectionUtils.isEmpty(priorityReq.data)) {
-            isParamQualified = false;
-        }
-        for (AsinPriorityReq.Asin asin : priorityReq.data) {
-            if (StringUtils.isEmpty(asin.asin)
-                    || !RegexUtil.isSiteCodeQualified(asin.siteCode)
-                    || !RegexUtil.isPriorityQualified(asin.priority)) {
-                isParamQualified = false;
-                break;
-            }
-        }
-        if (!isParamQualified) {
+        AsinPriorityReq priorityReq;
+        AsinReq asinReq;
+        try {
+            priorityReq = new Gson().fromJson(jsonArray, AsinPriorityReq.class);
+            asinReq = new Gson().fromJson(jsonArray, AsinReq.class);
+        } catch (Exception e) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_FORMAT_ERROR;
             return baseRspParam.toJson();
         }
+
+        /*校验data数据是不是null*/
+        if (CollectionUtils.isEmpty(asinReq.data)) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        /* 参数验证阶段 */
+        Map<String, String> checkResult = checkAsinData(asinReq.data, 2);
+        if (checkResult.get(IS_SUCCESS).equalsIgnoreCase("0")) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = checkResult.get(MESSAGE);
+            return baseRspParam.toJson();
+        }
+
 
         /* 逻辑处理阶段 */
         AsinPriorityRsp priorityRsp = new AsinPriorityRsp();

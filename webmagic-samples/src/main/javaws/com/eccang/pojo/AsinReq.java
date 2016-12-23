@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class AsinReq extends BaseReqParam {
 
-    public List<Asin> data = new ArrayList<Asin>();
+    public List<Asin> data = new ArrayList<>();
 
     public class Asin {
         public String siteCode;

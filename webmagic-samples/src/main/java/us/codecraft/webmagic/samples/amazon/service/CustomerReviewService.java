@@ -69,4 +69,8 @@ public class CustomerReviewService {
             mCustomerReviewDao.addAll(newList);
         }
     }
+
+    public List<CustomerReview> findCustomerReviewIsOpen(String customerCode) {
+        return mCustomerReviewDao.findCustomerReviewIsOpen(customerCode);
+    }
 }

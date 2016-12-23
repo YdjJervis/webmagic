@@ -15,6 +15,8 @@ public class AsinRsp extends BaseRspParam {
         public int totalCount;
         public int oldCount;
         public int newCount;
+        public int usableNum; /*可用数*/
+        public int hasUsedNum; /*已用数*/
     }
 
 }

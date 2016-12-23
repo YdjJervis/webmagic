@@ -6,13 +6,17 @@ import com.eccang.pojo.BatchAsinRsp;
 import com.eccang.pojo.BatchReq;
 import com.eccang.pojo.BatchReviewRsp;
 import com.google.gson.Gson;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.pojo.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.BatchReview;
+import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
 import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
 import us.codecraft.webmagic.samples.amazon.service.BatchReviewService;
 import us.codecraft.webmagic.samples.amazon.service.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.CustomerReviewService;
 import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
 import javax.jws.WebService;
@@ -36,6 +40,11 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
     @Autowired
     private BatchReviewService mBatchReviewService;
 
+    @Autowired
+    private CustomerReviewService mCustomerReviewService;
+
+    Logger sLogger = Logger.getLogger(getClass());
+
     @Override
     public String getBatchInfo(String json) {
 
@@ -45,7 +54,29 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             return baseRspParam.toJson();
         }
 
-        BatchReq batchReq = new Gson().fromJson(json, BatchReq.class);
+        BatchReq batchReq;
+        try {
+            batchReq = new Gson().fromJson(json, BatchReq.class);
+        } catch (Exception e) {
+            sLogger.info(e);
+            baseRspParam.status  = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        /*校验batch对象是否为null*/
+        if(batchReq.data == null) {
+            baseRspParam.status  = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_BATCH_NULL_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        /*校验batch对象中批次号number是否为空*/
+        if(StringUtils.isEmpty(batchReq.data.number)) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_BATCH_NUM_ERROR;
+            return baseRspParam.toJson();
+        }
 
         Batch batch = mBatchService.findByBatchNumber(batchReq.data.number);
 
@@ -76,7 +107,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                     BatchAsinRsp.Asin asin = batchAsinRsp.new Asin();
                     asin.siteCode = batchAsin.siteCode;
                     asin.asin = batchAsin.asin;
-                    asin.rootAsin = batchAsin.rootAsin;
+                    asin.rootAsin = batchAsin.rootAsin == null ? "" : batchAsin.rootAsin;
                     asin.crawled = batchAsin.crawled;
                     asin.progress = batchAsin.progress;
                     asin.startTime = DateUtils.format(batchAsin.startTime);
@@ -109,9 +140,12 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
 
                 List<BatchReview> batchReviewList = mBatchReviewService.findAllByBatchNum(batchReq.data.number);
                 for (BatchReview batchReview : batchReviewList) {
+                    CustomerReview customerReview = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode,batchReview.reviewID);
                     BatchReviewRsp.ReviewMonitor monitor = batchReviewRsp.new ReviewMonitor();
                     monitor.siteCode = batchReview.siteCode;
                     monitor.reviewID = batchReview.reviewID;
+                    monitor.crawled = batchReview.status;
+                    monitor.asin = customerReview.asin;
                     monitor.updateTime = DateUtils.format(batchReview.updateTime);
                     batchReviewRsp.data.details.add(monitor);
                 }

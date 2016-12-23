@@ -28,7 +28,7 @@ public class RegexUtil {
      * 验证优先级范围
      */
     public static boolean isPriorityQualified(int priority) {
-        return priority >= 0 || priority <= 4;
+        return priority >= 0 && priority <= 4;
     }
 
     public static boolean isSiteCodeQualified(String siteCode) {

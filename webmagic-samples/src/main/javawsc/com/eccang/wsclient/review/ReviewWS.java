@@ -31,18 +31,6 @@ public interface ReviewWS {
      */
     @WebMethod
     @WebResult(partName = "return")
-    public String getReviews(
-        @WebParam(name = "arg0", partName = "arg0")
-        String arg0);
-
-    /**
-     * 
-     * @param arg0
-     * @return
-     *     returns java.lang.String
-     */
-    @WebMethod
-    @WebResult(partName = "return")
     public String addToMonitor(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
@@ -55,7 +43,31 @@ public interface ReviewWS {
      */
     @WebMethod
     @WebResult(partName = "return")
+    public String getReviewById(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
     public String updateCustomerReview(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String getReviewsByAsin(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
