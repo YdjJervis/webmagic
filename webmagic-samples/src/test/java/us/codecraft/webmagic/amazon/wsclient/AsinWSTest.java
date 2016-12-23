@@ -8,15 +8,18 @@ import com.google.gson.Gson;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
+import us.codecraft.webmagic.samples.amazon.pojo.ImportData;
 import us.codecraft.webmagic.samples.amazon.service.ImportDataService;
+
+import java.util.List;
 
 /**
  * @author Jervis
  * @version V0.20
- * @Description:
+ * @ription:
  * @date 2016/12/7 16:03
  */
-public class AsinWS extends SpringTestCase {
+public class AsinWSTest extends SpringTestCase {
 
     @Autowired
     private ImportDataService mImportDataService;
