@@ -1,9 +1,10 @@
 
 package com.eccang.wsclient.test;
 
+import us.codecraft.webmagic.samples.base.util.PropertyUtil;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 
@@ -26,8 +27,9 @@ public class TestWSService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8080/eccang/ws/test?wsdl");
-        } catch (MalformedURLException ex) {
+            String value = PropertyUtil.getValue("ws.properties", "spiderWSIPPort");
+            url = new URL(value + "/eccang/ws/test?wsdl");
+        } catch (Exception ex) {
             e = new WebServiceException(ex);
         }
         TESTWSSERVICE_WSDL_LOCATION = url;

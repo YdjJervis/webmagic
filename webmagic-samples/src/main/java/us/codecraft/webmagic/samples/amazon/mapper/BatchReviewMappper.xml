@@ -11,6 +11,7 @@
         <result property="type" column="bor_type"/>
         <result property="status" column="bor_status"/>
         <result property="priority" column="bor_priority"/>
+        <result property="isChanged" column="bor_is_changed"/>
         <result property="extra" column="bor_extra"/>
         <result property="createTime" column="bor_create_time"/>
         <result property="updateTime" column="bor_update_time"/>
@@ -26,6 +27,7 @@
         bor_type = #{type},
         bor_status = #{status},
         bor_priority = #{priority},
+        bor_is_changed = #{isChanged},
         bor_extra = #{extra}
         WHERE
         bo_batch_num = #{batchNumber} AND bor_review_id = #{reviewID};
@@ -33,12 +35,12 @@
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO batch_order_review(
-        bo_batch_num,bas_code,bor_review_id,bor_type,bor_status,bor_priority,bor_extra
+        bo_batch_num,bas_code,bor_review_id,bor_type,bor_status,bor_priority,bor_is_changed,bor_extra
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.batchNumber},#{item.siteCode},#{item.reviewID},#{item.type},#{item.status},#{item.priority},#{item.extra}
+            #{item.batchNumber},#{item.siteCode},#{item.reviewID},#{item.type},#{item.status},#{item.priority},#{item.isChanged},#{item.extra}
             )
         </foreach>
     </insert>

@@ -16,6 +16,7 @@ public class BatchReview extends BasePojo {
     public int type;
     public int status;
     public int priority;
+    public int isChanged;
 
     @Override
     public String toString() {
@@ -26,6 +27,7 @@ public class BatchReview extends BasePojo {
                 ", type=" + type +
                 ", status=" + status +
                 ", priority=" + priority +
+                ", isChanged=" + isChanged +
                 '}';
     }
 }

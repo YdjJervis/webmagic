@@ -25,6 +25,7 @@ public class BatchAsin extends BasePojo {
     public int status;
     public float progress;
     public int type;
+    public int isChanged;
     public Date startTime;
     public Date finishTime;
 
@@ -41,6 +42,7 @@ public class BatchAsin extends BasePojo {
                 ", status=" + status +
                 ", progress=" + progress +
                 ", type=" + type +
+                ", isChanged=" + isChanged +
                 ", startTime=" + startTime +
                 ", finishTime=" + finishTime +
                 '}';

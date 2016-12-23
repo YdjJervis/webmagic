@@ -15,6 +15,7 @@
         <result property="status" column="boa_status"/>
         <result property="progress" column="boa_progress"/>
         <result property="type" column="boa_type"/>
+        <result property="isChanged" column="boa_is_changed"/>
         <result property="extra" column="boa_extra"/>
         <result property="startTime" column="boa_start_time"/>
         <result property="finishTime" column="boa_finish_time"/>
@@ -68,6 +69,7 @@
         boa_status = #{status},
         boa_progress = #{progress},
         boa_type = #{type},
+        boa_is_changed = #{isChanged},
         boa_extra = #{extra},
         boa_start_time = #{startTime},
         boa_finish_time = #{finishTime}
@@ -78,13 +80,13 @@
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO batch_order_asin(
         bo_batch_num,bas_code,boa_asin,boa_root_asin,boa_priority,boa_star,boa_crawled,boa_status,boa_progress,
-        boa_type,boa_extra,boa_start_time,boa_finish_time
+        boa_type,boa_is_changed,boa_extra,boa_start_time,boa_finish_time
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
             #{item.batchNumber},#{item.siteCode},#{item.asin},#{item.rootAsin},#{item.priority},#{item.star},#{item.crawled},#{item.status},#{item.progress},
-            #{item.type},#{item.extra},#{item.startTime},#{item.finishTime}
+            #{item.type},#{item.isChanged},#{item.extra},#{item.startTime},#{item.finishTime}
             )
         </foreach>
     </insert>
