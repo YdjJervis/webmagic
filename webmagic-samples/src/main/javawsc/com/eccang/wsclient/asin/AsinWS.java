@@ -5,9 +5,8 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
 
 
 /**
@@ -17,6 +16,7 @@ import javax.xml.ws.ResponseWrapper;
  * 
  */
 @WebService(name = "AsinWS", targetNamespace = "http://cxf.eccang.com/")
+@SOAPBinding(style = SOAPBinding.Style.RPC)
 @XmlSeeAlso({
     ObjectFactory.class
 })
@@ -30,11 +30,9 @@ public interface AsinWS {
      *     returns java.lang.String
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "addToCrawl", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.AddToCrawl")
-    @ResponseWrapper(localName = "addToCrawlResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.AddToCrawlResponse")
+    @WebResult(partName = "return")
     public String addToCrawl(
-        @WebParam(name = "arg0", targetNamespace = "")
+        @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
     /**
@@ -44,11 +42,21 @@ public interface AsinWS {
      *     returns java.lang.String
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getAsins", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.GetAsins")
-    @ResponseWrapper(localName = "getAsinsResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.GetAsinsResponse")
+    @WebResult(partName = "return")
     public String getAsins(
-        @WebParam(name = "arg0", targetNamespace = "")
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String getAsinsStatus(
+        @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
     /**
@@ -58,11 +66,9 @@ public interface AsinWS {
      *     returns com.eccang.wsclient.asin.BaseRspParam
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "auth", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.Auth")
-    @ResponseWrapper(localName = "authResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.AuthResponse")
+    @WebResult(partName = "return")
     public BaseRspParam auth(
-        @WebParam(name = "arg0", targetNamespace = "")
+        @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
     /**
@@ -72,11 +78,9 @@ public interface AsinWS {
      *     returns java.lang.String
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "setPriority", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.SetPriority")
-    @ResponseWrapper(localName = "setPriorityResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.asin.SetPriorityResponse")
+    @WebResult(partName = "return")
     public String setPriority(
-        @WebParam(name = "arg0", targetNamespace = "")
+        @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
 }

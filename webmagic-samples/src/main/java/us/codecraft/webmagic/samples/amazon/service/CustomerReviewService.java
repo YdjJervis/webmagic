@@ -42,6 +42,10 @@ public class CustomerReviewService {
         return mCustomerReviewDao.findCustomerReview(customerCode, reviewId);
     }
 
+    public List<CustomerReview> findCustomerReviewsByCustomerCode(String customerCode) {
+        return mCustomerReviewDao.findCustomerReviewsByCustomerCode(customerCode);
+    }
+
     public boolean isExist(String customerCode, String reviewId) {
         return findCustomerReview(customerCode, reviewId) != null;
     }

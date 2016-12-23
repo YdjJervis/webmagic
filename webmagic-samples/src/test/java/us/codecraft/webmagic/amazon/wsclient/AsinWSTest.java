@@ -77,4 +77,15 @@ public class AsinWSTest extends SpringTestCase {
         System.out.println(json);
 
     }
+
+    @Test
+    public void testGetAsinStatus() {
+        AsinReq asinReq = new AsinReq();
+        asinReq.cutomerCode = "EC_001";
+        asinReq.platformCode = "ERP";
+        asinReq.token = "123456789";
+        System.out.println(new Gson().toJson(asinReq));
+        String json = new AsinWSService().getAsinWSPort().getAsinsStatus(new Gson().toJson(asinReq));
+        System.out.println(json);
+    }
 }

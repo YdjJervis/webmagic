@@ -1,10 +1,9 @@
 
 package com.eccang.wsclient.review;
 
-import us.codecraft.webmagic.samples.base.util.PropertyUtil;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 
@@ -27,9 +26,8 @@ public class ReviewWSService
         URL url = null;
         WebServiceException e = null;
         try {
-            String value = PropertyUtil.getValue("ws.properties", "spiderWSIPPort");
-            url = new URL(value + "/eccang/ws/review?wsdl");
-        } catch (Exception ex) {
+            url = new URL("http://192.168.100.109:8080/eccang/ws/review?wsdl");
+        } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
         REVIEWWSSERVICE_WSDL_LOCATION = url;

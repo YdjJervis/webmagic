@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
 import javax.jws.WebService;
 import java.util.*;
@@ -374,5 +375,39 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         }
 
         return priorityRsp.toJson();
+    }
+
+    @Override
+    public String getAsinsStatus(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        CustomerAsinRsp customerAsinRsp = new CustomerAsinRsp();
+        customerAsinRsp.cutomerCode = baseRspParam.cutomerCode;
+        customerAsinRsp.status = baseRspParam.status;
+        customerAsinRsp.msg = baseRspParam.msg;
+
+        customerAsinRsp.data = null;
+        customerAsinRsp.asinsList = new ArrayList<>();
+        CustomerAsinRsp.CustomerAsin cusAsin;
+        /*通过客户码查询客户下所有的asin爬取状态*/
+        List<CustomerAsin> customerAsins = mCustomerAsinService.findByCustomerCodeIsOpen(baseRspParam.cutomerCode);
+
+        for (CustomerAsin customerAsin : customerAsins) {
+            cusAsin = customerAsinRsp.new CustomerAsin();
+            cusAsin.asin = customerAsin.asin;
+            cusAsin.siteCode = customerAsin.siteCode;
+            cusAsin.crawl = customerAsin.crawl;
+            cusAsin.priority = customerAsin.priority;
+            cusAsin.frequency = customerAsin.frequency;
+            cusAsin.star = customerAsin.star;
+            cusAsin.createTime = DateUtils.format(customerAsin.createTime);
+            cusAsin.updateTime = DateUtils.format(customerAsin.updateTime);
+            customerAsinRsp.asinsList.add(cusAsin);
+        }
+        return customerAsinRsp.toJson();
     }
 }

@@ -35,4 +35,7 @@ public interface ReviewWS extends SpiderWS{
     @WebMethod
     String updateCustomerReview(String json);
 
+    @WebMethod
+    String getReviewsStatus(String json);
+
 }

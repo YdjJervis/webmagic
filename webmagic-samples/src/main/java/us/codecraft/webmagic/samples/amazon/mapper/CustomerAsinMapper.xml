@@ -40,7 +40,12 @@
     </insert>
 
     <select id="findByObject" resultMap="CustomerAsinMap">
-        select * from relation_customer_asin WHERE bec_code = #{customerCode} and bas_code = #{siteCode} and saa_asin = #{asin};
+        select * from
+          relation_customer_asin
+        WHERE
+          bec_code = #{customerCode}
+          and bas_code = #{siteCode}
+          and saa_asin = #{asin};
     </select>
 
     <select id="findNeedGenerateBatch" resultMap="CustomerAsinMap">

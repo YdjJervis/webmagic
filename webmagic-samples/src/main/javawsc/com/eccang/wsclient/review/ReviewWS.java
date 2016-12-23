@@ -43,6 +43,18 @@ public interface ReviewWS {
      */
     @WebMethod
     @WebResult(partName = "return")
+    public String getReviewsStatus(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
     public String getReviewById(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);

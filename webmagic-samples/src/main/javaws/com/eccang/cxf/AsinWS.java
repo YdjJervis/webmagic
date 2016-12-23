@@ -31,4 +31,7 @@ public interface AsinWS extends SpiderWS{
      */
     @WebMethod
     String setPriority(String jsonArray);
+
+    @WebMethod
+    String getAsinsStatus(String json);
 }

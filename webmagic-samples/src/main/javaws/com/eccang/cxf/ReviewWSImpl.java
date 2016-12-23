@@ -16,7 +16,10 @@ import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
 import javax.jws.WebService;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jervis
@@ -634,6 +637,42 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             customerReviewUpdateRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
         }
         return customerReviewUpdateRsp.toJson();
+    }
+
+    @Override
+    public String getReviewsStatus(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        CustomerReviewRsp customerReviewRsp = new CustomerReviewRsp();
+        customerReviewRsp.cutomerCode = baseRspParam.cutomerCode;
+        customerReviewRsp.status = baseRspParam.status;
+        customerReviewRsp.msg = baseRspParam.msg;
+
+        customerReviewRsp.reviewsList = new ArrayList<>();
+
+        List<CustomerReview> customerReviewList = mCustomerReviewService.findCustomerReviewsByCustomerCode(baseRspParam.cutomerCode);
+        CustomerReviewRsp.Review review;
+        for (CustomerReview customerReview : customerReviewList) {
+            review = customerReviewRsp.new Review();
+            review.asin = customerReview.asin;
+            review.reviewId = customerReview.reviewId;
+            review.siteCode = customerReview.siteCode;
+            review.crawl = customerReview.crawl;
+            review.priority = customerReview.priority;
+            review.frequency = customerReview.frequency;
+            review.noSell = customerReview.onSell;
+            review.crawlTime = customerReview.times;
+            review.finishTime = DateUtils.format(customerReview.finishTime);
+            review.createTime = DateUtils.format(customerReview.createTime);
+            review.updateTime = DateUtils.format(customerReview.updateTime);
+            customerReviewRsp.reviewsList.add(review);
+        }
+
+        return customerReviewRsp.toJson();
     }
 
     /**

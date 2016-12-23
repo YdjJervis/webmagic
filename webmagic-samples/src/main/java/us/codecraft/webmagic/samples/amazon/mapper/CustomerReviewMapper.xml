@@ -44,6 +44,10 @@
         SELECT * FROM relation_customer_review
         WHERE rcr_crawl = 1 AND bec_code = #{0}
     </select>
+    <select id="findCustomerReviewsByCustomerCode" resultMap="CustomerReviewResultMap">
+        SELECT * FROM relation_customer_review
+        WHERE bec_code = #{0}
+    </select>
 
     <update id="update" parameterType="CustomerReview">
         UPDATE

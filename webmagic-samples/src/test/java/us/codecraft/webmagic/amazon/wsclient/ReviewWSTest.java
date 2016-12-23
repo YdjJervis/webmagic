@@ -10,8 +10,6 @@ import us.codecraft.webmagic.base.SpringTestCase;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 
-import java.util.List;
-
 /**
  * @author Jervis
  * @version V0.2
@@ -50,16 +48,16 @@ public class ReviewWSTest extends SpringTestCase {
 
         Review re = new Review();
         re.star = 1;
-        List<Review> reviewList = mReviewService.findAll(re);
-        for (Review reviewLoop : reviewList) {
+//        List<Review> reviewList = mReviewService.findAll(re);
+//        for (Review reviewLoop : reviewList) {
             ReviewReq.Review review = reviewReq.new Review();
             review.priority = 2;
-            review.reviewId = reviewLoop.reviewId;
-            review.siteCode = reviewLoop.siteCode;
-            review.asin = reviewLoop.rootAsin;
+            review.reviewId = "R3K2VNQENRX082";
+            review.siteCode = "CN";
+            review.asin = "B01DB6RGT2";
             review.frequency = 2;
             reviewReq.data.add(review);
-        }
+//        }
 
         String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq));
         System.out.println(json);
@@ -98,6 +96,18 @@ public class ReviewWSTest extends SpringTestCase {
         reviewReq.data.add(review1);
 
         String json = new ReviewWSService().getReviewWSPort().setPriority(new Gson().toJson(reviewReq));
+        System.out.println(json);
+    }
+
+    @Test
+    public void getReviewStatusTest() {
+        ReviewReq reviewReq = new ReviewReq();
+
+        reviewReq.cutomerCode = "EC_001";
+        reviewReq.platformCode = "ERP";
+        reviewReq.token = "123456789";
+
+        String json = new ReviewWSService().getReviewWSPort().getReviewsStatus(new Gson().toJson(reviewReq));
         System.out.println(json);
     }
 }

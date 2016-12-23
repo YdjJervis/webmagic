@@ -37,9 +37,6 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
     @Autowired
     private CustomerReviewService mCustomerReviewService;
 
-    @Autowired
-            private CustomerAsinService mCustomerAsinService;
-
     Logger sLogger = Logger.getLogger(getClass());
 
     @Override
@@ -106,7 +103,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                     asin.siteCode = batchAsin.siteCode;
                     asin.asin = batchAsin.asin;
                     asin.rootAsin = batchAsin.rootAsin == null ? "" : batchAsin.rootAsin;
-                    asin.isChanged = 1;
+                    asin.isChanged = batchAsin.isChanged;
                     asin.progress = batchAsin.progress;
                     asin.startTime = DateUtils.format(batchAsin.startTime);
                     asin.finishTime = DateUtils.format(batchAsin.finishTime);
@@ -143,8 +140,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                     BatchReviewRsp.ReviewMonitor monitor = batchReviewRsp.new ReviewMonitor();
                     monitor.siteCode = batchReview.siteCode;
                     monitor.reviewID = batchReview.reviewID;
-                    monitor.isChanged = 1;
-                    monitor.progress =  batchReview.status == 2 ? 0 : 1;
+                    monitor.isChanged = batchReview.isChanged;
+                    monitor.progress =  batchReview.status == 2 ? 1 : 0;
                     monitor.asin = customerReview.asin;
                     monitor.updateTime = DateUtils.format(batchReview.updateTime);
                     batchReviewRsp.data.details.add(monitor);
