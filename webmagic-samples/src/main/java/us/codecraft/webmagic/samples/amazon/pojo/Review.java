@@ -74,6 +74,7 @@ public class Review extends BasePojo {
      * 评论内容
      */
     public String content;
+    public String votes;
     /**
      * 评论标题
      */
@@ -95,7 +96,7 @@ public class Review extends BasePojo {
     @Override
     public String toString() {
         return "Review{" +
-                "basCode='" + siteCode + '\'' +
+                "siteCode='" + siteCode + '\'' +
                 ", rootAsin='" + rootAsin + '\'' +
                 ", personId='" + personId + '\'' +
                 ", time='" + time + '\'' +
@@ -107,12 +108,13 @@ public class Review extends BasePojo {
                 ", star=" + star +
                 ", version='" + version + '\'' +
                 ", content='" + content + '\'' +
+                ", votes='" + votes + '\'' +
                 ", title='" + title + '\'' +
                 ", pageNum='" + pageNum + '\'' +
                 ", pageSize='" + pageSize + '\'' +
                 ", priority=" + priority +
-                ", frequency='" + frequency + '\'' +
-                ", marked='" + marked + '\'' +
+                ", frequency=" + frequency +
+                ", marked=" + marked +
                 '}';
     }
 }

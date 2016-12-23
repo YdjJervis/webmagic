@@ -125,7 +125,12 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         String time = reviewNode.xpath("//span[@data-hook='review-date']/text()").get();
         String version = reviewNode.xpath("//a[@data-hook='format-strip']/text()").get();
         String content = reviewNode.xpath("//span[@data-hook='review-body']/text()").get();
+        String votes = reviewNode.xpath("//span[@data-hook='review-voting-widget']//span[@class='review-votes']/text()").get();
         String buyStatus = reviewNode.xpath("//span[@data-hook='avp-badge']/text()").get();
+
+        if (StringUtils.isNotEmpty(votes)) {
+            votes = votes.trim();
+        }
 
         review.siteCode = siteCode;
         review.star = star;
@@ -137,6 +142,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         review.dealTime = ReviewTimeUtil.parse(time, siteCode);
         review.version = version;
         review.content = content;
+        review.votes = votes;
         review.buyStatus = buyStatus;
         return review;
     }

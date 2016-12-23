@@ -16,6 +16,7 @@ public class CustomerReview extends BasePojo {
     public String siteCode;
     public String asin;
     public String reviewId;
+    public int onSell = 1;
     /**
      * 是否是开启状态。1-是/0-否
      */
@@ -38,10 +39,12 @@ public class CustomerReview extends BasePojo {
     @Override
     public String toString() {
         return "CustomerReview{" +
-                "reviewId='" + reviewId + '\'' +
-                ", customerCode='" + customerCode + '\'' +
-                ", status=" + status +
+                "customerCode='" + customerCode + '\'' +
                 ", siteCode='" + siteCode + '\'' +
+                ", asin='" + asin + '\'' +
+                ", reviewId='" + reviewId + '\'' +
+                ", onSell=" + onSell +
+                ", status=" + status +
                 ", priority=" + priority +
                 ", frequency=" + frequency +
                 ", times=" + times +

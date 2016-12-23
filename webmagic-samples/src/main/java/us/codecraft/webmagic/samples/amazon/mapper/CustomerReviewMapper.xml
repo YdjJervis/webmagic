@@ -9,6 +9,7 @@
         <result property="siteCode" column="bas_code"/>
         <result property="asin" column="saa_asin"/>
         <result property="reviewId" column="rcr_review_id"/>
+        <result property="onSell" column="rcr_on_sell"/>
         <result property="status" column="rcr_status"/>
         <result property="priority" column="rcr_priority"/>
         <result property="frequency" column="rcr_frequency"/>
@@ -21,9 +22,9 @@
     <!--添加到监控-->
     <insert id="add" parameterType="CustomerReview">
         insert into relation_customer_review (
-          bec_code, bas_code, saa_asin, rcr_review_id, rcr_status, rcr_marked, rcr_priority, rcr_frequency, rcr_times, rcr_finish_time
+          bec_code, bas_code, saa_asin, rcr_review_id, rcr_on_sell, rcr_status, rcr_marked, rcr_priority, rcr_frequency, rcr_times, rcr_finish_time
         ) values (
-          #{customerCode}, #{siteCode}, #{asin}, #{reviewId}, #{status}, #{marked}, #{priority}, #{frequency}, #{times}, #{finishTime}
+          #{customerCode}, #{siteCode}, #{asin}, #{reviewId}, #{nosell}, #{status}, #{marked}, #{priority}, #{frequency}, #{times}, #{finishTime}
         )
     </insert>
 
@@ -36,7 +37,7 @@
 
     <select id="findNeedGenerateBatch" resultMap="CustomerReviewResultMap">
         SELECT * FROM relation_customer_review
-        WHERE rcr_status = 1 AND CURRENT_TIMESTAMP - rcr_finish_time > rcr_frequency * 3600
+        WHERE rcr_status = 1 AND rcr_on_sell = 1 AND CURRENT_TIMESTAMP - rcr_finish_time > rcr_frequency * 3600 or rcr_finish_time IS NULL;
     </select>
 
     <select id="findCustomerReviewIsOpen" resultMap="CustomerReviewResultMap">
@@ -50,6 +51,7 @@
         SET
           bas_code = #{siteCode},
           saa_asin = #{asin},
+          rcr_on_sell = #{onSell},
           rcr_status = #{status},
           rcr_priority = #{priority},
           rcr_frequency = #{frequency},
@@ -61,12 +63,13 @@
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO relation_customer_review (
-        bec_code, bas_code, saa_asin, rcr_review_id, rcr_status, rcr_priority, rcr_frequency, rcr_times, rcr_finish_time
+        bec_code, bas_code, saa_asin, rcr_review_id, rcr_on_sell, rcr_status, rcr_priority, rcr_frequency, rcr_times,
+        rcr_finish_time
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.customerCode}, #{item.siteCode}, #{item.asin}, #{item.reviewId}, #{item.status},
+            #{item.customerCode}, #{item.siteCode}, #{item.asin}, #{item.reviewId}, #{item.onSell}, #{item.status},
             #{item.priority}, #{item.frequency}, #{item.times}, #{item.finishTime}
             )
         </foreach>

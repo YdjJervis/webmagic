@@ -140,10 +140,9 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
                 /* 改变大字段的值 */
                 dbBatchAsin.extra = mUrlService.getBatchAsinExtra(dbBatchAsin, asinObj.rootAsin);
+                dbBatchAsin.finishTime = currentTime;
                 mBatchAsinService.update(dbBatchAsin);
 
-                /* 更新爬取完毕，放进推送队列 */
-                mPushQueueService.add(batch.number);
             }
 
             /* 添加到历史表 */
@@ -161,6 +160,9 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         if (mUrlService.findByBatchNum(getUrl(page).batchNum).size() == 0) {
             batch.status = 2;
             batch.finishTime = currentTime;
+
+            /* 更新爬取完毕，放进推送队列 */
+            mPushQueueService.add(batch.number);
         }
         mBatchService.update(batch);
     }
@@ -169,6 +171,17 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
     public void execute() {
         sLogger.info("开始执行更新爬取...");
         List<Url> urlList = mUrlService.find(R.CrawlType.REVIEW_UPDATE);
+
+        BatchAsin batchAsin = null;
+        Date currentTime = new Date();
+        for (Url url : urlList) {
+            batchAsin = mBatchAsinService.findAllByAsin(url.batchNum, url.siteCode, url.asin);
+            if (batchAsin.startTime == null) {
+                batchAsin.startTime = currentTime;
+                mBatchAsinService.update(batchAsin);
+            }
+        }
+
         startToCrawl(urlList);
     }
 

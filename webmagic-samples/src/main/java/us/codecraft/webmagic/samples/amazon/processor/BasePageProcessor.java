@@ -147,7 +147,7 @@ public class BasePageProcessor implements PageProcessor {
         String asin = extractAsin(page);
         mAsinService.updateAndDeleteUrl(site.basCode, asin);
 
-        /* 二期业务：如果页面不存在，就把所有的记录的进度更新成1，type改成2(全量爬取完毕) */
+        /* 二期业务：如果页面不存在，就把所有的记录的进度更新成1，状态改为全量爬取完毕 */
         BatchAsin batchAsin = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, site.basCode, asin);
         batchAsin.status = 4;
         batchAsin.progress = 1;

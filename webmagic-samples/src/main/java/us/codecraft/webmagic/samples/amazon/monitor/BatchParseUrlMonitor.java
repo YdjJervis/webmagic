@@ -37,6 +37,7 @@ public class BatchParseUrlMonitor extends ParseMonitor {
 
     @Override
     public void execute() {
+        sLogger.info("批次转URL任务开始...");
         List<Url> urlList = getUrl(true);
         mUrlService.addAll(urlList);
     }
@@ -50,6 +51,7 @@ public class BatchParseUrlMonitor extends ParseMonitor {
 
         /* 把没有爬取首页的详单转换成爬取首页的URL，并改变爬取类型为爬取首页 */
         List<BatchAsin> batchAsinList = mBatchAsinService.findNotCrawledMainPage();
+        sLogger.info("没有爬取首页的个数：" + batchAsinList.size());
         for (BatchAsin batchAsin : batchAsinList) {
 
             Site site = siteMap.get(batchAsin.siteCode);
@@ -75,6 +77,7 @@ public class BatchParseUrlMonitor extends ParseMonitor {
 
         /* 把需要全量爬取的批次详单转换成全量爬取的URL，并改变爬取类型为全量爬取 */
         batchAsinList = mBatchAsinService.findNotCrawledReview();
+        sLogger.info("没有全量爬取的个数：" + batchAsinList.size());
         for (BatchAsin batchAsin : batchAsinList) {
 
             Site site = siteMap.get(batchAsin.siteCode);
@@ -103,6 +106,7 @@ public class BatchParseUrlMonitor extends ParseMonitor {
 
         /* 把需要更新爬取的爬取的批次详单转换更新爬取的URL，并改变爬取类型为更新爬取 */
         batchAsinList = mBatchAsinService.findNotUpdatedReview();
+        sLogger.info("没有更新爬取的个数：" + batchAsinList.size());
         for (BatchAsin batchAsin : batchAsinList) {
 
             Site site = siteMap.get(batchAsin.siteCode);

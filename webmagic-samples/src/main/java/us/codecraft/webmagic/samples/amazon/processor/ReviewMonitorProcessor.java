@@ -42,23 +42,26 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
             Review review = mReviewService.findByReviewId(reviewId);
 
             String star = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']//img").regex(".*stars-([1-5]).*").get();
+
             if (!NumberUtils.isNumber(star)) {
-                sLogger.error("抱歉，没有成功解析颗星数：" + star);
-                return;
+                sLogger.warn("抱歉，商品已经下架，没有成功解析颗星数：" + star);
+                updateBatchStatus(page, false);
+            } else {
+                review.star = Integer.valueOf(star);
+                review.title = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
+                review.time = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/nobr/text()").get();
+                review.content = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
+
+                sLogger.info(review);
+                mReviewService.update(review);
+
+                updateBatchStatus(page, true);
             }
-            review.star = Integer.valueOf(star);
-            review.title = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
-            review.time = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/nobr/text()").get();
-            review.content = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
 
-            sLogger.info(review);
-            mReviewService.update(review);
-
-            updateBatchStatus(page);
         }
     }
 
-    private void updateBatchStatus(Page page) {
+    private void updateBatchStatus(Page page, boolean isOnSell) {
         String reviewId = page.getUrl().regex(".*customer-reviews/(.*)").get();
         /* 二期业务 */
         /* 更新详单 */
@@ -90,6 +93,9 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
         CustomerReview customerReview = mCustomerReviewService.findCustomerReview(batch.customerCode, reviewId);
         customerReview.times++;
         customerReview.finishTime = currentTime;
+        if (!isOnSell) {
+            customerReview.onSell = 0;
+        }
         mCustomerReviewService.update(customerReview);
 
         /* URL归档到历史表 */
@@ -99,7 +105,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
 
     @Override
     void dealPageNotFound(Page page) {
-        updateBatchStatus(page);
+        updateBatchStatus(page, false);
     }
 
     @Override

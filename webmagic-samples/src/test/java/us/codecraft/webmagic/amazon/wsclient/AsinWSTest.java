@@ -29,9 +29,9 @@ public class AsinWS extends SpringTestCase {
         priorityReq.token = "123456789";
 
         AsinPriorityReq.Asin asin = priorityReq.new Asin();
-        asin.priority = 10;
-        asin.asin = "B01LXA42XX";
-        asin.siteCode = "US";
+        asin.priority = 1;
+        asin.asin = "B01LXA42FB";
+        asin.siteCode = "UK";
 
         priorityReq.data.add(asin);
 
@@ -47,8 +47,8 @@ public class AsinWS extends SpringTestCase {
         queryReq.token = "123456789";
 
         AsinQueryReq.Asin asin = queryReq.new Asin();
-        asin.asin = "B0181YRLT4";
-        asin.siteCode = "CN";
+        asin.asin = "B01LXA42FB";
+        asin.siteCode = "UK";
 
         queryReq.data.add(asin);
 
@@ -63,22 +63,19 @@ public class AsinWS extends SpringTestCase {
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
-//        List<ImportData> importDataList = mImportDataService.find(null);
-//
-//        for (ImportData importData : importDataList) {
-//
-//        }
-        AsinReq.Asin asin = asinReq.new Asin();
+        List<ImportData> importDataList = mImportDataService.find(null);
 
-        asin.asin = "B0181YRLT4";
-        asin.siteCode = "CN";
-        asin.priority = 0;
-        asin.star = "0-0-1-1-1";
-        asinReq.data.add(asin);
-        String reqStr = new Gson().toJson(asinReq);
-        System.out.println(reqStr);
+        for (ImportData importData : importDataList) {
+            AsinReq.Asin asin = asinReq.new Asin();
+            asin.asin = importData.getAsin();
+            asin.siteCode = importData.getSiteCode();
+            asin.priority = 0;
+            asin.star = "0-0-1-1-1";
+            asinReq.data.add(asin);
+        }
 
-        String json = new AsinWSService().getAsinWSPort().addToCrawl(reqStr);
+        System.out.println(new Gson().toJson(asinReq));
+        String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));
         System.out.println(json);
 
     }
