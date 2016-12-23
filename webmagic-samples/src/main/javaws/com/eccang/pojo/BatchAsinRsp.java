@@ -17,6 +17,7 @@ public class BatchAsinRsp extends BaseRspParam {
         public String number;
         public String createTime;
         public int type;
+        public int status; /*批次爬取状态*/
         public int times;
         public String startTime;
         public String finishTime;
@@ -30,7 +31,7 @@ public class BatchAsinRsp extends BaseRspParam {
         public String siteCode;
         public String asin;
         public String rootAsin;
-        public int crawled;
+        public int status;
         public double progress;
         public String startTime;
         public String finishTime;

@@ -35,7 +35,7 @@ public class ReviewWSTest extends SpringTestCase {
         asin.asin = "R2V7LL01LD8CLG";
         queryReq.data = asin;
 
-        String json = new ReviewWSService().getReviewWSPort().getReviews(new Gson().toJson(queryReq));
+        String json = new ReviewWSService().getReviewWSPort().getReviewsByAsin(new Gson().toJson(queryReq));
         System.out.println(json);
     }
 
@@ -58,7 +58,6 @@ public class ReviewWSTest extends SpringTestCase {
             review.siteCode = reviewLoop.siteCode;
             review.asin = reviewLoop.rootAsin;
             review.frequency = 2;
-            review.marked = 1;
             reviewReq.data.add(review);
         }
 

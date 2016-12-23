@@ -9,14 +9,8 @@ import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import us.codecraft.webmagic.samples.amazon.pojo.Batch;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchAsin;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchReview;
-import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
-import us.codecraft.webmagic.samples.amazon.service.BatchAsinService;
-import us.codecraft.webmagic.samples.amazon.service.BatchReviewService;
-import us.codecraft.webmagic.samples.amazon.service.BatchService;
-import us.codecraft.webmagic.samples.amazon.service.CustomerReviewService;
+import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
 import javax.jws.WebService;
@@ -42,6 +36,9 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
 
     @Autowired
     private CustomerReviewService mCustomerReviewService;
+
+    @Autowired
+            private CustomerAsinService mCustomerAsinService;
 
     Logger sLogger = Logger.getLogger(getClass());
 
@@ -96,6 +93,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 batchAsinRsp.data.number = batchReq.data.number;
                 batchAsinRsp.data.createTime = DateUtils.format(batch.createTime);
                 batchAsinRsp.data.type = batch.type;
+                batchAsinRsp.data.status = batch.status;
                 batchAsinRsp.data.times = batch.times;
                 batchAsinRsp.data.startTime = DateUtils.format(batch.startTime);
                 batchAsinRsp.data.finishTime = DateUtils.format(batch.finishTime);
@@ -104,11 +102,13 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
 
                 List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batchReq.data.number);
                 for (BatchAsin batchAsin : batchAsinList) {
+                    CustomerAsin customerAsin = new CustomerAsin(baseRspParam.cutomerCode, batchAsin.siteCode, batchAsin.asin);
+                    customerAsin = mCustomerAsinService.find(customerAsin);
                     BatchAsinRsp.Asin asin = batchAsinRsp.new Asin();
                     asin.siteCode = batchAsin.siteCode;
                     asin.asin = batchAsin.asin;
                     asin.rootAsin = batchAsin.rootAsin == null ? "" : batchAsin.rootAsin;
-                    asin.crawled = batchAsin.crawled;
+                    asin.status = customerAsin.status;
                     asin.progress = batchAsin.progress;
                     asin.startTime = DateUtils.format(batchAsin.startTime);
                     asin.finishTime = DateUtils.format(batchAsin.finishTime);
@@ -132,6 +132,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 batchReviewRsp.data.createTime = DateUtils.format(batch.createTime);
                 batchReviewRsp.data.number = batchReq.data.number;
                 batchReviewRsp.data.type = batch.type;
+                batchReviewRsp.data.status = batch.status;
                 batchReviewRsp.data.times = batch.times;
                 batchReviewRsp.data.startTime = DateUtils.format(batch.startTime);
                 batchReviewRsp.data.finishTime = DateUtils.format(batch.finishTime);
@@ -144,7 +145,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                     BatchReviewRsp.ReviewMonitor monitor = batchReviewRsp.new ReviewMonitor();
                     monitor.siteCode = batchReview.siteCode;
                     monitor.reviewID = batchReview.reviewID;
-                    monitor.crawled = batchReview.status;
+                    monitor.status = customerReview.status;
                     monitor.asin = customerReview.asin;
                     monitor.updateTime = DateUtils.format(batchReview.updateTime);
                     batchReviewRsp.data.details.add(monitor);

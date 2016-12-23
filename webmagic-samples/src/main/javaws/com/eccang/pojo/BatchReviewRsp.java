@@ -18,6 +18,7 @@ public class BatchReviewRsp extends BaseRspParam {
         public String number;
         public String createTime;
         public int type;
+        public int status; /*批次爬取状态*/
         public int times;
         public String startTime;
         public String finishTime;
@@ -29,7 +30,7 @@ public class BatchReviewRsp extends BaseRspParam {
     public class ReviewMonitor {
         public String siteCode;
         public String asin;
-        public int crawled;
+        public int status;
         public String reviewID;
         public int times;
         public String updateTime;

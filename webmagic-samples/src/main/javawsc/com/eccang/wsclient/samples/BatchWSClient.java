@@ -20,7 +20,7 @@ public class BatchWSClient {
         batchReq.token = "123456789";
 
         batchReq.data = batchReq.new Batch();
-        batchReq.data.number = "EC20161214181249250";
+        batchReq.data.number = "EC20161223115609215";
 
         String info = new BatchWSService().getBatchWSPort().getBatchInfo(new Gson().toJson(batchReq));
         System.out.println(info);
