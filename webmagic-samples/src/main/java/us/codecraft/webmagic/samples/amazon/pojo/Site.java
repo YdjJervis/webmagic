@@ -10,21 +10,21 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
  */
 public class Site extends BasePojo {
 
-    public String basCode;
-    public String basSite;
-    public String basName;
+    public String code;
+    public String site;
+    public String name;
     /**
      * 站点是否爬取。0-不爬取；1-要爬取
      */
-    public int basCrawl;
+    public int crawl;
 
     @Override
     public String toString() {
-        return super.toString() + "Site{" +
-                "basCode='" + basCode + '\'' +
-                ", basSite='" + basSite + '\'' +
-                ", basName='" + basName + '\'' +
-                ", basCrawl='" + basCrawl + '\'' +
+        return "Site{" +
+                "code='" + code + '\'' +
+                ", site='" + site + '\'' +
+                ", name='" + name + '\'' +
+                ", crawl=" + crawl +
                 '}';
     }
 }

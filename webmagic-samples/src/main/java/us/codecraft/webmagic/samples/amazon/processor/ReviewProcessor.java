@@ -41,7 +41,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         List<Selectable> reviewNodeList = extractReviewNodeList(page);
 
         String asin = extractAsin(page);
-        String siteCode = extractSite(page).basCode;
+        String siteCode = extractSite(page).code;
 
         sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 

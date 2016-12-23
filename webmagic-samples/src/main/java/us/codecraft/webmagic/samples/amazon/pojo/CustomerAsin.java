@@ -16,6 +16,7 @@ public class CustomerAsin extends BasePojo {
     public String siteCode;
     public String asin;
     public int crawl = 1;
+    public int onSell = 1;
     public int priority;
     public int frequency;
     public String star;
@@ -30,4 +31,18 @@ public class CustomerAsin extends BasePojo {
         this.asin = asin;
     }
 
+    @Override
+    public String toString() {
+        return "CustomerAsin{" +
+                "customerCode='" + customerCode + '\'' +
+                ", siteCode='" + siteCode + '\'' +
+                ", asin='" + asin + '\'' +
+                ", crawl=" + crawl +
+                ", onSell=" + onSell +
+                ", priority=" + priority +
+                ", frequency=" + frequency +
+                ", star='" + star + '\'' +
+                ", syncTime=" + syncTime +
+                '}';
+    }
 }

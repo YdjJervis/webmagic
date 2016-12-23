@@ -23,9 +23,6 @@ import java.util.regex.Pattern;
 public class ProductProcessor extends BasePageProcessor implements ScheduledTask {
 
     @Autowired
-    private BatchAsinService mBatchAsinService;
-
-    @Autowired
     private ProductService mProductService;
 
     @Autowired
@@ -35,7 +32,10 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
     private UrlHistoryService mHistoryService;
 
     @Autowired
-    private AsinService mAsinService;
+    private CustomerAsinService mCustomerAsinService;
+
+    @Autowired
+    private BatchService mBatchService;
 
     @Override
     protected void dealOtherPage(Page page) {
@@ -59,14 +59,14 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             mAsinRootAsinService.add(asinRootAsin);
 
             /* 改变批次详单 */
-            BatchAsin dbBatchAsin = mBatchAsinService.findAllByAsin(url.batchNum, site.basCode, asinStr);
+            BatchAsin dbBatchAsin = mBatchAsinService.findAllByAsin(url.batchNum, site.code, asinStr);
             dbBatchAsin.status = 2;
             dbBatchAsin.type = 1;
             mBatchAsinService.update(dbBatchAsin);
 
             /* 添加Asin到归档 */
             Asin asin = new Asin();
-            asin.siteCode = site.basCode;
+            asin.siteCode = site.code;
             asin.rootAsin = rootAsin;
             mAsinService.add(asin);
 
@@ -83,6 +83,16 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             sLogger.info(product);*/
 
         }
+    }
+
+    @Override
+    void dealPageNotFound(Page page) {
+        super.dealPageNotFound(page);
+        /* 把下架反应到客户和ASIN关系里面 */
+        Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
+        CustomerAsin customerAsin = mCustomerAsinService.find(new CustomerAsin(batch.customerCode, extractSite(page).code, extractAsin(page)));
+        customerAsin.onSell = 0;
+        mCustomerAsinService.update(customerAsin);
     }
 
     @Override

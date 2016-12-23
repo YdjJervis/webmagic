@@ -149,6 +149,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 customerAsin.asin = asin.asin;
                 customerAsin.star = asin.star;
                 customerAsin.frequency = R.AsinSetting.UPDATE_FREQUENCY;
+                customerAsin.onSell = mNoSellService.isExist(new Asin(asin.siteCode, asin.asin)) ? 0 : 1;
                 customerAsinList.add(customerAsin);
             }
             mCustomerAsinService.addAll(customerAsinList);

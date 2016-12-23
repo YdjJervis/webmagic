@@ -56,10 +56,10 @@ public class FollowSellMonitor extends ParseMonitor {
             Url url = new Url();
             // eg: https://www.amazon.com/gp/offer-listing/B0117RFOEG
             Site site = mSiteService.find(sell.siteCode);
-            url.url = site.basSite + "/gp/offer-listing/" + sell.asin;
+            url.url = site.site + "/gp/offer-listing/" + sell.asin;
             url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
             url.type = 4;
-            url.siteCode = site.basCode;
+            url.siteCode = site.code;
             url.asin = sell.asin;
             url.priority = sell.priority;
 

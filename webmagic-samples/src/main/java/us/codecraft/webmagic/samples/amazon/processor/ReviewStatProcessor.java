@@ -29,7 +29,7 @@ public class ReviewStatProcessor extends ReviewProcessor {
     protected void dealReview(Page page) {
         /*提取ASIN码*/
         String asin = extractAsin(page);
-        String siteCode = extractSite(page).basCode;
+        String siteCode = extractSite(page).code;
 
         /*提取总评价数*/
         String totalReviewStr = page.getHtml().xpath("//*[@data-hook='total-review-count']/text()").get();

@@ -29,7 +29,7 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
             List<FollowSell> followSellList = new ArrayList<FollowSell>();
 
             for (Selectable divNode : page.getHtml().xpath("//div[@class='a-row a-spacing-mini olpOffer']").nodes()) {
-                FollowSell followSell = new FollowSellExtractor(extractSite(page).basCode,extractAsin(page),divNode).extract();
+                FollowSell followSell = new FollowSellExtractor(extractSite(page).code,extractAsin(page),divNode).extract();
                 followSellList.add(followSell);
             }
 

@@ -61,7 +61,7 @@ public class BatchParseUrlMonitor extends ParseMonitor {
             }
 
             Url url = new Url();
-            url.url = siteMap.get(batchAsin.siteCode).basSite + "/dp/" + batchAsin.asin;
+            url.url = siteMap.get(batchAsin.siteCode).site + "/dp/" + batchAsin.asin;
             initUrl(batchAsin, url);
 
             /* 装换成URL列表后，把爬取的状态改成爬取当中 */
@@ -89,7 +89,7 @@ public class BatchParseUrlMonitor extends ParseMonitor {
             List<String> filterList = mAsinService.getUpdateFilters(batchAsin.star);
             for (String filter : filterList) {
                 Url url = new Url();
-                url.url = siteMap.get(batchAsin.siteCode).basSite + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
+                url.url = siteMap.get(batchAsin.siteCode).site + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
                 url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
                 initUrl(batchAsin, url);
                 urlList.add(url);
@@ -118,7 +118,7 @@ public class BatchParseUrlMonitor extends ParseMonitor {
             List<String> filterList = mAsinService.getUpdateFilters(batchAsin.star);
             for (String filter : filterList) {
                 Url url = new Url();
-                url.url = siteMap.get(batchAsin.siteCode).basSite + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
+                url.url = siteMap.get(batchAsin.siteCode).site + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
                 url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
                 initUrl(batchAsin, url);
                 urlList.add(url);

@@ -4,10 +4,10 @@
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.SiteDao">
 
     <resultMap id="SiteResultMap" type="Site">
-        <result property="basCode" column="bas_code"/>
-        <result property="basSite" column="bas_site"/>
-        <result property="basName" column="bas_name"/>
-        <result property="basCrawl" column="bas_crawl"/>
+        <result property="code" column="bas_code"/>
+        <result property="site" column="bas_site"/>
+        <result property="name" column="bas_name"/>
+        <result property="crawl" column="bas_crawl"/>
         <result property="updateTime" column="bas_update_time"/>
     </resultMap>
 

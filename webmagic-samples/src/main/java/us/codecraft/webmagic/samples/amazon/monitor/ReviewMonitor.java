@@ -47,7 +47,7 @@ public class ReviewMonitor extends ParseMonitor {
             url.batchNum = batchReview.batchNumber;
             url.siteCode = batchReview.siteCode;
             Site site = mSiteService.find(batchReview.siteCode);
-            url.url = site.basSite + "/gp/customer-reviews/" + batchReview.reviewID;
+            url.url = site.site + "/gp/customer-reviews/" + batchReview.reviewID;
             url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
             url.type = batchReview.type;
             url.reviewId = batchReview.reviewID;
