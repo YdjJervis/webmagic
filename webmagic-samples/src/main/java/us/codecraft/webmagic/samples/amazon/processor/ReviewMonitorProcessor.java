@@ -45,28 +45,45 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
 
             if (!NumberUtils.isNumber(star)) {
                 sLogger.warn("抱歉，商品已经下架，没有成功解析颗星数：" + star);
-                updateBatchStatus(page, false);
+                updateBatchStatus(page, false, false);
             } else {
-                review.star = Integer.valueOf(star);
-                review.title = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
-                review.time = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/nobr/text()").get();
-                review.content = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
+                int stars = Integer.valueOf(star);
+                String title = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
+                String content = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
+
+                boolean changed = false;
+                if (review.star != stars || !review.title.equals(title) || review.content.equals(content)) {
+                    changed = true;
+                }
+
+                review.star = stars;
+                review.title = title;
+                review.content = content;
 
                 sLogger.info(review);
                 mReviewService.update(review);
 
-                updateBatchStatus(page, true);
+                updateBatchStatus(page, true, changed);
             }
 
         }
     }
 
-    private void updateBatchStatus(Page page, boolean isOnSell) {
+    /**
+     * 更新：
+     * 1，批次总单；
+     * 2，批次详单；
+     * 3，客户Review关系。
+     */
+    private void updateBatchStatus(Page page, boolean isOnSell, boolean changed) {
         String reviewId = page.getUrl().regex(".*customer-reviews/(.*)").get();
         /* 二期业务 */
         /* 更新详单 */
         BatchReview batchReview = mBatchReviewService.findByReviewID(getUrl(page).batchNum, reviewId);
         batchReview.status = 2;
+        if (changed) {
+            batchReview.isChanged = 1;
+        }
         mBatchReviewService.update(batchReview);
 
         /* 更新批次总单的状态 */
@@ -96,6 +113,9 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
         if (!isOnSell) {
             customerReview.onSell = 0;
         }
+        if (changed) {
+            customerReview.crawl = 0;
+        }
         mCustomerReviewService.update(customerReview);
 
         /* URL归档到历史表 */
@@ -105,7 +125,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
 
     @Override
     void dealPageNotFound(Page page) {
-        updateBatchStatus(page, false);
+        updateBatchStatus(page, false, false);
     }
 
     @Override
