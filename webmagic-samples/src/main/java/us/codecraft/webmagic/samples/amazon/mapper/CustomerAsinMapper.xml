@@ -77,7 +77,10 @@
 
     <select id="findNeedGenerateBatch" resultMap="CustomerAsinMap">
         SELECT * FROM relation_customer_asin
-        WHERE rca_crawl = 1
+        WHERE
+        rca_crawl = 1
+        AND
+        rca_on_sell = 1
         AND
         CURRENT_TIMESTAMP - rca_sync_time > rca_frequency * 3600;
     </select>
