@@ -652,7 +652,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         customerReviewRsp.status = baseRspParam.status;
         customerReviewRsp.msg = baseRspParam.msg;
 
-        customerReviewRsp.reviewsList = new ArrayList<>();
+        customerReviewRsp.data = new ArrayList<>();
 
         List<CustomerReview> customerReviewList = mCustomerReviewService.findCustomerReviewsByCustomerCode(baseRspParam.cutomerCode);
         CustomerReviewRsp.Review review;
@@ -669,7 +669,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             review.finishTime = DateUtils.format(customerReview.finishTime);
             review.createTime = DateUtils.format(customerReview.createTime);
             review.updateTime = DateUtils.format(customerReview.updateTime);
-            customerReviewRsp.reviewsList.add(review);
+            customerReviewRsp.data.add(review);
 
         }
 

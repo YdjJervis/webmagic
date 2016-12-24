@@ -6,22 +6,20 @@ import java.util.List;
  * @author Hardy
  * @version V0.2
  * @Description:
- * @date 2016/12/23 16:55
+ * @date 2016/12/23 18:17
  */
-public class CustomerReviewRsp extends BaseRspParam {
+public class CustomerAsinsRsp extends BaseRspParam {
 
-    public List<Review> data;
+    public List<CustomerAsinsRsp.CustomerAsin> data;
 
-    public class Review {
+    public class CustomerAsin {
         public String asin;
-        public String reviewId;
         public String siteCode;
         public int crawl;
         public int priority;
         public int frequency;
-        public int noSell;
-        public int crawlTime;
-        public String finishTime;
+        public String star;
+        public String syncTime;
         public String createTime;
         public String updateTime;
     }

@@ -386,29 +386,29 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             return baseRspParam.toJson();
         }
 
-        CustomerAsinRsp customerAsinRsp = new CustomerAsinRsp();
-        customerAsinRsp.cutomerCode = baseRspParam.cutomerCode;
-        customerAsinRsp.status = baseRspParam.status;
-        customerAsinRsp.msg = baseRspParam.msg;
+        CustomerAsinsRsp customerAsinsRsp = new CustomerAsinsRsp();
+        customerAsinsRsp.cutomerCode = baseRspParam.cutomerCode;
+        customerAsinsRsp.status = baseRspParam.status;
+        customerAsinsRsp.msg = baseRspParam.msg;
 
-        customerAsinRsp.data = null;
-        customerAsinRsp.asinsList = new ArrayList<>();
-        CustomerAsinRsp.CustomerAsin cusAsin;
+        customerAsinsRsp.data = new ArrayList<>();
+        CustomerAsinsRsp.CustomerAsin cusAsin;
         /*通过客户码查询客户下所有的asin爬取状态*/
         List<CustomerAsin> customerAsins = mCustomerAsinService.findByCustomerCodeIsOpen(baseRspParam.cutomerCode);
 
         for (CustomerAsin customerAsin : customerAsins) {
-            cusAsin = customerAsinRsp.new CustomerAsin();
+            cusAsin = customerAsinsRsp.new CustomerAsin();
             cusAsin.asin = customerAsin.asin;
             cusAsin.siteCode = customerAsin.siteCode;
             cusAsin.crawl = customerAsin.crawl;
             cusAsin.priority = customerAsin.priority;
             cusAsin.frequency = customerAsin.frequency;
             cusAsin.star = customerAsin.star;
+            cusAsin.syncTime = DateUtils.format(customerAsin.syncTime);
             cusAsin.createTime = DateUtils.format(customerAsin.createTime);
             cusAsin.updateTime = DateUtils.format(customerAsin.updateTime);
-            customerAsinRsp.asinsList.add(cusAsin);
+            customerAsinsRsp.data.add(cusAsin);
         }
-        return customerAsinRsp.toJson();
+        return customerAsinsRsp.toJson();
     }
 }
