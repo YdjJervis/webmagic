@@ -16,7 +16,7 @@ public class AsinQueryRsp extends BaseRspParam {
     public class Asin {
         public String asin;
         public String rootAsin;
-        public int onSale;
+        public int onSell;
         public float progress;
     }
 }

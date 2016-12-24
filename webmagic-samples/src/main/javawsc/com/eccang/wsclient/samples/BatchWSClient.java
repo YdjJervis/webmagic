@@ -15,12 +15,12 @@ public class BatchWSClient {
     public static void main(String[] args) {
 
         BatchReq batchReq = new BatchReq();
-        batchReq.cutomerCode = "EC_001";
+        batchReq.cutomerCode = "EC_002";
         batchReq.platformCode = "ERP";
         batchReq.token = "123456789";
 
         batchReq.data = batchReq.new Batch();
-        batchReq.data.number = "EC20161223160827427";
+        batchReq.data.number = "EC2016122411205651";
 
         String info = new BatchWSService().getBatchWSPort().getBatchInfo(new Gson().toJson(batchReq));
         System.out.println(info);

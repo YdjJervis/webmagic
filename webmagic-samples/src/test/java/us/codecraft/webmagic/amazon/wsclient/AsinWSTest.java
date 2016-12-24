@@ -8,10 +8,7 @@ import com.google.gson.Gson;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
-import us.codecraft.webmagic.samples.amazon.pojo.ImportData;
 import us.codecraft.webmagic.samples.amazon.service.ImportDataService;
-
-import java.util.List;
 
 /**
  * @author Jervis
@@ -27,14 +24,14 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testChangePriority() {
         AsinPriorityReq priorityReq = new AsinPriorityReq();
-        priorityReq.cutomerCode = "EC_001";
+        priorityReq.cutomerCode = "EC_002";
         priorityReq.platformCode = "ERP";
         priorityReq.token = "123456789";
 
         AsinPriorityReq.Asin asin = priorityReq.new Asin();
         asin.priority = 1;
-        asin.asin = "B01LXA42FB";
-        asin.siteCode = "UK";
+        asin.asin = "B00HYAL84G";
+        asin.siteCode = "US";
 
         priorityReq.data.add(asin);
 
@@ -45,13 +42,13 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testQueryAsin() {
         AsinQueryReq queryReq = new AsinQueryReq();
-        queryReq.cutomerCode = "EC_001";
+        queryReq.cutomerCode = "EC_002";
         queryReq.platformCode = "ERP";
         queryReq.token = "123456789";
 
         AsinQueryReq.Asin asin = queryReq.new Asin();
-        asin.asin = "B01LXA42FB";
-        asin.siteCode = "UK";
+        asin.asin = "B00HYAL84G";
+        asin.siteCode = "US";
 
         queryReq.data.add(asin);
 
@@ -66,16 +63,16 @@ public class AsinWSTest extends SpringTestCase {
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
-        List<ImportData> importDataList = mImportDataService.find(null);
-
-        for (ImportData importData : importDataList) {
+//        List<ImportData> importDataList = mImportDataService.find(null);
+//
+//        for (ImportData importData : importDataList) {
             AsinReq.Asin asin = asinReq.new Asin();
-            asin.asin = importData.getAsin();
-            asin.siteCode = importData.getSiteCode();
+            asin.asin = "B00HYAL84G";
+            asin.siteCode = "US";
             asin.priority = 0;
             asin.star = "0-0-1-1-1";
             asinReq.data.add(asin);
-        }
+//        }
 
         System.out.println(new Gson().toJson(asinReq));
         String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));

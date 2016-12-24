@@ -25,12 +25,13 @@ public class ReviewWSTest extends SpringTestCase {
     public void query() {
 
         ReviewQueryReq queryReq = new ReviewQueryReq();
-        queryReq.cutomerCode = "EC_001";
+        queryReq.cutomerCode = "EC_002";
         queryReq.platformCode = "ERP";
         queryReq.token = "123456789";
 
         ReviewQueryReq.Asin asin = queryReq.new Asin();
-        asin.asin = "R2V7LL01LD8CLG";
+        asin.asin = "B00HYAL84G";
+        asin.siteCode = "US";
         queryReq.data = asin;
 
         String json = new ReviewWSService().getReviewWSPort().getReviewsByAsin(new Gson().toJson(queryReq));
@@ -41,7 +42,7 @@ public class ReviewWSTest extends SpringTestCase {
     public void add() {
         ReviewReq reviewReq = new ReviewReq();
 
-        reviewReq.cutomerCode = "EC_001";
+        reviewReq.cutomerCode = "EC_002";
         reviewReq.platformCode = "ERP";
         reviewReq.token = "123456789";
 
@@ -52,10 +53,10 @@ public class ReviewWSTest extends SpringTestCase {
 //        for (Review reviewLoop : reviewList) {
             ReviewReq.Review review = reviewReq.new Review();
             review.priority = 2;
-            review.reviewId = "R3K2VNQENRX082";
-            review.siteCode = "CN";
-            review.asin = "B01DB6RGT2";
-            review.frequency = 2;
+            review.reviewId = "Tx164I0R2U1QE3";
+            review.siteCode = "US";
+            review.asin = "B00HYAL84G";
+            review.frequency = 4;
             reviewReq.data.add(review);
 //        }
 
@@ -67,13 +68,13 @@ public class ReviewWSTest extends SpringTestCase {
     public void setFrequency() {
         ReviewReq reviewReq = new ReviewReq();
 
-        reviewReq.cutomerCode = "EC_001";
+        reviewReq.cutomerCode = "EC_002";
         reviewReq.platformCode = "ERP";
         reviewReq.token = "123456789";
 
         ReviewReq.Review review1 = reviewReq.new Review();
-        review1.reviewId = "R2V7LL01LD8CLG";
-        review1.frequency = 3;
+        review1.reviewId = "Tx164I0R2U1QE3";
+        review1.frequency = 8;
 
         reviewReq.data.add(review1);
 
@@ -85,12 +86,12 @@ public class ReviewWSTest extends SpringTestCase {
     public void setPriority() {
         ReviewReq reviewReq = new ReviewReq();
 
-        reviewReq.cutomerCode = "EC_001";
+        reviewReq.cutomerCode = "EC_002";
         reviewReq.platformCode = "ERP";
         reviewReq.token = "123456789";
 
         ReviewReq.Review review1 = reviewReq.new Review();
-        review1.reviewId = "R2V7LL01LD8CLG";
+        review1.reviewId = "Tx164I0R2U1QE3";
         review1.priority = 3;
 
         reviewReq.data.add(review1);

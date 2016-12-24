@@ -74,11 +74,7 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
             for (CustomerAsinReq.Asin asin : customerAsinReq.data) {
                 CustomerAsin customerAsin = new CustomerAsin(customerAsinRsp.cutomerCode, asin.siteCode, asin.asin);
                 customerAsin = mCustomerAsinService.find(customerAsin);
-                if ("open".equals(asin.crawl.trim())) {
-                    customerAsin.crawl = 1;
-                } else {
-                    customerAsin.crawl = 0;
-                }
+                customerAsin.crawl = asin.crawl;
                 mCustomerAsinService.update(customerAsin);
             }
             /*可用asin的数据量*/
@@ -115,11 +111,6 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
 
             if (!RegexUtil.isSiteCodeQualified(asin.siteCode)) {
                 result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR);
-                return result;
-            }
-
-            if (!RegexUtil.isCrawlStatusQualified(asin.crawl)) {
-                result.put(AsinWSImpl.MESSAGE, R.RequestMsg.PARAMETER_CRAWL_STATUS_ERROR);
                 return result;
             }
         }

@@ -19,7 +19,7 @@ public class CustomerReviewRsp extends BaseRspParam {
         public int crawl;
         public int priority;
         public int frequency;
-        public int noSell;
+        public int onSell;
         public int crawlTime;
         public String finishTime;
         public String createTime;

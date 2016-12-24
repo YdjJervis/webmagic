@@ -47,9 +47,6 @@ public class BasePageProcessor implements PageProcessor {
     protected UrlService mUrlService;
 
     @Autowired
-    protected IpsStatService mIpsStatService;
-
-    @Autowired
     private UserAgentService mUserAgentService;
 
     @Autowired
@@ -175,7 +172,7 @@ public class BasePageProcessor implements PageProcessor {
 
             if (statusCode == 407 || statusCode == 0 || statusCode == 402) {
                 if (page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
-                    mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), statusCode);
+                    mIpsInfoManageService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), statusCode);
                 }
             }
 
@@ -197,7 +194,7 @@ public class BasePageProcessor implements PageProcessor {
 
         if (StringUtils.isNotEmpty(validateUrl)) {
             if (page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
-                mIpsStatService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), -1);
+                mIpsInfoManageService.switchIp((String) page.getRequest().getExtra("ipsType"), (String) page.getRequest().getExtra("host"), -1);
             }
         }
 

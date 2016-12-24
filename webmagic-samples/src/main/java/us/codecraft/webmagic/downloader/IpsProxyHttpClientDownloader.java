@@ -32,7 +32,6 @@ import us.codecraft.webmagic.samples.amazon.pojo.IpsInfoManage;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.processor.BasePageProcessor;
 import us.codecraft.webmagic.samples.amazon.service.IpsInfoManageService;
-import us.codecraft.webmagic.samples.amazon.service.IpsStatService;
 import us.codecraft.webmagic.samples.amazon.util.ParseUtils;
 import us.codecraft.webmagic.selector.PlainText;
 import us.codecraft.webmagic.utils.HttpConstant;
@@ -41,7 +40,10 @@ import us.codecraft.webmagic.utils.UrlUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -58,9 +60,6 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
 
     @Autowired
     IpsInfoManageService mIpsInfoManageService;
-
-    @Autowired
-    IpsStatService mIpsStatService;
 
     private HttpClientGenerator httpClientGenerator = new HttpClientGenerator();
 
@@ -179,7 +178,7 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         List<IpsInfoManage> ipsInfoManageList = mIpsInfoManageService.findIpInfoIsUsing(urlHost);
 
         if (null == ipsInfoManageList || ipsInfoManageList.size() == 0) {
-            ipsInfoManage = mIpsStatService.getUsingIp(urlHost);
+            ipsInfoManage = mIpsInfoManageService.getUsingIp(urlHost);
         } else {
             ipsInfoManage = ipsInfoManageList.get(0);
         }

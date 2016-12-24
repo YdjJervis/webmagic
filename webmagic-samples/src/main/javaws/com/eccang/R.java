@@ -54,7 +54,7 @@ public final class R {
 
         public static final String PARAMETER_ASIN_LIST_ASIN_ERROR = "数据列表中存在空数据";
 
-        public static final String PARAMETER_CRAWL_STATUS_ERROR = "爬取状态设置格式有误，爬取状态为\"open\"或\"close\"";
+//        public static final String PARAMETER_CRAWL_STATUS_ERROR = "爬取状态设置格式有误，爬取状态为\"open\"或\"close\"";
 
         public static final String PARAMETER_BATCH_NULL_ERROR = "查询的批次对象为空";
 
@@ -69,6 +69,8 @@ public final class R {
         public static final String PARAMETER_STATUS_ERROR = "状态设置格式有误，正确范围为[0,1]";
 
         public static final String PARAMETER_ASIN_EMPTY__ERROR = "客户下，Asin不存在";
+
+        public static final String PARAMETER_REVIEW_EMPTY__ERROR = "客户下，查询的监听Review不存在";
 
         public static final String PARAMETER_ASIN_NOT_WORK__ERROR = "此Asin还没有开始爬取";
 

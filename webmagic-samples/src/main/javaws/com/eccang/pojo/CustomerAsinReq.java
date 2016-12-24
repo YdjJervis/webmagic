@@ -16,6 +16,6 @@ public class CustomerAsinReq extends BaseReqParam{
     public class Asin{
         public String siteCode;
         public String asin;
-        public String crawl;
+        public int crawl;
     }
 }

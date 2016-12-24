@@ -18,6 +18,7 @@ public class CustomerAsinsRsp extends BaseRspParam {
         public int crawl;
         public int priority;
         public int frequency;
+        public int onSell;
         public String star;
         public String syncTime;
         public String createTime;

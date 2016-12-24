@@ -227,16 +227,16 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 if (asinRootAsin != null) {
                     /*查询asin的爬取情况（批次asin表中）*/
 
-                    resultAsin.onSale = 1;
+                    resultAsin.onSell = 1;
                 } else {
                     /*根rootAsin不存在：1.asin下架；2.asin还没有爬取过*/
                     dbAsin = new Asin();
                     dbAsin.siteCode = asin.siteCode;
                     dbAsin.rootAsin = asinRootAsin.rootAsin;
                     if (mNoSellService.isExist(dbAsin)) {
-                        resultAsin.onSale = 0;
+                        resultAsin.onSell = 0;
                     } else {
-                        resultAsin.onSale = 1;
+                        resultAsin.onSell = 1;
                     }
                 }
                 resultAsin.asin = asin.asin;
@@ -402,6 +402,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             cusAsin.siteCode = customerAsin.siteCode;
             cusAsin.crawl = customerAsin.crawl;
             cusAsin.priority = customerAsin.priority;
+            cusAsin.onSell = customerAsin.onSell;
             cusAsin.frequency = customerAsin.frequency;
             cusAsin.star = customerAsin.star;
             cusAsin.syncTime = DateUtils.format(customerAsin.syncTime);

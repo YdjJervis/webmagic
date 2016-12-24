@@ -484,8 +484,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
 
                 if (data == null) {
-                    customerReviewUpdateRsp.status = R.HttpStatus.PARAM_WRONG;
-                    customerReviewUpdateRsp.msg = "客户下不存在reviewId：" + customerReview.reviewId + "的评论";
+                    customerReviewUpdateRsp.msg = R.RequestMsg.PARAMETER_REVIEW_EMPTY__ERROR;
                     return customerReviewUpdateRsp.toJson();
                 }
 
@@ -567,6 +566,12 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         try {
             for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
                 CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
+
+                if(data == null) {
+                    customerReviewUpdateRsp.msg = R.RequestMsg.PARAMETER_REVIEW_EMPTY__ERROR;
+                    return customerReviewUpdateRsp.toJson();
+                }
+
                 if (customerReview.frequency == data.frequency) {
                     customerReviewUpdateRsp.data.noChange++;
                 } else {
@@ -664,7 +669,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             review.crawl = customerReview.crawl;
             review.priority = customerReview.priority;
             review.frequency = customerReview.frequency;
-            review.noSell = customerReview.onSell;
+            review.onSell = customerReview.onSell;
             review.crawlTime = customerReview.times;
             review.finishTime = DateUtils.format(customerReview.finishTime);
             review.createTime = DateUtils.format(customerReview.createTime);

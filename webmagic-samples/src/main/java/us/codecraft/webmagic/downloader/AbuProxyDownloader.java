@@ -1,13 +1,11 @@
 package us.codecraft.webmagic.downloader;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.samples.amazon.pojo.HtmlResponse;
-import us.codecraft.webmagic.samples.amazon.service.IpsStatService;
 import us.codecraft.webmagic.samples.amazon.util.ParseUtils;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.PlainText;
@@ -23,9 +21,6 @@ import us.codecraft.webmagic.utils.UrlUtils;
 public class AbuProxyDownloader extends AbstractDownloader {
 
     private Logger mLogger = Logger.getLogger(getClass());
-
-    @Autowired
-    IpsStatService mIpsStatService;
 
     @Override
     public Page download(Request request, Task task) {

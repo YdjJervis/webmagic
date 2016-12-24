@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import junit.framework.TestCase;
 import org.junit.Test;
-import us.codecraft.webmagic.samples.amazon.pojo.RequestStat;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
 
 import java.util.List;
@@ -33,15 +32,6 @@ public class GsonTest extends TestCase {
     public void test2Object() {
         BaseReqParam stat = new Gson().fromJson("{\"data\":[],\"cutomerCode\":\"EC_001\",\"platformCode\":\"ERP\",\"token\":\"123456789\"}", BaseReqParam.class);
         System.out.println(stat);
-    }
-
-    @Test
-    public void test2ObjectList() {
-        List<RequestStat> statList = new Gson().fromJson("",new TypeToken<List<RequestStat>>(){}.getType());
-        for (RequestStat stat : statList) {
-            System.out.println(stat);
-        }
-        System.out.println(statList);
     }
 
 }
