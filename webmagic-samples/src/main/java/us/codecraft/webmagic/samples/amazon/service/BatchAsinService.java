@@ -95,6 +95,9 @@ public class BatchAsinService {
         return mBatchAsinDao.findAverageProgress(batchNumber);
     }
 
+    /**
+     * eg:把"0-0-1-1-1"转换成[1,2,3]
+     */
     public List<Integer> getStarArray(String starExp) {
         String[] split = starExp.split("-");
         List<Integer> list = new ArrayList<Integer>();

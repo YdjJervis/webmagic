@@ -141,6 +141,12 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                 /* 改变大字段的值 */
                 dbBatchAsin.extra = mUrlService.getBatchAsinExtra(dbBatchAsin, asinObj.rootAsin);
                 dbBatchAsin.finishTime = currentTime;
+
+                /* 标记是否与上次相同 */
+                if (!dbAsin.extra.equals(asinObj.extra)) {
+                    dbBatchAsin.isChanged = 1;
+                }
+
                 mBatchAsinService.update(dbBatchAsin);
 
             }

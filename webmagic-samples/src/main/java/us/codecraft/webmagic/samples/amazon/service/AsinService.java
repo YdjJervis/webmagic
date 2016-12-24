@@ -47,11 +47,22 @@ public class AsinService {
     }
 
     public Asin updateExtra(Asin asin) {
+
+        asin.extra = getAsinExtra(asin.rootAsin);
+        update(asin);
+
+        return asin;
+    }
+
+    /**
+     * 生成Asin表记录的Extra字段
+     */
+    private String getAsinExtra(String rootAsin) {
         /* 全量爬取完毕，把需要爬取星级的最后一条评论ReviewID记录到extra字段，方便下次更新爬取的时候使用 */
-        List<Review> reviewList = mReviewService.findLastReview(asin.rootAsin);
+        List<Review> reviewList = mReviewService.findLastReview(rootAsin);
 
         /* 取出该ASIN每个星级对应评论总数，加入到Map集合，方便下面的循环读取 */
-        List<StarReviewCount> srcList = mReviewService.findStarReviewCount(asin.rootAsin);
+        List<StarReviewCount> srcList = mReviewService.findStarReviewCount(rootAsin);
 
         /* List转Map */
         Map<Integer, Integer> srcMap = new HashMap<Integer, Integer>();
@@ -65,10 +76,8 @@ public class AsinService {
             sRMap.reviewNum = srcMap.get(review.star);
             mapList.add(sRMap);
         }
-        asin.extra = new Gson().toJson(mapList);
-        update(asin);
 
-        return asin;
+        return new Gson().toJson(mapList);
     }
 
     public void update(Asin asin) {
