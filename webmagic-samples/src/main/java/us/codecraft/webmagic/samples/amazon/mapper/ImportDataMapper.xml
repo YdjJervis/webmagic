@@ -13,6 +13,7 @@
           test_asin_source
         WHERE
           siteCode = #{0}
+        limit 30
     </select>
 
     <select id="findAll" resultMap="ImportDataMap">

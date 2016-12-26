@@ -16,6 +16,8 @@ public class ProductExtractorAdapter {
         ProductExtractor extractor = null;
         if (siteCode.equals(R.SiteCode.US)) {
             extractor = new USProductExtractor();
+        }else if(siteCode.equals(R.SiteCode.UK)){
+            extractor = new UKProductExtractor();
         }
 
         if (extractor != null) {

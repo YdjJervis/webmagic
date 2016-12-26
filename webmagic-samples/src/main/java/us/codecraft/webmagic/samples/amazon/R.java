@@ -32,6 +32,7 @@ public final class R {
      */
     public static final class SiteCode {
         public static final String US = "US";
+        public static final String UK = "UK";
     }
 
     public static final class KeywordRank {

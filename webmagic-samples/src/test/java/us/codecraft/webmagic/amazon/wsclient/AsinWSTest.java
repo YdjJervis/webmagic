@@ -8,7 +8,10 @@ import com.google.gson.Gson;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
+import us.codecraft.webmagic.samples.amazon.pojo.ImportData;
 import us.codecraft.webmagic.samples.amazon.service.ImportDataService;
+
+import java.util.List;
 
 /**
  * @author Jervis
@@ -63,16 +66,36 @@ public class AsinWSTest extends SpringTestCase {
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
-//        List<ImportData> importDataList = mImportDataService.find(null);
-//
-//        for (ImportData importData : importDataList) {
+        AsinReq.Asin asin = asinReq.new Asin();
+        asin.asin = "B00HYAL84G";
+        asin.siteCode = "US";
+        asin.priority = 0;
+        asin.star = "0-0-1-1-1";
+        asinReq.data.add(asin);
+
+        System.out.println(new Gson().toJson(asinReq));
+        String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));
+        System.out.println(json);
+
+    }
+
+    @Test
+    public void testAsinBatchImportMany() {
+        AsinReq asinReq = new AsinReq();
+        asinReq.cutomerCode = "EC_001";
+        asinReq.platformCode = "ERP";
+        asinReq.token = "123456789";
+
+        List<ImportData> importDataList = mImportDataService.find("US");
+
+        for (ImportData importData : importDataList) {
             AsinReq.Asin asin = asinReq.new Asin();
-            asin.asin = "B00HYAL84G";
-            asin.siteCode = "US";
+            asin.asin = importData.getAsin();
+            asin.siteCode = importData.getSiteCode();
             asin.priority = 0;
             asin.star = "0-0-1-1-1";
             asinReq.data.add(asin);
-//        }
+        }
 
         System.out.println(new Gson().toJson(asinReq));
         String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));

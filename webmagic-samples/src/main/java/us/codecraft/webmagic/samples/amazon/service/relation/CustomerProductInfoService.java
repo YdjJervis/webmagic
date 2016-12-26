@@ -21,6 +21,14 @@ public class CustomerProductInfoService {
     private CustomerProductInfoDao mDao;
 
     public void add(CustomerProductInfo customerProductInfo) {
-        mDao.add(customerProductInfo);
+        if(isExist(customerProductInfo.customerCode,customerProductInfo.siteCode,customerProductInfo.asin)){
+            mDao.update(customerProductInfo);
+        }else{
+            mDao.add(customerProductInfo);
+        }
+    }
+
+    public boolean isExist(String customerCode, String siteCode, String asin) {
+        return mDao.find(customerCode, siteCode, asin) != null;
     }
 }

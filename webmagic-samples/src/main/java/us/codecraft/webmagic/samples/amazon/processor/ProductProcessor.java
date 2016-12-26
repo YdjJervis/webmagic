@@ -12,10 +12,12 @@ import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.dict.Site;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.AsinRootAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerProductInfo;
 import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
 import us.codecraft.webmagic.samples.amazon.service.relation.AsinRootAsinService;
 import us.codecraft.webmagic.samples.amazon.service.relation.CustomerAsinService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerProductInfoService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
 import java.util.ArrayList;
@@ -45,6 +47,9 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
 
     @Autowired
     private BatchService mBatchService;
+
+    @Autowired
+    private CustomerProductInfoService mCustomerProductInfoService;
 
     @Override
     protected void dealOtherPage(Page page) {
@@ -87,9 +92,18 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             mHistoryService.addAll(urlList);
 
             /*三期业务 */
-            Product product = new ProductExtractorAdapter().extract(site.code, asin.rootAsin, page);
+            Product product = new ProductExtractorAdapter().extract(site.code, asinRootAsin.rootAsin, page);
             mProductService.add(product);
             sLogger.info(product);
+
+            /* 把客户和产品详细信息关系入库 */
+            CustomerProductInfo productInfo = new CustomerProductInfo();
+            productInfo.customerCode = getCustomerAsin(page).customerCode;
+            productInfo.siteCode = asinRootAsin.siteCode;
+            productInfo.asin = asinRootAsin.asin;
+            productInfo.rootAsin = asinRootAsin.rootAsin;
+            mCustomerProductInfoService.add(productInfo);
+
 
         }
     }
@@ -98,10 +112,17 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
     void dealPageNotFound(Page page) {
         super.dealPageNotFound(page);
         /* 把下架反应到客户和ASIN关系里面 */
-        Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
-        CustomerAsin customerAsin = mCustomerAsinService.find(new CustomerAsin(batch.customerCode, extractSite(page).code, extractAsin(page)));
+        CustomerAsin customerAsin = getCustomerAsin(page);
         customerAsin.onSell = 0;
         mCustomerAsinService.update(customerAsin);
+    }
+
+    /**
+     * 返回当前爬取URL对应的客户ASIN关系记录
+     */
+    private CustomerAsin getCustomerAsin(Page page) {
+        Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
+        return mCustomerAsinService.find(new CustomerAsin(batch.customerCode, extractSite(page).code, extractAsin(page)));
     }
 
     @Override

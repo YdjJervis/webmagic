@@ -13,6 +13,6 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 @Repository
 public interface CustomerProductInfoDao extends BaseDao<CustomerProductInfo> {
 
-
+    CustomerProductInfo find(String customerCode, String siteCode, String asin);
 
 }
