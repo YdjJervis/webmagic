@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -9,18 +10,17 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.HttpClientImplDownloader;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.GoodsRankInfo;
 import us.codecraft.webmagic.samples.amazon.pojo.RankSearchKeyword;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
+import us.codecraft.webmagic.samples.base.service.UserAgentService;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,8 +34,12 @@ import java.util.regex.Pattern;
 public class SearchRankMonitorProcessor extends BasePageProcessor implements ScheduledTask {
 
     Logger sLogger = Logger.getLogger(getClass());
+    private Set<Integer> mDealSet = Sets.newHashSet(0, 200, 402, 403, 404, 407, 417, 429, 503);
     private static final String US = "https://www.amazon.com";
     private us.codecraft.webmagic.Site mSite = us.codecraft.webmagic.Site.me().setRetryTimes(3).setSleepTime(10 * 1000).setTimeOut(10 * 1000);
+
+    @Autowired
+    UserAgentService mUserAgentService;
 
     @Autowired
     private HttpClientImplDownloader mHttpClientImplDownloader;
@@ -267,14 +271,14 @@ public class SearchRankMonitorProcessor extends BasePageProcessor implements Sch
         Map<String, Integer> resultMap = new HashMap<String, Integer>();
 
         /*最大页数*/
-        String maxPageNum = page.getHtml().xpath("//div[@id='pagn']/span[@class='pagnDisabled']/text()").get();
+        String maxPageNum = page.getHtml().xpath("//div[@id='pagn']//span[@class='pagnDisabled']/text()").get();
         if (StringUtils.isNotEmpty(maxPageNum)) {
-            resultMap.put("maxPageNum", Integer.valueOf(maxPageNum));
+            resultMap.put(R.KeywordRank.MAX_PAGE_NUM, Integer.valueOf(maxPageNum));
         } else {
-            resultMap.put("maxPageNum", 1);
+            resultMap.put(R.KeywordRank.MAX_PAGE_NUM, 1);
         }
         /*第一页的商品数*/
-        resultMap.put("everyPageNum", goodsNodesList.size());
+        resultMap.put(R.KeywordRank.EVERY_PAGE_NUM, goodsNodesList.size());
         return resultMap;
     }
 
@@ -308,11 +312,18 @@ public class SearchRankMonitorProcessor extends BasePageProcessor implements Sch
     }
 
     @Override
+    public us.codecraft.webmagic.Site getSite() {
+        sLogger.info("getSite()::");
+        mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(mDealSet);
+        return mSite;
+    }
+
+    @Override
     public void execute() {
         /*查询需要监测的关键词信息*/
         List<RankSearchKeyword> rankSearchKeywordList = null;
-        Url url = null;
-        List<Url> urlList = new ArrayList<Url>();
+        Url url;
+        List<Url> urlList = new ArrayList<>();
         for (RankSearchKeyword rankSearchKeyword : rankSearchKeywordList) {
             url = new Url();
             url.url = getUrl(rankSearchKeyword);

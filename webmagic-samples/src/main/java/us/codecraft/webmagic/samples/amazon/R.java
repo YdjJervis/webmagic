@@ -34,4 +34,9 @@ public final class R {
         public static final String US = "US";
     }
 
+    public static final class KeywordRank {
+        public static final String MAX_PAGE_NUM = "maxPageNum"; /*最大页码数*/
+        public static final String EVERY_PAGE_NUM = "everyPageNum"; /*每页商品数*/
+    }
+
 }

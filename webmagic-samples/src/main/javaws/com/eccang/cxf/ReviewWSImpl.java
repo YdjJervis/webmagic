@@ -176,8 +176,8 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 reviewQueryReq.data.level = "0-0-1-1-1";
             }
             /* 传的参数不包含三个类型的，就默认为全部的 */
-            if (!Sets.newHashSet("yes", "no", "all").contains(reviewQueryReq.data.experience)) {
-                reviewQueryReq.data.experience = "all";
+            if (!Sets.newHashSet("yes", "no").contains(reviewQueryReq.data.experience)) {
+                reviewQueryReq.data.experience = null;
             }
 
             if (pageSize == 0 || pageSize > 100) {
@@ -230,16 +230,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             /* 把查询的Review转换成需要返回的对象 */
             for (Review review : reviewList) {
                 ReviewQueryRsp.Review resultReview = reviewQueryRsp.new Review();
-                resultReview.siteCode = review.siteCode;
-                resultReview.time = DateUtils.format(review.dealTime);
-                resultReview.personID = review.personId;
-                resultReview.reviewID = review.reviewId;
-                resultReview.buyStatus = review.buyStatus;
-                resultReview.person = review.person;
-                resultReview.version = review.version;
-                resultReview.star = review.star;
-                resultReview.title = review.title;
-                resultReview.content = review.content;
+                initResultReview(resultReview, review, asin);
                 reviewQueryRsp.data.add(resultReview);
             }
         } catch (NumberFormatException e) {
@@ -331,14 +322,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             for (Review review : reviews) {
                 if (review != null) {
                     ReviewQueryRsp.Review resultReview = reviewQueryRsp.new Review();
-                    resultReview.siteCode = review.siteCode;
-                    resultReview.time = DateUtils.format(review.dealTime);
-                    resultReview.personID = review.personId;
-                    resultReview.reviewID = review.reviewId;
-                    resultReview.buyStatus = review.buyStatus;
-                    resultReview.star = review.star;
-                    resultReview.title = review.title;
-                    resultReview.content = review.content;
+                    initResultReview(resultReview, review, asin);
                     reviewQueryRsp.data.add(resultReview);
                 }
             }
@@ -350,6 +334,23 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         return reviewQueryRsp.toJson();
+    }
+
+    /**
+     * 初始化返回结果
+     */
+    private void initResultReview(ReviewQueryRsp.Review resultReview, Review review, String asin) {
+        resultReview.asin = asin;
+        resultReview.siteCode = review.siteCode;
+        resultReview.time = DateUtils.format(review.dealTime);
+        resultReview.personID = review.personId;
+        resultReview.reviewID = review.reviewId;
+        resultReview.buyStatus = StringUtils.isEmpty(review.buyStatus) ? "" : review.buyStatus;
+        resultReview.person = review.person;
+        resultReview.version = StringUtils.isEmpty(review.version) ?  "" : review.version;
+        resultReview.star = review.star;
+        resultReview.title = review.title;
+        resultReview.content = review.content;
     }
 
     /**
@@ -669,6 +670,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             review.crawl = customerReview.crawl;
             review.priority = customerReview.priority;
             review.frequency = customerReview.frequency;
+
             review.onSell = customerReview.onSell;
             review.crawlTime = customerReview.times;
             review.finishTime = DateUtils.format(customerReview.finishTime);

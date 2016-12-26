@@ -5,10 +5,8 @@ import com.eccang.pojo.ReviewReq;
 import com.eccang.wsclient.review.ReviewWSService;
 import com.google.gson.Gson;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 
 /**
  * @author Jervis
@@ -18,19 +16,16 @@ import us.codecraft.webmagic.samples.amazon.service.ReviewService;
  */
 public class ReviewWSTest extends SpringTestCase {
 
-    @Autowired
-    private ReviewService mReviewService;
-
     @Test
     public void query() {
 
         ReviewQueryReq queryReq = new ReviewQueryReq();
-        queryReq.cutomerCode = "EC_002";
+        queryReq.cutomerCode = "EC_001";
         queryReq.platformCode = "ERP";
         queryReq.token = "123456789";
 
         ReviewQueryReq.Asin asin = queryReq.new Asin();
-        asin.asin = "B00HYAL84G";
+        asin.asin = "B001B8R03U";
         asin.siteCode = "US";
         queryReq.data = asin;
 
