@@ -30,24 +30,80 @@
     </resultMap>
 
     <insert id="add" parameterType="Product">
-        INSERT INTO spider_amazon_product(bas_code,sap_rootAsin,sap_model_type,sap_seller_id,sap_seller_name,sap_trans_id,sap_trans_name,
-        sap_title,sap_price,sap_img_url,sap_review_num,sap_review_star,sap_review_time,sap_reply_num,sap_trans_mode,sap_seller_num,
-        sap_added_time,sap_category,sap_extra)
-        VALUES(#{siteCode},#{rootAsin},#{modelType},#{sellerID},#{sellerName},#{transID},#{transName},#{title},#{price},#{imgUrl},#{reviewNum},#{reviewStar},
-        #{reviewTime},#{replyNum},#{transMode},#{sellerNum},#{addedTime},#{category},#{extra});
+        INSERT INTO spider_amazon_product(
+        bas_code,
+        sap_rootAsin,
+        sap_model_type,
+        sap_seller_id,
+        sap_seller_name,
+        sap_trans_id,
+        sap_trans_name,
+        sap_title,
+        sap_price,
+        sap_img_url,
+        sap_review_num,
+        sap_review_star,
+        sap_review_time,
+        sap_reply_num,
+        sap_trans_mode,
+        sap_seller_num,
+        sap_added_time,
+        sap_category,
+        sap_extra
+        )VALUES(
+        #{siteCode},
+        #{rootAsin},
+        #{modelType},
+        #{sellerID},
+        #{sellerName},
+        #{transID},
+        #{transName},
+        #{title},
+        #{price},
+        #{imgUrl},
+        #{reviewNum},
+        #{reviewStar},
+        #{reviewTime},
+        #{replyNum},
+        #{transMode},
+        #{sellerNum},
+        #{addedTime},
+        #{category},
+        #{extra}
+        );
     </insert>
 
     <update id="update" parameterType="Product">
         UPDATE spider_amazon_product SET
-        sap_model_type = #{modelType},sap_seller_id=#{sellerID},sap_seller_name=#{sellerName},sap_trans_id=#{transID},sap_trans_name=#{transName},
-        sap_title=#{title},sap_price=#{price},sap_img_url=#{imgUrl},sap_review_num=#{reviewNum},sap_review_star=#{reviewStar},sap_review_time=#{reviewTime},
-        sap_reply_num=#{replyNum},sap_trans_mode=#{transMode},sap_seller_num=#{sellerNum},sap_added_time=#{addedTime},sap_category=#{category},sap_extra=#{extra}
-        where bas_code = #{siteCode} and sap_rootAsin = #{rootAsin};
+        sap_model_type = #{modelType},
+        sap_seller_id = #{sellerID},
+        sap_seller_name = #{sellerName},
+        sap_trans_id = #{transID},
+        sap_trans_name = #{transName},
+        sap_title = #{title},
+        sap_price = #{price},
+        sap_img_url = #{imgUrl},
+        sap_review_num = #{reviewNum},
+        sap_review_star = #{reviewStar},
+        sap_review_time = #{reviewTime},
+        sap_reply_num = #{replyNum},
+        sap_trans_mode = #{transMode},
+        sap_seller_num = #{sellerNum},
+        sap_added_time = #{addedTime},
+        sap_category = #{category},
+        sap_extra = #{extra}
+        where
+        bas_code = #{siteCode}
+        and
+        sap_rootAsin = #{rootAsin};
     </update>
 
     <select id="findByObject" resultMap="ProductResultMap">
         SELECT * FROM spider_amazon_product
-        WHERE bas_code = #{siteCode} and sap_rootAsin = #{rootAsin};
+        WHERE
+        bas_code = #{siteCode}
+        and
+        sap_rootAsin = #{rootAsin};
 
     </select>
 </mapper>

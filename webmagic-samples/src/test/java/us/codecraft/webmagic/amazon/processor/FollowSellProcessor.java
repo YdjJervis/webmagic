@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
  */
 public class FollowSellProcessor implements PageProcessor {
 
-
     @Override
     public void process(Page page) {
         /* 如果是产品首页 */
@@ -35,7 +34,7 @@ public class FollowSellProcessor implements PageProcessor {
         return Site.me().setUserAgent(UserAgentUtil.getRandomUserAgent());
     }
 
-    String extractAsin(Page page) {
+    private String extractAsin(Page page) {
         return page.getUrl().regex(".*/gp/offer-listing/([0-9A-Za-z]*)").get();
     }
 

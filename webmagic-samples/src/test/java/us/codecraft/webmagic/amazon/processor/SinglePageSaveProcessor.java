@@ -18,9 +18,6 @@ import java.io.IOException;
 public class SinglePageSaveProcessor implements PageProcessor {
     @Override
     public void process(Page page){
-        System.out.println(page.getStatusCode());
-        String personID = page.getHtml().xpath("//a[@data-hook='review-author']/@href").regex("profile/([0-9a-zA-Z]*)").get();
-        System.out.println(personID);
         try {
             FileUtils.writeStringToFile(new File("C:\\Users\\Administrator\\Desktop\\download.html"),page.getHtml().get());
         } catch (IOException e) {

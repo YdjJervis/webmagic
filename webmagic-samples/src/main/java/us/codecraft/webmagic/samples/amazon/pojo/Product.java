@@ -31,9 +31,10 @@ public class Product extends BasePojo {
 
     @Override
     public String toString() {
-        return super.toString() + "Product{" +
+        return "Product{" +
                 "siteCode='" + siteCode + '\'' +
-                "rootAsin='" + rootAsin + '\'' +
+                ", rootAsin='" + rootAsin + '\'' +
+                ", modelType=" + modelType +
                 ", sellerID='" + sellerID + '\'' +
                 ", sellerName='" + sellerName + '\'' +
                 ", transID='" + transID + '\'' +
@@ -51,5 +52,4 @@ public class Product extends BasePojo {
                 ", category='" + category + '\'' +
                 '}';
     }
-
 }

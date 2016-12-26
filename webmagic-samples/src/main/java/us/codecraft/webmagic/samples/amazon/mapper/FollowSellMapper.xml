@@ -16,30 +16,54 @@
     </resultMap>
 
     <insert id="addAll" parameterType="java.util.List">
-        INSERT INTO spider_monitor_follow_sell(
-        bas_code,saa_asin,smfs_marked,smfs_parsed,smfs_priority,smfs_extra
+        INSERT INTO spider_monitor_follow_sell (
+        bas_code,
+        saa_asin,
+        smfs_marked,
+        smfs_parsed,
+        smfs_priority,
+        smfs_extra
         )
         VALUES
-        <foreach collection="list" item="item" index="index" separator=",">
-            (
-            #{item.siteCode},#{item.asin},#{item.marked},#{item.parsed},#{item.priority},#{item.extra}
+        <foreach collection="list" item="item" index="index" separator=",">(
+            #{item.siteCode},
+            #{item.asin},
+            #{item.marked},
+            #{item.parsed},
+            #{item.priority},
+            #{item.extra}
             )
         </foreach>
     </insert>
 
     <update id="update" parameterType="FollowSellMonitor">
-        UPDATE spider_monitor_follow_sell SET
-        smfs_marked = #{marked},smfs_parsed = {parsed},smfs_priority = {priority},smfs_extra = #{extra}
-        WHERE bas_code = #{siteCode} and saa_asin = #{asin};
+        UPDATE spider_monitor_follow_sell
+        SET
+        smfs_marked = #{marked},
+        smfs_parsed = {parsed},
+        smfs_priority = {priority},
+        smfs_extra = #{extra}
+        WHERE
+	    bas_code = #{siteCode}
+	    and
+	    saa_asin = #{asin};
     </update>
 
     <select id="findByObject" resultMap="FollowSellResultMap">
-        select * from spider_monitor_follow_sell WHERE
-        bas_code = #{siteCode} and saa_asin = #{asin};
+        select * from spider_monitor_follow_sell
+        WHERE
+        bas_code = #{siteCode}
+        and
+        saa_asin = #{asin};
     </select>
 
     <select id="findNotParsed" resultMap="FollowSellResultMap">
-        select * from spider_monitor_follow_sell WHERE
-        smfs_marked = 1 and smfs_parsed = 0 and CURRENT_TIMESTAMP - smfs_update_time > (smfs_priority + 1) * 0;
+        select * from spider_monitor_follow_sell
+        WHERE
+        smfs_marked = 1
+        and
+        smfs_parsed = 0
+        and
+        CURRENT_TIMESTAMP - smfs_update_time > (smfs_priority + 1) * 0;
     </select>
 </mapper>
