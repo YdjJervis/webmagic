@@ -13,7 +13,7 @@ import us.codecraft.webmagic.samples.amazon.pojo.Product;
 public abstract class AbstractProductExtractor implements ProductExtractor{
 
     Logger sLogger = Logger.getLogger(getClass());
-    protected Product sProduct;
+    Product sProduct;
 
     @Override
     public Product extract(String asin, Page page) {

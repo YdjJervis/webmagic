@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.R;
+import us.codecraft.webmagic.samples.amazon.extractor.product.ProductExtractorAdapter;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
@@ -77,10 +78,10 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             urlList.add(url);
             mHistoryService.addAll(urlList);
 
-            /* 三期业务 */
-            /*Product product = new ProductExtractor(extractSite(page).basCode, rootAsin, page).extract();
+            /*三期业务 */
+            Product product = new ProductExtractorAdapter().extract(site.code, asin.rootAsin, page);
             mProductService.add(product);
-            sLogger.info(product);*/
+            sLogger.info(product);
 
         }
     }

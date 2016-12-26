@@ -4,12 +4,10 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.samples.amazon.extractor.followsell.FollowSellExtractorAdapter;
 import us.codecraft.webmagic.samples.amazon.pojo.FollowSell;
-import us.codecraft.webmagic.samples.amazon.util.FollowSellExtractor;
 import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
-import us.codecraft.webmagic.selector.Selectable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -27,12 +25,7 @@ public class FollowSellProcessor implements PageProcessor {
         /* 如果是产品首页 */
         if (Pattern.compile(".*/gp/offer-listing/.*").matcher(page.getUrl().get()).matches()) {
 
-            List<FollowSell> followSellList = new ArrayList<FollowSell>();
-
-            for (Selectable divNode : page.getHtml().xpath("//div[@class='a-row a-spacing-mini olpOffer']").nodes()) {
-                FollowSell followSell = new FollowSellExtractor("US",extractAsin(page),divNode).extract();
-                followSellList.add(followSell);
-            }
+            List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract("US", extractAsin(page), page);
             System.out.println(followSellList);
         }
     }

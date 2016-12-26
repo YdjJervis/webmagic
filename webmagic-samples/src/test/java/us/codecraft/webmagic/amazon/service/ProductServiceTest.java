@@ -17,7 +17,7 @@ public class ProductServiceTest extends SpringTestCase {
         product.siteCode = "US";
         product.rootAsin = "ASIN001";
         product.modelType = 3;
-        mService.add(product);
+        mService.add(null);
     }
 
 }
