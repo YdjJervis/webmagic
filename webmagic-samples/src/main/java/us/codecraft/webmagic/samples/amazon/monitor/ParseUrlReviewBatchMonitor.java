@@ -21,7 +21,7 @@ import java.util.List;
  * @date 2016/10/11
  */
 @Service
-public class ReviewMonitor extends ParseMonitor {
+public class ParseUrlReviewBatchMonitor extends ParseMonitor {
 
     @Autowired
     private SiteService mSiteService;

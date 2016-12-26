@@ -2,9 +2,11 @@ package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.pojo.dict.Site;
+import us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.pojo.dict.Site;
+import us.codecraft.webmagic.samples.amazon.service.FollowSellMonitorService;
+import us.codecraft.webmagic.samples.amazon.service.UrlService;
 import us.codecraft.webmagic.samples.amazon.service.dict.SiteService;
 import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
@@ -19,7 +21,7 @@ import java.util.List;
  * @date 2016/12/2
  */
 @Service
-public class FollowSellMonitor extends ParseMonitor {
+public class ParseUrlFollowSellMonitor extends ParseMonitor {
 
     @Autowired
     private SiteService mSiteService;
@@ -39,8 +41,8 @@ public class FollowSellMonitor extends ParseMonitor {
 
         /* 把所有已经转换成URL的监听Review的状态标记为已经转换 */
         for (Url url : urlList) {
-            us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor followSellMonitor = new us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor(url.siteCode, url.asin);
-            us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor dbFollowSellMonitor = mFollowSellMonitorService.findByObject(followSellMonitor);
+            FollowSellMonitor followSellMonitor = new FollowSellMonitor(url.siteCode, url.asin);
+            FollowSellMonitor dbFollowSellMonitor = mFollowSellMonitorService.findByObject(followSellMonitor);
             dbFollowSellMonitor.parsed = 1;
             mFollowSellMonitorService.update(dbFollowSellMonitor);
         }
@@ -51,9 +53,9 @@ public class FollowSellMonitor extends ParseMonitor {
     protected List<Url> getUrl(boolean isCrawlAll) {
         List<Url> urlList = new ArrayList<Url>();
 
-        List<us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor> monitorList = mFollowSellMonitorService.findNotParsed();
+        List<FollowSellMonitor> monitorList = mFollowSellMonitorService.findNotParsed();
 
-        for (us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor sell : monitorList) {
+        for (FollowSellMonitor sell : monitorList) {
             Url url = new Url();
             // eg: https://www.amazon.com/gp/offer-listing/B0117RFOEG
             Site site = mSiteService.find(sell.siteCode);

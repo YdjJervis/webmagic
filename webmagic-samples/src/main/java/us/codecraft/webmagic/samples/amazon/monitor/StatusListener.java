@@ -9,7 +9,7 @@ import us.codecraft.webmagic.samples.amazon.service.UrlService;
 /**
  * @author Jervis
  * @version V0.1
- * @Description: 状态监听器
+ * @Description: 状态监听器。爬虫重启的时候，还原某些状态
  * @date 2016/11/1 14:11
  */
 @Component

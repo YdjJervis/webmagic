@@ -2,6 +2,8 @@ package us.codecraft.webmagic.samples.amazon.pojo.relation;
 
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
+import java.util.Date;
+
 /**
  * @author Jervis
  * @version V0.2
@@ -18,7 +20,7 @@ public class CustomerFollowSell extends BasePojo {
     public int priority;
     public int frequency;
     public int times;
-    public int syncTime;
+    public Date syncTime;
 
     @Override
     public String toString() {

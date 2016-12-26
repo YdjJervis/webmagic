@@ -25,7 +25,7 @@ import java.util.Map;
  * @date 2016/10/11
  */
 @Service
-public class BatchParseUrlMonitor extends ParseMonitor {
+public class ParseUrlAsinBatchMonitor extends ParseMonitor {
 
     @Autowired
     protected UrlService mUrlService;

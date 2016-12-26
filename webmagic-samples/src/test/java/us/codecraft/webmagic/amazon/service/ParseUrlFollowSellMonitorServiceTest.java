@@ -9,7 +9,7 @@ import us.codecraft.webmagic.samples.amazon.service.FollowSellMonitorService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FollowSellMonitorServiceTest extends SpringTestCase {
+public class ParseUrlFollowSellMonitorServiceTest extends SpringTestCase {
 
     @Autowired
     FollowSellMonitorService mService;

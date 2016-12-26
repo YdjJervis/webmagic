@@ -54,4 +54,7 @@ public class CustomerFollowSellService {
         return mDao.findNeedGenerateBatch();
     }
 
+    public void update(CustomerFollowSell customerFollowSell) {
+        mDao.update(customerFollowSell);
+    }
 }
