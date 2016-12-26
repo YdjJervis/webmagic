@@ -56,7 +56,7 @@ public class BatchService {
     }
 
     /**
-     * @param type 0-全量爬取；1-监听爬取;2-Review更新爬取
+     * @param type 0-全量爬取；1-监听爬取;2-Review更新爬取;3-跟卖;4-关键词排名
      */
     public Batch generate(String customerCode, int type) {
 

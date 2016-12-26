@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.relation.CustomerRankKeywordDao">
+    <resultMap id="CustomerRankKeywordMap" type="CustomerRankKeyword">
+        <id column="rcrk_id" property="id" />
+        <result column="saa_asin" property="asin" />
+        <result column="rcrk_keyword" property="keyword" />
+        <result column="bec_code" property="customerCode" />
+        <result column="bas_code" property="siteCode" />
+        <result column="bad_code" property="departmentCode" />
+        <result column="rcrk_crawl" property="crawl" />
+        <result column="rcrk_priority" property="priority" />
+        <result column="rcrk_frequency" property="frequency" />
+        <result column="rcrk_sync_time" property="syncTime" />
+        <result column="rcrk_create_time" property="createTime" />
+        <result column="rcrk_update_time" property="updateTime" />
+    </resultMap>
+
+    <insert id="add" parameterType="CustomerRankKeyword" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO relation_customer_rank_keyword (
+          saa_asin,
+          rcrk_keyword,
+          bec_code,
+          bas_code,
+          bad_code,
+          rcrk_crawl,
+          rcrk_priority,
+          rcrk_frequency,
+          rcrk_create_time,
+          rcrk_update_time
+        ) VALUES (
+          #{asin},
+          #{keyword},
+          #{customerCode},
+          #{siteCode},
+          #{departmentCode},
+          #{crawl},
+          #{priority},
+          #{frequency},
+          #{createTime},
+          #{updateTime}
+        )
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO relation_customer_rank_keyword (
+          saa_asin,
+          rcrk_keyword,
+          bec_code,
+          bas_code,
+          bad_code,
+          rcrk_crawl,
+          rcrk_priority,
+          rcrk_frequency,
+          rcrk_create_time,
+          rcrk_update_time
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            #{item.asin},
+            #{item.keyword},
+            #{item.customerCode},
+            #{item.siteCode},
+            #{item.departmentCode},
+            #{item.crawl},
+            #{item.priority},
+            #{item.frequency},
+            #{item.createTime},
+            #{item.updateTime}
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="CustomerRankKeyword">
+        UPDATE
+          relation_customer_rank_keyword
+        SET
+          saa_asin = #{asin},
+          rcrk_keyword = #{keyword},
+          bec_code = #{customerCode},
+          bas_code = #{siteCode},
+          bad_code = #{departmentCode},
+          rcrk_crawl = #{crawl},
+          rcrk_priority = #{priority},
+          rcrk_frequency = #{frequency},
+          rcrk_update_time = CURRENT_TIMESTAMP
+        WHERE
+          rcrk_id = #{id}
+    </update>
+
+    <select id="findByCustomer" resultMap="CustomerRankKeywordMap" parameterType="java.lang.String">
+        SELECT
+          *
+        FOR
+          relation_customer_rank_keyword
+        WHERE
+          bec_code = #{0}
+    </select>
+    <select id="findNeedGenerateBatch" resultMap="CustomerRankKeywordMap">
+        SELECT
+          *
+        FROM
+          relation_customer_rank_keyword
+        WHERE
+          CURRENT_TIMESTAMP - rcrk_sync_time > rcrk_frequency * 3600;
+    </select>
+</mapper>
