@@ -11,7 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchReview;
+import us.codecraft.webmagic.samples.amazon.pojo.dict.API;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerReview;
 import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchAsinService;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchReviewService;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.dict.APIService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerReviewService;
 
 import java.util.ArrayList;
 import java.util.List;

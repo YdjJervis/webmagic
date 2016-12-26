@@ -7,7 +7,7 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
-import us.codecraft.webmagic.samples.amazon.service.AsinRootAsinService;
+import us.codecraft.webmagic.samples.amazon.service.relation.AsinRootAsinService;
 import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 import us.codecraft.webmagic.samples.amazon.util.ReviewTimeUtil;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;

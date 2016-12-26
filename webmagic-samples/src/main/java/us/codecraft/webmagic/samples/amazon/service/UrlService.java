@@ -8,6 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsinExtra;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchAsinService;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.relation.AsinRootAsinService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerAsinService;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
 import java.util.*;

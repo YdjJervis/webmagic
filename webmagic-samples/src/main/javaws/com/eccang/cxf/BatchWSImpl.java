@@ -9,8 +9,14 @@ import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import us.codecraft.webmagic.samples.amazon.pojo.*;
-import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchReview;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerReview;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchAsinService;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchReviewService;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerReviewService;
 import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
 import javax.jws.WebService;

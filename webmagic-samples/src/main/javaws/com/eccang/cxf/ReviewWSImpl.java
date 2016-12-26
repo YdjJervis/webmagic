@@ -8,11 +8,15 @@ import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import us.codecraft.webmagic.samples.amazon.pojo.AsinRootAsin;
-import us.codecraft.webmagic.samples.amazon.pojo.CustomerAsin;
-import us.codecraft.webmagic.samples.amazon.pojo.CustomerReview;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.AsinRootAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerReview;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.service.relation.AsinRootAsinService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerAsinService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerBusinessService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerReviewService;
 import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
 import javax.jws.WebService;

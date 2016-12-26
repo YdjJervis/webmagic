@@ -8,7 +8,16 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.AsinRootAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
 import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchAsinService;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.relation.AsinRootAsinService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerAsinService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerBusinessService;
 import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
 import javax.jws.WebService;

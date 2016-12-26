@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import us.codecraft.webmagic.samples.amazon.pojo.HtmlResponse;
-import us.codecraft.webmagic.samples.amazon.pojo.IpsInfoManage;
+import us.codecraft.webmagic.samples.amazon.pojo.dict.IpsInfoManage;
 import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 
 import java.io.ByteArrayOutputStream;

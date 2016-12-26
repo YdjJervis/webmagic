@@ -2,10 +2,12 @@ package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchReview;
-import us.codecraft.webmagic.samples.amazon.pojo.Site;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchReview;
+import us.codecraft.webmagic.samples.amazon.pojo.dict.Site;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchReviewService;
+import us.codecraft.webmagic.samples.amazon.service.dict.SiteService;
 import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 

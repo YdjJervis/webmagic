@@ -52,7 +52,7 @@
         <property name="configLocation" value="classpath:mybatis-config.xml"/>
         <property name="mapperLocations">
             <list>
-                <value>classpath:us/codecraft/webmagic/samples/amazon/mapper/*.xml</value>
+                <value>classpath:us/codecraft/webmagic/samples/amazon/mapper/**/*.xml</value>
                 <value>classpath:us/codecraft/webmagic/samples/base/mapper/*.xml</value>
             </list>
         </property>

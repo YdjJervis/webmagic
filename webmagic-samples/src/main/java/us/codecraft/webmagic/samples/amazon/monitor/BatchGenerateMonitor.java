@@ -4,7 +4,16 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchReview;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerReview;
 import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchReviewService;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerAsinService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerReviewService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
 import java.util.*;

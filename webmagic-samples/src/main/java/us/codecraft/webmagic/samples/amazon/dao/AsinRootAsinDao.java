@@ -1,7 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.dao;
 
 import org.springframework.stereotype.Repository;
-import us.codecraft.webmagic.samples.amazon.pojo.AsinRootAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.AsinRootAsin;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 
 /**

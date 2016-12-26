@@ -7,7 +7,15 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.extractor.product.ProductExtractorAdapter;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.dict.Site;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.AsinRootAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
 import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.relation.AsinRootAsinService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerAsinService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
 import java.util.ArrayList;

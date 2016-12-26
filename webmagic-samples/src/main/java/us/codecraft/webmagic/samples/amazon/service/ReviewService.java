@@ -4,7 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.ReviewDao;
-import us.codecraft.webmagic.samples.amazon.pojo.BatchAsinExtra;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsinExtra;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewCount;
 
