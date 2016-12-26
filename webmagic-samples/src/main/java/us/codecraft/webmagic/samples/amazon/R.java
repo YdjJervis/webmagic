@@ -27,5 +27,11 @@ public final class R {
         public static final int REVIEW_MONITOR = 4;
     }
 
+    /**
+     * 站点码
+     */
+    public static final class SiteCode {
+        public static final String US = "US";
+    }
 
 }
