@@ -21,6 +21,7 @@ import us.codecraft.webmagic.samples.amazon.pojo.dict.IpsInfoManage;
 import us.codecraft.webmagic.samples.amazon.pojo.dict.Site;
 import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchAsinService;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
 import us.codecraft.webmagic.samples.amazon.service.dict.IpsInfoManageService;
 import us.codecraft.webmagic.samples.amazon.service.dict.IpsSwitchManageService;
 import us.codecraft.webmagic.samples.amazon.service.dict.SiteService;
@@ -52,6 +53,8 @@ public class BasePageProcessor implements PageProcessor {
 
     @Autowired
     protected UrlService mUrlService;
+    @Autowired
+    protected UrlHistoryService mUrlHistoryService;
 
     @Autowired
     private UserAgentService mUserAgentService;
@@ -85,9 +88,12 @@ public class BasePageProcessor implements PageProcessor {
 
     @Autowired
     private IpsProxyHttpClientDownloader mIpsProxyHttpClientDownloader;
-
     @Autowired
     private NoSellService mNoSellService;
+    @Autowired
+    protected BatchService mBatchService;
+    @Autowired
+    protected PushQueueService mPushQueueService;
 
     @Override
     public synchronized void process(Page page) {
@@ -100,7 +106,7 @@ public class BasePageProcessor implements PageProcessor {
         /*监测对应URL的代理使用情况*/
         //statUrlProxy(page);
 
-        updateUrlStatus(page,true);
+        updateUrlStatus(page, true);
 
         if (isPage404(page)) {
             dealPageNotFound(page);
@@ -222,7 +228,7 @@ public class BasePageProcessor implements PageProcessor {
         }
         /* 当需要验证码时，page的状态码还是200，不符合我们的逻辑，所以修改一下 */
         page.setStatusCode(0);
-        updateUrlStatus(page,false);
+        updateUrlStatus(page, false);
     }
 
     /**
@@ -371,6 +377,15 @@ public class BasePageProcessor implements PageProcessor {
             }
         }
         return page;
+    }
+
+    /**
+     * 归档当前URL
+     */
+    void archiveCurrentUrl(Page page) {
+        /* URL归档到历史表 */
+        mUrlService.deleteByUrlMd5(getUrl(page).urlMD5);
+        mUrlHistoryService.add(getUrl(page));
     }
 
     /**

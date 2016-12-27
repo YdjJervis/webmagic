@@ -6,15 +6,16 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.extractor.product.ProductExtractorAdapter;
-import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.Asin;
+import us.codecraft.webmagic.samples.amazon.pojo.Product;
+import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.dict.Site;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.AsinRootAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerProductInfo;
-import us.codecraft.webmagic.samples.amazon.service.*;
-import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.ProductService;
 import us.codecraft.webmagic.samples.amazon.service.relation.AsinRootAsinService;
 import us.codecraft.webmagic.samples.amazon.service.relation.CustomerAsinService;
 import us.codecraft.webmagic.samples.amazon.service.relation.CustomerProductInfoService;
@@ -40,13 +41,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
     private AsinRootAsinService mAsinRootAsinService;
 
     @Autowired
-    private UrlHistoryService mHistoryService;
-
-    @Autowired
     private CustomerAsinService mCustomerAsinService;
-
-    @Autowired
-    private BatchService mBatchService;
 
     @Autowired
     private CustomerProductInfoService mCustomerProductInfoService;
@@ -89,7 +84,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             /* 添加到历史表 */
             List<Url> urlList = new ArrayList<Url>();
             urlList.add(url);
-            mHistoryService.addAll(urlList);
+            mUrlHistoryService.addAll(urlList);
 
             /*三期业务 */
             Product product = new ProductExtractorAdapter().extract(site.code, asinRootAsin.rootAsin, page);

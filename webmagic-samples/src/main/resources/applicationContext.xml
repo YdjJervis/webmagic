@@ -95,17 +95,17 @@
         <task:scheduled ref="reviewProcessor" method="execute" cron="0/15 * * * * ?"/>
         <task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/>
         <task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>
-        <!--<task:scheduled ref="followSellProcessor" method="execute" cron="0/5 * * * * ?"/>-->
+        <task:scheduled ref="followSellProcessor" method="execute" cron="0/5 * * * * ?"/>
 
         <!-- 生成批次各种批次 -->
         <task:scheduled ref="generateAsinBatchMonitor" method="execute" cron="0/5 * * * * ?"/>
         <task:scheduled ref="generateReviewBatchMonitor" method="execute" cron="0/5 * * * * ?"/>
-        <!--<task:scheduled ref="generateFollowSellBatchMonitor" method="execute" cron="0/5 * * * * ?"/>-->
+        <task:scheduled ref="generateFollowSellBatchMonitor" method="execute" cron="0/5 * * * * ?"/>
 
         <!-- Review监控 -->
         <task:scheduled ref="parseUrlAsinBatchMonitor" method="execute" cron="0/10 * * * * ?"/>
         <task:scheduled ref="parseUrlReviewBatchMonitor" method="execute" cron="0/10 * * * * ?"/>
-        <!--<task:scheduled ref="parseUrlFollowSellMonitor" method="execute" cron="0/10 * * * * ?"/>-->
+        <task:scheduled ref="parseUrlFollowSellMonitor" method="execute" cron="0/10 * * * * ?"/>
 
         <!--统计给定一批ASIN的评论总数和评论的页码数-->
         <!--<task:scheduled ref="reviewStatProcessor" method="execute" cron="0/10 * * * * ?"/>-->

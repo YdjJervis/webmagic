@@ -67,4 +67,11 @@ public class BatchFollowSellService {
     public float findAverageProgress(String batchNum) {
         return mDao.findAverageProgress(batchNum);
     }
+
+    /**
+     * 把详单记录设置成爬取完毕状态
+     */
+    public void updateCrawlFinish(String batchNum, String siteCode, String asin){
+        mDao.updateCrawlFinish(batchNum, siteCode, asin);
+    }
 }

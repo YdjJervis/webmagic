@@ -2,68 +2,70 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.crawl.FollowSellDao">
 
-    <resultMap id="FollowSellResultMap" type="FollowSellMonitor">
-        <result column="smfs_id" property="id"/>
+    <resultMap id="FollowSellResultMap" type="FollowSell">
+        <result column="saf_id" property="id"/>
         <result column="bas_code" property="siteCode"/>
         <result column="saa_asin" property="asin"/>
-        <result column="smfs_marked" property="marked"/>
-        <result column="smfs_parsed" property="parsed"/>
-        <result column="smfs_priority" property="priority"/>
-        <result column="smfs_extra" property="extra"/>
-        <result column="smfs_create_time" property="createTime"/>
-        <result column="smfs_update_time" property="updateTime"/>
-
+        <result column="saf_price" property="price"/>
+        <result column="saf_trans_policy" property="transPolicy"/>
+        <result column="saf_condition" property="condition"/>
+        <result column="saf_seller_id" property="sellerID"/>
+        <result column="saf_seller_name" property="sellerName"/>
+        <result column="saf_rating" property="rating"/>
+        <result column="saf_extra" property="extra"/>
+        <result column="saf_create_time" property="createTime"/>
+        <result column="saf_update_time" property="updateTime"/>
     </resultMap>
 
     <insert id="addAll" parameterType="java.util.List">
-        INSERT INTO spider_monitor_follow_sell (
+        INSERT INTO spider_amazon_followsell (
         bas_code,
         saa_asin,
-        smfs_marked,
-        smfs_parsed,
-        smfs_priority,
-        smfs_extra
+        saf_price,
+        saf_trans_policy,
+        saf_condition,
+        saf_seller_id,
+        saf_seller_name,
+        saf_rating,
+        saf_extra
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">(
             #{item.siteCode},
             #{item.asin},
-            #{item.marked},
-            #{item.parsed},
-            #{item.priority},
+            #{item.price},
+            #{item.transPolicy},
+            #{item.condition},
+            #{item.sellerID},
+            #{item.sellerName},
+            #{item.rating},
             #{item.extra}
             )
         </foreach>
     </insert>
 
-    <update id="update" parameterType="FollowSellMonitor">
-        UPDATE spider_monitor_follow_sell
+    <update id="update" parameterType="FollowSell">
+        UPDATE spider_amazon_followsell
         SET
-        smfs_marked = #{marked},
-        smfs_parsed = {parsed},
-        smfs_priority = {priority},
-        smfs_extra = #{extra}
-        WHERE
-	    bas_code = #{siteCode}
-	    and
-	    saa_asin = #{asin};
-    </update>
-
-    <select id="findByObject" resultMap="FollowSellResultMap">
-        select * from spider_monitor_follow_sell
+        saf_price = #{price},
+        saf_trans_policy = #{transPolicy},
+        saf_condition = #{condition},
+        saf_seller_id = #{sellerID},
+        saf_seller_name = #{sellerName},
+        saf_rating = #{rating},
+        saf_extra = #{extra}
         WHERE
         bas_code = #{siteCode}
         and
         saa_asin = #{asin};
+    </update>
+
+    <select id="find" resultMap="FollowSellResultMap">
+        select * from spider_amazon_followsell
+        WHERE
+        bas_code = #{0}
+        and
+        saa_asin = #{1};
     </select>
 
-    <select id="findNotParsed" resultMap="FollowSellResultMap">
-        select * from spider_monitor_follow_sell
-        WHERE
-        smfs_marked = 1
-        and
-        smfs_parsed = 0
-        and
-        CURRENT_TIMESTAMP - smfs_update_time > (smfs_priority + 1) * 0;
-    </select>
 </mapper>

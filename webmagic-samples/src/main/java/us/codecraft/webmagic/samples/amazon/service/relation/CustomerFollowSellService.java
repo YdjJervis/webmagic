@@ -46,8 +46,12 @@ public class CustomerFollowSellService {
         }
     }
 
+    public CustomerFollowSell find(String customerCode, String siteCode, String asin) {
+        return mDao.find(customerCode, siteCode, asin);
+    }
+
     public boolean isExist(String customerCode, String siteCode, String asin) {
-        return mDao.find(customerCode, siteCode, asin) != null;
+        return find(customerCode, siteCode, asin) != null;
     }
 
     public List<CustomerFollowSell> findNeedGenerateBatch() {

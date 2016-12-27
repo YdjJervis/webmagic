@@ -4,13 +4,13 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchReview;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerReview;
-import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.service.ReviewService;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchReviewService;
-import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
 import us.codecraft.webmagic.samples.amazon.service.relation.CustomerReviewService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
@@ -27,18 +27,11 @@ import java.util.List;
 public class ReviewMonitorProcessor extends BasePageProcessor implements ScheduledTask {
 
     @Autowired
-    private UrlHistoryService mUrlHistoryService;
-    @Autowired
     private ReviewService mReviewService;
-
     @Autowired
     private BatchReviewService mBatchReviewService;
     @Autowired
-    private BatchService mBatchService;
-    @Autowired
     private CustomerReviewService mCustomerReviewService;
-    @Autowired
-    private PushQueueService mPushQueueService;
 
     @Override
     protected void dealOtherPage(Page page) {
@@ -124,9 +117,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
         }
         mCustomerReviewService.update(customerReview);
 
-        /* URL归档到历史表 */
-        mUrlService.deleteByUrlMd5(getUrl(page).urlMD5);
-        mUrlHistoryService.add(getUrl(page));
+        archiveCurrentUrl(page);
     }
 
     @Override

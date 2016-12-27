@@ -23,4 +23,6 @@ public interface BatchFollowSellDao extends BaseDao<BatchFollowSell> {
     List<BatchFollowSell> findNotCrawled();
 
     float findAverageProgress(String batchNum);
+
+    void updateCrawlFinish(String batchNum, String siteCode, String asin);
 }

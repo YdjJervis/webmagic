@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.base.monitor;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @Description: 把Asin转换成需要爬取的URL对象
  * @date 2016/10/11
  */
+@Service
 public abstract class ParseMonitor implements ScheduledTask {
 
     protected Logger sLogger = Logger.getLogger(getClass());

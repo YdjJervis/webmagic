@@ -8,13 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.R;
-import us.codecraft.webmagic.samples.amazon.pojo.*;
+import us.codecraft.webmagic.samples.amazon.pojo.Asin;
+import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
+import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.AsinRootAsin;
-import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.service.AsinService;
+import us.codecraft.webmagic.samples.amazon.service.PushQueueService;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchAsinService;
-import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
 import us.codecraft.webmagic.samples.amazon.service.relation.AsinRootAsinService;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 import us.codecraft.webmagic.selector.Selectable;
@@ -31,15 +34,9 @@ import java.util.*;
 public class ReviewUpdateProcessor extends ReviewProcessor {
 
     @Autowired
-    private UrlService mUrlService;
-    @Autowired
-    private UrlHistoryService mUrlHistoryService;
-    @Autowired
     private AsinService mAsinService;
     @Autowired
     private AsinRootAsinService mAsinRootAsinService;
-    @Autowired
-    private BatchService mBatchService;
     @Autowired
     private BatchAsinService mBatchAsinService;
     @Autowired

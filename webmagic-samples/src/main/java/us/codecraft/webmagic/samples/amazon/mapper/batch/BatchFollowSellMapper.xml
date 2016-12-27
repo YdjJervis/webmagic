@@ -84,4 +84,16 @@
         saa_asin = #{asin};
     </update>
 
+    <update id="updateCrawlFinish">
+        UPDATE batch_order_followsell
+        SET
+        bof_status = 2
+        where
+        bo_batch_num = #{0}
+        and
+        bas_code = #{1}
+        and
+        saa_asin = #{2};
+    </update>
+
 </mapper>

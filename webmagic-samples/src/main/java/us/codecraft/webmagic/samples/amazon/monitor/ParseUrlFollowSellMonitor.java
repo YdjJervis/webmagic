@@ -48,6 +48,7 @@ public class ParseUrlFollowSellMonitor extends ParseMonitor {
 
         for (BatchFollowSell batchFollowSell : batchFollowSellList) {
             Url url = new Url();
+            url.batchNum = batchFollowSell.batchNumber;
             // eg: https://www.amazon.com/gp/offer-listing/B0117RFOEG
             Site site = mSiteService.find(batchFollowSell.siteCode);
             url.url = site.site + "/gp/offer-listing/" + batchFollowSell.asin;
