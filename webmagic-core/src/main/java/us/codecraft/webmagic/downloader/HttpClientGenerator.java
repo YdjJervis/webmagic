@@ -56,6 +56,7 @@ public class HttpClientGenerator {
     private CloseableHttpClient generateClient(Site site, Proxy proxy) {
         CredentialsProvider credsProvider = null;
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
+        
         if(proxy!=null && StringUtils.isNotBlank(proxy.getUser()) && StringUtils.isNotBlank(proxy.getPassword()))
         {
             credsProvider= new BasicCredentialsProvider();
@@ -72,8 +73,7 @@ public class HttpClientGenerator {
                     site.getUsernamePasswordCredentials());//用户名和密码
             httpClientBuilder.setDefaultCredentialsProvider(credsProvider);
         }
-
-
+        
         httpClientBuilder.setConnectionManager(connectionManager);
         if (site != null && site.getUserAgent() != null) {
             httpClientBuilder.setUserAgent(site.getUserAgent());
@@ -94,8 +94,9 @@ public class HttpClientGenerator {
         }
 
 
-        SocketConfig socketConfig = SocketConfig.custom().setSoKeepAlive(true).setTcpNoDelay(true).build();
+        SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(site.getTimeOut()).setSoKeepAlive(true).setTcpNoDelay(true).build();
         httpClientBuilder.setDefaultSocketConfig(socketConfig);
+        connectionManager.setDefaultSocketConfig(socketConfig);
         if (site != null) {
             httpClientBuilder.setRetryHandler(new DefaultHttpRequestRetryHandler(site.getRetryTimes(), true));
         }

@@ -87,9 +87,9 @@ public class RedisUtils {
         int port = 6379;
         try {
             JedisPoolConfig config = new JedisPoolConfig();
-            config.setMaxActive(MAX_ACTIVE);
+            config.setMaxTotal(MAX_ACTIVE);
             config.setMaxIdle(MAX_IDLE);
-            config.setMaxWait(MAX_WAIT);
+            config.setMaxIdle(MAX_WAIT);
             config.setTestOnBorrow(TEST_ON_BORROW);
             jedisPool = new JedisPool(config, address_array.split(",")[0], port, TIMEOUT);
         } catch (Exception e) {
@@ -97,9 +97,9 @@ public class RedisUtils {
             try {
                 //如果第一个IP异常，则访问第二个IP
                 JedisPoolConfig config = new JedisPoolConfig();
-                config.setMaxActive(MAX_ACTIVE);
+                config.setMaxTotal(MAX_ACTIVE);
                 config.setMaxIdle(MAX_IDLE);
-                config.setMaxWait(MAX_WAIT);
+                config.setMaxIdle(MAX_WAIT);
                 config.setTestOnBorrow(TEST_ON_BORROW);
                 jedisPool = new JedisPool(config, address_array.split(",")[1], port, TIMEOUT);
             } catch (Exception e2) {
