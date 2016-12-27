@@ -2,6 +2,7 @@ package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
@@ -60,7 +61,7 @@ public class GenerateAsinBatchMonitor extends GenerateBatchMonitor implements Sc
                 batchAsin.asin = customerAsin.asin;
                 batchAsin.priority = customerAsin.priority;
                 batchAsin.star = customerAsin.star;
-                batchAsin.type = 2;
+                batchAsin.type = R.BatchType.REVIEW_UPDATE;
                 batchAsin.status = 4;
                 batchAsin.crawled = 1;
                 needAddList.add(batchAsin);
@@ -68,7 +69,7 @@ public class GenerateAsinBatchMonitor extends GenerateBatchMonitor implements Sc
 
             mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
             /*添加创建详单信息*/
-            mBatchService.addBatch(customerCode, needAddList, 2, 0);
+            mBatchService.addBatch(customerCode, needAddList, R.BatchType.REVIEW_UPDATE, 0);
 
             mLogger.info("生成Review更新爬取批次：成功");
         }

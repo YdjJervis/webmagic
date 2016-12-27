@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.samples.amazon.dao;
+package us.codecraft.webmagic.samples.amazon.dao.crawl;
 
 import org.springframework.stereotype.Repository;
 import us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor;

@@ -4,7 +4,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.dao.FollowSellDao;
+import us.codecraft.webmagic.samples.amazon.dao.crawl.FollowSellDao;
 import us.codecraft.webmagic.samples.amazon.pojo.FollowSellMonitor;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Jervis
  * @version V0.1
- * @Description: 客户 业务
+ * @Description: 跟卖监控 业务
  * @date 2016/10/11
  */
 @Service
@@ -26,7 +26,7 @@ public class FollowSellMonitorService {
 
     public void addAll(List<FollowSellMonitor> followSellMonitorList) {
 
-        List<FollowSellMonitor> list = new ArrayList<FollowSellMonitor>();
+        List<FollowSellMonitor> list = new ArrayList<>();
         for (FollowSellMonitor followSellMonitor : followSellMonitorList) {
             if (!isExist(followSellMonitor)) {
                 list.add(followSellMonitor);

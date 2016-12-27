@@ -1,7 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.extractor.followsell;
 
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.samples.amazon.pojo.FollowSell;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.FollowSell;
 
 import java.util.List;
 

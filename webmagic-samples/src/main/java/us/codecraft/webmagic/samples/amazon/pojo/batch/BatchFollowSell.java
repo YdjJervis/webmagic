@@ -10,5 +10,24 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
  */
 public class BatchFollowSell extends BasePojo {
 
+    public String batchNumber;
+    public String siteCode;
+    public String asin;
+    public int type;
+    public int status;
+    public int priority;
+    public int isChanged;
 
+    @Override
+    public String toString() {
+        return "BatchFollowSell{" +
+                "batchNumber='" + batchNumber + '\'' +
+                ", siteCode='" + siteCode + '\'' +
+                ", asin='" + asin + '\'' +
+                ", type=" + type +
+                ", status=" + status +
+                ", priority=" + priority +
+                ", isChanged=" + isChanged +
+                '}';
+    }
 }

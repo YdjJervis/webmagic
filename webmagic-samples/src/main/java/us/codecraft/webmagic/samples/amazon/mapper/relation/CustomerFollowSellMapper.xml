@@ -14,7 +14,7 @@
         <result property="frequency" column="rcf_frequency"/>
         <result property="times" column="rcf_times"/>
         <result property="syncTime" column="rcf_sync_time"/>
-        <result property="createTime" column="rcf_finish_time"/>
+        <result property="createTime" column="rcf_create_time"/>
         <result property="updateTime" column="rcf_update_time"/>
     </resultMap>
 
@@ -45,13 +45,13 @@
 
     <select id="findNeedGenerateBatch" resultMap="CustomerFollowSellMap">
         SELECT * FROM relation_customer_followsell
-        WHERE rcr_crawl = 1
+        WHERE rcf_crawl = 1
         AND
-        rcr_on_sell = 1
+        rcf_on_sell = 1
         AND
-        CURRENT_TIMESTAMP - rcr_finish_time > rcr_frequency * 3600
+        CURRENT_TIMESTAMP - rcf_sync_time > rcf_frequency * 3600
         or
-        rcr_finish_time IS NULL;
+        rcf_sync_time IS NULL;
     </select>
 
     <select id="find" resultMap="CustomerFollowSellMap">

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author Jervis
  * @version V0.20
- * @Description: API DAO
+ * @Description: Review详单表 DAO
  * @date 2016/11/10 14:45
  */
 @Repository

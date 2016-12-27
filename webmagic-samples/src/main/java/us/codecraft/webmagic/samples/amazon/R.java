@@ -36,6 +36,17 @@ public final class R {
     }
 
     /**
+     * 批次爬取类型
+     */
+    public static final class BatchType {
+        public static final int REVIEW_ALL = 0;
+        public static final int REVIEW_MONITOR = 1;
+        public static final int REVIEW_UPDATE = 2;
+        public static final int FOLLOW_SELL = 3;
+        public static final int KEYWORD_RANK = 4;
+    }
+
+    /**
      * 站点码
      */
     public static final class SiteCode {

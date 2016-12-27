@@ -44,7 +44,7 @@ public class GenerateReviewBatchMonitor extends GenerateBatchMonitor implements 
 
             List<CustomerReview> rmList = customerListMap.get(customerCode);
             /*生成总单并添加到数据库中*/
-            Batch batch = mBatchService.generate(customerCode, 1);
+            Batch batch = mBatchService.generate(customerCode, R.BatchType.REVIEW_MONITOR);
             mBatchService.add(batch);
 
             /*将批次单号与review建立关系*/

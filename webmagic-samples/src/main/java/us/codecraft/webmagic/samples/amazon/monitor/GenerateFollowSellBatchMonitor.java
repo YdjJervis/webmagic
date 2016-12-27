@@ -2,9 +2,12 @@ package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchFollowSell;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerFollowSell;
+import us.codecraft.webmagic.samples.amazon.service.batch.BatchFollowSellService;
 import us.codecraft.webmagic.samples.amazon.service.relation.CustomerFollowSellService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
@@ -24,6 +27,8 @@ public class GenerateFollowSellBatchMonitor extends GenerateBatchMonitor impleme
 
     @Autowired
     private CustomerFollowSellService mCustomerFollowSellService;
+    @Autowired
+    private BatchFollowSellService mBatchFollowSellService;
 
     @Override
     public void execute() {
@@ -48,29 +53,30 @@ public class GenerateFollowSellBatchMonitor extends GenerateBatchMonitor impleme
         /*生成总单与详单*/
         for (String customerCode : customerListMap.keySet()) {
 
-            List<CustomerFollowSell> rmList = customerListMap.get(customerCode);
+            List<CustomerFollowSell> cfsList = customerListMap.get(customerCode);
+
+            /*生成总单并添加到数据库中*/
+            Batch batch = mBatchService.generate(customerCode, R.BatchType.FOLLOW_SELL);
+            mBatchService.add(batch);
 
             /*将批次单号与Asin建立关系*/
-            List<BatchAsin> needAddList = new ArrayList<>();
+            List<BatchFollowSell> needAddList = new ArrayList<>();
 
-            for (CustomerFollowSell customerAsin : rmList) {
+            BatchFollowSell batchFollowSell;
+            for (CustomerFollowSell customerFollowSell : cfsList) {
 
+                batchFollowSell = new BatchFollowSell();
+                batchFollowSell.batchNumber = batch.number;
+                batchFollowSell.siteCode = customerFollowSell.siteCode;
+                batchFollowSell.asin = customerFollowSell.asin;
+                batchFollowSell.type = R.CrawlType.FOLLOW_SELL;
+                batchFollowSell.priority = customerFollowSell.priority;
 
-                /*BatchAsin batchAsin = new BatchAsin();
-                batchAsin.siteCode = customerAsin.siteCode;
-                batchAsin.asin = customerAsin.asin;
-                batchAsin.priority = customerAsin.priority;
-                batchAsin.star = customerAsin.star;
-                batchAsin.type = 2;
-                batchAsin.status = 4;
-                batchAsin.crawled = 1;
-                needAddList.add(batchAsin);*/
+                needAddList.add(batchFollowSell);
             }
 
             mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
-            /*添加创建详单信息*/
-            mBatchService.addBatch(customerCode, needAddList, 2, 0);
-
+            mBatchFollowSellService.addAll(needAddList);
             mLogger.info("生成Review更新爬取批次：成功");
         }
     }

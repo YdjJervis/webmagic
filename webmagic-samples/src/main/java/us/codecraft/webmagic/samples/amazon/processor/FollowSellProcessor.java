@@ -2,8 +2,9 @@ package us.codecraft.webmagic.samples.amazon.processor;
 
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.extractor.followsell.FollowSellExtractorAdapter;
-import us.codecraft.webmagic.samples.amazon.pojo.FollowSell;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.FollowSell;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
@@ -22,12 +23,19 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
     @Override
     protected void dealOtherPage(Page page) {
         /* 如果是产品首页 */
-        if (Pattern.compile(".*/gp/offer-listing/.*").matcher(page.getUrl().get()).matches()) {
+        if (isFollowSellType(page)) {
 
             List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract(extractSite(page).code, extractAsin(page), page);
             System.out.println(followSellList);
 
         }
+    }
+
+    /**
+     * @return 是否是跟卖类型URL
+     */
+    private boolean isFollowSellType(Page page) {
+        return Pattern.compile(".*/gp/offer-listing/.*").matcher(page.getUrl().get()).matches();
     }
 
     @Override
@@ -38,7 +46,7 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
     @Override
     public void execute() {
         sLogger.info("开始执行 跟卖 爬取任务...");
-        List<Url> urlList = mUrlService.find(4);
+        List<Url> urlList = mUrlService.find(R.CrawlType.FOLLOW_SELL);
         startToCrawl(urlList);
     }
 }

@@ -2,7 +2,7 @@ package us.codecraft.webmagic.samples.amazon.extractor.followsell;
 
 import org.apache.log4j.Logger;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.samples.amazon.pojo.FollowSell;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.FollowSell;
 
 import java.util.ArrayList;
 import java.util.List;

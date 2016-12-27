@@ -5,7 +5,7 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.extractor.followsell.FollowSellExtractorAdapter;
-import us.codecraft.webmagic.samples.amazon.pojo.FollowSell;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.FollowSell;
 import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 
 import java.util.List;

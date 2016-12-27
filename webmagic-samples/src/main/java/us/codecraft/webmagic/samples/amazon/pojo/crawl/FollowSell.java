@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.samples.amazon.pojo;
+package us.codecraft.webmagic.samples.amazon.pojo.crawl;
 
 import us.codecraft.webmagic.samples.base.pojo.BasePojo;
 
