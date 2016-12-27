@@ -24,7 +24,15 @@ public final class R {
         /**
          * Review监听爬取
          */
-        public static final int REVIEW_MONITOR = 4;
+        public static final int REVIEW_MONITOR = 3;
+        /**
+         * 跟卖爬取
+         */
+        public static final int FOLLOW_SELL = 4;
+        /**
+         * 关键字搜索爬取
+         */
+        public static final int KEYWORD_RANK = 5;
     }
 
     /**

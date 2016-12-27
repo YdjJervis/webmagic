@@ -2,6 +2,7 @@ package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchReview;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerReview;
@@ -53,7 +54,7 @@ public class GenerateReviewBatchMonitor extends GenerateBatchMonitor implements 
                 batchReview.reviewID = customerReview.reviewId;
                 batchReview.batchNumber = batch.number;
                 batchReview.siteCode = customerReview.siteCode;
-                batchReview.type = 4;
+                batchReview.type = R.CrawlType.REVIEW_MONITOR;
                 needAddList.add(batchReview);
 
                 customerReview.finishTime = currentTime;
