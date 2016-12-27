@@ -20,4 +20,6 @@ public interface BatchRankDao {
 
     List<BatchRank> findByBatch(String batchNum);
 
+    List<BatchRank> findNotCrawled();
+
 }

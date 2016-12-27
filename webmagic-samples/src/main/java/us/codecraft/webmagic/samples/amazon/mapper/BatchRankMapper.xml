@@ -59,6 +59,10 @@
           bor_id = #{id}
     </update>
 
+    <select id="findNotCrawled" resultMap="BatchRankMap">
+        select * from batch_order_rank WHERE bor_status = 0;
+    </select>
+
     <select id="findByBatch" resultMap="BatchRankMap">
         SELECT
           *

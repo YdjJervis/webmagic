@@ -29,4 +29,8 @@ public class BatchRankService {
     public List<BatchRank> findByBatch(String batchNum) {
         return mBatchRankDao.findByBatch(batchNum);
     }
+
+    public List<BatchRank> findNotCrawled() {
+        return mBatchRankDao.findNotCrawled();
+    }
 }

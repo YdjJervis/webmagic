@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  *          2016/11/30 15:07
  */
 @Service
-public class SearchRankMonitorProcessor extends BasePageProcessor implements ScheduledTask {
+public class KeywordRankMonitorProcessor extends BasePageProcessor implements ScheduledTask {
 
     Logger sLogger = Logger.getLogger(getClass());
     private Set<Integer> mDealSet = Sets.newHashSet(0, 200, 402, 403, 404, 407, 417, 429, 503);
