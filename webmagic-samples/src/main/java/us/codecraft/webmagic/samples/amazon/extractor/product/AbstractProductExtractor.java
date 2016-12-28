@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.extractor.product;
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.pojo.crawl.Product;
 import us.codecraft.webmagic.samples.amazon.pojo.ProductRank;
@@ -72,7 +73,7 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
         /* 解析在其它分类的排名情况 */
         for (Selectable liNode : page.getHtml().xpath("//*[@class='zg_hrsr_item']").nodes()) {
             rank = new ProductRank();
-            rank.rank = liNode.xpath("span/text()").regex("#([0-9,]*)").get();
+            rank.rank = liNode.xpath("span/text()").get();
 
             for (Selectable aNode : liNode.xpath("//a").nodes()) {
                 category = rank.new Category();
@@ -83,5 +84,26 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
             rankList.add(rank);
         }
         return new Gson().toJson(rankList);
+    }
+
+    /**
+     * @return 产品添加时间
+     */
+    String extractAddedTime(Page page) {
+        List<Selectable> liNodes = page.getHtml().xpath("//div[@id='detail_bullets_id']//li[@id!='SalesRank']").nodes();
+        for (Selectable liNode : liNodes) {
+            String key = liNode.xpath("b/text()").get();
+            if (StringUtils.isNotEmpty(key) && key.contains(onKey())) {
+                return liNode.xpath("li/text()").get();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return 详细信息对应的Key值包含的关键字
+     */
+    String onKey(){
+        return "Date";
     }
 }

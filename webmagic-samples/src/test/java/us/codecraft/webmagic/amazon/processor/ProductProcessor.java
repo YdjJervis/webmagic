@@ -22,8 +22,7 @@ public class ProductProcessor implements PageProcessor {
     @Override
     public void process(Page page) {
 
-        Product product = new ProductExtractorAdapter().extract("US", "B00RM7AAA4", page);
-
+        Product product = new ProductExtractorAdapter().extract("DE", "B016E1GH3W", page);
         System.out.println(product);
     }
 
@@ -31,7 +30,8 @@ public class ProductProcessor implements PageProcessor {
         //model_1 https://www.amazon.com/dp/B01LW0F62Q
         //model_2 https://www.amazon.com/dp/B01JBYXUQ6
         //model_3 https://www.amazon.com/dp/B00RM7AAA4
-        Spider.create(new ProductProcessor()).addUrl("https://www.amazon.com/dp/B00RM7AAA4")
+        //DE https://www.amazon.de/dp/B01E1D3DWS
+        Spider.create(new ProductProcessor()).addUrl("https://www.amazon.de/dp/B016E1GH3W")
                 .start();
 
     }
