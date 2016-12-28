@@ -22,7 +22,7 @@ public class ProductProcessor implements PageProcessor {
     @Override
     public void process(Page page) {
 
-        Product product = new ProductExtractorAdapter().extract("US", "B01JBYXUQ6", page);
+        Product product = new ProductExtractorAdapter().extract("UK", "B01ETE11OQ", page);
 
         System.out.println(product);
     }
@@ -31,8 +31,9 @@ public class ProductProcessor implements PageProcessor {
         //model_1 https://www.amazon.com/dp/B01LW0F62Q
         //model_2 https://www.amazon.com/dp/B01JBYXUQ6
         //model_3 https://www.amazon.com/dp/B00RM7AAA4
-        Spider.create(new ProductProcessor()).addUrl("https://www.amazon.com/dp/B01JBYXUQ6")
+        Spider.create(new ProductProcessor()).addUrl("https://www.amazon.co.uk/dp/B01ETE11OQ")
                 .start();
+
     }
 
     /**
@@ -57,7 +58,6 @@ public class ProductProcessor implements PageProcessor {
         System.out.println(page.getHtml());
         Selectable xpath = page.getHtml().xpath("//a[@id='a']");
         System.out.println(StringUtils.isEmpty(xpath.get()));
-
     }
 
     @Override

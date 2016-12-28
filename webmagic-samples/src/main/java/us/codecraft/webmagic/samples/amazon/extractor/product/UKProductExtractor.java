@@ -23,33 +23,9 @@ public class UKProductExtractor extends AbstractProductExtractor {
     public Product extract(String asin, Page page) {
         super.extract(asin, page);
         sProduct.siteCode = R.SiteCode.UK;
-        sProduct.rootAsin = asin;
-        List<Selectable> merchantNodes = page.getHtml().xpath("//*[@id='merchant-info']/a").nodes();
-        if (merchantNodes.size() == 2) {
-            sProduct.sellerID = merchantNodes.get(0).xpath("a/@href").regex("seller=([0-9a-zA-Z]*)").get();
-            sProduct.sellerName = merchantNodes.get(0).xpath("a/text()").get();
-
-            sProduct.transID = merchantNodes.get(1).xpath("a/@href").regex("nodeId=([0-9]*)").get();
-            sProduct.transName = merchantNodes.get(1).xpath("a/text()").get();
-        } else if (merchantNodes.size() == 1) {
-            sProduct.sellerID = merchantNodes.get(0).xpath("a/@href").regex("seller=([0-9a-zA-Z]*)").get();
-            sProduct.sellerName = merchantNodes.get(0).xpath("a/text()").get();
-        }
 
         sProduct.sellerID = page.getHtml().xpath("//*[@id='merchant-info']/html()").regex("seller=([0-9a-zA-Z]*)").get();
-        sProduct.title = page.getHtml().xpath("//*[@id='productTitle']/text()").get();
-        sProduct.price = page.getHtml().xpath("//*[@id='priceblock_ourprice' or @id='priceblock_dealprice' or @id='priceblock_saleprice']/text()").get();
-        sProduct.imgUrl = page.getHtml().xpath("//*[@id='imgTagWrapperId']/img/@data-a-dynamic-image").regex("(http.*?jpg)").get();
-        sProduct.reviewNum = page.getHtml().xpath("*[@id='acrCustomerReviewText']/text()").regex("([0-9,]*)").get();
-        sProduct.reviewStar = page.getHtml().xpath("*[@id='reviewStarsLinkedCustomerReviews']//span/text()").get();
-        sProduct.reviewTime = page.getHtml().xpath("//div[@id='revMHRL']/div/div/span/span[2]/text()").get();
-        sProduct.replyNum = page.getHtml().xpath("a[@id='askATFLink']/html()").regex("([0-9,]+)").get();
         sProduct.transMode = page.getHtml().xpath("*[@id='priceBadging_feature_div']//span[@class='a-icon-alt']/text()").get();
-        sProduct.sellerNum = page.getHtml().xpath("//*[@id='mbc']//a[contains(@href,'offer-listing')]/text()").regex("\\(([0-9]*)\\)").get();
-
-        List<String> featureList = page.getHtml().xpath("//div[@id='feature-bullets']//span[@class='a-list-item']/text()").all();
-        sLogger.info(featureList);
-        sProduct.extra = new Gson().toJson(featureList);
 
         Selectable model_1 = page.getHtml().xpath("//*[@id='productDetails_detailBullets_sections1']");
         if (StringUtils.isNotEmpty(model_1.get())) {

@@ -4,6 +4,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
@@ -127,7 +128,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
 
     @Override
     public void execute() {
-        List<Url> urlList = mUrlService.findMonitorUrlList();
+        List<Url> urlList = mUrlService.find(R.CrawlType.REVIEW_MONITOR);
         sLogger.info("开始爬取被监听的Review...数量为" + urlList.size());
         startToCrawl(urlList);
     }

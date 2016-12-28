@@ -68,14 +68,6 @@
         SELECT * FROM spider_amazon_url WHERE bo_batch_num = #{0} AND bas_code = #{1} AND saa_asin = #{2} AND sau_type = 2;
     </select>
 
-    <!--查询被监听的的URL列表-->
-    <select id="findMonitorUrlList" resultMap="UrlResultMap">
-        SELECT * FROM spider_amazon_url
-        WHERE sau_type = 3 AND sau_crawling = 0 AND CURRENT_TIMESTAMP - sau_update_time > 0
-        ORDER BY sau_times,sau_priority LIMIT 10;
-    </select>
-    <!--(sau_priority + 1) * 7200-->
-
     <delete id="delete" parameterType="int">
         DELETE FROM spider_amazon_url WHERE sau_id = #{0};
     </delete>

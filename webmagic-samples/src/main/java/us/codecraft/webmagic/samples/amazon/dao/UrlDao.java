@@ -26,8 +26,6 @@ public interface UrlDao extends BaseDao<Url> {
      */
     List<Url> findByAsin(String batchNum, String siteCode, String asin);
 
-    List<Url> findMonitorUrlList();
-
     /**
      * @return 指定ASIN的Url列表
      */
