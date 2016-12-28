@@ -1,11 +1,12 @@
 package us.codecraft.webmagic.samples.amazon.extractor.product;
 
 import com.google.gson.Gson;
-import org.apache.log4j.Logger;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.pojo.Product;
+import us.codecraft.webmagic.samples.amazon.pojo.ProductRank;
 import us.codecraft.webmagic.selector.Selectable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +17,6 @@ import java.util.List;
  */
 public abstract class AbstractProductExtractor implements ProductExtractor{
 
-    Logger sLogger = Logger.getLogger(getClass());
     Product sProduct;
 
     @Override
@@ -49,5 +49,39 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
         sProduct.sellerNum = page.getHtml().xpath("//*[@id='mbc']//a[contains(@href,'offer-listing')]/text()").get();
 
         return sProduct;
+    }
+
+
+    /**
+     * @return 排名信息，Json串
+     */
+    String extractRankInfo(Page page) {
+        List<ProductRank> rankList = new ArrayList<>();
+
+        /* 解析总排名情况 */
+        ProductRank rank = new ProductRank();
+        rank.rank = page.getHtml().xpath("//*[@id='SalesRank']/text()").get();
+        page.getHtml().xpath("//*[@id='SalesRank']/text()").regex(".*([0-9,]*).*");
+        ProductRank.Category category = rank.new Category();
+        category.category = page.getHtml().xpath("//*[@id='SalesRank']/a/text()").get();
+        category.url = page.getHtml().xpath("//*[@id='SalesRank']/a/@href").get();
+        rank.categoryList.add(category);
+
+        rankList.add(rank);
+
+        /* 解析在其它分类的排名情况 */
+        for (Selectable liNode : page.getHtml().xpath("//*[@class='zg_hrsr_item']").nodes()) {
+            rank = new ProductRank();
+            rank.rank = liNode.xpath("span/text()").regex("#([0-9,]*)").get();
+
+            for (Selectable aNode : liNode.xpath("//a").nodes()) {
+                category = rank.new Category();
+                category.category = aNode.xpath("a/text()").get();
+                category.url = aNode.xpath("a/@href").get();
+                rank.categoryList.add(category);
+            }
+            rankList.add(rank);
+        }
+        return new Gson().toJson(rankList);
     }
 }

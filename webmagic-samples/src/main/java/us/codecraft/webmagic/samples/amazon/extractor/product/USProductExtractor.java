@@ -24,9 +24,6 @@ public class USProductExtractor extends AbstractProductExtractor {
         super.extract(asin, page);
         sProduct.siteCode = R.SiteCode.US;
 
-        sProduct.sellerID = page.getHtml().xpath("//*[@id='merchant-info']/html()").regex("seller=([0-9a-zA-Z]*)").get();
-        sProduct.transMode = page.getHtml().xpath("*[@id='priceBadging_feature_div']//span[@class='a-icon-alt']/text()").get();
-
         Selectable model_1 = page.getHtml().xpath("//*[@id='productDetails_detailBullets_sections1']");
         if (StringUtils.isNotEmpty(model_1.get())) {
             sProduct.modelType = 1;
@@ -36,7 +33,7 @@ public class USProductExtractor extends AbstractProductExtractor {
                     sProduct.addedTime = trNode.xpath("td/text()").get().trim();
                 } else if (thText.contains("Rank")) {
 
-                    List<ProductRank> rankList = new ArrayList<ProductRank>();
+                    List<ProductRank> rankList = new ArrayList<>();
                     for (Selectable spanNode : trNode.xpath("td/span/span").nodes()) {
                         ProductRank rank = new ProductRank();
                         rank.rank = spanNode.regex("#([0-9,]*)").get();
@@ -64,33 +61,7 @@ public class USProductExtractor extends AbstractProductExtractor {
                     sProduct.addedTime = spanNode.xpath("span/span[2]/text()").get();
                 }
             }
-
-            List<ProductRank> rankList = new ArrayList<ProductRank>();
-
-            /* 解析总排名情况 */
-            ProductRank rank = new ProductRank();
-            rank.rank = model_2.xpath("//*[@id='SalesRank']/text()").regex("#([0-9,]*)").get();
-            ProductRank.Category category = rank.new Category();
-            category.category = model_2.xpath("//*[@id='SalesRank']/a/text()").get();
-            category.url = model_2.xpath("//*[@id='SalesRank']/a/@href").get();
-            rank.categoryList.add(category);
-
-            rankList.add(rank);
-
-            /* 解析在其它分类的排名情况 */
-            for (Selectable liNode : model_2.xpath("//*[@class='zg_hrsr_item']").nodes()) {
-                rank = new ProductRank();
-                rank.rank = liNode.xpath("span/text()").regex("#([0-9,]*)").get();
-
-                for (Selectable aNode : liNode.xpath("//a").nodes()) {
-                    category = rank.new Category();
-                    category.category = aNode.xpath("a/text()").get();
-                    category.url = aNode.xpath("a/@href").get();
-                    rank.categoryList.add(category);
-                }
-                rankList.add(rank);
-            }
-            sProduct.category = new Gson().toJson(rankList);
+            sProduct.category = extractRankInfo(page);
 
             return sProduct;
         }
