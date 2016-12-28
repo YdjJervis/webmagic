@@ -7,7 +7,7 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.extractor.product.ProductExtractorAdapter;
-import us.codecraft.webmagic.samples.amazon.pojo.Product;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Product;
 import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.Selectable;

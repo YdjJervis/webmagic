@@ -1,8 +1,8 @@
-package us.codecraft.webmagic.samples.amazon.dao;
+package us.codecraft.webmagic.samples.amazon.dao.crawl;
 
 import org.springframework.stereotype.Repository;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsinExtra;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewCount;
 import us.codecraft.webmagic.samples.base.dao.BaseDao;
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;

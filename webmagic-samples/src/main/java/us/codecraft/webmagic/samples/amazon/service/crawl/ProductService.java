@@ -1,10 +1,10 @@
-package us.codecraft.webmagic.samples.amazon.service;
+package us.codecraft.webmagic.samples.amazon.service.crawl;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.dao.ProductDao;
-import us.codecraft.webmagic.samples.amazon.pojo.Product;
+import us.codecraft.webmagic.samples.amazon.dao.crawl.ProductDao;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Product;
 
 /**
  * @author Jervis

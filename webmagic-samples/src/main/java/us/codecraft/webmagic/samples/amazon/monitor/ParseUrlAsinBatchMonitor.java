@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.dict.Site;
 import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchAsinService;

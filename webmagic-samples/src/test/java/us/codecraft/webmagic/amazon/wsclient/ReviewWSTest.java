@@ -6,7 +6,7 @@ import com.eccang.wsclient.review.ReviewWSService;
 import com.google.gson.Gson;
 import org.junit.Test;
 import us.codecraft.webmagic.base.SpringTestCase;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Review;
 
 /**
  * @author Jervis

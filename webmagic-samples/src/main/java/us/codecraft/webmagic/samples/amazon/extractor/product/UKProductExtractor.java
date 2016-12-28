@@ -3,7 +3,7 @@ package us.codecraft.webmagic.samples.amazon.extractor.product;
 import org.apache.commons.lang3.StringUtils;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.samples.amazon.R;
-import us.codecraft.webmagic.samples.amazon.pojo.Product;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Product;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.List;

@@ -3,8 +3,8 @@ package us.codecraft.webmagic.amazon.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
-import us.codecraft.webmagic.samples.amazon.service.ReviewService;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Review;
+import us.codecraft.webmagic.samples.amazon.service.crawl.ReviewService;
 
 import java.util.ArrayList;
 import java.util.List;

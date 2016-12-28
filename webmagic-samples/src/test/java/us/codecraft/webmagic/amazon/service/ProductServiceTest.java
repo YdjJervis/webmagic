@@ -3,8 +3,8 @@ package us.codecraft.webmagic.amazon.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
-import us.codecraft.webmagic.samples.amazon.pojo.Product;
-import us.codecraft.webmagic.samples.amazon.service.ProductService;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Product;
+import us.codecraft.webmagic.samples.amazon.service.crawl.ProductService;
 
 public class ProductServiceTest extends SpringTestCase {
 

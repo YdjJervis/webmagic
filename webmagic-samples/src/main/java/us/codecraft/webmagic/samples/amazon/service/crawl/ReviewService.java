@@ -1,11 +1,11 @@
-package us.codecraft.webmagic.samples.amazon.service;
+package us.codecraft.webmagic.samples.amazon.service.crawl;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.dao.ReviewDao;
+import us.codecraft.webmagic.samples.amazon.dao.crawl.ReviewDao;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsinExtra;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewCount;
 
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package us.codecraft.webmagic.samples.amazon.extractor.product;
 
 import com.google.gson.Gson;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.samples.amazon.pojo.Product;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Product;
 import us.codecraft.webmagic.samples.amazon.pojo.ProductRank;
 import us.codecraft.webmagic.selector.Selectable;
 

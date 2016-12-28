@@ -17,6 +17,7 @@ import us.codecraft.webmagic.downloader.IpsProxyHttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchAsin;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.dict.IpsInfoManage;
 import us.codecraft.webmagic.samples.amazon.pojo.dict.Site;
 import us.codecraft.webmagic.samples.amazon.service.*;

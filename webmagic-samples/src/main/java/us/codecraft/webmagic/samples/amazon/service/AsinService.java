@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.AsinDao;
 import us.codecraft.webmagic.samples.amazon.pojo.Asin;
-import us.codecraft.webmagic.samples.amazon.pojo.Review;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.Review;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewCount;
 import us.codecraft.webmagic.samples.amazon.pojo.StarReviewMap;
+import us.codecraft.webmagic.samples.amazon.service.crawl.ReviewService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
