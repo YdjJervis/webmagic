@@ -19,6 +19,8 @@ public class FollowSellExtractorAdapter {
         FollowSellExtractor extractor = null;
         if (siteCode.equals(R.SiteCode.US)) {
             extractor = new USFollowSellExtractor();
+        } else if(siteCode.equals(R.SiteCode.UK)){
+            extractor = new UKFollowSellExtractor();
         }
 
         if (extractor != null) {

@@ -9,7 +9,6 @@ import us.codecraft.webmagic.samples.amazon.pojo.crawl.FollowSell;
 import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * @author Jervis
@@ -21,12 +20,8 @@ public class FollowSellProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        /* 如果是产品首页 */
-        if (Pattern.compile(".*/gp/offer-listing/.*").matcher(page.getUrl().get()).matches()) {
-
-            List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract("US", extractAsin(page), page);
-            System.out.println(followSellList);
-        }
+        List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract("UK", extractAsin(page), page);
+        System.out.println(followSellList);
     }
 
     @Override
@@ -39,8 +34,10 @@ public class FollowSellProcessor implements PageProcessor {
     }
 
     public static void main(String[] args) {
-
-        Spider.create(new FollowSellProcessor()).addUrl("https://www.amazon.com/gp/offer-listing/B019ZCMROK")
+        //eg:
+        //us https://www.amazon.com/gp/offer-listing/B019ZCMROK
+        //uk https://www.amazon.co.uk/gp/offer-listing/B0186FESVC
+        Spider.create(new FollowSellProcessor()).addUrl("https://www.amazon.co.uk/gp/offer-listing/B0186FESVC")
                 .start();
     }
 }

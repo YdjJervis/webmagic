@@ -8,10 +8,10 @@ import java.util.List;
 /**
  * @author Jervis
  * @version V0.2
- * @Description: 美国站跟卖信息抽取器
+ * @Description: 英国站跟卖信息抽取器
  * @date 2016/12/24 18:14
  */
-public class USFollowSellExtractor extends AbstractFollowSellExtractor {
+public class UKFollowSellExtractor extends AbstractFollowSellExtractor {
 
     @Override
     public List<FollowSell> extract(String asin, Page page) {
