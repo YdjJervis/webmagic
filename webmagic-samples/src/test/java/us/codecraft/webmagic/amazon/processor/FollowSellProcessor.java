@@ -20,7 +20,7 @@ public class FollowSellProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract("UK", extractAsin(page), page);
+        List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract("DE", extractAsin(page), page);
         System.out.println(followSellList);
     }
 
@@ -37,7 +37,8 @@ public class FollowSellProcessor implements PageProcessor {
         //eg:
         //us https://www.amazon.com/gp/offer-listing/B019ZCMROK
         //uk https://www.amazon.co.uk/gp/offer-listing/B0186FESVC
-        Spider.create(new FollowSellProcessor()).addUrl("https://www.amazon.co.uk/gp/offer-listing/B0186FESVC")
+        //de https://www.amazon.de/gp/offer-listing/B01ARHAWSA 有翻页
+        Spider.create(new FollowSellProcessor()).addUrl("https://www.amazon.de/gp/offer-listing/B01ARHAWSA")
                 .start();
     }
 }

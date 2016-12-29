@@ -6,12 +6,14 @@
         <result column="saf_id" property="id"/>
         <result column="bas_code" property="siteCode"/>
         <result column="saa_asin" property="asin"/>
+        <result column="saf_seller_id" property="sellerID"/>
         <result column="saf_price" property="price"/>
         <result column="saf_trans_policy" property="transPolicy"/>
         <result column="saf_condition" property="condition"/>
-        <result column="saf_seller_id" property="sellerID"/>
         <result column="saf_seller_name" property="sellerName"/>
         <result column="saf_rating" property="rating"/>
+        <result column="saf_probability" property="probability"/>
+        <result column="saf_star_level" property="starLevel"/>
         <result column="saf_extra" property="extra"/>
         <result column="saf_create_time" property="createTime"/>
         <result column="saf_update_time" property="updateTime"/>
@@ -21,24 +23,28 @@
         INSERT INTO spider_amazon_followsell (
         bas_code,
         saa_asin,
+        saf_seller_id,
         saf_price,
         saf_trans_policy,
         saf_condition,
-        saf_seller_id,
         saf_seller_name,
         saf_rating,
+        saf_probability,
+        saf_star_level,
         saf_extra
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">(
             #{item.siteCode},
             #{item.asin},
+            #{item.sellerID},
             #{item.price},
             #{item.transPolicy},
             #{item.condition},
-            #{item.sellerID},
             #{item.sellerName},
             #{item.rating},
+            #{item.probability},
+            #{item.starLevel},
             #{item.extra}
             )
         </foreach>
@@ -50,14 +56,17 @@
         saf_price = #{price},
         saf_trans_policy = #{transPolicy},
         saf_condition = #{condition},
-        saf_seller_id = #{sellerID},
         saf_seller_name = #{sellerName},
         saf_rating = #{rating},
+        saf_probability = #{probability},
+        saf_star_level = #{starLevel},
         saf_extra = #{extra}
         WHERE
         bas_code = #{siteCode}
         and
-        saa_asin = #{asin};
+        saa_asin = #{asin}
+        and
+        saf_seller_id = #{sellerID};
     </update>
 
     <select id="find" resultMap="FollowSellResultMap">
@@ -65,7 +74,9 @@
         WHERE
         bas_code = #{0}
         and
-        saa_asin = #{1};
+        saa_asin = #{1}
+        and
+        saf_seller_id = #{2};
     </select>
 
 </mapper>

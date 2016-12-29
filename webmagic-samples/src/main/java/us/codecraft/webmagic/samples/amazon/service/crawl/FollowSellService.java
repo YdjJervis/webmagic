@@ -1,7 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.service.crawl;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.crawl.FollowSellDao;
@@ -19,13 +18,11 @@ import java.util.List;
 @Service
 public class FollowSellService {
 
-    private Logger mLogger = Logger.getLogger(getClass());
-
     @Autowired
     private FollowSellDao mDao;
 
     public void add(FollowSell followSell) {
-        if (!isExist(followSell.siteCode, followSell.asin)) {
+        if (!isExist(followSell.siteCode, followSell.asin, followSell.sellerID)) {
             mDao.add(followSell);
         } else {
             update(followSell);
@@ -35,7 +32,7 @@ public class FollowSellService {
     public void addAll(List<FollowSell> followSellList) {
         List<FollowSell> list = new ArrayList<>();
         for (FollowSell followSell : followSellList) {
-            if (!isExist(followSell.siteCode, followSell.asin)) {
+            if (!isExist(followSell.siteCode, followSell.asin, followSell.sellerID)) {
                 list.add(followSell);
             } else {
                 update(followSell);
@@ -50,11 +47,11 @@ public class FollowSellService {
         mDao.update(followSell);
     }
 
-    public FollowSell find(String siteCode, String asin) {
-        return mDao.find(siteCode, asin);
+    public FollowSell find(String siteCode, String asin, String selllerId) {
+        return mDao.find(siteCode, asin, selllerId);
     }
 
-    public boolean isExist(String siteCode, String asin) {
-        return find(siteCode, asin) != null;
+    public boolean isExist(String siteCode, String asin, String selllerId) {
+        return find(siteCode, asin, selllerId) != null;
     }
 }

@@ -122,8 +122,8 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
         if (!needCrawlNextPage) {
             /* 不需要继续翻页，删除该星级对应的Url */
-            List<Url> updateCrawlList = mUrlService.findUpdateCrawl(getUrl(page).batchNum, siteCode, asin);
-            List<Url> deleteList = new ArrayList<Url>();
+            List<Url> updateCrawlList = mUrlService.find(getUrl(page).batchNum, siteCode, asin, R.CrawlType.REVIEW_UPDATE);
+            List<Url> deleteList = new ArrayList<>();
 
             /* 找出该过滤器的所有URL */
             for (Url url : updateCrawlList) {

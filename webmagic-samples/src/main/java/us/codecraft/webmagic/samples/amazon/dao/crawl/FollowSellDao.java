@@ -13,5 +13,5 @@ import us.codecraft.webmagic.samples.base.dao.BaseDao;
 @Repository
 public interface FollowSellDao extends BaseDao<FollowSell>{
 
-    FollowSell find(String siteCode, String asin);
+    FollowSell find(String siteCode, String asin, String selllerId);
 }

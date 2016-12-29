@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.dao.UrlDao;
 import us.codecraft.webmagic.samples.amazon.pojo.*;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
@@ -86,7 +87,7 @@ public class UrlService {
 
     public void addAll(List<Url> urlList) {
 
-        List<Url> newList = new ArrayList<Url>();
+        List<Url> newList = new ArrayList<>();
 
         for (Url url : urlList) {
             if (!isExist(url.urlMD5)) {
@@ -110,24 +111,28 @@ public class UrlService {
         return mUrlDao.findByType(type);
     }
 
+    public List<Url> find(String batchNum, String siteCode, String asin, int type) {
+        return mUrlDao.find(batchNum, siteCode, asin, type);
+    }
+
     /**
      * 根据Url最大页码和已经爬取过的页码判断是否已经爬取完毕
      * yes：把asin的状态更新到爬取完毕，no：ignore
      */
     public void updateAsinCrawledAll(Url url) {
 
-        List<Url> list = mUrlDao.findByAsin(url.batchNum, url.siteCode, url.asin);
+        List<Url> list = find(url.batchNum, url.siteCode, url.asin, R.CrawlType.REVIEW_ALL);
 
         mLogger.info("ASIN:" + url.asin + " 对应的URL表记录数：" + list.size());
 
         /* 如果暂时不能计算总进度，就返回 */
         if (!canCalculateProgress(list)) {
-            mLogger.info(url.asin+" 暂时不能统计进度");
+            mLogger.info(url.asin + " 暂时不能统计进度");
             return;
         }
 
         /* 用过滤器作key，过滤器对应的最大的评论页码作value */
-        Map<String, Integer> maxPageMap = new HashMap<String, Integer>();
+        Map<String, Integer> maxPageMap = new HashMap<>();
         for (Url urlLooper : list) {
 
             String filter = UrlUtils.getValue(urlLooper.url, "filterByStar");
@@ -228,7 +233,7 @@ public class UrlService {
 
     /**
      * @param batchAsin 单条批次详单
-     * @param rootAsin 根ASIN码
+     * @param rootAsin  根ASIN码
      * @return 大字段数据
      */
     public String getBatchAsinExtra(BatchAsin batchAsin, String rootAsin) {
@@ -260,12 +265,7 @@ public class UrlService {
      */
     public int getPageNum(String url) {
         String pageNumStr = UrlUtils.getValue(url, "pageNumber");
-        int pageNum = StringUtils.isEmpty(pageNumStr) ? 1 : Integer.valueOf(pageNumStr);
-        return pageNum;
-    }
-
-    public List<Url> findUpdateCrawl(String batchNum, String siteCode, String asin) {
-        return mUrlDao.findUpdateCrawl(batchNum, siteCode, asin);
+        return StringUtils.isEmpty(pageNumStr) ? 1 : Integer.valueOf(pageNumStr);
     }
 
     public boolean isExist(String urlMd5) {
@@ -292,20 +292,6 @@ public class UrlService {
      */
     public void deleteUpdating() {
         mUrlDao.deleteByType(2);
-    }
-
-    /**
-     * 切换所有ASIN的URL的优先级
-     */
-    public void updatePriority(String asin, int priority) {
-        mUrlDao.updatePriority(asin, priority);
-    }
-
-    /**
-     * 更改监控Review对应URL的优先级
-     */
-    public void updateMonitorPriority(String reviewID, int priority) {
-        mUrlDao.updateMonitorPriority(reviewID, priority);
     }
 
     public List<Url> findByBatchNum(String batchNumber) {

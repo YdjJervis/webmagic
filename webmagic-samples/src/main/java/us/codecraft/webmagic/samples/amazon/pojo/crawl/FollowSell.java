@@ -12,10 +12,10 @@ public class FollowSell extends BasePojo{
 
     public String siteCode;
     public String asin;
+    public String sellerID;
     public String price;
     public String transPolicy = "";
     public String condition;
-    public String sellerID;
     public String sellerName;
     public String rating;
     /**
@@ -24,25 +24,19 @@ public class FollowSell extends BasePojo{
     public String probability;
     public String starLevel;
 
-    /**
-     * 是否是自己店铺产品。1-Y/0-N
-     */
-    public int self;
-
     @Override
     public String toString() {
         return "FollowSell{" +
                 "siteCode='" + siteCode + '\'' +
                 ", asin='" + asin + '\'' +
+                ", sellerID='" + sellerID + '\'' +
                 ", price='" + price + '\'' +
                 ", transPolicy='" + transPolicy + '\'' +
                 ", condition='" + condition + '\'' +
-                ", sellerID='" + sellerID + '\'' +
                 ", sellerName='" + sellerName + '\'' +
                 ", rating='" + rating + '\'' +
                 ", probability='" + probability + '\'' +
                 ", starLevel='" + starLevel + '\'' +
-                ", self=" + self +
                 '}';
     }
 }

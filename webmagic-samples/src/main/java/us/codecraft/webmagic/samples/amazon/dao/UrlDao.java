@@ -24,12 +24,7 @@ public interface UrlDao extends BaseDao<Url> {
     /**
      * @return 指定站点的ASIN的Url列表
      */
-    List<Url> findByAsin(String batchNum, String siteCode, String asin);
-
-    /**
-     * @return 指定ASIN的Url列表
-     */
-    List<Url> findUpdateCrawl(String batchNum, String siteCode, String asin);
+    List<Url> find(String batchNum, String siteCode, String asin, int type);
 
     void deleteByAsin(String siteCode, String asin);
 
@@ -46,15 +41,6 @@ public interface UrlDao extends BaseDao<Url> {
      * @param type 0-全量；1-监听；2-更新
      */
     void deleteByType(int type);
-
-    /**
-     * 更改指定ASIN对应URL的优先级
-     */
-    void updatePriority(String asin, int priority);
-
-    void updateMonitorPriority(String reviewID, int priority);
-
-    void deleteOne(String batchNum, String siteCode, String asin);
 
     List<Url> findByBatchNum(String batchNumber);
 }

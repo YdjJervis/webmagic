@@ -1,5 +1,6 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -13,7 +14,9 @@ import us.codecraft.webmagic.samples.amazon.service.batch.BatchFollowSellService
 import us.codecraft.webmagic.samples.amazon.service.crawl.FollowSellService;
 import us.codecraft.webmagic.samples.amazon.service.relation.CustomerFollowSellService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
+import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -26,6 +29,8 @@ import java.util.regex.Pattern;
  */
 @Service
 public class FollowSellProcessor extends BasePageProcessor implements ScheduledTask {
+
+    private static final String START_INDEX = "startIndex";
 
     @Autowired
     private FollowSellService mFollowSellService;
@@ -42,53 +47,91 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
             List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract(extractSite(page).code, extractAsin(page), page);
             mFollowSellService.addAll(followSellList);
 
-            /* 归档URL */
-            mUrlService.deleteByUrlMd5(getUrl(page).urlMD5);
-            mUrlHistoryService.add(getUrl(page));
+            /* 更新批次总单的状态 */
+            Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
+            Date currentTime = new Date();
+            if (batch.startTime == null) {
+                batch.startTime = currentTime;
+                batch.status = 1;
+            }
 
-            updateBatchStatus(page);
+            saveTurnPageUrl(page);
+
+            List<Url> urlList = mUrlService.find(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin, R.CrawlType.FOLLOW_SELL);
+            int crawledNum = 0;
+            for (Url url : urlList) {
+                if (url.status == 200) {
+                    ++crawledNum;
+                }
+            }
+            if (urlList.size() == crawledNum) {
+                /* 归档URL */
+                mUrlService.deleteAll(urlList);
+                mUrlHistoryService.addAll(urlList);
+
+                /* 更改详单记录状态 */
+                mBatchFollowSellService.updateCrawlFinish(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin);
+
+                batch.progress = mBatchFollowSellService.findAverageProgress(getUrl(page).batchNum);
+                if (batch.progress == 1) {
+                    batch.finishTime = currentTime;
+                    batch.status = 2;
+
+                    /* 监控批次完成，把批次放进推送队列 */
+                    mPushQueueService.add(batch.number);
+                }
+
+            }
+            mBatchService.update(batch);
+
+            /* 更新客户-Review关系记录状态 */
+            CustomerFollowSell customerFollowSell = mCustomerFollowSellService.find(batch.customerCode, getUrl(page).siteCode, getUrl(page).asin);
+            customerFollowSell.times++;
+            customerFollowSell.syncTime = currentTime;
+            mCustomerFollowSellService.update(customerFollowSell);
         }
     }
 
     /**
-     * 更新：
-     * 1，批次总单
-     * 2，批次详单
-     * 3，客户和跟卖关系
-     * 4，归档URL
+     * 当为翻页第一页时，保存其它页的翻页URL到URL表
      */
-    private void updateBatchStatus(Page page) {
-        /* 更改详单记录状态 */
-        mBatchFollowSellService.updateCrawlFinish(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin);
+    private void saveTurnPageUrl(Page page) {
+        List<String> pageUrlList = extractPageUrlList(page);
+        List<Url> urlList = new ArrayList<>();
+        for (String urlStr : pageUrlList) {
+            Url url = new Url();
 
-        /* 更新批次总单的状态 */
-        Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
-        Date currentTime = new Date();
-        if (batch.startTime == null) {
-            batch.startTime = currentTime;
+            url.batchNum = getUrl(page).batchNum;
+            url.siteCode = getUrl(page).siteCode;
+            url.asin = getUrl(page).asin;
+
+            url.type = getUrl(page).type;
+            url.urlMD5 = UrlUtils.md5(url.batchNum + urlStr);
+            url.url = urlStr;
+            url.parentUrl = getUrl(page).url;
+            url.priority = getUrl(page).priority;
+
+            urlList.add(url);
         }
-        float progress = mBatchFollowSellService.findAverageProgress(getUrl(page).batchNum);
-        batch.progress = progress;
+        mUrlService.addAll(urlList);
+    }
 
-        if (progress == 1) {
-            batch.finishTime = currentTime;
-            batch.status = 2;
-
-            /* 监控批次完成，把批次放进推送队列 */
-            mPushQueueService.add(batch.number);
-        } else {
-            batch.status = 1;
+    private int extractIndex(Page page) {
+        String startIndex = UrlUtils.getValue(page.getUrl().get(), START_INDEX);
+        if (StringUtils.isEmpty(startIndex)) {
+            return 0;
         }
-        mBatchService.update(batch);
+        return Integer.valueOf(startIndex);
+    }
 
-        /* 更新客户-Review关系记录状态 */
-        CustomerFollowSell customerFollowSell = mCustomerFollowSellService.find(batch.customerCode, getUrl(page).siteCode, getUrl(page).asin);
-        customerFollowSell.times++;
-        customerFollowSell.syncTime = currentTime;
-        mCustomerFollowSellService.update(customerFollowSell);
-
-        /* URL归档到历史表 */
-        archiveCurrentUrl(page);
+    /**
+     * 如果是第一页就抽取页面
+     */
+    private List<String> extractPageUrlList(Page page) {
+        if (extractIndex(page) == 0) {
+            return page.getHtml().xpath("//ul[@class='a-pagination']//a/@href").regex("(.*page_[0-9]+.*)").all();
+        }
+        return new ArrayList<>();
     }
 
     /**
