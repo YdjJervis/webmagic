@@ -20,6 +20,8 @@ public class ProductExtractorAdapter {
             extractor = new UKProductExtractor();
         } else if (siteCode.equals(R.SiteCode.DE)) {
             extractor = new DEProductExtractor();
+        } else if (siteCode.equals(R.SiteCode.FR)) {
+            extractor = new FRProductExtractor();
         }
 
         if (extractor != null) {
