@@ -55,7 +55,7 @@
         AND sau_type = #{0}
         AND sau_crawling = 0
         ORDER BY
-        sau_priority LIMIT 15;
+        sau_priority LIMIT 1;
     </select>
 
     <!-- 根据ASIN码查询全量爬取的URL -->

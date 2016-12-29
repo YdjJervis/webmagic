@@ -33,4 +33,12 @@ public class BatchRankService {
     public List<BatchRank> findNotCrawled() {
         return mBatchRankDao.findNotCrawled();
     }
+
+    public BatchRank findByObj(BatchRank batchRank) {
+        return mBatchRankDao.findByObj(batchRank);
+    }
+
+    public float findAverageProgress(String batchNum) {
+        return mBatchRankDao.findAverageProgress(batchNum);
+    }
 }

@@ -65,10 +65,14 @@ public class PushTask {
         PushDataReq pushDataReq = getNeedPushData(pushQueue);
         /*推送*/
         boolean isSuccess = true;
-        if (pushDataReq.getData().getAsins().size() > 0) {
+        if (pushDataReq.getData().getAsins() != null && pushDataReq.getData().getAsins().size() > 0) {
             isSuccess = push(pushDataReq);
         } else {
-            sLogger.info("批次号为(" + pushQueue.batchNum + ")没有数据变化，无需推送数据.");
+            if(!pushDataReq.getData().getType().equalsIgnoreCase("0")) {
+                sLogger.info("批次号为(" + pushQueue.batchNum + ")没有数据变化，无需推送数据.");
+            } else {
+                isSuccess = push(pushDataReq);
+            }
         }
         /*判断推送成功或失败*/
         pushQueue.status = isSuccess ? 2 : 3;
@@ -114,6 +118,7 @@ public class PushTask {
         PushDataReq pushDataReq = new PushDataReq();
         /*生成公共请求参数*/
         pushDataReq.setCustomerCode(batch.customerCode);
+        pushDataReq.setPlatformCode("ERP");
         pushDataReq.setToken(api.token);
 
         /*查询需要推送的具体数据，并将数据封装在Data对象里*/

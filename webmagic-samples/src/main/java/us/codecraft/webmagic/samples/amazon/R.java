@@ -60,6 +60,8 @@ public final class R {
     public static final class KeywordRank {
         public static final String MAX_PAGE_NUM = "maxPageNum"; /*最大页码数*/
         public static final String EVERY_PAGE_NUM = "everyPageNum"; /*每页商品数*/
+        public static final String KEYWORDS = "keywords"; /*搜索关键词参数*/
+        public static final String DEPARTMENT = "url"; /*搜索关键词品类参数*/
     }
 
 }

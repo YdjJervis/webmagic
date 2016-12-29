@@ -1,7 +1,11 @@
 package us.codecraft.webmagic.amazon.service;
 
+import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import us.codecraft.webmagic.samples.amazon.util.DateUtils;
+
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 /**
  * @author Hardy
@@ -36,5 +40,13 @@ public class TestMethod {
 //        Jedis jedis = new Jedis("0.0.0.0", 6379);
 //        Jedis jedis = new Jedis("192.168.0.121",6379);
         System.out.println(jedis.get("liugang"));
+    }
+    @Test
+    public void urlEncodeTest() {
+        String urlParam = "search-alias=aps";
+        urlParam = URLEncoder.encode(urlParam);
+        System.out.println(urlParam);
+        urlParam = URLDecoder.decode(urlParam);
+        System.out.println(urlParam);
     }
 }

@@ -37,8 +37,8 @@
           #{crawl},
           #{priority},
           #{frequency},
-          #{createTime},
-          #{updateTime}
+          CURRENT_TIMESTAMP,
+          CURRENT_TIMESTAMP
         )
     </insert>
 
@@ -56,6 +56,7 @@
           rcrk_update_time
         ) VALUES
         <foreach collection="list" index="index" item="item" separator=",">
+          (
             #{item.asin},
             #{item.keyword},
             #{item.customerCode},
@@ -64,8 +65,9 @@
             #{item.crawl},
             #{item.priority},
             #{item.frequency},
-            #{item.createTime},
-            #{item.updateTime}
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+          )
         </foreach>
     </insert>
 
@@ -81,6 +83,7 @@
           rcrk_crawl = #{crawl},
           rcrk_priority = #{priority},
           rcrk_frequency = #{frequency},
+          rcrk_sync_time = #{syncTime},
           rcrk_update_time = CURRENT_TIMESTAMP
         WHERE
           rcrk_id = #{id}
@@ -100,6 +103,8 @@
         FROM
           relation_customer_rank_keyword
         WHERE
-          CURRENT_TIMESTAMP - rcrk_sync_time > rcrk_frequency * 3600;
+          rcrk_crawl = 1 AND
+          CURRENT_TIMESTAMP - rcrk_sync_time > rcrk_frequency * 3600
+          OR rcrk_sync_time is null;
     </select>
 </mapper>

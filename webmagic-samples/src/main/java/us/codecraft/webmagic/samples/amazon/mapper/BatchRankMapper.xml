@@ -3,7 +3,7 @@
 <mapper namespace="us.codecraft.webmagic.samples.amazon.dao.batch.BatchRankDao">
     <resultMap id="BatchRankMap" type="BatchRank">
         <id column="bor_id" property="id" />
-        <result column="bor_batch_num" property="batchNum" />
+        <result column="bo_batch_num" property="batchNum" />
         <result column="bor_keyword" property="keyword" />
         <result column="bad_code" property="departmentCode" />
         <result column="bas_code" property="siteCode" />
@@ -18,7 +18,7 @@
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO batch_order_rank (
-          bor_batch_num,
+          bo_batch_num,
           bor_keyword,
           bas_code,
           saa_asin,
@@ -32,15 +32,15 @@
         ) VALUES
         <foreach collection="list" index="index" item="item" separator=",">
             (
-              #{batchNum},
-              #{keyword},
-              #{siteCode},
-              #{asin},
-              #{departmentCode},
-              #{type},
-              #{status},
-              #{priority},
-              #{isChanged},
+              #{item.batchNum},
+              #{item.keyword},
+              #{item.siteCode},
+              #{item.asin},
+              #{item.departmentCode},
+              #{item.type},
+              #{item.status},
+              #{item.priority},
+              #{item.isChanged},
               CURRENT_TIMESTAMP,
               CURRENT_TIMESTAMP
             )
@@ -51,7 +51,7 @@
         UPDATE
           batch_order_rank
         SET
-          bor_typ = #{type},
+          bor_type = #{type},
           bor_status = #{status},
           bor_is_changed = #{isChanged},
           bor_update_time = CURRENT_TIMESTAMP
@@ -69,6 +69,19 @@
         FROM
           batch_order_rank
         WHERE
-          bor_batch_num = #{batchNum}
+          bo_batch_num = #{batchNum}
+    </select>
+
+    <select id="findByObj" resultMap="BatchRankMap">
+        SELECT
+          *
+        FROM
+          batch_order_rank
+        WHERE
+          bo_batch_num = #{batchNum} and bor_keyword = #{keyword} and bas_code = #{siteCode} and saa_asin = #{asin} and bad_code = #{departmentCode}
+    </select>
+
+    <select id="findAverageProgress" resultType="float">
+        SELECT SUM(bor_status)/COUNT(*)/2 FROM batch_order_rank WHERE bo_batch_num = #{0};
     </select>
 </mapper>

@@ -1,6 +1,8 @@
 package us.codecraft.webmagic.samples.amazon.monitor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchRank;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerRankKeyword;
@@ -19,6 +21,7 @@ import java.util.Map;
  * @Description:
  * @date 2016/12/26 18:28
  */
+@Service
 public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implements ScheduledTask {
 
     @Autowired
@@ -34,7 +37,7 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
     /**
      * 每个客户取一批满足条件的keywordRank生成批次单号
      */
-    public void generateKeywordRankBatch() {
+    private void generateKeywordRankBatch() {
         Date currentTime = new Date();
 
         /*查询需要生成新的批次的客户关系关键词排名数据*/
@@ -48,7 +51,7 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
             List<CustomerRankKeyword> rckList = customerListMap.get(customerCode);
 
             /*生成总单并添加到数据库中*/
-            Batch batch = mBatchService.generate(customerCode, 4);
+            Batch batch = mBatchService.generate(customerCode, R.BatchType.KEYWORD_RANK);
             mBatchService.add(batch);
 
             /*将批次单号与review建立关系*/
@@ -61,7 +64,8 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
                 batchRank.setSiteCode(customerRankKeyword.getSiteCode());
                 batchRank.setAsin(customerRankKeyword.getAsin());
                 batchRank.setDepartmentCode(customerRankKeyword.getDepartmentCode());
-                batchRank.setType(5);
+                batchRank.setType(R.CrawlType.KEYWORD_RANK);
+                batchRank.setPriority(customerRankKeyword.getPriority());
 
                 needAddList.add(batchRank);
 

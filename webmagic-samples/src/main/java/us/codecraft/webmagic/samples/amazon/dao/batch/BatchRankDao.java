@@ -22,4 +22,7 @@ public interface BatchRankDao {
 
     List<BatchRank> findNotCrawled();
 
+    BatchRank findByObj(BatchRank batchRank);
+
+    float findAverageProgress(String batchNum);
 }

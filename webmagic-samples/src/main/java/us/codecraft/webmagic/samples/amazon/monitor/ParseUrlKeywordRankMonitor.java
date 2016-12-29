@@ -12,6 +12,7 @@ import us.codecraft.webmagic.samples.amazon.service.dict.SiteService;
 import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,9 +53,9 @@ public class ParseUrlKeywordRankMonitor extends ParseMonitor {
             url.siteCode = batchRank.getSiteCode();
             Site site = mSiteService.find(url.siteCode);
             if(StringUtils.isEmpty(batchRank.getDepartmentCode())) {
-                url.url = site.site + "/s?keywords" + batchRank.getKeyword() + "&ie=UTF8&lo=none";
+                url.url = site.site + "/s?keywords=" + URLEncoder.encode(batchRank.getKeyword()) + "&url=search-alias=aps&ie=UTF8&lo=none";
             } else {
-                url.url = site.site + "/s?keywords" + batchRank.getKeyword() + "&url=" + batchRank.getDepartmentCode() + "&ie=UTF8&lo=none";
+                url.url = site.site + "/s?keywords=" + URLEncoder.encode(batchRank.getKeyword()) + "&url=" + URLEncoder.encode(batchRank.getDepartmentCode()) + "&ie=UTF8&lo=none";
             }
             url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
             url.type = batchRank.getType();

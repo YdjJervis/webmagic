@@ -5,10 +5,16 @@ import java.util.Date;
 /**
  * @author Hardy
  * @version V0.1
- *  通过关键词搜索的商品排名信息
+ *  通过关键词搜索的商品排名前十信息
  *  2016/11/30 15:21
  */
 public class GoodsRankInfo {
+    private String id;
+    private String batchNum;
+    private String asin ;
+    private String keyword;
+    private String siteCode;
+    private String departmentCode;
     private String title;
     private String price;
     private String deliveryMode;/*发货方式*/
@@ -18,8 +24,56 @@ public class GoodsRankInfo {
     private int rankNum;/*排名*/
     private String departmentInfo; /*品类信息*/
     private String goodsStatus; /*排行商品状态(Bestseller or Gesponsert)*/
-    private Date createDate;
-    private Date updateDate;
+    private Date createTime;
+    private Date updateTime;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getBatchNum() {
+        return batchNum;
+    }
+
+    public void setBatchNum(String batchNum) {
+        this.batchNum = batchNum;
+    }
+
+    public String getAsin() {
+        return asin;
+    }
+
+    public void setAsin(String asin) {
+        this.asin = asin;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public String getSiteCode() {
+        return siteCode;
+    }
+
+    public void setSiteCode(String siteCode) {
+        this.siteCode = siteCode;
+    }
+
+    public String getDepartmentCode() {
+        return departmentCode;
+    }
+
+    public void setDepartmentCode(String departmentCode) {
+        this.departmentCode = departmentCode;
+    }
 
     public String getTitle() {
         return title;
@@ -93,19 +147,19 @@ public class GoodsRankInfo {
         this.goodsStatus = goodsStatus;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public Date getUpdateDate() {
-        return updateDate;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }
