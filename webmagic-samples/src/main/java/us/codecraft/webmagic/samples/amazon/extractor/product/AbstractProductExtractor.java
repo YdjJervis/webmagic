@@ -56,7 +56,7 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
     }
 
     /**
-     * @return
+     * @return 平均星级
      */
     String getReviewStar(Page page) {
         return page.getHtml().xpath("//*[@id='reviewStarsLinkedCustomerReviews']//span/text()").get();
@@ -66,19 +66,13 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
      * @return 排名信息，Json串
      */
     String extractRankInfo(Page page) {
+
         List<ProductRank> rankList = new ArrayList<>();
 
-        /* 解析总排名情况 */
-        ProductRank rank = new ProductRank();
-        rank.rank = page.getHtml().xpath("//*[@id='SalesRank']/text()").get();
-        page.getHtml().xpath("//*[@id='SalesRank']/text()").regex(".*([0-9,]*).*");
-        ProductRank.Category category = rank.new Category();
-        category.category = page.getHtml().xpath("//*[@id='SalesRank']/a/text()").get();
-        category.url = page.getHtml().xpath("//*[@id='SalesRank']/a/@href").get();
-        rank.categoryList.add(category);
-
+        ProductRank rank = extractTotalRank(page);
         rankList.add(rank);
 
+        ProductRank.Category category;
         /* 解析在其它分类的排名情况 */
         for (Selectable liNode : page.getHtml().xpath("//*[@class='zg_hrsr_item']").nodes()) {
             rank = new ProductRank();
@@ -96,9 +90,23 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
     }
 
     /**
+     * @return 总排名情况
+     */
+    ProductRank extractTotalRank(Page page) {
+        ProductRank rank = new ProductRank();
+        rank.rank = page.getHtml().xpath("//*[@id='SalesRank']/text()").get();
+        page.getHtml().xpath("//*[@id='SalesRank']/text()").regex(".*([0-9,]*).*");
+        ProductRank.Category category = rank.new Category();
+        category.category = page.getHtml().xpath("//*[@id='SalesRank']/a/text()").get();
+        category.url = page.getHtml().xpath("//*[@id='SalesRank']/a/@href").get();
+        rank.categoryList.add(category);
+        return rank;
+    }
+
+    /**
      * @return 产品添加时间
      */
-    private String extractAddedTime(Page page) {
+    String extractAddedTime(Page page) {
         List<Selectable> liNodes = page.getHtml().xpath("//div[@id='detail_bullets_id']//li[@id!='SalesRank']").nodes();
         for (Selectable liNode : liNodes) {
             String key = liNode.xpath("b/text()").get();
