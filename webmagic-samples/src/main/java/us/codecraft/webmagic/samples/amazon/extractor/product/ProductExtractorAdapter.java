@@ -22,6 +22,8 @@ public class ProductExtractorAdapter {
             extractor = new DEProductExtractor();
         } else if (siteCode.equals(R.SiteCode.FR)) {
             extractor = new FRProductExtractor();
+        } else if (siteCode.equals(R.SiteCode.JP)) {
+            extractor = new JPProductExtractor();
         }
 
         if (extractor != null) {

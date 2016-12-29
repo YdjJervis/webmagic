@@ -15,13 +15,12 @@ public class FRProductExtractor extends AbstractProductExtractor {
     @Override
     public Product extract(String asin, Page page) {
         super.extract(asin, page);
-        sProduct.siteCode = R.SiteCode.UK;
-
-        sProduct.reviewStar = page.getHtml().xpath("//*[@id='averageCustomerReviews']//span[@class='a-icon-alt']/text()").get();
-
-        sProduct.addedTime = extractAddedTime(page);
-        sProduct.category = extractRankInfo(page);
-
+        sProduct.siteCode = R.SiteCode.FR;
         return sProduct;
+    }
+
+    @Override
+    String getReviewStar(Page page) {
+        return page.getHtml().xpath("//*[@id='averageCustomerReviews']//span[@class='a-icon-alt']/text()").get();
     }
 }

@@ -10,13 +10,24 @@ import us.codecraft.webmagic.samples.amazon.pojo.crawl.Product;
  * @Description: 美国站产品基本信息抽取器
  * @date 2016/12/24 18:14
  */
-public class UKProductExtractor extends AbstractProductExtractor {
+public class JPProductExtractor extends AbstractProductExtractor {
 
     @Override
     public Product extract(String asin, Page page) {
         super.extract(asin, page);
-        sProduct.siteCode = R.SiteCode.UK;
+        sProduct.siteCode = R.SiteCode.JP;
         return sProduct;
     }
+
+    @Override
+    String getReviewStar(Page page) {
+        return page.getHtml().xpath("//*[@id='averageCustomerReviews']//span[@class='a-icon-alt']/text()").get();
+    }
+
+    @Override
+    String onAddedTimeKey() {
+        return "開始日";
+    }
+
 
 }

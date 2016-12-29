@@ -15,16 +15,12 @@ public class DEProductExtractor extends AbstractProductExtractor {
     @Override
     public Product extract(String asin, Page page) {
         super.extract(asin, page);
-        sProduct.siteCode = R.SiteCode.UK;
-
-        sProduct.addedTime = extractAddedTime(page);
-        sProduct.category = extractRankInfo(page);
-
+        sProduct.siteCode = R.SiteCode.DE;
         return sProduct;
     }
 
     @Override
-    String onKey() {
+    String onAddedTimeKey() {
         return "seit";
     }
 }

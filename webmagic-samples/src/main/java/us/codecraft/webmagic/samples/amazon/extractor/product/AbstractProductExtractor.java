@@ -45,13 +45,22 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
         sProduct.imgUrl = page.getHtml().xpath("//*[@id='imgTagWrapperId']/img/@data-a-dynamic-image").regex("(http.*?jpg)").get();
         sProduct.reviewNum = page.getHtml().xpath("//*[@id='acrCustomerReviewText']/text()").regex("([0-9,]*)").get();
         sProduct.replyNum = page.getHtml().xpath("//a[@id='askATFLink']/html()").regex("([0-9,]+)").get();
-        sProduct.reviewStar = page.getHtml().xpath("//*[@id='reviewStarsLinkedCustomerReviews']//span/text()").get();
         sProduct.reviewTime = page.getHtml().xpath("//div[@id='revMHRL']/div/div/span/span[2]/text()").get();
         sProduct.sellerNum = page.getHtml().xpath("//*[@id='mbc']//a[contains(@href,'offer-listing')]/text()").get();
+        sProduct.addedTime = extractAddedTime(page);
+
+        sProduct.reviewStar = getReviewStar(page);
+        sProduct.category = extractRankInfo(page);
 
         return sProduct;
     }
 
+    /**
+     * @return
+     */
+    String getReviewStar(Page page) {
+        return page.getHtml().xpath("//*[@id='reviewStarsLinkedCustomerReviews']//span/text()").get();
+    }
 
     /**
      * @return 排名信息，Json串
@@ -89,11 +98,11 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
     /**
      * @return 产品添加时间
      */
-    String extractAddedTime(Page page) {
+    private String extractAddedTime(Page page) {
         List<Selectable> liNodes = page.getHtml().xpath("//div[@id='detail_bullets_id']//li[@id!='SalesRank']").nodes();
         for (Selectable liNode : liNodes) {
             String key = liNode.xpath("b/text()").get();
-            if (StringUtils.isNotEmpty(key) && key.contains(onKey())) {
+            if (StringUtils.isNotEmpty(key) && key.contains(onAddedTimeKey())) {
                 return liNode.xpath("li/text()").get();
             }
         }
@@ -103,7 +112,7 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
     /**
      * @return 详细信息对应的Key值包含的关键字
      */
-    String onKey(){
+    String onAddedTimeKey(){
         return "Date";
     }
 }
