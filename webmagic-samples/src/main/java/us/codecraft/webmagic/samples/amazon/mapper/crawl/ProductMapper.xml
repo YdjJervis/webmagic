@@ -20,7 +20,7 @@
         <result column="sap_review_time" property="reviewTime"/>
         <result column="sap_reply_num" property="replyNum"/>
         <result column="sap_trans_mode" property="transMode"/>
-        <result column="sap_seller_num" property="sellerNum"/>
+        <result column="sap_follow_sell_num" property="followSellNum"/>
         <result column="sap_added_time" property="addedTime"/>
         <result column="sap_category" property="category"/>
         <result column="sap_extra" property="extra"/>
@@ -46,7 +46,7 @@
         sap_review_time,
         sap_reply_num,
         sap_trans_mode,
-        sap_seller_num,
+        sap_follow_sell_num,
         sap_added_time,
         sap_category,
         sap_extra
@@ -66,7 +66,7 @@
         #{reviewTime},
         #{replyNum},
         #{transMode},
-        #{sellerNum},
+        #{followSellNum},
         #{addedTime},
         #{category},
         #{extra}
@@ -88,7 +88,7 @@
         sap_review_time = #{reviewTime},
         sap_reply_num = #{replyNum},
         sap_trans_mode = #{transMode},
-        sap_seller_num = #{sellerNum},
+        sap_follow_sell_num = #{followSellNum},
         sap_added_time = #{addedTime},
         sap_category = #{category},
         sap_extra = #{extra}

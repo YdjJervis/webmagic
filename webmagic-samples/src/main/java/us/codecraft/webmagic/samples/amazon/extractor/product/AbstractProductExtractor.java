@@ -46,7 +46,7 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
         sProduct.reviewNum = page.getHtml().xpath("//*[@id='acrCustomerReviewText']/text()").regex("([0-9,]*)").get();
         sProduct.replyNum = page.getHtml().xpath("//a[@id='askATFLink']/html()").regex("([0-9,]+)").get();
         sProduct.reviewTime = page.getHtml().xpath("//div[@id='revMHRL']/div/div/span/span[2]/text()").get();
-        sProduct.sellerNum = page.getHtml().xpath("//*[@id='mbc']//a[contains(@href,'offer-listing')]/text()").get();
+        sProduct.followSellNum = page.getHtml().xpath("//*[@id='mbc']//a[contains(@href,'offer-listing')]/text()").get();
         sProduct.addedTime = extractAddedTime(page);
 
         sProduct.reviewStar = getReviewStar(page);

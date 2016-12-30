@@ -88,8 +88,12 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
 
             /*三期业务 */
             Product product = new ProductExtractorAdapter().extract(site.code, asinRootAsin.rootAsin, page);
-            mProductService.add(product);
-            sLogger.info(product);
+            if (product != null) {
+                mProductService.add(product);
+                sLogger.info(product);
+            } else {
+                sLogger.warn("当前站点未适配产品基本详细信息抓取：" + site.code);
+            }
 
             /* 把客户和产品详细信息关系入库 */
             CustomerProductInfo productInfo = new CustomerProductInfo();
