@@ -15,6 +15,7 @@ public class CustomerFollowSell extends BasePojo {
     public String customerCode;
     public String siteCode;
     public String asin;
+    public String sellerId;
     public int crawl = 1;
     public int onSell = 1;
     public int priority;
@@ -28,6 +29,7 @@ public class CustomerFollowSell extends BasePojo {
                 "customerCode='" + customerCode + '\'' +
                 ", siteCode='" + siteCode + '\'' +
                 ", asin='" + asin + '\'' +
+                ", sellerId='" + sellerId + '\'' +
                 ", crawl=" + crawl +
                 ", onSell=" + onSell +
                 ", priority=" + priority +

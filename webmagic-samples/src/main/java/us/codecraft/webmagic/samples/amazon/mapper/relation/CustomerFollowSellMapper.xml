@@ -8,6 +8,7 @@
         <result property="customerCode" column="bec_code"/>
         <result property="siteCode" column="bas_code"/>
         <result property="asin" column="rar_asin"/>
+        <result property="sellerId" column="saf_seller_id"/>
         <result property="crawl" column="rcf_crawl"/>
         <result property="onSell" column="rcf_on_sell"/>
         <result property="priority" column="rcf_priority"/>
@@ -24,6 +25,7 @@
           bec_code,
           bas_code,
           rar_asin,
+          saf_seller_id,
           rcf_crawl,
           rcf_on_sell,
           rcf_priority,
@@ -34,6 +36,7 @@
           #{customerCode},
           #{siteCode},
           #{asin},
+          #{sellerId}
           #{crawl},
           #{onSell},
           #{priority},
@@ -68,6 +71,7 @@
         UPDATE
           relation_customer_followsell
         SET
+          saf_seller_id = #{sellerId},
           rcf_crawl = #{crawl},
           rcf_on_sell = #{onSell},
           rcf_priority = #{priority},
@@ -87,6 +91,7 @@
         bec_code,
         bas_code,
         rar_asin,
+        saf_seller_id,
         rcf_crawl,
         rcf_on_sell,
         rcf_priority,
@@ -99,6 +104,7 @@
             #{item.customerCode},
             #{item.siteCode},
             #{item.asin},
+            #{item.sellerId},
             #{item.crawl},
             #{item.onSell},
             #{item.priority},

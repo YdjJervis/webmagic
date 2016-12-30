@@ -116,7 +116,7 @@
         AND sau_type = #{0}
         AND sau_crawling = 0
         ORDER BY
-        sau_priority LIMIT 1;
+        sau_priority LIMIT 10;
     </select>
 
     <select id="find" resultMap="UrlResultMap">

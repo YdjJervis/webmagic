@@ -30,7 +30,7 @@ public class CustomerFollowSellServiceTest extends SpringTestCase {
 
     @Test
     public void addAll(){
-        List<ImportData> importDataList = mImportDataService.find("US");
+        List<ImportData> importDataList = mImportDataService.find(null);
 
         List<CustomerFollowSell> list = new ArrayList<>();
         for (ImportData importData : importDataList) {

@@ -92,6 +92,18 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
         }
     }
 
+    @Override
+    void dealPageNotFound(Page page) {
+        /* 把下架反应到客户和ASIN关系里面 */
+        Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
+        CustomerFollowSell customerFollowSell = mCustomerFollowSellService.find(batch.customerCode, getUrl(page).siteCode, getUrl(page).asin);
+        customerFollowSell.onSell = 0;
+        mCustomerFollowSellService.update(customerFollowSell);
+
+        /* 删除URL */
+        mUrlService.deleteByUrlMd5(getUrl(page).urlMD5);
+    }
+
     /**
      * 当为翻页第一页时，保存其它页的翻页URL到URL表
      */

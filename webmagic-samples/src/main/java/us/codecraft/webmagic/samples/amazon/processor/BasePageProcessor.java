@@ -269,7 +269,7 @@ public class BasePageProcessor implements PageProcessor {
      * @return 是否是404页面
      */
     private boolean isPage404(Page page) {
-        return page.getStatusCode() == 404;
+        return page.getStatusCode() == 404 || page.getHtml().get().contains("404.html");
     }
 
     /**
