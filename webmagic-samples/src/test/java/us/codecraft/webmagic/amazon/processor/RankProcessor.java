@@ -5,7 +5,7 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.samples.amazon.pojo.GoodsRankInfo;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.GoodsRankInfo;
 import us.codecraft.webmagic.samples.base.util.UserAgentUtil;
 import us.codecraft.webmagic.selector.Selectable;
 

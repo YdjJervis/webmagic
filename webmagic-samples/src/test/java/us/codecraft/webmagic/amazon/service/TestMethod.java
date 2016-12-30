@@ -4,6 +4,7 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import us.codecraft.webmagic.samples.amazon.util.DateUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
@@ -43,10 +44,15 @@ public class TestMethod {
     }
     @Test
     public void urlEncodeTest() {
-        String urlParam = "search-alias=aps";
-        urlParam = URLEncoder.encode(urlParam);
-        System.out.println(urlParam);
-        urlParam = URLDecoder.decode(urlParam);
-        System.out.println(urlParam);
+        String urlParam = "cars bettwäsche";
+        try {
+            urlParam = URLEncoder.encode(urlParam, "UTF-8");
+            System.out.println(urlParam);
+            urlParam = URLDecoder.decode(urlParam, "UTF-8");
+            System.out.println(urlParam);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
     }
 }

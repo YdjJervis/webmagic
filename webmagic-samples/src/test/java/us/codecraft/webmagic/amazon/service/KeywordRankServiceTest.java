@@ -3,8 +3,8 @@ package us.codecraft.webmagic.amazon.service;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
-import us.codecraft.webmagic.samples.amazon.pojo.KeywordRank;
-import us.codecraft.webmagic.samples.amazon.service.KeywordRankService;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.KeywordRank;
+import us.codecraft.webmagic.samples.amazon.service.crawl.KeywordRankService;
 
 /**
  * @author Hardy

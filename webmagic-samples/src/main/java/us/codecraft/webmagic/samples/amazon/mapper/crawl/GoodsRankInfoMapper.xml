@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.GoodsRankInfoDao">
+<mapper namespace="us.codecraft.webmagic.samples.amazon.dao.crawl.GoodsRankInfoDao">
     <resultMap id="GoodsRankInfoMap" type="GoodsRankInfo">
         <id column="sag_id" property="id" />
         <result column="bo_batch_num" property="batchNum" />

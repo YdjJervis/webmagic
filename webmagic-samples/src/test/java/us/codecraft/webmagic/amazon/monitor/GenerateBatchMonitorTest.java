@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.base.SpringTestCase;
 import us.codecraft.webmagic.samples.amazon.monitor.GenerateAsinBatchMonitor;
+import us.codecraft.webmagic.samples.amazon.monitor.GenerateKeywordRankBatchMonitor;
 import us.codecraft.webmagic.samples.amazon.monitor.GenerateReviewBatchMonitor;
 
 /**
@@ -20,6 +21,9 @@ public class GenerateBatchMonitorTest extends SpringTestCase {
     @Autowired
     private GenerateReviewBatchMonitor mGenerateReviewBatchMonitor;
 
+    @Autowired
+    private GenerateKeywordRankBatchMonitor mGenerateKeywordRankBatchMonitor;
+
     @Test
     public void generateReviewMonitorBathTest() {
         mGenerateBatchMonitor.execute();
@@ -28,6 +32,11 @@ public class GenerateBatchMonitorTest extends SpringTestCase {
     @Test
     public void generateReviewUpdateBatch() {
         mGenerateReviewBatchMonitor.execute();
+    }
+
+    @Test
+    public void generateKeywordRankBatchMonitor() {
+        mGenerateKeywordRankBatchMonitor.execute();
     }
 
 }

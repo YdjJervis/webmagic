@@ -1,7 +1,7 @@
-package us.codecraft.webmagic.samples.amazon.dao;
+package us.codecraft.webmagic.samples.amazon.dao.crawl;
 
 import org.springframework.stereotype.Repository;
-import us.codecraft.webmagic.samples.amazon.pojo.GoodsRankInfo;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.GoodsRankInfo;
 
 import java.util.List;
 

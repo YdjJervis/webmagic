@@ -6,6 +6,8 @@ import us.codecraft.webmagic.base.SpringTestCase;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerRankKeyword;
 import us.codecraft.webmagic.samples.amazon.service.relation.CustomerRankKeywordService;
 
+import java.net.URLEncoder;
+
 /**
  * @author Hardy
  * @version V0.2
@@ -19,13 +21,13 @@ public class CustomerRankKeywordServiceTest extends SpringTestCase {
     @Test
     public void add() {
         CustomerRankKeyword customerRankKeyword = new CustomerRankKeyword();
-        customerRankKeyword.setAsin("B00NK332BS");
-        customerRankKeyword.setKeyword("food");
+        customerRankKeyword.setAsin("B00IA530JA");
+        customerRankKeyword.setKeyword(URLEncoder.encode("Robinet"));
         customerRankKeyword.setCustomerCode("EC_001");
-        customerRankKeyword.setSiteCode("US");
-        customerRankKeyword.setDepartmentCode("search-alias=pets");
+        customerRankKeyword.setSiteCode("FR");
+        customerRankKeyword.setDepartmentCode("search-alias=aps");
         customerRankKeyword.setCrawl(1);
-        customerRankKeyword.setPriority(2);
+        customerRankKeyword.setPriority(0);
         mCustomerRankKeywordService.add(customerRankKeyword);
     }
 }

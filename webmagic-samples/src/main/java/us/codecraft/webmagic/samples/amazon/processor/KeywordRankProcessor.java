@@ -8,19 +8,22 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.downloader.HttpClientImplDownloader;
 import us.codecraft.webmagic.samples.amazon.R;
-import us.codecraft.webmagic.samples.amazon.pojo.GoodsRankInfo;
-import us.codecraft.webmagic.samples.amazon.pojo.KeywordRank;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.GoodsRankInfo;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.KeywordRank;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchRank;
 import us.codecraft.webmagic.samples.amazon.service.*;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchRankService;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
+import us.codecraft.webmagic.samples.amazon.service.crawl.GoodsRankInfoService;
+import us.codecraft.webmagic.samples.amazon.service.crawl.KeywordRankService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 import us.codecraft.webmagic.samples.base.service.UserAgentService;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 import us.codecraft.webmagic.selector.Selectable;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -66,8 +69,14 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
         /*获取当前页的商品结点列表*/
         List<Selectable> goodsNodesList = extractGoodsNodesList(page);
 
-        String departmentCode = URLDecoder.decode(UrlUtils.getValue(url.url, R.KeywordRank.DEPARTMENT));
-        String keyword = URLDecoder.decode(UrlUtils.getValue(url.url, R.KeywordRank.KEYWORDS));
+        String departmentCode;
+        String keyword;
+        try {
+            departmentCode = URLDecoder.decode(UrlUtils.getValue(url.url, R.KeywordRank.DEPARTMENT), "utf-8");
+            keyword = URLDecoder.decode(UrlUtils.getValue(url.url, R.KeywordRank.KEYWORDS), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
+        }
         String asin = url.asin;
         String siteCode = url.siteCode;
         KeywordRank keywordRank = new KeywordRank(asin, keyword, siteCode, departmentCode);
@@ -77,11 +86,12 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
             Map<String, Integer> homePage = getHomePageInfo(page, goodsNodesList);
             KeywordRank rank = mKeywordRankService.findByObj(keywordRank);
             if (rank == null) {
-                /*将最大页数与每页的商品数更新到监测表中*/
+                /*将最大页数与每页的商品数添加到监测表中*/
                 keywordRank.setTotalPages(homePage.get(R.KeywordRank.MAX_PAGE_NUM));
                 keywordRank.setEveryPage(homePage.get(R.KeywordRank.EVERY_PAGE_NUM));
                 mKeywordRankService.add(keywordRank);
             } else {
+                /*将最大页数与每页的商品数更新到监测表中*/
                 rank.setTotalPages(homePage.get(R.KeywordRank.MAX_PAGE_NUM));
                 rank.setEveryPage(homePage.get(R.KeywordRank.EVERY_PAGE_NUM));
                 mKeywordRankService.updateByObj(rank);
@@ -174,13 +184,14 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
         if (progress == 1) {
             batch.finishTime = new Date();
             batch.status = 2;
-            /*添加到需要推送队列表中*/
-            mPushQueueService.add(batchNum);
 
             /*将URL从url表转到url_history表中*/
             List<Url> finishUrls = mUrlService.findByBatchNum(url.batchNum);
             mUrlHistoryService.addAll(finishUrls);
             mUrlService.deleteAll(finishUrls);
+
+            /*添加到需要推送队列表中*/
+            mPushQueueService.add(batchNum);
         } else {
             batch.status = 1;
         }
@@ -210,7 +221,7 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
             /*解析前十的商品信息*/
         for (Selectable goodsNode : goodsNodesList) {
             rankIndex++;
-            GoodsRankInfo goodsRankInfo = extractGoodsNode(goodsNode);
+            GoodsRankInfo goodsRankInfo = extractGoodsNode(goodsNode, url.siteCode);
             if (StringUtils.isEmpty(goodsRankInfo.getTitle())) {
                 /*取前十商品信息，不含品类推荐*/
                 rankIndex--;
@@ -258,17 +269,17 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
     /**
      * 解析关键词搜索得到的商品信息
      */
-    private GoodsRankInfo extractGoodsNode(Selectable goodsNode) {
+    private GoodsRankInfo extractGoodsNode(Selectable goodsNode, String siteCode) {
         /*获取商品asin*/
         GoodsRankInfo goodsRankInfo = new GoodsRankInfo();
-        String title = goodsNode.xpath("//h2[contains(@class, 's-access-title')]/text()").get();
-        String price = getPrice(goodsNode);
+        String title = goodsNode.xpath("//h2[contains(@class, 's-access-title')]/@data-attribute").get();
+        String price = getPrice(goodsNode, siteCode);
         String pictureUrl = goodsNode.xpath("//img[contains(@class, 'cfMarker')]/@src").get();
-        int offersNum = getOffersNum(goodsNode);
+        int offersNum = getOffersNum(goodsNode, siteCode);
         String departmentInfo = getDepartmentInfo(goodsNode);
         String deliveryMode = getDeliveryMode(goodsNode);
         String goodsStatus = getGoodsStatus(goodsNode);
-        String distributionMode = getDistributionMode(goodsNode) ? "free" : "notFree";
+        String distributionMode = getDistributionMode(goodsNode, siteCode) ? "free" : "noFree";
         goodsRankInfo.setTitle(title);
         goodsRankInfo.setPrice(price);
         goodsRankInfo.setDeliveryMode(deliveryMode);
@@ -290,7 +301,21 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
     /**
      * 解析商品价格
      */
-    private String getPrice(Selectable goodsNode) {
+    private String getPrice(Selectable goodsNode, String siteCode) {
+        if (siteCode.equalsIgnoreCase(R.SiteCode.US)) {
+            return getPriceUS(goodsNode);
+        } else if (siteCode.equalsIgnoreCase(R.SiteCode.UK) |
+                siteCode.equalsIgnoreCase(R.SiteCode.DE) |
+                siteCode.equalsIgnoreCase(R.SiteCode.FR)) {
+            return getPriceUK(goodsNode);
+        }
+        return null;
+    }
+
+    /**
+     * 解析美国站关键词搜索到的商品的价格
+     */
+    private String getPriceUS(Selectable goodsNode) {
         String price = "";
         List<Selectable> priceNodes = goodsNode.xpath("//span[contains(@class, 'sx-price')]/*").nodes();
         for (Selectable priceNode : priceNodes) {
@@ -305,11 +330,60 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
     }
 
     /**
+     * 解析英国站关键词搜索到的商品的价格
+     */
+    private String getPriceUK(Selectable goodsNode) {
+        String price = goodsNode.xpath("//span[contains(@class, 's-price')]/text()").get();
+        if (StringUtils.isEmpty(price)) {
+            price = goodsNode.xpath("//span[contains(@class, 'a-color-price')]/text()").get();
+        }
+        return price;
+    }
+
+    /**
      * 解析商品跟卖数
      */
-    private int getOffersNum(Selectable goodsNode) {
+    private int getOffersNum(Selectable goodsNode, String siteCode) {
+        if (siteCode.equalsIgnoreCase(R.SiteCode.US) | siteCode.equalsIgnoreCase(R.SiteCode.UK)) {
+            return getOffersNumUS(goodsNode);
+        } else if (siteCode.equalsIgnoreCase(R.SiteCode.DE)) {
+            return getOffersNumDE(goodsNode);
+        } else if (siteCode.equalsIgnoreCase(R.SiteCode.FR)) {
+            return getOffersNumFR(goodsNode);
+        }
+        return 0;
+    }
+
+    /**
+     * 美国站解析商品跟卖数
+     */
+    private int getOffersNumUS(Selectable goodsNode) {
         int offersNum = 0;
         List<String> resultList = goodsNode.regex("(\\d+) offer").all();
+        for (String offer : resultList) {
+            offersNum += Integer.valueOf(offer);
+        }
+        return offersNum;
+    }
+
+    /**
+     * 德国站解析商品跟卖数
+     */
+    private int getOffersNumDE(Selectable goodsNode) {
+        int offersNum = 0;
+        List<String> resultList = goodsNode.regex("(\\d+) Angebote").all();
+        for (String offer : resultList) {
+            offersNum += Integer.valueOf(offer);
+        }
+        return offersNum;
+    }
+
+    /**
+     * 法国站解析商品跟卖数
+     */
+    private int getOffersNumFR(Selectable goodsNode) {
+        int offersNum = 0;
+        List<String> resultList = goodsNode.regex("(\\d+) offres").all();
         for (String offer : resultList) {
             offersNum += Integer.valueOf(offer);
         }
@@ -320,10 +394,13 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
      * 解析排名商品的品类信息
      */
     private String getDepartmentInfo(Selectable goodsNode) {
-        String departmentInfo;
-        departmentInfo = goodsNode.xpath("//a/span[@class='a-text-bold']/text()").get();
-        departmentInfo += goodsNode.xpath("//a[@class='a-size-small a-link-normal a-text-normal' and contains(@href,'/s/')]/text()").get();
-        //departmentInfo += goodsNode.regex("(See.*?items)").get();
+        Selectable departNode = goodsNode.xpath("//a[@class='a-size-small a-link-normal a-text-normal' and contains(@href,'/s/')]");
+        String departmentInfo = departNode.xpath("//span/text()").get();
+        if (StringUtils.isNotEmpty(departmentInfo)) {
+            departmentInfo += departNode.xpath("/a/text()").get();
+        } else {
+            departmentInfo = departNode.xpath("/a/text()").get();
+        }
         return departmentInfo;
     }
 
@@ -352,8 +429,8 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
         } else if (StringUtils.isEmpty(bestSeller) && StringUtils.isEmpty(sponsored)) {
             return null;
         } else {
-            goodsStatus.append(bestSeller);
-            goodsStatus.append(sponsored);
+            goodsStatus.append(StringUtils.isEmpty(bestSeller) ? "" : bestSeller);
+            goodsStatus.append(StringUtils.isEmpty(sponsored) ? "" : sponsored);
         }
 
         return goodsStatus.toString().trim();
@@ -362,8 +439,36 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
     /**
      * 解析排名商品是否免运费
      */
-    private boolean getDistributionMode(Selectable goodsNode) {
+    private boolean getDistributionMode(Selectable goodsNode, String siteCode) {
+        if (siteCode.equalsIgnoreCase(R.SiteCode.US) | siteCode.equalsIgnoreCase(R.SiteCode.UK)) {
+            return getDistributionModeUS(goodsNode);
+        } else if (siteCode.equalsIgnoreCase(R.SiteCode.DE)) {
+            return getDistributionModeDE(goodsNode);
+        } else if (siteCode.equalsIgnoreCase(R.SiteCode.FR)) {
+            return getDistributionModeFR(goodsNode);
+        }
+        return false;
+    }
+
+    /**
+     * 美国站或英国站解析排名商品是否免运费
+     */
+    private boolean getDistributionModeUS(Selectable goodsNode) {
         return goodsNode.regex("FREE Shipping").match();
+    }
+
+    /**
+     * 德国站解析排名商品是否免运费
+     */
+    private boolean getDistributionModeDE(Selectable goodsNode) {
+        return goodsNode.regex("Kostenlose Lieferung").match();
+    }
+
+    /**
+     * 法国站解析排名商品是否免运费
+     */
+    private boolean getDistributionModeFR(Selectable goodsNode) {
+        return goodsNode.regex("Livraison gratuite").match();
     }
 
     /**
@@ -394,10 +499,12 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
 
         /*最大页数*/
         String maxPageNum = page.getHtml().xpath("//div[@id='pagn']//span[@class='pagnDisabled']/text()").get();
+
         if (StringUtils.isNotEmpty(maxPageNum)) {
             resultMap.put(R.KeywordRank.MAX_PAGE_NUM, Integer.valueOf(maxPageNum));
         } else {
-            resultMap.put(R.KeywordRank.MAX_PAGE_NUM, 1);
+            int max = page.getHtml().xpath("//div[@id='pagn']//span[@class='pagnLink']").nodes().size() + 1;
+            resultMap.put(R.KeywordRank.MAX_PAGE_NUM, max);
         }
         /*第一页的商品数*/
         resultMap.put(R.KeywordRank.EVERY_PAGE_NUM, goodsNodesList.size());

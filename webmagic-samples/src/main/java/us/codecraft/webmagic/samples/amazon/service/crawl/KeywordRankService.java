@@ -1,9 +1,9 @@
-package us.codecraft.webmagic.samples.amazon.service;
+package us.codecraft.webmagic.samples.amazon.service.crawl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.dao.KeywordRankDao;
-import us.codecraft.webmagic.samples.amazon.pojo.KeywordRank;
+import us.codecraft.webmagic.samples.amazon.dao.crawl.KeywordRankDao;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.KeywordRank;
 
 import java.util.List;
 

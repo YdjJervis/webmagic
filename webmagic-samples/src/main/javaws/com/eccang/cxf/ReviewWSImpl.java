@@ -94,7 +94,6 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 customerReview.frequency = review.frequency;
                 if (mCustomerReviewService.isExist(reviewReq.cutomerCode, review.reviewId)) {
                     crawledNum++;
-                    continue;
                 }
                 customerReviewList.add(customerReview);
             }

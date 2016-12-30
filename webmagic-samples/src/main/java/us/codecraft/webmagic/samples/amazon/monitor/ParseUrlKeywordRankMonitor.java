@@ -12,6 +12,7 @@ import us.codecraft.webmagic.samples.amazon.service.dict.SiteService;
 import us.codecraft.webmagic.samples.base.monitor.ParseMonitor;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ParseUrlKeywordRankMonitor extends ParseMonitor {
     public void execute() {
         List<Url> urls = getUrl(true);
 
-        /* 把所有需要监听的Review转换成URL后入库 */
+        /* 把所有需要监听的关键词搜索转换成URL后入库 */
         mUrlService.addAll(urls);
     }
 
@@ -52,10 +53,15 @@ public class ParseUrlKeywordRankMonitor extends ParseMonitor {
             url.batchNum = batchRank.getBatchNum();
             url.siteCode = batchRank.getSiteCode();
             Site site = mSiteService.find(url.siteCode);
-            if(StringUtils.isEmpty(batchRank.getDepartmentCode())) {
-                url.url = site.site + "/s?keywords=" + URLEncoder.encode(batchRank.getKeyword()) + "&url=search-alias=aps&ie=UTF8&lo=none";
-            } else {
-                url.url = site.site + "/s?keywords=" + URLEncoder.encode(batchRank.getKeyword()) + "&url=" + URLEncoder.encode(batchRank.getDepartmentCode()) + "&ie=UTF8&lo=none";
+            try {
+                if (StringUtils.isEmpty(batchRank.getDepartmentCode())) {
+
+                    url.url = site.site + "/s?keywords=" + URLEncoder.encode(batchRank.getKeyword(), "utf-8") + "&url=search-alias=aps&ie=UTF8&lo=none";
+                } else {
+                    url.url = site.site + "/s?keywords=" + URLEncoder.encode(batchRank.getKeyword(), "utf-8") + "&url=" + URLEncoder.encode(batchRank.getDepartmentCode(), "utf-8") + "&ie=UTF8&lo=none";
+                }
+            } catch (UnsupportedEncodingException e) {
+                sLogger.info(e);
             }
             url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
             url.type = batchRank.getType();
@@ -66,7 +72,7 @@ public class ParseUrlKeywordRankMonitor extends ParseMonitor {
             mBatchRankService.update(batchRank);
             urls.add(url);
         }
-        sLogger.info("新添加的review的监听条数：" + urls.size());
+        sLogger.info("新添加的关键词排名搜索的监听条数：" + urls.size());
 
         return urls;
     }
