@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.dict.ProxyAgencyBaseInfoDao">
+    <resultMap id="ProxyAgencyBaseInfoMap" type="ProxyAgencyBaseInfo">
+        <id property="id" column="bpt_id" />
+        <result property="proxyCode" column="bpt_proxy_code" />
+        <result property="createDate" column="bpt_create_date" />
+        <result property="updateDate" column="bpt_update_date" />
+    </resultMap>
+
+    <!-- 单条信息添加 -->
+    <insert id="addInfo" parameterType="ProxyAgencyBaseInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO base_proxy_type (
+          bpt_proxy_code,
+          bpt_create_date,
+          bpt_update_date
+        ) VALUES (
+          #{proxyCode},
+          CURRENT_TIMESTAMP,
+          CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 通过id删除 -->
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM base_proxy_type
+        WHERE bpt_id = #{0}
+    </delete>
+
+    <!-- 通过id更新 -->
+    <update id="updateById" parameterType="ProxyAgencyBaseInfo">
+        UPDATE base_proxy_type
+        SET
+          bpt_proxy_code = #{proxyCode},
+          bpt_update_date = CURRENT_TIMESTAMP
+        WHERE
+          bpt_id = #{id}
+    </update>
+
+    <!-- 通过id查询 -->
+    <select id="findById" parameterType="int" resultMap="ProxyAgencyBaseInfoMap">
+        SELECT * FROM base_proxy_type
+        WHERE bpt_id = #{0}
+    </select>
+
+    <!-- 通过代理类型查询 -->
+    <select id="findByCode" parameterType="java.lang.String" resultMap="ProxyAgencyBaseInfoMap">
+        SELECT * FROM base_proxy_type
+        WHERE bpt_proxy_code = #{0}
+    </select>
+
+    <!-- 查询所有代理商信息 -->
+    <select id="findAll" resultMap="ProxyAgencyBaseInfoMap">
+      SELECT * FROM base_proxy_type
+    </select>
+</mapper>

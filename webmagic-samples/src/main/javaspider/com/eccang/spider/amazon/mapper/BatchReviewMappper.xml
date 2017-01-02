@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.batch.BatchReviewDao">
+
+    <resultMap id="BatchReviewResultMap" type="BatchReview">
+        <id property="id" column="bor_id"/>
+        <result property="batchNumber" column="bo_batch_num"/>
+        <result property="siteCode" column="bas_code"/>
+        <result property="reviewID" column="bor_review_id"/>
+        <result property="type" column="bor_type"/>
+        <result property="status" column="bor_status"/>
+        <result property="priority" column="bor_priority"/>
+        <result property="isChanged" column="bor_is_changed"/>
+        <result property="extra" column="bor_extra"/>
+        <result property="createTime" column="bor_create_time"/>
+        <result property="updateTime" column="bor_update_time"/>
+    </resultMap>
+
+    <select id="find" parameterType="BatchReview" resultMap="BatchReviewResultMap">
+        SELECT * FROM batch_order_review WHERE bo_batch_num = #{batchNumber} AND bor_review_id = #{reviewID};
+    </select>
+
+    <update id="update" parameterType="BatchReview">
+        UPDATE batch_order_review SET
+        bas_code = #{siteCode},
+        bor_type = #{type},
+        bor_status = #{status},
+        bor_priority = #{priority},
+        bor_is_changed = #{isChanged},
+        bor_extra = #{extra}
+        WHERE
+        bo_batch_num = #{batchNumber} AND bor_review_id = #{reviewID};
+    </update>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO batch_order_review(
+        bo_batch_num,bas_code,bor_review_id,bor_type,bor_status,bor_priority,bor_is_changed,bor_extra
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.batchNumber},#{item.siteCode},#{item.reviewID},#{item.type},#{item.status},#{item.priority},#{item.isChanged},#{item.extra}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findByReviewID" resultMap="BatchReviewResultMap">
+        SELECT * FROM batch_order_review WHERE bo_batch_num = #{0} and bor_review_id = #{1};
+    </select>
+
+    <select id="findAllByBatchNum" resultMap="BatchReviewResultMap">
+        select * from batch_order_review WHERE bo_batch_num = #{0};
+    </select>
+
+    <select id="findNotCrawled" resultMap="BatchReviewResultMap">
+        select * from batch_order_review WHERE bor_status = 0;
+    </select>
+
+    <!-- 查询某个单号的平均进度 -->
+    <select id="findAverageProgress" resultType="float">
+        SELECT SUM(bor_status)/COUNT(*)/2 FROM batch_order_review WHERE bo_batch_num = #{0};
+    </select>
+
+</mapper>

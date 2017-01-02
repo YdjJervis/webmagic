@@ -18,8 +18,8 @@
 
     </settings>
     <typeAliases>
-        <package name="us.codecraft.webmagic.samples.amazon.pojo"/>
-        <package name="us.codecraft.webmagic.samples.base.pojo"/>
+        <package name="com.eccang.spider.amazon.pojo"/>
+        <package name="com.eccang.spider.base.pojo"/>
     </typeAliases>
 
     <mappers>

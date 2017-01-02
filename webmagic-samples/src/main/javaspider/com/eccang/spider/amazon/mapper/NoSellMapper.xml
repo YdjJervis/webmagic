@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.NoSellDao">
+
+    <resultMap id="NoSellResultMap" type="Asin">
+        <id column="sans_id" property="id"/>
+        <result column="bas_code" property="siteCode"/>
+        <result column="rar_asin" property="rootAsin"/>
+        <result column="sans_create_time" property="createTime"/>
+        <result column="sans_update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="add" parameterType="Asin">
+        INSERT INTO spider_amazon_nosell(
+          bas_code,rar_asin
+        ) VALUES (
+        #{siteCode},#{rootAsin}
+        )
+    </insert>
+
+    <select id="findExist" resultType="int">
+        select COUNT(*) from spider_amazon_nosell
+        WHERE bas_code = #{0} and rar_asin = #{1};
+    </select>
+</mapper>

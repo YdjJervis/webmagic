@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.KeywordRankStatDao">
+
+    <resultMap id="KeywordRankStatMap" type="KeywordRankStat">
+        <id column="sarss_id" property="id" />
+        <result column="sars_id" property="rankSearchId" />
+        <result column="sarss_rank_num" property="rankNum" />
+        <result column="sarss_total_pages" property="totalPage" />
+        <result column="sarss_every_page" property="everyPage" />
+        <result column="sarss_is_complete" property="isComplete" />
+        <result column="sarss_createDate" property="createDate" />
+        <result column="sarss_updateDate" property="updateDate" />
+    </resultMap>
+
+    <insert id="add" parameterType="KeywordRankStat" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO spider_amazon_rank_search_stat (
+          sars_id,
+          sarss_rank_num,
+          sarss_total_pages,
+          sarss_every_page,
+          sarss_is_complete,
+          sarss_createDate,
+          sarss_updateDate
+        ) VALUES (
+          #{rankSearchId},
+          #{rankNum},
+          #{totalPage},
+          #{everyPage},
+          #{isComplete},
+          CURRENT_TIMESTAMP,
+          CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <update id="updateById" parameterType="KeywordRankStat">
+        UPDATE
+          spider_amazon_rank_search_stat
+        SET
+          sars_id = #{rankSearchId},
+          sarss_rank_num = #{rankNum},
+          sarss_total_pages = #{totalPage},
+          sarss_every_page = #{everyPage},
+          sarss_is_complete = #{isComplete},
+          sarss_updateDate = CURRENT_TIMESTAMP
+        WHERE
+          sarss_id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM
+          spider_amazon_rank_search_stat
+        WHERE
+          sarss_id = #{0}
+    </delete>
+
+    <select id="findById" resultMap="KeywordRankStatMap" parameterType="int">
+        SELECT
+          sarss_id,
+          sars_id,
+          sarss_rank_num,
+          sarss_total_pages,
+          sarss_every_page,
+          sarss_is_complete,
+          sarss_createDate,
+          sarss_updateDate
+        FROM
+          spider_amazon_rank_search_stat
+        WHERE
+          sarss_id = #{0}
+    </select>
+
+    <select id="findAll" resultMap="KeywordRankStatMap">
+        SELECT
+          sarss_id,
+          sars_id,
+          sarss_rank_num,
+          sarss_total_pages,
+          sarss_every_page,
+          sarss_is_complete,
+          sarss_createDate,
+          sarss_updateDate
+        FROM
+          spider_amazon_rank_search_stat
+    </select>
+
+    <select id="findByRankSearchId" resultMap="KeywordRankStatMap" parameterType="int">
+        SELECT
+          sarss_id,
+          sars_id,
+          sarss_rank_num,
+          sarss_total_pages,
+          sarss_every_page,
+          sarss_is_complete,
+          sarss_createDate,
+          sarss_updateDate
+        FROM
+          spider_amazon_rank_search_stat
+        WHERE
+          sars_id = #{0}
+    </select>
+</mapper>

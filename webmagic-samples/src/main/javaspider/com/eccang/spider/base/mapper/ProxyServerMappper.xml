@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.base.dao.ProxyServerDao">
+
+    <resultMap id="ProxyServerResultMap" type="ProxyServer">
+        <result property="id" column="bps_ip"/>
+        <result property="hostName" column="bps_host_name"/>
+        <result property="port" column="bps_port"/>
+        <result property="useCount" column="bps_use_count"/>
+        <result property="status" column="bps_status"/>
+        <result property="updateTime" column="bps_udpate_time"/>
+    </resultMap>
+
+    <update id="update" parameterType="ProxyServer">
+        UPDATE base_proxy_server SET bps_host_name=#{hostName},bps_port=#{port},bps_use_count = #{useCount},bps_status=#{status},bps_udpate_time=#{updatetime} WHERE bps_ip=#{id};
+    </update>
+
+    <update id="add" parameterType="ProxyServer">
+        INSERT INTO base_proxy_server(bps_host_name,bps_port) VALUES (#{hostName},#{port})
+        ON DUPLICATE KEY UPDATE bps_host_name = #{hostName},bps_port = #{port},bps_udpate_time=CURRENT_TIMESTAMP
+    </update>
+
+    <select id="findAll" resultMap="ProxyServerResultMap">
+        SELECT * FROM base_proxy_server;
+    </select>
+
+</mapper>

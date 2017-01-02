@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.base.dao.UserAgentDao">
+
+    <resultMap id="UserAgentResultMap" type="UserAgent">
+        <result property="id" column="bua_ip"/>
+        <result property="userAgent" column="bua_user_agent"/>
+        <result property="useCount" column="bua_use_count"/>
+        <result property="updateTime" column="bua_update_time"/>
+    </resultMap>
+
+    <update id="update" parameterType="UserAgent">
+        UPDATE base_user_agent SET bua_use_count = #{useCount} WHERE bua_ip=#{id};
+    </update>
+
+    <select id="findAll" resultMap="UserAgentResultMap">
+        SELECT * FROM base_user_agent;
+    </select>
+
+</mapper>

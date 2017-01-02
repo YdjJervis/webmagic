@@ -29,7 +29,7 @@
     
     <!-- 自定义监听器 -->
     <listener>
-        <listener-class>us.codecraft.webmagic.samples.amazon.monitor.StatusListener</listener-class>
+        <listener-class>com.eccang.spider.amazon.monitor.StatusListener</listener-class>
     </listener>
 
     <!--配置CXF-->

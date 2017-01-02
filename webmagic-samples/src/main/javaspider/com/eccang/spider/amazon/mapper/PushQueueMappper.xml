@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.PushQueueDao">
+
+    <resultMap id="PushQueueMap" type="PushQueue">
+        <id column="dpq_id" property="id"/>
+        <result column="bo_batch_num" property="batchNum"/>
+        <result column="dpq_status" property="status"/>
+        <result column="dpq_times" property="times"/>
+        <result column="dpq_extra" property="extra"/>
+        <result column="dpq_create_time" property="createTime"/>
+        <result column="dpq_update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="add" parameterType="PushQueue" useGeneratedKeys="true" keyProperty="id">
+        insert into data_push_queue(bo_batch_num,dpq_status,dpq_times,dpq_extra)
+        values
+            (#{batchNum},#{status},#{times},#{extra})
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM data_push_queue
+        WHERE
+            bo_batch_num = #{0}
+    </delete>
+
+    <update id="update" parameterType="PushQueue">
+        UPDATE data_push_queue SET
+            dpq_status = #{status},
+            dpq_times = #{times},
+            dpq_extra = #{extra}
+        WHERE
+            bo_batch_num = #{batchNum}
+    </update>
+
+    <select id="findNeed2Push" resultMap="PushQueueMap">
+      SELECT
+        *
+      FROM
+        data_push_queue
+      WHERE
+        <![CDATA[
+        dpq_times < 3 AND dpq_status != 1 and dpq_status != 2
+
+        ]]>
+    </select>
+
+</mapper>

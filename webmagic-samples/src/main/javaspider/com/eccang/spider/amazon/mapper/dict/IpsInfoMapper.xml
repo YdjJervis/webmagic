@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.dict.IpsInfoDao">
+    <!--<cache eviction="LRU" type="us.codecraft.webmagic.samples.base.service.RedisCacheService"/>-->
+
+    <resultMap id="IpsInfoResultMap" type="IpsInfo">
+        <id property="id" column="bii_id" />
+        <result property="proxyType" column="bpt_proxy_code" />
+        <result property="domain" column="bii_domain" />
+        <result property="host" column="bii_host" />
+        <result property="port" column="bii_port" />
+        <result property="createDate" column="bii_create_date" />
+        <result property="updateDate" column="bii_update_date" />
+    </resultMap>
+
+    <!-- 查询所有ip信息 -->
+    <select id="findAll" resultMap="IpsInfoResultMap">
+        SELECT * FROM BASE_IPS_INFO
+    </select>
+
+    <!-- 通过ID查询IP信息 -->
+    <select id="findById" resultMap="IpsInfoResultMap" parameterType="int">
+        SELECT * FROM BASE_IPS_INFO
+        WHERE BII_ID = #{0}
+    </select>
+
+    <!-- 通过host查询IP信息 -->
+    <select id="findByHost" resultMap="IpsInfoResultMap" parameterType="java.lang.String">
+        SELECT * FROM BASE_IPS_INFO
+        WHERE BII_HOST = #{0}
+    </select>
+
+    <!-- 批量新增IP信息 -->
+    <insert id="addAll" parameterType="java.util.List">
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        INSERT INTO BASE_IPS_INFO(BPT_PROXY_CODE, BII_DOMAIN, BII_HOST, BII_PORT, BII_CREATE_DATE, BII_UPDATE_DATE)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.proxyType}, #{item.doamin}, #{item.host}, #{item.port}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        </foreach>
+    </insert>
+</mapper>

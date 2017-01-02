@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.batch.BatchFollowSellDao">
+
+    <resultMap id="BatchFollowSellMap" type="BatchFollowSell">
+        <id column="bof_id" property="id"/>
+        <result column="bo_batch_num" property="batchNumber"/>
+        <result column="bas_code" property="siteCode"/>
+        <result column="saa_asin" property="asin"/>
+        <result column="bof_type" property="type"/>
+        <result column="bof_status" property="status"/>
+        <result column="bof_priority" property="priority"/>
+        <result column="bof_is_changed" property="isChanged"/>
+        <result column="bof_extra" property="extra"/>
+        <result column="bof_create_time" property="createTime"/>
+        <result column="bof_update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO batch_order_followsell(
+        bo_batch_num,
+        bas_code,
+        saa_asin,
+        bof_type,
+        bof_status,
+        bof_priority,
+        bof_is_changed,
+        bof_extra
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.batchNumber},
+            #{item.siteCode},
+            #{item.asin},
+            #{item.type},
+            #{item.status},
+            #{item.priority},
+            #{item.isChanged},
+            #{item.extra}
+            )
+        </foreach>
+    </insert>
+
+    <select id="find" resultMap="BatchFollowSellMap">
+        select * from batch_order_followsell
+        WHERE
+        bo_batch_num = #{0}
+        and
+        bas_code = #{1}
+        and
+        saa_asin = #{2};
+    </select>
+
+    <select id="findAllByBatchNum" resultMap="BatchFollowSellMap">
+        select * from batch_order_followsell
+        WHERE
+        bo_batch_num = #{0};
+    </select>
+
+    <!-- 查找未爬取过的记录 -->
+    <select id="findNotCrawled" resultMap="BatchFollowSellMap">
+        select * from batch_order_followsell WHERE bof_status = 0;
+    </select>
+
+    <!-- 查询某个单号的平均进度 -->
+    <select id="findAverageProgress" resultType="float">
+        SELECT SUM(bof_status)/COUNT(*)/2 FROM batch_order_followsell WHERE bo_batch_num = #{0};
+    </select>
+
+    <update id="update" parameterType="BatchFollowSell">
+        UPDATE batch_order_followsell
+        SET
+        bof_type = #{type},
+        bof_status = #{status},
+        bof_priority = #{priority},
+        bof_is_changed = #{isChanged},
+        bof_extra = #{extra}
+        where
+        bo_batch_num = #{batchNumber}
+        and
+        bas_code = #{siteCode}
+        and
+        saa_asin = #{asin};
+    </update>
+
+    <update id="updateCrawlFinish">
+        UPDATE batch_order_followsell
+        SET
+        bof_status = 2
+        where
+        bo_batch_num = #{0}
+        and
+        bas_code = #{1}
+        and
+        saa_asin = #{2};
+    </update>
+
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.DownloadStatDao">
+    
+    <resultMap id="DownloadStatMap" type="DownloadStat">
+        <id property="id" column="sds_id" />
+        <result property="ipsType" column="sds_ips_type" />
+        <result property="urlMD5" column="sds_url_md5" />
+        <result property="totalTime" column="sds_total_time" />
+        <result property="validTime" column="sds_valid_time" />
+        <result property="invalidTime" column="sds_invalid_time" />
+        <result property="updateDate" column="sds_update_date" />
+    </resultMap>
+
+    <!-- 查询所有数据 -->
+    <select id="findAll" resultMap="DownloadStatMap">
+        SELECT  * FROM spider_download_stat
+    </select>
+
+    <!-- 通过url MD5 查询监测信息 -->
+    <select id="findByUrlMD5" parameterType="java.lang.String" resultMap="DownloadStatMap">
+        SELECT  * FROM spider_download_stat
+        WHERE sds_url_md5 = #{0}
+    </select>
+
+    <!-- 增加 -->
+    <insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="DownloadStat">
+        INSERT INTO spider_download_stat (
+        sds_ips_type,
+        sds_url_md5,
+        sds_total_time,
+        sds_valid_time,
+        sds_invalid_time,
+        sds_create_date,
+        sds_update_date
+        ) VALUES (
+        #{ipsType},
+        #{urlMD5},
+        #{totalTime},
+        #{validTime},
+        #{invalidTime},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 通过id更新 -->
+    <update id="updateById" parameterType="DownloadStat">
+      UPDATE
+        spider_download_stat
+      <trim prefix="SET" suffixOverrides=",">
+        <if test="ipsType!=null">sds_ips_type = #{ipsType},</if>
+        <if test="urlMD5!=null">sds_url_md5 = #{urlMD5},</if>
+        <if test="totalTime!=0">sds_total_time = #{totalTime},</if>
+        <if test="validTime!=0">sds_valid_time = #{validTime},</if>
+        <if test="invalidTime!=0">sds_invalid_time = #{invalidTime},</if>
+        <if test="updateDate != null">sds_update_date = #{updateDate},</if>
+      </trim>
+      WHERE
+        sds_id = #{id}
+    </update>
+
+</mapper>

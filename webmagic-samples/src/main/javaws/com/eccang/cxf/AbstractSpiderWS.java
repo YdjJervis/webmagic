@@ -8,12 +8,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.pojo.dict.API;
-import us.codecraft.webmagic.samples.amazon.pojo.dict.Customer;
-import us.codecraft.webmagic.samples.amazon.pojo.dict.Platform;
-import us.codecraft.webmagic.samples.amazon.service.dict.APIService;
-import us.codecraft.webmagic.samples.amazon.service.dict.CustomerService;
-import us.codecraft.webmagic.samples.amazon.service.dict.PlatformService;
+import com.eccang.spider.amazon.pojo.dict.API;
+import com.eccang.spider.amazon.pojo.dict.Customer;
+import com.eccang.spider.amazon.pojo.dict.Platform;
+import com.eccang.spider.amazon.service.dict.APIService;
+import com.eccang.spider.amazon.service.dict.CustomerService;
+import com.eccang.spider.amazon.service.dict.PlatformService;
 
 /**
  * @author Jervis

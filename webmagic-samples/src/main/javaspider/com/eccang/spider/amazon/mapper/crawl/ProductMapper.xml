@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.crawl.ProductDao">
+
+    <resultMap id="ProductResultMap" type="Product">
+
+        <result column="sap_id" property="id"/>
+        <result column="bas_code" property="siteCode"/>
+        <result column="sap_rootAsin" property="rootAsin"/>
+        <result column="sap_model_type" property="modelType"/>
+        <result column="sap_seller_id" property="sellerID"/>
+        <result column="sap_seller_name" property="sellerName"/>
+        <result column="sap_trans_id" property="transID"/>
+        <result column="sap_trans_name" property="transName"/>
+        <result column="sap_title" property="title"/>
+        <result column="sap_price" property="price"/>
+        <result column="sap_img_url" property="imgUrl"/>
+        <result column="sap_review_num" property="reviewNum"/>
+        <result column="sap_review_star" property="reviewStar"/>
+        <result column="sap_review_time" property="reviewTime"/>
+        <result column="sap_reply_num" property="replyNum"/>
+        <result column="sap_trans_mode" property="transMode"/>
+        <result column="sap_follow_sell_num" property="followSellNum"/>
+        <result column="sap_added_time" property="addedTime"/>
+        <result column="sap_category" property="category"/>
+        <result column="sap_extra" property="extra"/>
+        <result column="sap_create_time" property="createTime"/>
+        <result column="sap_update_time" property="updateTime"/>
+
+    </resultMap>
+
+    <insert id="add" parameterType="Product">
+        INSERT INTO spider_amazon_product(
+        bas_code,
+        sap_rootAsin,
+        sap_model_type,
+        sap_seller_id,
+        sap_seller_name,
+        sap_trans_id,
+        sap_trans_name,
+        sap_title,
+        sap_price,
+        sap_img_url,
+        sap_review_num,
+        sap_review_star,
+        sap_review_time,
+        sap_reply_num,
+        sap_trans_mode,
+        sap_follow_sell_num,
+        sap_added_time,
+        sap_category,
+        sap_extra
+        )VALUES(
+        #{siteCode},
+        #{rootAsin},
+        #{modelType},
+        #{sellerID},
+        #{sellerName},
+        #{transID},
+        #{transName},
+        #{title},
+        #{price},
+        #{imgUrl},
+        #{reviewNum},
+        #{reviewStar},
+        #{reviewTime},
+        #{replyNum},
+        #{transMode},
+        #{followSellNum},
+        #{addedTime},
+        #{category},
+        #{extra}
+        );
+    </insert>
+
+    <update id="update" parameterType="Product">
+        UPDATE spider_amazon_product SET
+        sap_model_type = #{modelType},
+        sap_seller_id = #{sellerID},
+        sap_seller_name = #{sellerName},
+        sap_trans_id = #{transID},
+        sap_trans_name = #{transName},
+        sap_title = #{title},
+        sap_price = #{price},
+        sap_img_url = #{imgUrl},
+        sap_review_num = #{reviewNum},
+        sap_review_star = #{reviewStar},
+        sap_review_time = #{reviewTime},
+        sap_reply_num = #{replyNum},
+        sap_trans_mode = #{transMode},
+        sap_follow_sell_num = #{followSellNum},
+        sap_added_time = #{addedTime},
+        sap_category = #{category},
+        sap_extra = #{extra}
+        where
+        bas_code = #{siteCode}
+        and
+        sap_rootAsin = #{rootAsin};
+    </update>
+
+    <select id="findByObject" resultMap="ProductResultMap">
+        SELECT * FROM spider_amazon_product
+        WHERE
+        bas_code = #{siteCode}
+        and
+        sap_rootAsin = #{rootAsin};
+
+    </select>
+</mapper>

@@ -1,7 +1,7 @@
 
 package com.eccang.wsclient.batch;
 
-import us.codecraft.webmagic.samples.base.util.PropertyUtil;
+import com.eccang.spider.base.util.PropertyUtil;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.*;

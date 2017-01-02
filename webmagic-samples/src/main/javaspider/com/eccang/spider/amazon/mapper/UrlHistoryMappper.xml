@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.UrlHistoryDao">
+
+    <resultMap id="UrlResultMap" type="Url">
+        <result property="id" column="sauh_id"/>
+        <result property="urlMD5" column="sauh_url_md5"/>
+        <result property="batchNum" column="bo_batch_num"/>
+        <result property="siteCode" column="bas_code"/>
+        <result property="asin" column="saa_asin"/>
+        <result property="url" column="sauh_url"/>
+        <result property="parentUrl" column="sauh_parent_url"/>
+        <result property="createTime" column="sauh_create_time"/>
+        <result property="updateTime" column="sauh_update_time"/>
+    </resultMap>
+
+    <insert id="add" parameterType="Url">
+        insert into spider_amazon_url_history(
+          sauh_url_md5,bo_batch_num,bas_code,saa_asin,sauh_url,sauh_parent_url
+        ) values (
+          #{urlMD5},#{batchNum},#{siteCode},#{asin},#{url},#{parentUrl}
+        )
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_amazon_url_history(
+        sauh_url_md5,bo_batch_num,bas_code,saa_asin,sauh_url,sauh_parent_url
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.urlMD5},
+            #{item.batchNum},
+            #{item.siteCode},
+            #{item.asin},
+            #{item.url},
+            #{item.parentUrl}
+            )
+        </foreach>
+    </insert>
+
+    <select id="find" resultMap="UrlResultMap">
+        SELECT * FROM spider_amazon_url_history WHERE sauh_url_md5 = #{0};
+    </select>
+
+    <select id="findByAsin" resultMap="UrlResultMap">
+        SELECT * FROM spider_amazon_url_history WHERE bas_code = #{0} AND saa_asin = #{0};
+    </select>
+
+</mapper>

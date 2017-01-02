@@ -9,9 +9,9 @@ import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
-import us.codecraft.webmagic.samples.amazon.service.relation.CustomerAsinService;
-import us.codecraft.webmagic.samples.amazon.service.relation.CustomerBusinessService;
+import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
+import com.eccang.spider.amazon.service.relation.CustomerAsinService;
+import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 
 import javax.jws.WebService;
 import java.util.HashMap;

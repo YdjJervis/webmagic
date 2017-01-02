@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.relation.CustomerFollowSellDao">
+
+    <resultMap id="CustomerFollowSellMap" type="CustomerFollowSell">
+        <id property="id" column="rcf_id"/>
+        <result property="customerCode" column="bec_code"/>
+        <result property="siteCode" column="bas_code"/>
+        <result property="asin" column="rar_asin"/>
+        <result property="sellerId" column="saf_seller_id"/>
+        <result property="crawl" column="rcf_crawl"/>
+        <result property="onSell" column="rcf_on_sell"/>
+        <result property="priority" column="rcf_priority"/>
+        <result property="frequency" column="rcf_frequency"/>
+        <result property="times" column="rcf_times"/>
+        <result property="syncTime" column="rcf_sync_time"/>
+        <result property="extra" column="rcf_extra"/>
+        <result property="createTime" column="rcf_create_time"/>
+        <result property="updateTime" column="rcf_update_time"/>
+    </resultMap>
+
+    <!--添加到监控-->
+    <insert id="add" parameterType="CustomerFollowSell">
+        insert into relation_customer_followsell (
+          bec_code,
+          bas_code,
+          rar_asin,
+          saf_seller_id,
+          rcf_crawl,
+          rcf_on_sell,
+          rcf_priority,
+          rcf_frequency,
+          rcf_times,
+          rcf_sync_time,
+          rcf_extra
+        ) values (
+          #{customerCode},
+          #{siteCode},
+          #{asin},
+          #{sellerId}
+          #{crawl},
+          #{onSell},
+          #{priority},
+          #{frequency},
+          #{times},
+          #{syncTime},
+          #{extra}
+        )
+    </insert>
+
+    <select id="findNeedGenerateBatch" resultMap="CustomerFollowSellMap">
+        SELECT * FROM relation_customer_followsell
+        WHERE rcf_crawl = 1
+        AND
+        rcf_on_sell = 1
+        AND
+        CURRENT_TIMESTAMP - rcf_sync_time > rcf_frequency * 3600
+        or
+        rcf_sync_time IS NULL;
+    </select>
+
+    <select id="find" resultMap="CustomerFollowSellMap">
+        SELECT * FROM relation_customer_followsell
+        WHERE
+          bec_code = #{0}
+        and
+          bas_code = #{1}
+        and
+          rar_asin = #{2}
+    </select>
+
+    <update id="update" parameterType="CustomerFollowSell">
+        UPDATE
+          relation_customer_followsell
+        SET
+          saf_seller_id = #{sellerId},
+          rcf_crawl = #{crawl},
+          rcf_on_sell = #{onSell},
+          rcf_priority = #{priority},
+          rcf_frequency = #{frequency},
+          rcf_times = #{times},
+          rcf_sync_time = #{syncTime},
+          rcf_extra = #{extra}
+        WHERE
+          bec_code = #{customerCode}
+        and
+          bas_code = #{siteCode}
+        and
+          rar_asin = #{asin}
+    </update>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO relation_customer_followsell (
+        bec_code,
+        bas_code,
+        rar_asin,
+        saf_seller_id,
+        rcf_crawl,
+        rcf_on_sell,
+        rcf_priority,
+        rcf_frequency,
+        rcf_times,
+        rcf_sync_time,
+        rcf_extra
+        ) VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.customerCode},
+            #{item.siteCode},
+            #{item.asin},
+            #{item.sellerId},
+            #{item.crawl},
+            #{item.onSell},
+            #{item.priority},
+            #{item.frequency},
+            #{item.times},
+            #{item.syncTime},
+            #{item.extra}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

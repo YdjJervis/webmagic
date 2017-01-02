@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.dict.IpsInfoManageDao">
+    <resultMap id="IpsInfoManageMap" type="IpsInfoManage">
+        <id property="id" column="biim_id" />
+        <result property="ipInfoId" column="bii_id" />
+        <result property="ipDomain" column="bii_domain" />
+        <result property="basCode" column="bas_code" />
+        <result property="ipHost" column="bii_host" />
+        <result property="ipPort" column="bii_port" />
+        <result property="ipVerifyUserName" column="bii_verify_username" />
+        <result property="ipVerifyPassword" column="bii_verify_password" />
+        <result property="urlHost" column="biim_url_host" />
+        <result property="isBlocked" column="biim_is_blocked" />
+        <result property="isUsing" column="biim_is_using" />
+        <result property="usedCount" column="biim_used_count" />
+        <result property="switchDate" column="biim_switch_date" />
+        <result property="lastUsedDate" column="biim_last_used_date" />
+        <result property="createDate" column="biim_create_date" />
+        <result property="updateDate" column="biim_update_date" />
+    </resultMap>
+
+    <!-- 查询有效的IP信息按最后使用时间升序排序 -->
+    <select id="findIsValidIps" resultMap="IpsInfoManageMap" parameterType="java.lang.String">
+        SELECT
+          biim.BIIM_ID,
+          biim.BII_ID,
+          bii.BII_DOMAIN,
+          bii.BII_HOST,
+          bii.BII_PORT,
+          bii.BII_VERIFY_USERNAME,
+          bii.BII_VERIFY_PASSWORD,
+          biim.BIIM_URL_HOST,
+          biim.BIIM_IS_BLOCKED,
+          biim.BIIM_IS_USING,
+          biim.BIIM_USED_COUNT,
+          biim.BIIM_LAST_USED_DATE,
+          biim.BIIM_CREATE_DATE,
+          biim.BIIM_UPDATE_DATE
+        FROM
+          BASE_IPS_INFO_MANAGE biim
+        LEFT JOIN
+          BASE_IPS_INFO bii
+        ON
+          biim.bii_id = bii.bii_id
+        WHERE
+          biim.BIIM_IS_BLOCKED = false and biim.BIIM_IS_USING = false AND biim.BIIM_URL_HOST = #{0}
+        ORDER BY
+          biim.BIIM_LAST_USED_DATE ASC
+    </select>
+
+    <!-- 更新IP管理信息 -->
+    <update id="update" parameterType="IpsInfoManage">
+        UPDATE
+          BASE_IPS_INFO_MANAGE
+        SET
+          BIIM_IS_BLOCKED = #{isBlocked},
+          BIIM_IS_USING = #{isUsing},
+          BIIM_USED_COUNT = #{usedCount},
+          BIIM_SWITCH_DATE = #{switchDate},
+          BIIM_LAST_USED_DATE = #{lastUsedDate},
+          BIIM_UPDATE_DATE = CURRENT_TIMESTAMP
+        WHERE
+          BIIM_ID = #{id}
+    </update>
+
+    <!-- 获取当前正在使用的ip信息 -->
+    <select id="findIpInfoIsUsing" resultMap="IpsInfoManageMap" parameterType="java.lang.String">
+        SELECT
+          biim.BIIM_ID,
+          biim.BII_ID,
+          biim.BAS_CODE,
+          bii.BII_DOMAIN,
+          bii.BII_HOST,
+          bii.BII_PORT,
+          bii.BII_VERIFY_USERNAME,
+          bii.BII_VERIFY_PASSWORD,
+          biim.BIIM_URL_HOST,
+          biim.BIIM_IS_BLOCKED,
+          biim.BIIM_IS_USING,
+          biim.BIIM_USED_COUNT,
+          biim.BIIM_SWITCH_DATE,
+          biim.BIIM_LAST_USED_DATE,
+          biim.BIIM_CREATE_DATE,
+          biim.BIIM_UPDATE_DATE
+        FROM
+          BASE_IPS_INFO_MANAGE biim
+        LEFT JOIN
+          BASE_IPS_INFO bii
+        ON
+          biim.bii_id = bii.bii_id
+        WHERE biim.BIIM_IS_USING = TRUE AND biim.BIIM_URL_HOST = #{0}
+        ORDER BY biim_last_used_date DESC
+    </select>
+
+    <!-- 新增对应域名的所有IP管理信息 -->
+    <insert id="addAll" parameterType="java.util.List" >
+        <selectKey resultType="java.lang.Long">
+            SELECT @@IDENTITY AS id
+        </selectKey>
+        INSERT INTO BASE_IPS_INFO_MANAGE(
+          BII_ID,
+          BAS_CODE,
+          BIIM_URL_HOST,
+          BIIM_IS_BLOCKED,
+          BIIM_IS_USING,
+          BIIM_USED_COUNT,
+          BIIM_SWITCH_DATE,
+          BIIM_CREATE_DATE,
+          BIIM_UPDATE_DATE
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.ipInfoId}, #{item.basCode}, #{item.urlHost}, #{item.isBlocked}, #{item.isUsing}, #{item.usedCount}, #{item.switchDate}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        </foreach>
+    </insert>
+
+    <!-- 查询对应域名的IP管理信息 -->
+    <select id="findIpsInfoByUrlHost" resultMap="IpsInfoManageMap" parameterType="java.lang.String">
+        SELECT * FROM BASE_IPS_INFO_MANAGE
+        WHERE BIIM_URL_HOST = #{0}
+    </select>
+
+    <!--通过url域名和正在使用的状态来更新-->
+    <update id="updateByUrlHost" parameterType="IpsInfoManage">
+        update
+          BASE_IPS_INFO_MANAGE
+        SET
+          BIIM_IS_USING = #{isUsing},
+          BIIM_UPDATE_DATE = CURRENT_TIMESTAMP
+        WHERE
+          BIIM_URL_HOST = #{urlHost} AND BIIM_IS_USING = 1
+    </update>
+</mapper>

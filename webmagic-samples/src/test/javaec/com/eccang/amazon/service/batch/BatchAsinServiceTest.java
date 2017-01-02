@@ -1,0 +1,68 @@
+package com.eccang.amazon.service.batch;
+
+import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.eccang.base.SpringTestCase;
+import com.eccang.spider.amazon.pojo.batch.BatchAsin;
+import com.eccang.spider.amazon.service.batch.BatchAsinService;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BatchAsinServiceTest extends SpringTestCase {
+
+    @Autowired
+    BatchAsinService mService;
+
+    private Logger mLogger = Logger.getLogger(getClass());
+
+    @Test
+    public void testAddAll() {
+
+        List<BatchAsin> batchAsinList = new ArrayList<BatchAsin>();
+
+        BatchAsin ba = new BatchAsin();
+        ba.siteCode = "CN";
+        ba.batchNumber = "EC353945830";
+        ba.asin = "B0FUHIKUEHF";
+        ba.rootAsin = "B0JFJGEOFJF";
+
+        batchAsinList.add(ba);
+
+        mService.addAll(batchAsinList);
+    }
+
+    @Test
+    public void testExist() {
+        BatchAsin ba = new BatchAsin();
+        ba.batchNumber = "EC353945830";
+        ba.asin = "B0FUHIKUEHF";
+
+
+        System.out.println(mService.isExist(ba));
+    }
+
+    @Test
+    public void testFindByBatchNum() {
+        System.out.println(mService.findAllByBatchNum("BN001"));
+    }
+
+    @Test
+    public void testFindByAsin() {
+        System.out.println(mService.findAllByAsin("", "US", "ASIN001"));
+    }
+
+    @Test
+    public void testUpdate() {
+        BatchAsin batchAsin = mService.findAllByAsin("", "US", "ASIN001");
+        batchAsin.crawled = 1;
+        mService.update(batchAsin);
+    }
+
+    @Test
+    public void testAverageProgress(){
+        System.out.println(mService.findAverageProgress("EC20161207095939826"));
+    }
+
+}

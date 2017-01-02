@@ -2,9 +2,9 @@ package com.eccang.wsclient.push;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.samples.amazon.pojo.PushQueue;
-import us.codecraft.webmagic.samples.amazon.service.PushQueueService;
-import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
+import com.eccang.spider.amazon.pojo.PushQueue;
+import com.eccang.spider.amazon.service.PushQueueService;
+import com.eccang.spider.base.monitor.ScheduledTask;
 
 import java.util.List;
 

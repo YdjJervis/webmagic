@@ -30,12 +30,12 @@ public class PhantomJSDownloader extends AbstractDownloader {
         this.initPhantomjsCrawlPath();
     }
     /**
-       * Ìí¼ÓĞÂµÄ¹¹Ôìº¯Êı£¬Ö§³Öphantomjs×Ô¶¨ÒåÃüÁî
+       * æ·»åŠ æ–°çš„æ„é€ å‡½æ•°ï¼Œæ”¯æŒphantomjsè‡ªå®šä¹‰å‘½ä»¤
        * 
        * example: 
-       *    phantomjs.exe Ö§³Öwindows»·¾³
-       *    phantomjs --ignore-ssl-errors=yes ºöÂÔ×¥È¡µØÖ·ÊÇhttpsÊ±µÄÒ»Ğ©´íÎó
-       *    /usr/local/bin/phantomjs ÃüÁîµÄ¾ø¶ÔÂ·¾¶£¬±ÜÃâÒòÏµÍ³»·¾³±äÁ¿ÒıÆğµÄIOException
+       *    phantomjs.exe æ”¯æŒwindowsç¯å¢ƒ
+       *    phantomjs --ignore-ssl-errors=yes å¿½ç•¥æŠ“å–åœ°å€æ˜¯httpsæ—¶çš„ä¸€äº›é”™è¯¯
+       *    /usr/local/bin/phantomjs å‘½ä»¤çš„ç»å¯¹è·¯å¾„ï¼Œé¿å…å› ç³»ç»Ÿç¯å¢ƒå˜é‡å¼•èµ·çš„IOException
        *   
        * @param phantomJsCommand phantomJsCommand
        */

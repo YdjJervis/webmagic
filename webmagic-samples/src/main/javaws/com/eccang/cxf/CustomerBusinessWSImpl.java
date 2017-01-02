@@ -8,8 +8,8 @@ import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerBusiness;
-import us.codecraft.webmagic.samples.amazon.service.relation.CustomerBusinessService;
+import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
+import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 
 import javax.jws.WebService;
 import java.util.ArrayList;

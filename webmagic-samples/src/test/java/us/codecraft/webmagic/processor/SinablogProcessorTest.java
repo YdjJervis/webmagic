@@ -5,7 +5,7 @@ import org.junit.Test;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.pipeline.FilePipeline;
 import us.codecraft.webmagic.pipeline.JsonFilePipeline;
-import us.codecraft.webmagic.samples.processor.SinaBlogProcessor;
+import us.codecraft.webmagic.samples.SinaBlogProcessor;
 import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class SinablogProcessorTest {
         //Spider.me()是简化写法，其实就是new一个啦
         //Spider.pipeline()设定一个pipeline，支持链式调用
         //ConsolePipeline输出结果到控制台
-        //FileCacheQueueScheduler保存url，支持断点续传，临时文件输出到/data/temp/webmagic/cache目录
+        //FileCacheQueueSchedular保存url，支持断点续传，临时文件输出到/data/temp/webmagic/cache目录
         //Spider.run()执行
         Spider.create(sinaBlogProcessor).pipeline(new FilePipeline()).pipeline(pipeline).scheduler(new FileCacheQueueScheduler("/data/temp/webmagic/cache/")).
                 run();

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.RankSearchKeywordDao">
+    <resultMap id="RankSearchKeywordMap" type="RankSearchKeyword">
+        <id property="id" column="sars_id"/>
+        <result property="asin" column="sars_asin"/>
+        <result property="customer" column="sars_customer"/>
+        <result property="keyword" column="sars_keyword"/>
+        <result property="siteCode" column="bas_site"/>
+        <result property="department" column="sars_department"/>
+        <result property="createDate" column="sars_createDate"/>
+        <result property="updateDate" column="sars_updateDate"/>
+    </resultMap>
+    <!--新增单条数据-->
+    <insert id="add" parameterType="RankSearchKeyword" useGeneratedKeys="true" keyProperty="id">
+      INSERT INTO spider_amazon_rank_search (
+        sars_customer,
+        sars_keyword,
+        sars_asin,
+        bas_site,
+        sars_department,
+        sars_createDate,
+        sars_updateDate
+      ) VALUES (
+        #{customer},
+        #{keyword},
+        #{asin},
+        #{siteCode},
+        #{department},
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+      )
+    </insert>
+
+    <!--通过ID更新-->
+    <update id="updateById" parameterType="RankSearchKeyword">
+      UPDATE spider_amazon_rank_search
+      SET
+        sars_customer = #{customer},
+        sars_keyword = #{keyword},
+        sars_asin = #{asin},
+        bas_site = #{siteCode},
+        sars_department = #{department},
+        sars_updateDate = CURRENT_TIMESTAMP
+      WHERE
+        sars_id = #{id}
+    </update>
+
+    <!--通过ID删除-->
+    <delete id="deleteById" parameterType="int">
+      DELETE FROM
+        spider_amazon_rank_search
+      WHERE
+        sars_id = #{0}
+    </delete>
+
+    <!--通过ID查询-->
+    <select id="findById" resultMap="RankSearchKeywordMap" parameterType="int">
+      SELECT
+        sars_id,
+        sars_customer,
+        sars_keyword,
+        sars_asin,
+        bas_site,
+        sars_department,
+        sars_createDate,
+        sars_updateDate
+      FROM
+        spider_amazon_rank_search
+      WHERE
+        sars_id = #{0}
+    </select>
+
+    <!--查询所有数据-->
+    <select id="findAll" resultMap="RankSearchKeywordMap">
+      SELECT
+        sars_id,
+        sars_customer,
+        sars_keyword,
+        sars_asin,
+        bas_site,
+        sars_department,
+        sars_createDate,
+        sars_updateDate
+      FROM
+        spider_amazon_rank_search
+    </select>
+</mapper>

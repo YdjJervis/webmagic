@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.crawl.GoodsRankInfoDao">
+    <resultMap id="GoodsRankInfoMap" type="GoodsRankInfo">
+        <id column="sag_id" property="id" />
+        <result column="bo_batch_num" property="batchNum" />
+        <result column="saa_asin" property="asin" />
+        <result column="sakr_keyword" property="keyword" />
+        <result column="bas_code" property="siteCode" />
+        <result column="bad_code" property="departmentCode" />
+        <result column="sag_rank_num" property="rankNum" />
+        <result column="sag_title" property="title" />
+        <result column="sag_price" property="price" />
+        <result column="sag_delivery_mode" property="deliveryMode" />
+        <result column="sag_distribution_mode" property="distributionMode" />
+        <result column="sag_goods_picture_url" property="goodsPictureUrl" />
+        <result column="sag_offers_num" property="offersNum" />
+        <result column="sag_department" property="departmentInfo" />
+        <result column="sag_goods_status" property="goodsStatus" />
+        <result column="sag_create_time" property="createTime" />
+        <result column="sag_update_time" property="updateTime" />
+    </resultMap>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_amazom_goods (
+          bo_batch_num,
+          saa_asin,
+          sakr_keyword,
+          bas_code,
+          bad_code,
+          sag_rank_num,
+          sag_title,
+          sag_price,
+          sag_delivery_mode,
+          sag_distribution_mode,
+          sag_goods_picture_url,
+          sag_offers_num,
+          sag_department,
+          sag_goods_status,
+          sag_create_time,
+          sag_update_time
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+              #{item.batchNum},
+              #{item.asin},
+              #{item.keyword},
+              #{item.siteCode},
+              #{item.departmentCode},
+              #{item.rankNum},
+              #{item.title},
+              #{item.price},
+              #{item.deliveryMode},
+              #{item.distributionMode},
+              #{item.goodsPictureUrl},
+              #{item.offersNum},
+              #{item.departmentInfo},
+              #{item.goodsStatus},
+              CURRENT_TIMESTAMP,
+              CURRENT_TIMESTAMP
+            )
+        </foreach>
+    </insert>
+
+    <select id="findByBatch" resultMap="GoodsRankInfoMap">
+        SELECT
+          *
+        FROM
+          spider_amazom_goods
+        WHERE
+          bo_batch_num = #{0}
+    </select>
+</mapper>

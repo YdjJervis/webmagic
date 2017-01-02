@@ -1,0 +1,34 @@
+package com.eccang.amazon.service;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.eccang.base.SpringTestCase;
+import com.eccang.spider.amazon.pojo.Url;
+import com.eccang.spider.amazon.service.UrlHistoryService;
+
+import java.util.ArrayList;
+
+public class UrlHistoryServiceTest extends SpringTestCase {
+
+    @Autowired
+    UrlHistoryService mService;
+
+    @Test
+    public void testExist() {
+        System.out.println(mService.isExist("5f79bcce4b68a8b5"));
+    }
+
+    @Test
+    public void testFind() {
+        new ArrayList<Url>().addAll(mService.findByAsin("US", "123123"));
+        System.out.println();
+    }
+
+    @Test
+    public void testAdd() {
+        Url url = new Url();
+        url.urlMD5 = "c809cffd211d195b";
+        url.siteCode = "us";
+        mService.add(url);
+    }
+}

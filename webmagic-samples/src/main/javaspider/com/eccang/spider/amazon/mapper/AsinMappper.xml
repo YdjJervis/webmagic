@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.AsinDao">
+
+    <resultMap id="AsinResultMap" type="Asin">
+        <id property="id" column="saa_id"/>
+        <result property="siteCode" column="bas_code"/>
+        <result property="rootAsin" column="rar_root_asin"/>
+        <result property="extra" column="saa_extra"/>
+        <result property="createTime" column="saa_create_time"/>
+        <result property="updateTime" column="saa_update_time"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="AsinResultMap">
+        select * from spider_amazon_asin;
+    </select>
+
+    <!--更新爬取状态和URL转换状态-->
+    <update id="update" parameterType="Asin">
+        UPDATE spider_amazon_asin
+        SET saa_extra=#{extra} WHERE
+        bas_code = #{siteCode} and rar_root_asin = #{rootAsin}
+    </update>
+
+    <select id="findByAsin" resultMap="AsinResultMap">
+        select * from spider_amazon_asin WHERE
+        bas_code = #{0} and rar_root_asin = #{1}
+    </select>
+
+    <insert id="add">
+        INSERT INTO spider_amazon_asin(
+        bas_code,rar_root_asin,saa_extra
+        ) VALUES (
+        #{siteCode},#{rootAsin},#{extra}
+        )
+    </insert>
+
+
+</mapper>

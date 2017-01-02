@@ -1,0 +1,64 @@
+package com.eccang.spider.base.dao;
+
+import java.util.List;
+
+/**
+ * @author Jervis
+ * @version V0.1
+ * @Description: 基础Dao
+ * @date 2016/10/11
+ */
+public interface BaseDao<T> {
+
+    /**
+     * 增加一条数据库记录
+     * @param obj 元素
+     * @return 影响行数
+     */
+    int add(T obj);
+
+    /**
+     * 增加多条数据库记录
+     * @param objList 元素列表
+     * @return 影响行数
+     */
+    int addAll(List<T> objList);
+
+    /**
+     * 根据元素ID删除一条数据库记录
+     * @param id 元素ID
+     * @return 影响行数
+     */
+    int delete(Integer id);
+
+    /**
+     * 更新一条数据库记录
+     * @param obj 元素
+     */
+    void update(T obj);
+
+    /**
+     * 根据ID查询一条数据库记录
+     * @param id 元素ID
+     * @return 元素对象
+     */
+    T find(Integer id);
+
+    /**
+     * 根据唯一码查询一条数据库记录
+     * @param code 唯一码
+     * @return 元素对象
+     */
+    T findByCode(String code);
+    /**
+     * 根据关键字查询元素列表
+     * @param keyWord 查询条件
+     * @return 元素列表
+     */
+    List<T> find(String keyWord);
+
+    /**
+     * @return 一个数据表所有记录
+     */
+    List<T> findAll();
+}

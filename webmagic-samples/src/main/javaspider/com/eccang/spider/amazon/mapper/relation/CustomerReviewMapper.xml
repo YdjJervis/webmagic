@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.relation.CustomerReviewDao">
+
+    <resultMap id="CustomerReviewResultMap" type="CustomerReview">
+        <id property="id" column="rcr_id"/>
+        <result property="customerCode" column="bec_code"/>
+        <result property="siteCode" column="bas_code"/>
+        <result property="asin" column="saa_asin"/>
+        <result property="reviewId" column="rcr_review_id"/>
+        <result property="onSell" column="rcr_on_sell"/>
+        <result property="crawl" column="rcr_crawl"/>
+        <result property="priority" column="rcr_priority"/>
+        <result property="frequency" column="rcr_frequency"/>
+        <result property="times" column="rcr_times"/>
+        <result property="finishTime" column="rcr_finish_time"/>
+        <result property="createTime" column="rcr_create_time"/>
+        <result property="updateTime" column="rcr_update_time"/>
+    </resultMap>
+
+    <!--添加到监控-->
+    <insert id="add" parameterType="CustomerReview">
+        insert into relation_customer_review (
+          bec_code, bas_code, saa_asin, rcr_review_id, rcr_on_sell, rcr_crawl, rcr_marked, rcr_priority, rcr_frequency, rcr_times, rcr_finish_time
+        ) values (
+          #{customerCode}, #{siteCode}, #{asin}, #{reviewId}, #{nosell}, #{crawl}, #{marked}, #{priority}, #{frequency}, #{times}, #{finishTime}
+        )
+    </insert>
+
+    <!--根据ReviewId查询记录-->
+    <select id="findCustomerReview" resultMap="CustomerReviewResultMap">
+        SELECT * FROM relation_customer_review
+        WHERE bec_code = #{0} and rcr_review_id = #{1};
+    </select>
+
+
+    <select id="findNeedGenerateBatch" resultMap="CustomerReviewResultMap">
+        SELECT * FROM relation_customer_review
+        WHERE rcr_crawl = 1 AND rcr_on_sell = 1 AND CURRENT_TIMESTAMP - rcr_finish_time > rcr_frequency * 3600 or rcr_finish_time IS NULL;
+    </select>
+
+    <select id="findCustomerReviewIsOpen" resultMap="CustomerReviewResultMap">
+        SELECT * FROM relation_customer_review
+        WHERE rcr_crawl = 1 AND bec_code = #{0}
+    </select>
+    <select id="findCustomerReviewsByCustomerCode" resultMap="CustomerReviewResultMap">
+        SELECT * FROM relation_customer_review
+        WHERE bec_code = #{0}
+    </select>
+
+    <update id="update" parameterType="CustomerReview">
+        UPDATE
+          relation_customer_review
+        SET
+          bas_code = #{siteCode},
+          saa_asin = #{asin},
+          rcr_on_sell = #{onSell},
+          rcr_crawl = #{crawl},
+          rcr_priority = #{priority},
+          rcr_frequency = #{frequency},
+          rcr_times = #{times},
+          rcr_finish_time = #{finishTime}
+        WHERE
+          bec_code = #{customerCode} and rcr_review_id = #{reviewId}
+    </update>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO relation_customer_review (
+        bec_code, bas_code, saa_asin, rcr_review_id, rcr_on_sell, rcr_crawl, rcr_priority, rcr_frequency, rcr_times,
+        rcr_finish_time
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.customerCode}, #{item.siteCode}, #{item.asin}, #{item.reviewId}, #{item.onSell}, #{item.crawl},
+            #{item.priority}, #{item.frequency}, #{item.times}, #{item.finishTime}
+            )
+        </foreach>
+    </insert>
+
+</mapper>
