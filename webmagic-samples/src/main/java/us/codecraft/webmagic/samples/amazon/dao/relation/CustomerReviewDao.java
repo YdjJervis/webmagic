@@ -26,4 +26,6 @@ public interface CustomerReviewDao extends BaseDao<CustomerReview> {
 
     List<CustomerReview> findCustomerReviewsByCustomerCode(String customerCode);
 
+
+
 }

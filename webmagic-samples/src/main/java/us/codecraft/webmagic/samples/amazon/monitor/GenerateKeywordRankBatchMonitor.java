@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchRank;
-import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerRankKeyword;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerKeywordRank;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchRankService;
-import us.codecraft.webmagic.samples.amazon.service.relation.CustomerRankKeywordService;
+import us.codecraft.webmagic.samples.amazon.service.relation.CustomerKeywordRankService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
     @Autowired
     private BatchRankService mBatchRankService;
     @Autowired
-    private CustomerRankKeywordService mCustomerRankKeywordService;
+    private CustomerKeywordRankService mCustomerKeywordRankService;
 
     @Override
     public void execute() {
@@ -41,14 +41,14 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
         Date currentTime = new Date();
 
         /*查询需要生成新的批次的客户关系关键词排名数据*/
-        List<CustomerRankKeyword> customerRankKeywords = mCustomerRankKeywordService.findNeedGenerateBatch();
-        mLogger.info("需要生成新批次号的总量：" + customerRankKeywords.size());
+        List<CustomerKeywordRank> customerKeywordRanks = mCustomerKeywordRankService.findNeedGenerateBatch();
+        mLogger.info("需要生成新批次号的总量：" + customerKeywordRanks.size());
 
         /*按客户码分组*/
-        Map<String, List<CustomerRankKeyword>> customerListMap = initCustomerListMap(customerRankKeywords);
+        Map<String, List<CustomerKeywordRank>> customerListMap = initCustomerListMap(customerKeywordRanks);
 
         for (String customerCode : customerListMap.keySet()) {
-            List<CustomerRankKeyword> rckList = customerListMap.get(customerCode);
+            List<CustomerKeywordRank> rckList = customerListMap.get(customerCode);
 
             /*生成总单并添加到数据库中*/
             Batch batch = mBatchService.generate(customerCode, R.BatchType.KEYWORD_RANK);
@@ -57,20 +57,20 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
             /*将批次单号与review建立关系*/
             List<BatchRank> needAddList = new ArrayList<>();
             BatchRank batchRank;
-            for (CustomerRankKeyword customerRankKeyword : rckList) {
+            for (CustomerKeywordRank customerKeywordRank : rckList) {
                 batchRank = new BatchRank();
                 batchRank.setBatchNum(batch.number);
-                batchRank.setKeyword(customerRankKeyword.getKeyword());
-                batchRank.setSiteCode(customerRankKeyword.getSiteCode());
-                batchRank.setAsin(customerRankKeyword.getAsin());
-                batchRank.setDepartmentCode(customerRankKeyword.getDepartmentCode());
+                batchRank.setKeyword(customerKeywordRank.getKeyword());
+                batchRank.setSiteCode(customerKeywordRank.getSiteCode());
+                batchRank.setAsin(customerKeywordRank.getAsin());
+                batchRank.setDepartmentCode(customerKeywordRank.getDepartmentCode());
                 batchRank.setType(R.CrawlType.KEYWORD_RANK);
-                batchRank.setPriority(customerRankKeyword.getPriority());
+                batchRank.setPriority(customerKeywordRank.getPriority());
 
                 needAddList.add(batchRank);
 
-                customerRankKeyword.setSyncTime(currentTime);
-                mCustomerRankKeywordService.update(customerRankKeyword);
+                customerKeywordRank.setSyncTime(currentTime);
+                mCustomerKeywordRankService.update(customerKeywordRank);
             }
 
             mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());

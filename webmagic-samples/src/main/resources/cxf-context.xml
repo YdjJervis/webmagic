@@ -54,5 +54,11 @@
         </jaxws:serviceBean>
     </jaxws:server>
 
+    <jaxws:server id="keywordRankWS" serviceClass="com.eccang.cxf.KeywordRankWS" address="/keywordRank">
+        <jaxws:serviceBean>
+            <bean class="com.eccang.cxf.KeywordRankWSImpl" />
+        </jaxws:serviceBean>
+    </jaxws:server>
+
 </beans>
 

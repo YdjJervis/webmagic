@@ -169,8 +169,8 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         }
 
         Map<String, Integer> businessInfo = mCustomerBusinessService.getBusinessInfo(asinReq.cutomerCode, R.BusinessCode.ASIN_SPIDER);
-        asinRsp.data.usableNum = businessInfo.get(R.BusinessInfo.USABLENUM);
-        asinRsp.data.hasUsedNum = businessInfo.get(R.BusinessInfo.HASUSEDNUM);
+        asinRsp.data.usableNum = businessInfo.get(R.BusinessInfo.USABLE_NUM);
+        asinRsp.data.hasUsedNum = businessInfo.get(R.BusinessInfo.HASUSED_NUM);
 
         return asinRsp.toJson();
     }

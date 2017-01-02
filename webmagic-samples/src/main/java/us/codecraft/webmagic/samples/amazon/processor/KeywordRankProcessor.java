@@ -6,20 +6,16 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.downloader.HttpClientImplDownloader;
 import us.codecraft.webmagic.samples.amazon.R;
-import us.codecraft.webmagic.samples.amazon.pojo.crawl.GoodsRankInfo;
-import us.codecraft.webmagic.samples.amazon.pojo.crawl.KeywordRank;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchRank;
-import us.codecraft.webmagic.samples.amazon.service.*;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.GoodsRankInfo;
+import us.codecraft.webmagic.samples.amazon.pojo.crawl.KeywordRank;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchRankService;
-import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
 import us.codecraft.webmagic.samples.amazon.service.crawl.GoodsRankInfoService;
 import us.codecraft.webmagic.samples.amazon.service.crawl.KeywordRankService;
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
-import us.codecraft.webmagic.samples.base.service.UserAgentService;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 import us.codecraft.webmagic.selector.Selectable;
 
@@ -39,26 +35,13 @@ import java.util.regex.Pattern;
 public class KeywordRankProcessor extends BasePageProcessor implements ScheduledTask {
 
     Logger sLogger = Logger.getLogger(getClass());
-    private static final String US = "https://www.amazon.com";
 
     @Autowired
-    UserAgentService mUserAgentService;
+    private KeywordRankService mKeywordRankService;
     @Autowired
-    KeywordRankService mKeywordRankService;
+    private GoodsRankInfoService mGoodsRankInfoService;
     @Autowired
-    GoodsRankInfoService mGoodsRankInfoService;
-    @Autowired
-    BatchRankService mBatchRankService;
-    @Autowired
-    BatchService mBatchService;
-    @Autowired
-    PushQueueService mPushQueueService;
-    @Autowired
-    UrlService mUrlService;
-    @Autowired
-    UrlHistoryService mUrlHistoryService;
-    @Autowired
-    private HttpClientImplDownloader mHttpClientImplDownloader;
+    private BatchRankService mBatchRankService;
 
     @Override
     protected void dealOtherPage(Page page) {
@@ -220,13 +203,12 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
         int rankIndex = 0;
             /*解析前十的商品信息*/
         for (Selectable goodsNode : goodsNodesList) {
-            rankIndex++;
             GoodsRankInfo goodsRankInfo = extractGoodsNode(goodsNode, url.siteCode);
             if (StringUtils.isEmpty(goodsRankInfo.getTitle())) {
                 /*取前十商品信息，不含品类推荐*/
-                rankIndex--;
                 continue;
             }
+            rankIndex++;
             goodsRankInfo.setBatchNum(url.batchNum);
             goodsRankInfo.setAsin(info.getAsin());
             goodsRankInfo.setKeyword(info.getKeyword());
@@ -446,6 +428,8 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
             return getDistributionModeDE(goodsNode);
         } else if (siteCode.equalsIgnoreCase(R.SiteCode.FR)) {
             return getDistributionModeFR(goodsNode);
+        } else if(siteCode.equalsIgnoreCase(R.SiteCode.JP)) {
+            return getDistributionModeJP(goodsNode);
         }
         return false;
     }
@@ -469,6 +453,13 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
      */
     private boolean getDistributionModeFR(Selectable goodsNode) {
         return goodsNode.regex("Livraison gratuite").match();
+    }
+
+    /**
+     * 日本站解析排名商品是否免运费
+     */
+    private boolean getDistributionModeJP(Selectable goodsNode) {
+        return goodsNode.regex("配送料無料").match();
     }
 
     /**

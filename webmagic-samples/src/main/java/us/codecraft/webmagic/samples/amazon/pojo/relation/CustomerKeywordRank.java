@@ -8,7 +8,7 @@ import java.util.Date;
  * @Description: 搜索关键词与客户关系
  * @date 2016/12/26 14:05
  */
-public class CustomerRankKeyword {
+public class CustomerKeywordRank {
     private int id;
     private String asin;
     private String keyword;

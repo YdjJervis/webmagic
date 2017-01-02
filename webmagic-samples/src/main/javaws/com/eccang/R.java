@@ -76,19 +76,26 @@ public final class R {
 
         public static final String PARAMETER_REVIEW_NOT_EXIST__ERROR = "此评论不存在";
 
+        public static final String PARAMETER_KEYWORD_ASIN_ERROR = "请求的Keyword中存在空的Asin码";
+
+        public static final String PARAMETER_KEYWORD_EMPTY__ERROR = "客户下，查询的监听keyword排名不存在";
+
         public static final String EXCEEDS_LIMIT = "数据超出限制";
+
+        public static final String PARAMETER_DEPARTMENT_CODE_ERROR = "数据列表中，没有传入正确的品类码";
 
     }
 
     /** 业务代码 */
     public static final class BusinessCode {
-        public static final String ASIN_SPIDER = "AS";/** 爬取asin */
+        public static final String ASIN_SPIDER = "AS"; /** 爬取asin */
         public static final String MONITOR_SPIDER = "MS"; /** 监听review */
+        public static final String KEYWORD_RANK_SPIDER = "KRS"; /** 关键词排名搜索 */
     }
 
     /** 业务统计 */
     public static final class BusinessInfo {
-        public static final String USABLENUM = "usableNum"; /*可用数*/
-        public static final String HASUSEDNUM = "hasUsedNum"; /*已用数*/
+        public static final String USABLE_NUM = "usableNum"; /*可用数*/
+        public static final String HASUSED_NUM = "hasUsedNum"; /*已用数*/
     }
 }

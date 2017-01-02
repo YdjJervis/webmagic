@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerFollowSell;
-import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerRankKeyword;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerKeywordRank;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerReview;
 import us.codecraft.webmagic.samples.amazon.service.NoSellService;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchService;
@@ -41,8 +41,8 @@ public class GenerateBatchMonitor {
                 customerCode = ((CustomerAsin) item).customerCode;
             } else if (item instanceof CustomerFollowSell) {
                 customerCode = ((CustomerFollowSell) item).customerCode;
-            } else if (item instanceof CustomerRankKeyword) {
-                customerCode = ((CustomerRankKeyword)item).getCustomerCode();
+            } else if (item instanceof CustomerKeywordRank) {
+                customerCode = ((CustomerKeywordRank)item).getCustomerCode();
             }
 
             if (customerListMap.get(customerCode) == null) {

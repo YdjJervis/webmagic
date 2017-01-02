@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.relation.CustomerAsinDao;
 import us.codecraft.webmagic.samples.amazon.dao.relation.CustomerBusinessDao;
+import us.codecraft.webmagic.samples.amazon.dao.relation.CustomerKeywordRankDao;
 import us.codecraft.webmagic.samples.amazon.dao.relation.CustomerReviewDao;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerAsin;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerBusiness;
+import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerKeywordRank;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerReview;
 
 import java.util.HashMap;
@@ -31,6 +33,9 @@ public class CustomerBusinessService {
     @Autowired
     CustomerReviewDao mCustomerReviewDao;
 
+    @Autowired
+    CustomerKeywordRankDao mCustomerKeywordRankDao;
+
     /**
      * 新增一条数据
      */
@@ -49,7 +54,7 @@ public class CustomerBusinessService {
      * 删除
      */
     public void deleteOne(String customerCode, String businessCode) {
-        mCustomerBusinessDao.deleteOne(customerCode,businessCode);
+        mCustomerBusinessDao.deleteOne(customerCode, businessCode);
     }
 
     /**
@@ -89,12 +94,15 @@ public class CustomerBusinessService {
 
         /* 查询客户下asin开启数 */
         int useNum;
-        if(businessCode.equalsIgnoreCase(R.BusinessCode.ASIN_SPIDER)) {
+        if (businessCode.equalsIgnoreCase(R.BusinessCode.ASIN_SPIDER)) {
             List<CustomerAsin> cusAList = mCustomerAsinDao.findByCustomerCodeIsOpen(customerCode);
             useNum = cusAList.size();
-        } else if (businessCode.equalsIgnoreCase(R.BusinessCode.MONITOR_SPIDER)){
+        } else if (businessCode.equalsIgnoreCase(R.BusinessCode.MONITOR_SPIDER)) {
             List<CustomerReview> cusRList = mCustomerReviewDao.findCustomerReviewIsOpen(customerCode);
             useNum = cusRList.size();
+        } else if (businessCode.equalsIgnoreCase(R.BusinessCode.KEYWORD_RANK_SPIDER)) {
+            List<CustomerKeywordRank> ckrList = mCustomerKeywordRankDao.findCustomerCodeIsOpen(customerCode);
+            useNum = ckrList.size();
         } else {
             useNum = 0;
         }
@@ -107,8 +115,8 @@ public class CustomerBusinessService {
             mCustomerBusinessDao.updateOne(customerBusiness);
         }
 
-        result.put(R.BusinessInfo.USABLENUM, customerBusiness.getMaxData() - useNum);
-        result.put(R.BusinessInfo.HASUSEDNUM, useNum);
+        result.put(R.BusinessInfo.USABLE_NUM, customerBusiness.getMaxData() - useNum);
+        result.put(R.BusinessInfo.HASUSED_NUM, useNum);
 
         return result;
     }

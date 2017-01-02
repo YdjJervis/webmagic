@@ -79,8 +79,8 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
             }
             /*可用asin的数据量*/
             Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerAsinRsp.cutomerCode, R.BusinessCode.ASIN_SPIDER);
-            customerAsinRsp.data.usableNum = result.get(R.BusinessInfo.USABLENUM);
-            customerAsinRsp.data.hasUsedNum = result.get(R.BusinessInfo.HASUSEDNUM);
+            customerAsinRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
+            customerAsinRsp.data.hasUsedNum = result.get(R.BusinessInfo.HASUSED_NUM);
         } catch (Exception e) {
             sLogger.error(e);
             customerAsinRsp.status = R.HttpStatus.SERVER_EXCEPTION;

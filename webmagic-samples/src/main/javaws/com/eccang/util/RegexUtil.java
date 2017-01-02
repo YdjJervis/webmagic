@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class RegexUtil {
 
     public static final Set<String> mSiteCodeSet = Sets.newHashSet("CA", "US", "MX", "DE", "JP", "CN", "ES", "FR", "IN", "IT", "UK");
-    public static final Set<String> mStatusSet = Sets.newHashSet("open", "close");
+    public static final Set<Integer> mStatusSet = Sets.newHashSet(0, 1);
 
     /**
      * 验证星级表达式
@@ -35,8 +35,8 @@ public class RegexUtil {
         return StringUtils.isNotEmpty(siteCode) && mSiteCodeSet.contains(siteCode);
     }
 
-    public static boolean isCrawlStatusQualified(String status) {
-        return StringUtils.isNotEmpty(status) && mStatusSet.contains(status);
+    public static boolean isCrawlStatusQualified(int status) {
+        return mStatusSet.contains(status);
     }
 
     public static boolean isFrequencyQualified(int frequency) {
