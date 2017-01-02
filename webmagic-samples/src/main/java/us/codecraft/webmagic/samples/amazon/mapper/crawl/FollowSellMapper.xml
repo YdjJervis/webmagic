@@ -4,6 +4,7 @@
 
     <resultMap id="FollowSellResultMap" type="FollowSell">
         <result column="saf_id" property="id"/>
+        <result column="bo_batch_num" property="batchNum"/>
         <result column="bas_code" property="siteCode"/>
         <result column="saa_asin" property="asin"/>
         <result column="saf_seller_id" property="sellerID"/>
@@ -21,6 +22,7 @@
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO spider_amazon_followsell (
+        bo_batch_num,
         bas_code,
         saa_asin,
         saf_seller_id,
@@ -35,6 +37,7 @@
         )
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">(
+            #{item.batchNum},
             #{item.siteCode},
             #{item.asin},
             #{item.sellerID},
@@ -50,33 +53,19 @@
         </foreach>
     </insert>
 
-    <update id="update" parameterType="FollowSell">
-        UPDATE spider_amazon_followsell
-        SET
-        saf_price = #{price},
-        saf_trans_policy = #{transPolicy},
-        saf_condition = #{condition},
-        saf_seller_name = #{sellerName},
-        saf_rating = #{rating},
-        saf_probability = #{probability},
-        saf_star_level = #{starLevel},
-        saf_extra = #{extra}
-        WHERE
-        bas_code = #{siteCode}
-        and
-        saa_asin = #{asin}
-        and
-        saf_seller_id = #{sellerID};
-    </update>
-
-    <select id="find" resultMap="FollowSellResultMap">
+    <select id="findAll" resultMap="FollowSellResultMap">
         select * from spider_amazon_followsell
         WHERE
-        bas_code = #{0}
-        and
-        saa_asin = #{1}
-        and
-        saf_seller_id = #{2};
+        bo_batch_num = #{batchNum}
+        <if test="siteCode != null">
+            and bas_code = #{siteCode}
+        </if>
+        <if test="asin != null">
+            and saa_asin = #{asin}
+        </if>
+        <if test="sellerID != null">
+            and saf_seller_id = #{sellerID}
+        </if>;
     </select>
 
 </mapper>

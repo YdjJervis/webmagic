@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.crawl.FollowSellDao;
 import us.codecraft.webmagic.samples.amazon.pojo.crawl.FollowSell;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,37 +20,17 @@ public class FollowSellService {
     @Autowired
     private FollowSellDao mDao;
 
-    public void add(FollowSell followSell) {
-        if (!isExist(followSell.siteCode, followSell.asin, followSell.sellerID)) {
-            mDao.add(followSell);
-        } else {
-            update(followSell);
-        }
-    }
-
     public void addAll(List<FollowSell> followSellList) {
-        List<FollowSell> list = new ArrayList<>();
-        for (FollowSell followSell : followSellList) {
-            if (!isExist(followSell.siteCode, followSell.asin, followSell.sellerID)) {
-                list.add(followSell);
-            } else {
-                update(followSell);
-            }
-        }
-        if (CollectionUtils.isNotEmpty(list)) {
-            mDao.addAll(list);
+        if (CollectionUtils.isNotEmpty(followSellList)) {
+            mDao.addAll(followSellList);
         }
     }
 
-    public void update(FollowSell followSell) {
-        mDao.update(followSell);
+    /**
+     * @param followSell batchNum属性必填，siteCode，asin，sellerID可选
+     */
+    public List<FollowSell> findAll(FollowSell followSell) {
+        return mDao.findAll(followSell);
     }
 
-    public FollowSell find(String siteCode, String asin, String selllerId) {
-        return mDao.find(siteCode, asin, selllerId);
-    }
-
-    public boolean isExist(String siteCode, String asin, String selllerId) {
-        return find(siteCode, asin, selllerId) != null;
-    }
 }

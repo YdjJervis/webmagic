@@ -10,6 +10,7 @@ import us.codecraft.webmagic.samples.base.pojo.BasePojo;
  */
 public class FollowSell extends BasePojo{
 
+    public String batchNum;
     public String siteCode;
     public String asin;
     public String sellerID;
@@ -27,7 +28,8 @@ public class FollowSell extends BasePojo{
     @Override
     public String toString() {
         return "FollowSell{" +
-                "siteCode='" + siteCode + '\'' +
+                "batchNum='" + batchNum + '\'' +
+                ", siteCode='" + siteCode + '\'' +
                 ", asin='" + asin + '\'' +
                 ", sellerID='" + sellerID + '\'' +
                 ", price='" + price + '\'' +

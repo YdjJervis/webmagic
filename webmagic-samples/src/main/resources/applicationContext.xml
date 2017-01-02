@@ -94,7 +94,7 @@
         <task:scheduled ref="productProcessor" method="execute" cron="0/5 * * * * ?"/>
 
 
-        <!--asin爬取-->
+        <!--Review 全量爬&更新爬-->
         <!--生成批次-->
         <task:scheduled ref="generateAsinBatchMonitor" method="execute" cron="0/5 * * * * ?"/>
         <!--详单转url-->
@@ -105,7 +105,7 @@
         <task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/>
 
 
-        <!--review监听爬取-->
+        <!--Review 监听爬-->
         <!--生成批次-->
         <task:scheduled ref="generateReviewBatchMonitor" method="execute" cron="0/5 * * * * ?"/>
         <!--详单转url-->

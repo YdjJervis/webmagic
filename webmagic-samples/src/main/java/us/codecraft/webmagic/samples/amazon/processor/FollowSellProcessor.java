@@ -8,6 +8,7 @@ import us.codecraft.webmagic.samples.amazon.R;
 import us.codecraft.webmagic.samples.amazon.extractor.followsell.FollowSellExtractorAdapter;
 import us.codecraft.webmagic.samples.amazon.pojo.Url;
 import us.codecraft.webmagic.samples.amazon.pojo.batch.Batch;
+import us.codecraft.webmagic.samples.amazon.pojo.batch.BatchFollowSell;
 import us.codecraft.webmagic.samples.amazon.pojo.crawl.FollowSell;
 import us.codecraft.webmagic.samples.amazon.pojo.relation.CustomerFollowSell;
 import us.codecraft.webmagic.samples.amazon.service.batch.BatchFollowSellService;
@@ -45,6 +46,10 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
         if (isFollowSellType(page)) {
 
             List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract(extractSite(page).code, extractAsin(page), page);
+            for (FollowSell followSell : followSellList) {
+                followSell.batchNum = getUrl(page).batchNum;
+            }
+
             mFollowSellService.addAll(followSellList);
 
             /* 更新批次总单的状态 */
@@ -99,6 +104,11 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
         CustomerFollowSell customerFollowSell = mCustomerFollowSellService.find(batch.customerCode, getUrl(page).siteCode, getUrl(page).asin);
         customerFollowSell.onSell = 0;
         mCustomerFollowSellService.update(customerFollowSell);
+
+        /* 跟新批次详单状态 */
+        BatchFollowSell batchFollowSell = mBatchFollowSellService.find(batch.number, getUrl(page).siteCode, getUrl(page).asin);
+        batchFollowSell.status = 2;
+        mBatchFollowSellService.update(batchFollowSell);
 
         /* 删除URL */
         mUrlService.deleteByUrlMd5(getUrl(page).urlMD5);
