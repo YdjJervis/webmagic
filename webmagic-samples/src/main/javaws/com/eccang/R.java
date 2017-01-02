@@ -96,6 +96,7 @@ public final class R {
     /** 业务统计 */
     public static final class BusinessInfo {
         public static final String USABLE_NUM = "usableNum"; /*可用数*/
-        public static final String HASUSED_NUM = "hasUsedNum"; /*已用数*/
+        public static final String HAS_USED_NUM = "hasUsedNum"; /*已用数*/
     }
 }
+

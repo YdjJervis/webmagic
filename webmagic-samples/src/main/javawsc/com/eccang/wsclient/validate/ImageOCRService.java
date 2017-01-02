@@ -1,6 +1,7 @@
 
 package com.eccang.wsclient.validate;
 
+
 import com.eccang.spider.base.util.PropertyUtil;
 
 import javax.xml.namespace.QName;

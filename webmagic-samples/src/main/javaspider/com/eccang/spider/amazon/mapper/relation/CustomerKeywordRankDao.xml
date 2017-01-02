@@ -17,7 +17,7 @@
     </resultMap>
 
     <insert id="add" parameterType="CustomerKeywordRank" keyProperty="id" useGeneratedKeys="true">
-        INSERT INTO relation_customer_rank_keyword (
+        INSERT INTO relation_customer_keyword_rank (
           saa_asin,
           rcrk_keyword,
           bec_code,
@@ -43,13 +43,12 @@
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
-        INSERT INTO relation_customer_rank_keyword (
+        INSERT INTO relation_customer_keyword_rank (
           saa_asin,
           rcrk_keyword,
           bec_code,
           bas_code,
           bad_code,
-          rcrk_crawl,
           rcrk_priority,
           rcrk_frequency,
           rcrk_create_time,
@@ -62,7 +61,6 @@
             #{item.customerCode},
             #{item.siteCode},
             #{item.departmentCode},
-            #{item.crawl},
             #{item.priority},
             #{item.frequency},
             CURRENT_TIMESTAMP,
@@ -73,7 +71,7 @@
 
     <update id="update" parameterType="CustomerKeywordRank">
         UPDATE
-          relation_customer_rank_keyword
+          relation_customer_keyword_rank
         SET
           saa_asin = #{asin},
           rcrk_keyword = #{keyword},
@@ -93,7 +91,7 @@
         SELECT
           *
         FOR
-          relation_customer_rank_keyword
+          relation_customer_keyword_rank
         WHERE
           bec_code = #{0}
     </select>
@@ -101,7 +99,7 @@
         SELECT
           *
         FROM
-          relation_customer_rank_keyword
+          relation_customer_keyword_rank
         WHERE
           rcrk_crawl = 1 AND
           CURRENT_TIMESTAMP - rcrk_sync_time > rcrk_frequency * 3600
@@ -110,8 +108,8 @@
     <select id="findCustomerCodeIsOpen" resultMap="CustomerRankKeywordMap">
         SELECT
           *
-        FOR
-          relation_customer_rank_keyword
+        FROM
+          relation_customer_keyword_rank
         WHERE
           rcrk_crawl = 1 AND bec_code = #{0}
     </select>
@@ -120,7 +118,7 @@
         SELECT
           *
         FROM
-          relation_customer_rank_keyword
+          relation_customer_keyword_rank
         WHERE
           saa_asin = #{asin} AND rcrk_keyword = #{keyword} AND bec_code = #{customerCode} AND bas_code = #{siteCode} AND bad_code = #{departmentCode}
     </select>

@@ -116,7 +116,7 @@ public class CustomerBusinessService {
         }
 
         result.put(R.BusinessInfo.USABLE_NUM, customerBusiness.getMaxData() - useNum);
-        result.put(R.BusinessInfo.HASUSED_NUM, useNum);
+        result.put(R.BusinessInfo.HAS_USED_NUM, useNum);
 
         return result;
     }

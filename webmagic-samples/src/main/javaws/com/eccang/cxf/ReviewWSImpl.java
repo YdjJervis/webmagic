@@ -110,7 +110,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         /*对应客户下，review监听业务的使用情况*/
         Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(reviewReq.cutomerCode, R.BusinessCode.MONITOR_SPIDER);
         reviewRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
-        reviewRsp.data.hasUsedNum = result.get(R.BusinessInfo.HASUSED_NUM);
+        reviewRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
 
         return reviewRsp.toJson();
     }
@@ -509,7 +509,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         /*对应客户下，review监听业务的使用情况*/
         Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(baseRspParam.cutomerCode, R.BusinessCode.MONITOR_SPIDER);
         customerReviewUpdateRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
-        customerReviewUpdateRsp.data.hasUsedNum = result.get(R.BusinessInfo.HASUSED_NUM);
+        customerReviewUpdateRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
 
         return customerReviewUpdateRsp.toJson();
     }

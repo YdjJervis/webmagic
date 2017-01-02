@@ -2,14 +2,14 @@ package com.eccang.cxf;
 
 import com.eccang.R;
 import com.eccang.pojo.*;
+import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
+import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
+import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
 import com.eccang.util.RegexUtil;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
-import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
-import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
 
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
@@ -96,7 +96,7 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
         /*对应客户下，keywordRank监听业务的使用情况*/
         Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerKeywordRankReq.cutomerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
         customerKeywordRankRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
-        customerKeywordRankRsp.data.hasUsedNum = result.get(R.BusinessInfo.HASUSED_NUM);
+        customerKeywordRankRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
 
         return customerKeywordRankRsp.toJson();
     }
@@ -166,6 +166,7 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
                 if (keywordRank.getPriority() == cKeywordRank.getPriority() &&
                         keywordRank.getFrequency() == cKeywordRank.getFrequency() &&
                         keywordRank.getCrawl() == cKeywordRank.getCrawl()) {
+
                     customerKeywordRankUpdateRsp.data.noChange++;
                 } else {
                     cKeywordRank.setPriority(keywordRank.getPriority());
@@ -184,7 +185,7 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
         /*对应客户下，keywordRank监听业务的使用情况*/
         Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerKeywordRankUpdateReq.cutomerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
         customerKeywordRankUpdateRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
-        customerKeywordRankUpdateRsp.data.hasUsedNum = result.get(R.BusinessInfo.HASUSED_NUM);
+        customerKeywordRankUpdateRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
         return customerKeywordRankUpdateRsp.toJson();
     }
 
