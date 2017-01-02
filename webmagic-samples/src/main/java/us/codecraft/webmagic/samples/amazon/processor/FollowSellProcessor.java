@@ -1,5 +1,7 @@
 package us.codecraft.webmagic.samples.amazon.processor;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,7 @@ import us.codecraft.webmagic.samples.amazon.service.relation.CustomerFollowSellS
 import us.codecraft.webmagic.samples.base.monitor.ScheduledTask;
 import us.codecraft.webmagic.samples.base.util.UrlUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -54,6 +54,14 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
 
             /* 更新批次总单的状态 */
             Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
+            CustomerFollowSell customerFollowSell = mCustomerFollowSellService.find(batch.customerCode, getUrl(page).siteCode, getUrl(page).asin);
+
+            Set<String> lastSellerIdSet = new Gson().fromJson(customerFollowSell.extra, new TypeToken<Set>() {
+            }.getType());
+            if (lastSellerIdSet == null) {
+                lastSellerIdSet = new HashSet<>();
+            }
+
             Date currentTime = new Date();
             if (batch.startTime == null) {
                 batch.startTime = currentTime;
@@ -76,24 +84,50 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
 
                 /* 更改详单记录状态 */
                 mBatchFollowSellService.updateCrawlFinish(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin);
+                BatchFollowSell batchFollowSell = mBatchFollowSellService.find(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin);
+                batchFollowSell.status = 2;
 
                 batch.progress = mBatchFollowSellService.findAverageProgress(getUrl(page).batchNum);
                 if (batch.progress == 1) {
                     batch.finishTime = currentTime;
                     batch.status = 2;
-
                     /* 监控批次完成，把批次放进推送队列 */
                     mPushQueueService.add(batch.number);
                 }
+
+                /* 关系表大字段保存最后爬取时当前ASIN所有的SellerID */
+                Set<String> sellerSet = new HashSet<>();
+                FollowSell followSell = new FollowSell();
+                followSell.batchNum = batch.number;
+                followSell.siteCode = customerFollowSell.siteCode;
+                followSell.asin = getUrl(page).asin;
+                for (FollowSell fs : mFollowSellService.findAll(followSell)) {
+                    sellerSet.add(fs.sellerID);
+                }
+                customerFollowSell.extra = new Gson().toJson(sellerSet);
+
+                boolean changed = false;
+                if (sellerSet.size() != lastSellerIdSet.size()) {
+                    changed = true;
+                } else {
+                    for (String sellerId : sellerSet) {
+                        if (!lastSellerIdSet.contains(sellerId)) {
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+                batchFollowSell.isChanged = changed ? 1 : 0;
+                mBatchFollowSellService.update(batchFollowSell);
 
             }
             mBatchService.update(batch);
 
             /* 更新客户-Review关系记录状态 */
-            CustomerFollowSell customerFollowSell = mCustomerFollowSellService.find(batch.customerCode, getUrl(page).siteCode, getUrl(page).asin);
             customerFollowSell.times++;
             customerFollowSell.syncTime = currentTime;
             mCustomerFollowSellService.update(customerFollowSell);
+
         }
     }
 

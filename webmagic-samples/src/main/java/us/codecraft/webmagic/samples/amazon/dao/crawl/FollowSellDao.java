@@ -16,4 +16,7 @@ import java.util.List;
 public interface FollowSellDao extends BaseDao<FollowSell> {
 
     List<FollowSell> findAll(FollowSell followSell);
+
+
+    FollowSell find(String batchNum, String siteCode, String asin, String sellerId);
 }

@@ -15,6 +15,7 @@
         <result property="frequency" column="rcf_frequency"/>
         <result property="times" column="rcf_times"/>
         <result property="syncTime" column="rcf_sync_time"/>
+        <result property="extra" column="rcf_extra"/>
         <result property="createTime" column="rcf_create_time"/>
         <result property="updateTime" column="rcf_update_time"/>
     </resultMap>
@@ -31,7 +32,8 @@
           rcf_priority,
           rcf_frequency,
           rcf_times,
-          rcf_sync_time
+          rcf_sync_time,
+          rcf_extra
         ) values (
           #{customerCode},
           #{siteCode},
@@ -42,7 +44,8 @@
           #{priority},
           #{frequency},
           #{times},
-          #{syncTime}
+          #{syncTime},
+          #{extra}
         )
     </insert>
 
@@ -77,7 +80,8 @@
           rcf_priority = #{priority},
           rcf_frequency = #{frequency},
           rcf_times = #{times},
-          rcf_sync_time = #{syncTime}
+          rcf_sync_time = #{syncTime},
+          rcf_extra = #{extra}
         WHERE
           bec_code = #{customerCode}
         and
@@ -97,7 +101,8 @@
         rcf_priority,
         rcf_frequency,
         rcf_times,
-        rcf_sync_time
+        rcf_sync_time,
+        rcf_extra
         ) VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -110,7 +115,8 @@
             #{item.priority},
             #{item.frequency},
             #{item.times},
-            #{item.syncTime}
+            #{item.syncTime},
+            #{item.extra}
             )
         </foreach>
     </insert>

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.samples.amazon.dao.crawl.FollowSellDao;
 import us.codecraft.webmagic.samples.amazon.pojo.crawl.FollowSell;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,17 @@ public class FollowSellService {
     private FollowSellDao mDao;
 
     public void addAll(List<FollowSell> followSellList) {
-        if (CollectionUtils.isNotEmpty(followSellList)) {
+        List<FollowSell> list = new ArrayList<>();
+
+        for (FollowSell followSell : followSellList) {
+            if (isExist(followSell.batchNum, followSell.siteCode, followSell.asin, followSell.sellerID)) {
+                list.add(followSell);
+            } else {
+                mDao.update(followSell);
+            }
+        }
+
+        if (CollectionUtils.isNotEmpty(list)) {
             mDao.addAll(followSellList);
         }
     }
@@ -33,4 +44,11 @@ public class FollowSellService {
         return mDao.findAll(followSell);
     }
 
+    public FollowSell find(String batchNum, String siteCode, String asin, String sellerId) {
+        return mDao.find(batchNum, siteCode, asin, sellerId);
+    }
+
+    public boolean isExist(String batchNum, String siteCode, String asin, String sellerId) {
+        return find(batchNum, siteCode, asin, sellerId) != null;
+    }
 }
