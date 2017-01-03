@@ -22,7 +22,7 @@
     </resultMap>
 
     <insert id="addAll" parameterType="java.util.List">
-        INSERT INTO spider_amazom_goods (
+        INSERT INTO spider_amazon_goods (
           bo_batch_num,
           saa_asin,
           sakr_keyword,
@@ -66,7 +66,7 @@
         SELECT
           *
         FROM
-          spider_amazom_goods
+          spider_amazon_goods
         WHERE
           bo_batch_num = #{0}
     </select>
