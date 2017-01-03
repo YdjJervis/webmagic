@@ -21,16 +21,16 @@ public class CustomerFollowSellServiceTest extends SpringTestCase {
     @Test
     public void addOne() {
         CustomerFollowSell customerFollowSell = new CustomerFollowSell();
-        customerFollowSell.customerCode = "Customer001";
+        customerFollowSell.customerCode = "EC_001";
         customerFollowSell.siteCode = "US";
-        customerFollowSell.asin = "Asin001";
+        customerFollowSell.asin = "0071809252";
         customerFollowSell.frequency = 2;
         mService.add(customerFollowSell);
     }
 
     @Test
     public void addAll(){
-        List<ImportData> importDataList = mImportDataService.find(null);
+        List<ImportData> importDataList = mImportDataService.find("US");
 
         List<CustomerFollowSell> list = new ArrayList<>();
         for (ImportData importData : importDataList) {

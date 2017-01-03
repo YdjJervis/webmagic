@@ -1,5 +1,6 @@
 package com.eccang.amazon.monitor;
 
+import com.eccang.spider.amazon.monitor.GenerateFollowSellBatchMonitor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.eccang.base.SpringTestCase;
@@ -24,6 +25,9 @@ public class GenerateBatchMonitorTest extends SpringTestCase {
     @Autowired
     private GenerateKeywordRankBatchMonitor mGenerateKeywordRankBatchMonitor;
 
+    @Autowired
+    private GenerateFollowSellBatchMonitor mGenerateFollowSellBatchMonitor;
+
     @Test
     public void generateReviewMonitorBathTest() {
         mGenerateBatchMonitor.execute();
@@ -37,6 +41,11 @@ public class GenerateBatchMonitorTest extends SpringTestCase {
     @Test
     public void generateKeywordRankBatchMonitor() {
         mGenerateKeywordRankBatchMonitor.execute();
+    }
+
+    @Test
+    public void generateFollowSellBatchMonitor() {
+        mGenerateFollowSellBatchMonitor.execute();
     }
 
 }

@@ -2,6 +2,7 @@ package us.codecraft.webmagic.amazon.wsclient;
 
 import com.eccang.base.SpringTestCase;
 import com.eccang.pojo.CustomerKeywordRankReq;
+import com.eccang.pojo.CustomerKeywordRankUpdateReq;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
 import com.eccang.wsclient.keywordRank.KeywordRankWSService;
 import com.google.gson.Gson;
@@ -34,6 +35,7 @@ public class KeywordRankWSTest extends SpringTestCase {
         keywordRank.setSiteCode("US");
         keywordRank.setKeyword("java");
         keywordRank.setFrequency(2);
+        keywordRank.setPriority(0);
         keywordRank.setDepartmentCode("search-alias=aps");
         keywordRanks.add(keywordRank);
         customerKeywordRankReq.setData(keywordRanks);
@@ -42,4 +44,25 @@ public class KeywordRankWSTest extends SpringTestCase {
         System.out.println(json);
     }
 
+    @Test
+    public void setStat() {
+        CustomerKeywordRankUpdateReq customerKeywordRankUpdateReq = new CustomerKeywordRankUpdateReq();
+        List<CustomerKeywordRankUpdateReq.KeywordRank> keywordRanks = new ArrayList<>();
+        CustomerKeywordRankUpdateReq.KeywordRank keywordRank = customerKeywordRankUpdateReq.new KeywordRank();
+        customerKeywordRankUpdateReq.cutomerCode = "EC_001";
+        customerKeywordRankUpdateReq.platformCode = "ERP";
+        customerKeywordRankUpdateReq.token = "123456789";
+        keywordRank.setAsin("0596009208");
+        keywordRank.setSiteCode("US");
+        keywordRank.setKeyword("java");
+        keywordRank.setFrequency(4);
+        keywordRank.setPriority(2);
+        keywordRank.setCrawl(1);
+        keywordRank.setDepartmentCode("search-alias=aps");
+        keywordRanks.add(keywordRank);
+        customerKeywordRankUpdateReq.setData(keywordRanks);
+
+        String json = new KeywordRankWSService().getKeywordRankWSPort().setStatus(new Gson().toJson(customerKeywordRankUpdateReq));
+        System.out.println(json);
+    }
 }

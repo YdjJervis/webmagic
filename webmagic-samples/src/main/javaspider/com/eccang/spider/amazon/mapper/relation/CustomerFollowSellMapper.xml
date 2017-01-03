@@ -38,7 +38,7 @@
           #{customerCode},
           #{siteCode},
           #{asin},
-          #{sellerId}
+          #{sellerId},
           #{crawl},
           #{onSell},
           #{priority},

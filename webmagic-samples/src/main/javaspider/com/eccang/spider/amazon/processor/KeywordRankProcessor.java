@@ -128,6 +128,7 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
         Batch batch = mBatchService.findByBatchNumber(url.batchNum);
         if (batch.startTime == null) {
             batch.startTime = new Date();
+            batch.status = 1;
         }
         mBatchService.update(batch);
     }
@@ -175,9 +176,8 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
 
             /*添加到需要推送队列表中*/
             mPushQueueService.add(batchNum);
-        } else {
-            batch.status = 1;
         }
+
         batch.progress = progress;
         mBatchService.update(batch);
     }
@@ -274,13 +274,6 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
     }
 
     /**
-     * 解析商品ASIN
-     */
-    private String getGoodsAsin(Selectable goodsNode) {
-        return goodsNode.xpath("/li/@data-asin").get();
-    }
-
-    /**
      * 解析商品价格
      */
     private String getPrice(Selectable goodsNode, String siteCode) {
@@ -292,6 +285,13 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
             return getPriceUK(goodsNode);
         }
         return null;
+    }
+
+    /**
+     * 解析商品ASIN
+     */
+    private String getGoodsAsin(Selectable goodsNode) {
+        return goodsNode.xpath("/li/@data-asin").get();
     }
 
     /**

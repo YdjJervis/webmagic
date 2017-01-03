@@ -210,6 +210,12 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
                 return checkResult;
             }
 
+            if (StringUtils.isEmpty(keywordRank.getKeyword())) {
+                /*校验keyword是不为空*/
+                checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_KEYWORD_EMPTY);
+                return checkResult;
+            }
+
             if (StringUtils.isEmpty(keywordRank.getAsin())) {
                 /*校验keywordRank是否有空的asin码*/
                 checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_KEYWORD_ASIN_ERROR);

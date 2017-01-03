@@ -80,7 +80,7 @@ public final class R {
 
         public static final String PARAMETER_KEYWORD_EMPTY__ERROR = "客户下，查询的监听keyword排名不存在";
 
-        public static final String EXCEEDS_LIMIT = "数据超出限制";
+        public static final String PARAMETER_KEYWORD_EMPTY = "关键词不能为空";
 
         public static final String PARAMETER_DEPARTMENT_CODE_ERROR = "数据列表中，没有传入正确的品类码";
 
