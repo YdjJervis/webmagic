@@ -103,7 +103,7 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
         }
 
         /*关键词搜索完成：1.找到对应的asin，2：没有找到，但是排名在100以后，3.没有找到，并搜到的商品数小于100*/
-        if (isFind || rankNum > 100 || isLastPage(page)) {
+        if (isFind || rankNum > 300 || isLastPage(page)) {
             /*查询关键词排名信息*/
             KeywordRank rank = mKeywordRankService.findByObj(keywordRank);
             boolean isChanged = false;
