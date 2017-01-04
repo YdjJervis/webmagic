@@ -165,9 +165,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             }
             mCustomerAsinService.addAll(customerAsinList);
         } catch (Exception e) {
-            sLogger.error(e);
-            asinRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            asinRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(asinRsp, e);
         }
 
         Map<String, Integer> businessInfo = mCustomerBusinessService.getBusinessInfo(asinReq.cutomerCode, R.BusinessCode.ASIN_SPIDER);
@@ -256,9 +254,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 asinQueryRsp.data.add(resultAsin);
             }
         } catch (Exception e) {
-            sLogger.error(e);
-            asinQueryRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            asinQueryRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(asinQueryRsp, e);
         }
 
         return asinQueryRsp.toJson();
@@ -381,9 +377,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 }
             }
         } catch (Exception e) {
-            sLogger.error(e);
-            priorityRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            priorityRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(priorityRsp, e);
         }
 
         return priorityRsp.toJson();

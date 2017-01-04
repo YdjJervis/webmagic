@@ -60,20 +60,20 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             batchReq = new Gson().fromJson(json, BatchReq.class);
         } catch (Exception e) {
             sLogger.info(e);
-            baseRspParam.status  = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
             return baseRspParam.toJson();
         }
 
         /*校验batch对象是否为null*/
-        if(batchReq.data == null) {
-            baseRspParam.status  = R.HttpStatus.PARAM_WRONG;
+        if (batchReq.data == null) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_BATCH_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
         /*校验batch对象中批次号number是否为空*/
-        if(StringUtils.isEmpty(batchReq.data.number)) {
+        if (StringUtils.isEmpty(batchReq.data.number)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_BATCH_NUM_ERROR;
             return baseRspParam.toJson();
@@ -118,9 +118,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                     batchAsinRsp.data.details.add(asin);
                 }
             } catch (Exception e) {
-                sLogger.error(e);
-                batchAsinRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-                batchAsinRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+                serverException(batchAsinRsp, e);
             }
 
             return batchAsinRsp.toJson();
@@ -143,20 +141,18 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
 
                 List<BatchReview> batchReviewList = mBatchReviewService.findAllByBatchNum(batchReq.data.number);
                 for (BatchReview batchReview : batchReviewList) {
-                    CustomerReview customerReview = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode,batchReview.reviewID);
+                    CustomerReview customerReview = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, batchReview.reviewID);
                     BatchReviewRsp.ReviewMonitor monitor = batchReviewRsp.new ReviewMonitor();
                     monitor.siteCode = batchReview.siteCode;
                     monitor.reviewID = batchReview.reviewID;
                     monitor.isChanged = batchReview.isChanged;
-                    monitor.progress =  batchReview.status == 2 ? 1 : 0;
+                    monitor.progress = batchReview.status == 2 ? 1 : 0;
                     monitor.asin = customerReview.asin;
                     monitor.updateTime = DateUtils.format(batchReview.updateTime);
                     batchReviewRsp.data.details.add(monitor);
                 }
             } catch (Exception e) {
-                sLogger.error(e);
-                batchReviewRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-                batchReviewRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+                serverException(batchReviewRsp, e);
             }
 
             return batchReviewRsp.toJson();

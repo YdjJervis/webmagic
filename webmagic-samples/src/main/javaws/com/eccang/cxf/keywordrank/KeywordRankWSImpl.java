@@ -95,9 +95,7 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
             customerKeywordRankRsp.data.newCount = customerKeywordRanks.size() - crawledNum;
             customerKeywordRankRsp.data.oldCount = crawledNum;
         } catch (Exception e) {
-            sLogger.error(e);
-            customerKeywordRankRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            customerKeywordRankRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(customerKeywordRankRsp, e);
         }
         /*对应客户下，keywordRank监听业务的使用情况*/
         Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerKeywordRankReq.cutomerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
@@ -183,9 +181,7 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
                 }
             }
         } catch (Exception e) {
-            sLogger.error(e);
-            customerKeywordRankUpdateRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            customerKeywordRankUpdateRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(customerKeywordRankUpdateRsp, e);
         }
 
         /*对应客户下，keywordRank监听业务的使用情况*/
@@ -215,27 +211,27 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
 
         /* 参数验证阶段 */
         KeywordRankQueryReq.KeywordInfo keywordInfo = keywordRankQueryReq.getData();
-        if(StringUtils.isEmpty(keywordInfo.getBatchNum())) {
+        if (StringUtils.isEmpty(keywordInfo.getBatchNum())) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_BATCH_NUM_ERROR;
             return baseRspParam.toJson();
         }
-        if(StringUtils.isEmpty(keywordInfo.getAsin())) {
+        if (StringUtils.isEmpty(keywordInfo.getAsin())) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_EMPTY;
             return baseRspParam.toJson();
         }
-        if(RegexUtil.isSiteCodeQualified(keywordInfo.getSiteCode())) {
+        if (RegexUtil.isSiteCodeQualified(keywordInfo.getSiteCode())) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR;
             return baseRspParam.toJson();
         }
-        if(StringUtils.isEmpty(keywordInfo.getKeyword())) {
+        if (StringUtils.isEmpty(keywordInfo.getKeyword())) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_KEYWORD_EMPTY;
             return baseRspParam.toJson();
         }
-        if(StringUtils.isEmpty(keywordInfo.getDepartmentCode())) {
+        if (StringUtils.isEmpty(keywordInfo.getDepartmentCode())) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_DEPARTMENT_CODE_EMPTY;
             return baseRspParam.toJson();

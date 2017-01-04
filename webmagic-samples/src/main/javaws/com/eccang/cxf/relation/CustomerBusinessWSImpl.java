@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author Hardy
  * @version V0.2
- * 客户查询业务功能详情
+ *          客户查询业务功能详情
  * @date 2016/12/15 17:30
  */
 @WebService
@@ -86,9 +86,7 @@ public class CustomerBusinessWSImpl extends AbstractSpiderWS implements Customer
             }
             customerBusinessRsp.setCustomerBusiness(customerBusinessList);
         } catch (Exception e) {
-            sLogger.error(e);
-            customerBusinessRsp.status = 500;
-            customerBusinessRsp.msg = "服务器异常.";
+            serverException(customerBusinessRsp, e);
         }
         return new Gson().toJson(customerBusinessRsp);
     }

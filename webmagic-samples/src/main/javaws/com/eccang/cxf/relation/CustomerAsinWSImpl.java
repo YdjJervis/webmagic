@@ -84,9 +84,7 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
             customerAsinRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
             customerAsinRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
         } catch (Exception e) {
-            sLogger.error(e);
-            customerAsinRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            customerAsinRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(customerAsinRsp, e);
         }
 
         return customerAsinRsp.toJson();

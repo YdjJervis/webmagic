@@ -105,9 +105,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             reviewRsp.data.newCount = customerReviewList.size() - crawledNum;
             reviewRsp.data.oldCount = crawledNum;
         } catch (Exception e) {
-            sLogger.error(e);
-            reviewRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            reviewRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(reviewRsp, e);
         }
         /*对应客户下，review监听业务的使用情况*/
         Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(reviewReq.cutomerCode, R.BusinessCode.MONITOR_SPIDER);
@@ -239,9 +237,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 reviewQueryRsp.data.add(resultReview);
             }
         } catch (NumberFormatException e) {
-            sLogger.error(e);
-            reviewQueryRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            reviewQueryRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(reviewQueryRsp, e);
         }
 
         return reviewQueryRsp.toJson();
@@ -333,9 +329,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             }
 
         } catch (NumberFormatException e) {
-            sLogger.error(e);
-            reviewQueryRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            reviewQueryRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(reviewQueryRsp, e);
         }
 
         return reviewQueryRsp.toJson();
@@ -352,7 +346,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         resultReview.reviewID = review.reviewId;
         resultReview.buyStatus = StringUtils.isEmpty(review.buyStatus) ? "" : review.buyStatus;
         resultReview.person = review.person;
-        resultReview.version = StringUtils.isEmpty(review.version) ?  "" : review.version;
+        resultReview.version = StringUtils.isEmpty(review.version) ? "" : review.version;
         resultReview.star = review.star;
         resultReview.title = review.title;
         resultReview.content = review.content;
@@ -423,9 +417,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 }
             }
         } catch (Exception e) {
-            sLogger.error(e);
-            customerReviewUpdateRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            customerReviewUpdateRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(customerReviewUpdateRsp, e);
         }
         return customerReviewUpdateRsp.toJson();
     }
@@ -503,9 +495,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 }
             }
         } catch (Exception e) {
-            sLogger.error(e);
-            customerReviewUpdateRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            customerReviewUpdateRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(customerReviewUpdateRsp, e);
         }
 
         /*对应客户下，review监听业务的使用情况*/
@@ -573,7 +563,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
                 CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
 
-                if(data == null) {
+                if (data == null) {
                     customerReviewUpdateRsp.msg = R.RequestMsg.PARAMETER_REVIEW_EMPTY__ERROR;
                     return customerReviewUpdateRsp.toJson();
                 }
@@ -587,9 +577,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 }
             }
         } catch (Exception e) {
-            sLogger.error(e);
-            customerReviewUpdateRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            customerReviewUpdateRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(customerReviewUpdateRsp, e);
         }
         return customerReviewUpdateRsp.toJson();
     }
@@ -643,9 +631,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 }
             }
         } catch (Exception e) {
-            sLogger.error(e);
-            customerReviewUpdateRsp.status = R.HttpStatus.SERVER_EXCEPTION;
-            customerReviewUpdateRsp.msg = R.RequestMsg.SERVER_EXCEPTION;
+            serverException(customerReviewUpdateRsp, e);
         }
         return customerReviewUpdateRsp.toJson();
     }

@@ -135,4 +135,10 @@ public abstract class AbstractSpiderWS implements SpiderWS {
 
         return baseRspParam;
     }
+
+    protected void serverException(BaseRspParam baseRspParam, Exception e) {
+        sLogger.error(e);
+        baseRspParam.status = R.HttpStatus.SERVER_EXCEPTION;
+        baseRspParam.msg = R.RequestMsg.SERVER_EXCEPTION;
+    }
 }
