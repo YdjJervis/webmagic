@@ -24,7 +24,7 @@ public class Product extends BasePojo {
     public String reviewStar;
     public String reviewTime;
     public String replyNum;
-    public String transMode;
+    public boolean amazonDelivery;
     public String followSellNum;
     public String addedTime;
     public String category;
@@ -46,7 +46,7 @@ public class Product extends BasePojo {
                 ", reviewStar='" + reviewStar + '\'' +
                 ", reviewTime='" + reviewTime + '\'' +
                 ", replyNum='" + replyNum + '\'' +
-                ", transMode='" + transMode + '\'' +
+                ", amazonDelivery='" + amazonDelivery + '\'' +
                 ", followSellNum='" + followSellNum + '\'' +
                 ", addedTime='" + addedTime + '\'' +
                 ", category='" + category + '\'' +

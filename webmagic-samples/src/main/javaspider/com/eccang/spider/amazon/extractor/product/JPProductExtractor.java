@@ -21,11 +21,6 @@ public class JPProductExtractor extends AbstractProductExtractor {
     }
 
     @Override
-    String getReviewStar(Page page) {
-        return page.getHtml().xpath("//*[@id='averageCustomerReviews']//span[@class='a-icon-alt']/text()").get();
-    }
-
-    @Override
     String extractAddedTime(Page page) {
         return page.getHtml().xpath("//*[@class='date-first-available']/td[2]/text()").get();
     }

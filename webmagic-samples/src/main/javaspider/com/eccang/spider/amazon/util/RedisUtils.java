@@ -21,6 +21,7 @@ import java.util.Set;
 public class RedisUtils {
 
     protected static Logger logger = Logger.getLogger(RedisUtils.class);
+    private static final String address_array = "127.0.0.1,192.168.0.1";
 
     //访问密码
 //    private static String AUTH = FileUtil.getPropertyValue("/properties/redis.properties", "auth");
@@ -83,29 +84,27 @@ public class RedisUtils {
      * 初始化Redis连接池
      */
     private static void initialPool() {
-        String address_array = "192.168.100.109";
         int port = 6379;
         try {
-            JedisPoolConfig config = new JedisPoolConfig();
-            config.setMaxTotal(MAX_ACTIVE);
-            config.setMaxIdle(MAX_IDLE);
-            config.setMaxIdle(MAX_WAIT);
-            config.setTestOnBorrow(TEST_ON_BORROW);
-            jedisPool = new JedisPool(config, address_array.split(",")[0], port, TIMEOUT);
+            initJedisPool(port, address_array.split(",")[0]);
         } catch (Exception e) {
             logger.error("First create JedisPool error : " + e);
             try {
                 //如果第一个IP异常，则访问第二个IP
-                JedisPoolConfig config = new JedisPoolConfig();
-                config.setMaxTotal(MAX_ACTIVE);
-                config.setMaxIdle(MAX_IDLE);
-                config.setMaxIdle(MAX_WAIT);
-                config.setTestOnBorrow(TEST_ON_BORROW);
-                jedisPool = new JedisPool(config, address_array.split(",")[1], port, TIMEOUT);
+                initJedisPool(port, address_array.split(",")[1]);
             } catch (Exception e2) {
                 logger.error("Second create JedisPool error : " + e2);
             }
         }
+    }
+
+    private static void initJedisPool(int port, String host) {
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(MAX_ACTIVE);
+        config.setMaxIdle(MAX_IDLE);
+        config.setMaxIdle(MAX_WAIT);
+        config.setTestOnBorrow(TEST_ON_BORROW);
+        jedisPool = new JedisPool(config, host, port, TIMEOUT);
     }
 
     /**

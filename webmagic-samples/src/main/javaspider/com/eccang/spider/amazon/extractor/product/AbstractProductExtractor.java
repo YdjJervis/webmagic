@@ -16,7 +16,7 @@ import java.util.List;
  * @Description: 产品抽取器抽象类，做一些公共操作
  * @date 2016/12/24 18:12
  */
-public abstract class AbstractProductExtractor implements ProductExtractor{
+public abstract class AbstractProductExtractor implements ProductExtractor {
 
     Product sProduct;
 
@@ -42,6 +42,7 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
 
         sProduct.title = page.getHtml().xpath("//*[@id='productTitle']/text()").get();
         sProduct.price = page.getHtml().xpath("//*[@id='priceblock_ourprice' or @id='priceblock_dealprice' or @id='priceblock_saleprice']/text()").get();
+        sProduct.amazonDelivery = isAmazon(page, sProduct.transName);
         sProduct.imgUrl = page.getHtml().xpath("//*[@id='imgTagWrapperId']/img/@data-a-dynamic-image").regex("(http.*?jpg)").get();
         sProduct.reviewNum = page.getHtml().xpath("//*[@id='acrCustomerReviewText']/text()").regex("([0-9,]*)").get();
         sProduct.replyNum = page.getHtml().xpath("//a[@id='askATFLink']/html()").regex("([0-9,]+)").get();
@@ -59,7 +60,22 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
      * @return 平均星级
      */
     String getReviewStar(Page page) {
-        return page.getHtml().xpath("//*[@id='reviewStarsLinkedCustomerReviews']//span/text()").get();
+        String reviewStar = page.getHtml().xpath("//*[@id='reviewStarsLinkedCustomerReviews']//span/text()").get();
+        if (StringUtils.isEmpty(reviewStar)) {
+            reviewStar = page.getHtml().xpath("//*[@id='acrPopover']//span[@class='a-icon-alt']/text()").get();
+        }
+        return reviewStar;
+    }
+
+    /**
+     *判断运货方式是否是亚马逊
+     */
+    boolean isAmazon(Page page, String transName) {
+        if(StringUtils.isNotEmpty(transName) && transName.toLowerCase().contains("amazon")) {
+            return true;
+        }
+        String transMode = page.getHtml().xpath("//*[@id='price-shipping-message']/span/text()").get();
+        return StringUtils.isNotEmpty(transMode);
     }
 
     /**
@@ -120,7 +136,7 @@ public abstract class AbstractProductExtractor implements ProductExtractor{
     /**
      * @return 详细信息对应的Key值包含的关键字
      */
-    String onAddedTimeKey(){
+    String onAddedTimeKey() {
         return "Date";
     }
 }

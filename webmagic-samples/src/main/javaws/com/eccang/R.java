@@ -82,7 +82,11 @@ public final class R {
 
         public static final String PARAMETER_KEYWORD_EMPTY = "关键词不能为空";
 
+        public static final String PARAMETER_DEPARTMENT_CODE_EMPTY = "品类码不能为空";
+
         public static final String PARAMETER_DEPARTMENT_CODE_ERROR = "数据列表中，没有传入正确的品类码";
+
+        public static final String PARAMETER_ASIN_EMPTY = "请求参数Asin不能为空";
 
     }
 

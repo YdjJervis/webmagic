@@ -19,7 +19,7 @@
         <result column="sap_review_star" property="reviewStar"/>
         <result column="sap_review_time" property="reviewTime"/>
         <result column="sap_reply_num" property="replyNum"/>
-        <result column="sap_trans_mode" property="transMode"/>
+        <result column="sap_amazon_delivery" property="amazonDelivery"/>
         <result column="sap_follow_sell_num" property="followSellNum"/>
         <result column="sap_added_time" property="addedTime"/>
         <result column="sap_category" property="category"/>
@@ -45,7 +45,7 @@
         sap_review_star,
         sap_review_time,
         sap_reply_num,
-        sap_trans_mode,
+        sap_amazon_delivery,
         sap_follow_sell_num,
         sap_added_time,
         sap_category,
@@ -65,7 +65,7 @@
         #{reviewStar},
         #{reviewTime},
         #{replyNum},
-        #{transMode},
+        #{amazonDelivery},
         #{followSellNum},
         #{addedTime},
         #{category},
@@ -87,7 +87,7 @@
         sap_review_star = #{reviewStar},
         sap_review_time = #{reviewTime},
         sap_reply_num = #{replyNum},
-        sap_trans_mode = #{transMode},
+        sap_amazon_delivery = #{amazonDelivery},
         sap_follow_sell_num = #{followSellNum},
         sap_added_time = #{addedTime},
         sap_category = #{category},

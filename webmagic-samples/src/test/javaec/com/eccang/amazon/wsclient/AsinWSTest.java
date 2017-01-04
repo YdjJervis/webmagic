@@ -62,12 +62,12 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testAsinBatchImport() {
         AsinReq asinReq = new AsinReq();
-        asinReq.cutomerCode = "EC_002";
+        asinReq.cutomerCode = "EC_001";
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
         AsinReq.Asin asin = asinReq.new Asin();
-        asin.asin = "B00HYAL84G";
+        asin.asin = "0071809252";
         asin.siteCode = "US";
         asin.priority = 0;
         asin.star = "0-0-1-1-1";

@@ -18,9 +18,4 @@ public class FRProductExtractor extends AbstractProductExtractor {
         sProduct.siteCode = R.SiteCode.FR;
         return sProduct;
     }
-
-    @Override
-    String getReviewStar(Page page) {
-        return page.getHtml().xpath("//*[@id='averageCustomerReviews']//span[@class='a-icon-alt']/text()").get();
-    }
 }

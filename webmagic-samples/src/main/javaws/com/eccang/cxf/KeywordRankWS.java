@@ -20,4 +20,7 @@ public interface KeywordRankWS extends SpiderWS {
     @WebMethod
     String setStatus(String json);
 
+    @WebMethod
+    String getKeywordRankInfo(String json);
+
 }

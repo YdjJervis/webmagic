@@ -2,7 +2,9 @@ package com.eccang.cxf;
 
 import com.eccang.R;
 import com.eccang.pojo.*;
+import com.eccang.spider.amazon.pojo.crawl.KeywordRank;
 import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
+import com.eccang.spider.amazon.service.crawl.KeywordRankService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
 import com.eccang.util.RegexUtil;
@@ -32,6 +34,8 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
     private CustomerKeywordRankService mCustomerKeywordRankService;
     @Autowired
     private CustomerBusinessService mCustomerBusinessService;
+    @Autowired
+    private KeywordRankService mKeywordRankService;
 
     @Override
     public String addToMonitor(String json) {
@@ -187,6 +191,66 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
         customerKeywordRankUpdateRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
         customerKeywordRankUpdateRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
         return customerKeywordRankUpdateRsp.toJson();
+    }
+
+    @Override
+    public String getKeywordRankInfo(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        KeywordRankQueryReq keywordRankQueryReq;
+        try {
+            keywordRankQueryReq = new Gson().fromJson(json, KeywordRankQueryReq.class);
+        } catch (Exception e) {
+            sLogger.info(e);
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        /* 参数验证阶段 */
+        KeywordRankQueryReq.KeywordInfo keywordInfo = keywordRankQueryReq.getData();
+        if(StringUtils.isEmpty(keywordInfo.getBatchNum())) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_BATCH_NUM_ERROR;
+            return baseRspParam.toJson();
+        }
+        if(StringUtils.isEmpty(keywordInfo.getAsin())) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_EMPTY;
+            return baseRspParam.toJson();
+        }
+        if(RegexUtil.isSiteCodeQualified(keywordInfo.getSiteCode())) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR;
+            return baseRspParam.toJson();
+        }
+        if(StringUtils.isEmpty(keywordInfo.getKeyword())) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_KEYWORD_EMPTY;
+            return baseRspParam.toJson();
+        }
+        if(StringUtils.isEmpty(keywordInfo.getDepartmentCode())) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DEPARTMENT_CODE_EMPTY;
+            return baseRspParam.toJson();
+        }
+
+        KeywordRankQueryRsp keywordRankQueryRsp = new KeywordRankQueryRsp();
+        keywordRankQueryRsp.cutomerCode = baseRspParam.cutomerCode;
+        keywordRankQueryRsp.status = baseRspParam.status;
+        keywordRankQueryRsp.msg = baseRspParam.msg;
+
+        KeywordRank keywordRank = new KeywordRank();
+        keywordRank.setAsin(keywordInfo.getAsin());
+        keywordRank.setKeyword(keywordInfo.getKeyword());
+        keywordRank.setDepartmentCode(keywordInfo.getDepartmentCode());
+        KeywordRank kwRank = mKeywordRankService.findByObj(keywordRank);
+
+        return null;
     }
 
     /**
