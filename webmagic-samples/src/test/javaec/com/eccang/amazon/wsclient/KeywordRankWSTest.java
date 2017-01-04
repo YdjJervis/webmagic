@@ -1,8 +1,8 @@
 package com.eccang.amazon.wsclient;
 
 import com.eccang.base.SpringTestCase;
-import com.eccang.pojo.CustomerKeywordRankReq;
-import com.eccang.pojo.CustomerKeywordRankUpdateReq;
+import com.eccang.pojo.keywordrank.CustomerKeywordRankReq;
+import com.eccang.pojo.keywordrank.CustomerKeywordRankUpdateReq;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
 import com.eccang.wsclient.keywordRank.KeywordRankWSService;
 import com.google.gson.Gson;

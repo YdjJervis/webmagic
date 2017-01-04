@@ -31,8 +31,8 @@ public abstract class AbstractSpiderWS implements SpiderWS {
     @Autowired
     private PlatformService mPlatformService;
 
-    static final String IS_SUCCESS = "isSuccess";
-    static final String MESSAGE = "message";
+    protected static final String IS_SUCCESS = "isSuccess";
+    protected static final String MESSAGE = "message";
 
     protected Logger sLogger = Logger.getLogger(getClass());
 

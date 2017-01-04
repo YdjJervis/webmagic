@@ -1,6 +1,6 @@
 package com.eccang.wsclient.samples;
 
-import com.eccang.pojo.CustomerBusinessReq;
+import com.eccang.pojo.business.CustomerBusinessReq;
 import com.eccang.wsclient.business.CustomerBusinessWSService;
 import com.google.gson.Gson;
 

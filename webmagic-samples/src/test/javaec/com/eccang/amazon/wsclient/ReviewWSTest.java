@@ -1,7 +1,7 @@
 package com.eccang.amazon.wsclient;
 
-import com.eccang.pojo.ReviewQueryReq;
-import com.eccang.pojo.ReviewReq;
+import com.eccang.pojo.review.ReviewQueryReq;
+import com.eccang.pojo.review.ReviewReq;
 import com.eccang.wsclient.review.ReviewWSService;
 import com.google.gson.Gson;
 import org.junit.Test;

@@ -1,8 +1,8 @@
 package com.eccang.amazon.wsclient;
 
-import com.eccang.pojo.AsinPriorityReq;
-import com.eccang.pojo.AsinQueryReq;
-import com.eccang.pojo.AsinReq;
+import com.eccang.pojo.asin.AsinPriorityReq;
+import com.eccang.pojo.asin.AsinQueryReq;
+import com.eccang.pojo.asin.AsinReq;
 import com.eccang.wsclient.asin.AsinWSService;
 import com.google.gson.Gson;
 import org.junit.Test;

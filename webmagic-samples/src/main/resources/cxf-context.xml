@@ -15,10 +15,10 @@
 
     <!-- 第二种发布方式：带有接口的发布 -->
     <!-- id:唯一标示 serviceClass：接口类型 address：服务的请求url-->
-    <jaxws:server id="asinWS" serviceClass="com.eccang.cxf.AsinWS" address="/asin">
+    <jaxws:server id="asinWS" serviceClass="com.eccang.cxf.asin.AsinWS" address="/asin">
         <jaxws:serviceBean>
             <!-- 服务的实现类 -->
-            <bean class="com.eccang.cxf.AsinWSImpl"/>
+            <bean class="com.eccang.cxf.asin.AsinWSImpl"/>
         </jaxws:serviceBean>
         <!-- 加入请求的消息拦截器 -->
         <jaxws:inInterceptors>
@@ -30,33 +30,33 @@
         </jaxws:outInterceptors>
     </jaxws:server>
 
-    <jaxws:server id="reviewWS" serviceClass="com.eccang.cxf.ReviewWS" address="/review">
+    <jaxws:server id="reviewWS" serviceClass="com.eccang.cxf.review.ReviewWS" address="/review">
         <jaxws:serviceBean>
-            <bean class="com.eccang.cxf.ReviewWSImpl"/>
+            <bean class="com.eccang.cxf.review.ReviewWSImpl"/>
         </jaxws:serviceBean>
     </jaxws:server>
 
-    <jaxws:server id="batchWS" serviceClass="com.eccang.cxf.BatchWS" address="/batch">
+    <jaxws:server id="batchWS" serviceClass="com.eccang.cxf.batch.BatchWS" address="/batch">
         <jaxws:serviceBean>
-            <bean class="com.eccang.cxf.BatchWSImpl"/>
+            <bean class="com.eccang.cxf.batch.BatchWSImpl"/>
         </jaxws:serviceBean>
     </jaxws:server>
 
-    <jaxws:server id="customerAsinWS" serviceClass="com.eccang.cxf.CustomerAsinWS" address="/customerAsin">
+    <jaxws:server id="customerAsinWS" serviceClass="com.eccang.cxf.relation.CustomerAsinWS" address="/customerAsin">
         <jaxws:serviceBean>
-            <bean class="com.eccang.cxf.CustomerAsinWSImpl"/>
+            <bean class="com.eccang.cxf.relation.CustomerAsinWSImpl"/>
         </jaxws:serviceBean>
     </jaxws:server>
 
-    <jaxws:server id="customerBusinessWS" serviceClass="com.eccang.cxf.CustomerBusinessWS" address="/customerBusiness">
+    <jaxws:server id="customerBusinessWS" serviceClass="com.eccang.cxf.relation.CustomerBusinessWS" address="/customerBusiness">
         <jaxws:serviceBean>
-            <bean class="com.eccang.cxf.CustomerBusinessWSImpl"/>
+            <bean class="com.eccang.cxf.relation.CustomerBusinessWSImpl"/>
         </jaxws:serviceBean>
     </jaxws:server>
 
-    <jaxws:server id="keywordRankWS" serviceClass="com.eccang.cxf.KeywordRankWS" address="/keywordRank">
+    <jaxws:server id="keywordRankWS" serviceClass="com.eccang.cxf.keywordrank.KeywordRankWS" address="/keywordRank">
         <jaxws:serviceBean>
-            <bean class="com.eccang.cxf.KeywordRankWSImpl" />
+            <bean class="com.eccang.cxf.keywordrank.KeywordRankWSImpl" />
         </jaxws:serviceBean>
     </jaxws:server>
 

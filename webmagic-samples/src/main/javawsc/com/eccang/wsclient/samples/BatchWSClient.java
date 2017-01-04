@@ -1,6 +1,6 @@
 package com.eccang.wsclient.samples;
 
-import com.eccang.pojo.BatchReq;
+import com.eccang.pojo.batch.BatchReq;
 import com.eccang.wsclient.batch.BatchWSService;
 import com.google.gson.Gson;
 
