@@ -83,7 +83,7 @@ public class RedisUtils {
      * 初始化Redis连接池
      */
     private static void initialPool() {
-        String address_array = "127.0.0.1,192.168.0.1";
+        String address_array = "192.168.100.109";
         int port = 6379;
         try {
             JedisPoolConfig config = new JedisPoolConfig();

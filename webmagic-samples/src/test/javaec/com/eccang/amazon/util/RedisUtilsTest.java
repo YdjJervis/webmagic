@@ -27,7 +27,7 @@ public class RedisUtilsTest {
 
     @Test
     public void hset() {
-        RedisUtils.hset("key", "field", "value");
+        RedisUtils.hset("page", "http://www.amazon.com?a=1", "gyeghie");
     }
 
     @Test
@@ -52,7 +52,7 @@ public class RedisUtilsTest {
 
     @Test
     public void hgetTest() {
-        System.out.println(RedisUtils.hget("addHashMap", "weight"));
+        System.out.println(RedisUtils.hget("page", "https://www.amazon.com/gp/offer-listing/0071809252"));
     }
 
     @Test

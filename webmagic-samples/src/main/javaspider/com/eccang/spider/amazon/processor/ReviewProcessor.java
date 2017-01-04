@@ -33,7 +33,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
     private AsinRootAsinService mAsinRootAsinService;
 
     @Override
-    protected void dealReview(Page page) {
+    protected void dealOtherPage(Page page) {
 
         String currentUrl = page.getUrl().get();
         Url urlExtra = getUrl(page);

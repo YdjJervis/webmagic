@@ -1,11 +1,5 @@
 package com.eccang.spider.amazon.processor;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.Page;
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.extractor.followsell.FollowSellExtractorAdapter;
 import com.eccang.spider.amazon.pojo.Url;
@@ -18,8 +12,14 @@ import com.eccang.spider.amazon.service.crawl.FollowSellService;
 import com.eccang.spider.amazon.service.relation.CustomerFollowSellService;
 import com.eccang.spider.base.monitor.ScheduledTask;
 import com.eccang.spider.base.util.UrlUtils;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.Page;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -31,8 +31,6 @@ import java.util.regex.Pattern;
 @Service
 public class FollowSellProcessor extends BasePageProcessor implements ScheduledTask {
 
-    private static final String START_INDEX = "startIndex";
-
     @Autowired
     private FollowSellService mFollowSellService;
     @Autowired
@@ -43,92 +41,90 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
     @Override
     protected void dealOtherPage(Page page) {
 
-        if (isFollowSellType(page)) {
+        List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract(extractSite(page).code, getUrl(page).asin, page);
+        for (FollowSell followSell : followSellList) {
+            followSell.batchNum = getUrl(page).batchNum;
+        }
 
-            List<FollowSell> followSellList = new FollowSellExtractorAdapter().extract(extractSite(page).code, extractAsin(page), page);
-            for (FollowSell followSell : followSellList) {
-                followSell.batchNum = getUrl(page).batchNum;
+        sLogger.info(followSellList);
+        mFollowSellService.addAll(followSellList);
+
+        /* 更新批次总单的状态 */
+        Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
+        CustomerFollowSell customerFollowSell = mCustomerFollowSellService.find(batch.customerCode, getUrl(page).siteCode, getUrl(page).asin);
+
+        Set<String> lastSellerIdSet = new Gson().fromJson(customerFollowSell.extra, new TypeToken<Set>() {
+        }.getType());
+        if (lastSellerIdSet == null) {
+            lastSellerIdSet = new HashSet<>();
+        }
+
+        Date currentTime = new Date();
+        if (batch.startTime == null) {
+            batch.startTime = currentTime;
+            batch.status = 1;
+        }
+
+        saveTurnPageUrl(page);
+
+        List<Url> urlList = mUrlService.find(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin, R.CrawlType.FOLLOW_SELL);
+        int crawledNum = 0;
+        for (Url url : urlList) {
+            if (url.status == 200) {
+                ++crawledNum;
+            }
+        }
+        if (urlList.size() == crawledNum) {
+            /* 归档URL */
+            mUrlService.deleteAll(urlList);
+            mUrlHistoryService.addAll(urlList);
+
+            /* 更改详单记录状态 */
+            mBatchFollowSellService.updateCrawlFinish(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin);
+            BatchFollowSell batchFollowSell = mBatchFollowSellService.find(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin);
+            batchFollowSell.status = 2;
+
+            batch.progress = mBatchFollowSellService.findAverageProgress(getUrl(page).batchNum);
+            if (batch.progress == 1) {
+                batch.finishTime = currentTime;
+                batch.status = 2;
+                /* 监控批次完成，把批次放进推送队列 */
+                mPushQueueService.add(batch.number);
             }
 
-            mFollowSellService.addAll(followSellList);
-
-            /* 更新批次总单的状态 */
-            Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
-            CustomerFollowSell customerFollowSell = mCustomerFollowSellService.find(batch.customerCode, getUrl(page).siteCode, getUrl(page).asin);
-
-            Set<String> lastSellerIdSet = new Gson().fromJson(customerFollowSell.extra, new TypeToken<Set>() {
-            }.getType());
-            if (lastSellerIdSet == null) {
-                lastSellerIdSet = new HashSet<>();
+            /* 关系表大字段保存最后爬取时当前ASIN所有的SellerID */
+            Set<String> sellerSet = new HashSet<>();
+            FollowSell followSell = new FollowSell();
+            followSell.batchNum = batch.number;
+            followSell.siteCode = customerFollowSell.siteCode;
+            followSell.asin = getUrl(page).asin;
+            for (FollowSell fs : mFollowSellService.findAll(followSell)) {
+                sellerSet.add(fs.sellerID);
             }
+            customerFollowSell.extra = new Gson().toJson(sellerSet);
 
-            Date currentTime = new Date();
-            if (batch.startTime == null) {
-                batch.startTime = currentTime;
-                batch.status = 1;
-            }
-
-            saveTurnPageUrl(page);
-
-            List<Url> urlList = mUrlService.find(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin, R.CrawlType.FOLLOW_SELL);
-            int crawledNum = 0;
-            for (Url url : urlList) {
-                if (url.status == 200) {
-                    ++crawledNum;
-                }
-            }
-            if (urlList.size() == crawledNum) {
-                /* 归档URL */
-                mUrlService.deleteAll(urlList);
-                mUrlHistoryService.addAll(urlList);
-
-                /* 更改详单记录状态 */
-                mBatchFollowSellService.updateCrawlFinish(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin);
-                BatchFollowSell batchFollowSell = mBatchFollowSellService.find(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin);
-                batchFollowSell.status = 2;
-
-                batch.progress = mBatchFollowSellService.findAverageProgress(getUrl(page).batchNum);
-                if (batch.progress == 1) {
-                    batch.finishTime = currentTime;
-                    batch.status = 2;
-                    /* 监控批次完成，把批次放进推送队列 */
-                    mPushQueueService.add(batch.number);
-                }
-
-                /* 关系表大字段保存最后爬取时当前ASIN所有的SellerID */
-                Set<String> sellerSet = new HashSet<>();
-                FollowSell followSell = new FollowSell();
-                followSell.batchNum = batch.number;
-                followSell.siteCode = customerFollowSell.siteCode;
-                followSell.asin = getUrl(page).asin;
-                for (FollowSell fs : mFollowSellService.findAll(followSell)) {
-                    sellerSet.add(fs.sellerID);
-                }
-                customerFollowSell.extra = new Gson().toJson(sellerSet);
-
-                boolean changed = false;
-                if (sellerSet.size() != lastSellerIdSet.size()) {
-                    changed = true;
-                } else {
-                    for (String sellerId : sellerSet) {
-                        if (!lastSellerIdSet.contains(sellerId)) {
-                            changed = true;
-                            break;
-                        }
+            boolean changed = false;
+            if (sellerSet.size() != lastSellerIdSet.size()) {
+                changed = true;
+            } else {
+                for (String sellerId : sellerSet) {
+                    if (!lastSellerIdSet.contains(sellerId)) {
+                        changed = true;
+                        break;
                     }
                 }
-                batchFollowSell.isChanged = changed ? 1 : 0;
-                mBatchFollowSellService.update(batchFollowSell);
-
             }
-            mBatchService.update(batch);
-
-            /* 更新客户-Review关系记录状态 */
-            customerFollowSell.times++;
-            customerFollowSell.syncTime = currentTime;
-            mCustomerFollowSellService.update(customerFollowSell);
+            batchFollowSell.isChanged = changed ? 1 : 0;
+            mBatchFollowSellService.update(batchFollowSell);
 
         }
+        mBatchService.update(batch);
+
+        /* 更新客户-Review关系记录状态 */
+        customerFollowSell.times++;
+        customerFollowSell.syncTime = currentTime;
+        mCustomerFollowSellService.update(customerFollowSell);
+
     }
 
     @Override
@@ -152,54 +148,52 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
      * 当为翻页第一页时，保存其它页的翻页URL到URL表
      */
     private void saveTurnPageUrl(Page page) {
-        List<String> pageUrlList = extractPageUrlList(page);
-        List<Url> urlList = new ArrayList<>();
-        for (String urlStr : pageUrlList) {
-            Url url = new Url();
 
-            url.batchNum = getUrl(page).batchNum;
-            url.siteCode = getUrl(page).siteCode;
-            url.asin = getUrl(page).asin;
+        int maxPageNum = extractMaxPageNum(page);
+        if (extractIndex(page) == 0 && maxPageNum > 1) {
+            sLogger.info("当前ASIN的跟卖最大页码：" + maxPageNum);
+            List<Url> urlList = new ArrayList<>();
+            for (int i = 2; i <= maxPageNum; i++) {
+                Url url = new Url();
 
-            url.type = getUrl(page).type;
-            url.urlMD5 = UrlUtils.md5(url.batchNum + urlStr);
-            url.url = urlStr;
-            url.parentUrl = getUrl(page).url;
-            url.priority = getUrl(page).priority;
+                String urlStr = page.getUrl().get() + "/ref=olp_page_" + i + "?startIndex=" + (i - 1) * 10 + "&overridePriceSuppression=1";
 
-            urlList.add(url);
+                url.batchNum = getUrl(page).batchNum;
+                url.siteCode = getUrl(page).siteCode;
+                url.asin = getUrl(page).asin;
+
+                url.type = getUrl(page).type;
+                url.urlMD5 = UrlUtils.md5(url.batchNum + urlStr);
+                url.url = urlStr;
+                url.parentUrl = getUrl(page).url;
+                url.priority = getUrl(page).priority;
+
+                urlList.add(url);
+            }
+            mUrlService.addAll(urlList);
         }
-        mUrlService.addAll(urlList);
     }
 
+    /**
+     * 根据当前页面URL抽取页码
+     */
     private int extractIndex(Page page) {
-        String startIndex = UrlUtils.getValue(page.getUrl().get(), START_INDEX);
-        if (StringUtils.isEmpty(startIndex)) {
-            return 0;
+        Matcher matcher = Pattern.compile(".*page_([0-9]+).*").matcher(page.getUrl().get());
+        if (matcher.matches()) {
+            return Integer.valueOf(matcher.group(1));
         }
-        return Integer.valueOf(startIndex);
+        return 0;
     }
 
-    /**
-     * 如果是第一页就抽取页面
-     */
-    private List<String> extractPageUrlList(Page page) {
-        if (extractIndex(page) == 0) {
-            return page.getHtml().xpath("//ul[@class='a-pagination']//a/@href").regex("(.*page_[0-9]+.*)").all();
+    private int extractMaxPageNum(Page page) {
+        int maxPage = 0;
+        List<String> pageNumList = page.getHtml().xpath("//ul[@class='a-pagination']//a/@href").regex(".*page_([0-9]+).*").all();
+        for (String pageNum : pageNumList) {
+            if (Integer.valueOf(pageNum) > maxPage) {
+                maxPage = Integer.valueOf(pageNum);
+            }
         }
-        return new ArrayList<>();
-    }
-
-    /**
-     * @return 是否是跟卖类型URL
-     */
-    private boolean isFollowSellType(Page page) {
-        return Pattern.compile(".*/gp/offer-listing/.*").matcher(page.getUrl().get()).matches();
-    }
-
-    @Override
-    String extractAsin(Page page) {
-        return page.getUrl().regex(".*/gp/offer-listing/([0-9A-Za-z]*)").get();
+        return maxPage;
     }
 
     @Override
@@ -207,5 +201,12 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
         sLogger.info("开始执行 跟卖 爬取任务...");
         List<Url> urlList = mUrlService.find(R.CrawlType.FOLLOW_SELL);
         startToCrawl(urlList);
+    }
+
+    public static void main(String[] args) {
+        Matcher matcher = Pattern.compile(".*page_([0-9]+).*").matcher("https://www.amazon.com/gp/offer-listing");
+        if (matcher.matches()) {
+            System.out.println(matcher.group(1));
+        }
     }
 }

@@ -26,7 +26,7 @@ public class ReviewStatProcessor extends ReviewProcessor {
     private ReviewStatService mService;
 
     @Override
-    protected void dealReview(Page page) {
+    protected void dealOtherPage(Page page) {
         /*提取ASIN码*/
         String asin = extractAsin(page);
         String siteCode = extractSite(page).code;
@@ -38,7 +38,6 @@ public class ReviewStatProcessor extends ReviewProcessor {
             return;
         }
         int totalReview = Integer.valueOf(totalReviewStr.replace(",", ""));
-
 
         //a-icon a-icon-star-medium a-star-medium-4-5 averageStarRating
         float starAverage = Float.valueOf(page.getHtml().xpath("//*[@data-hook='average-star-rating']/@class").regex(".*medium-([0-5\\-]{1,3}).*").get().replace("-", "."));
@@ -52,7 +51,7 @@ public class ReviewStatProcessor extends ReviewProcessor {
         for (Selectable propNode : starPropNodes) {
             String starStr = propNode.xpath("td[@class='aok-nowrap']/a/text()").regex(".*([1-5]).*").get();
             if (StringUtils.isEmpty(starStr)) {
-                    /*该星级没有评论，跳过*/
+                /*该星级没有评论，跳过*/
                 continue;
             }
             sLogger.info("星级：" + starStr);

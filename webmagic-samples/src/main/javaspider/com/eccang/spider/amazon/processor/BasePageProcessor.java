@@ -1,5 +1,26 @@
 package com.eccang.spider.amazon.processor;
 
+import com.eccang.spider.amazon.pojo.Asin;
+import com.eccang.spider.amazon.pojo.ImgValidateResult;
+import com.eccang.spider.amazon.pojo.Url;
+import com.eccang.spider.amazon.pojo.UrlBatchStat;
+import com.eccang.spider.amazon.pojo.batch.BatchAsin;
+import com.eccang.spider.amazon.pojo.crawl.Review;
+import com.eccang.spider.amazon.pojo.dict.IpsInfoManage;
+import com.eccang.spider.amazon.pojo.dict.Site;
+import com.eccang.spider.amazon.service.*;
+import com.eccang.spider.amazon.service.batch.BatchAsinService;
+import com.eccang.spider.amazon.service.batch.BatchService;
+import com.eccang.spider.amazon.service.dict.IpsInfoManageService;
+import com.eccang.spider.amazon.service.dict.IpsSwitchManageService;
+import com.eccang.spider.amazon.service.dict.SiteService;
+import com.eccang.spider.amazon.util.RedisUtils;
+import com.eccang.spider.amazon.util.ValidateProxyUtils;
+import com.eccang.spider.base.service.UserAgentService;
+import com.eccang.spider.downloader.AbuProxyDownloader;
+import com.eccang.spider.downloader.HttpClientImplDownloader;
+import com.eccang.spider.downloader.HttpClientRedisCacheDownloader;
+import com.eccang.spider.downloader.IpsProxyHttpClientDownloader;
 import com.eccang.wsclient.validate.ImageOCRService;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -11,23 +32,7 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
-import com.eccang.spider.downloader.AbuProxyDownloader;
-import com.eccang.spider.downloader.HttpClientImplDownloader;
-import com.eccang.spider.downloader.IpsProxyHttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
-import com.eccang.spider.amazon.pojo.*;
-import com.eccang.spider.amazon.pojo.batch.BatchAsin;
-import com.eccang.spider.amazon.pojo.crawl.Review;
-import com.eccang.spider.amazon.pojo.dict.IpsInfoManage;
-import com.eccang.spider.amazon.pojo.dict.Site;
-import com.eccang.spider.amazon.service.*;
-import com.eccang.spider.amazon.service.batch.BatchAsinService;
-import com.eccang.spider.amazon.service.batch.BatchService;
-import com.eccang.spider.amazon.service.dict.IpsInfoManageService;
-import com.eccang.spider.amazon.service.dict.IpsSwitchManageService;
-import com.eccang.spider.amazon.service.dict.SiteService;
-import com.eccang.spider.amazon.util.ValidateProxyUtils;
-import com.eccang.spider.base.service.UserAgentService;
 import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.utils.UrlUtils;
 
@@ -42,7 +47,7 @@ import java.util.Set;
  * @date 2016/10/27
  */
 @Service
-public class BasePageProcessor implements PageProcessor {
+public abstract class BasePageProcessor implements PageProcessor {
 
     Logger sLogger = Logger.getLogger(getClass());
     private us.codecraft.webmagic.Site mSite = us.codecraft.webmagic.Site.me().setRetryTimes(3).setSleepTime(10 * 1000).setTimeOut(10 * 1000);
@@ -90,6 +95,8 @@ public class BasePageProcessor implements PageProcessor {
     @Autowired
     private IpsProxyHttpClientDownloader mIpsProxyHttpClientDownloader;
     @Autowired
+    private HttpClientRedisCacheDownloader mHttpClientRedisCacheDownloader;
+    @Autowired
     private NoSellService mNoSellService;
     @Autowired
     protected BatchService mBatchService;
@@ -115,9 +122,8 @@ public class BasePageProcessor implements PageProcessor {
             //包括mSet里的状态码，则不做处理
         } else if (isValidatePage(page)) {
             dealValidate(page);
-        } else if (isReviewPage(page)) {
-            dealReview(page);
         } else {
+            RedisUtils.hset("page", page.getUrl().get(), page.getHtml().get());
             dealOtherPage(page);
         }
     }
@@ -125,20 +131,13 @@ public class BasePageProcessor implements PageProcessor {
     /**
      * 处理其它页码，对亚马逊页面爬取的扩展
      */
-    protected void dealOtherPage(Page page) {
-    }
+    protected abstract void dealOtherPage(Page page);
 
     @Override
     public us.codecraft.webmagic.Site getSite() {
         sLogger.info("getSite()::");
         mSite.setUserAgent(mUserAgentService.findRandomUA().userAgent).setAcceptStatCode(mDealSet);
         return mSite;
-    }
-
-    /**
-     * 处理Review。不同子类可以覆写后做不同处理
-     */
-    protected void dealReview(Page page) {
     }
 
     /**
@@ -327,7 +326,7 @@ public class BasePageProcessor implements PageProcessor {
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
-                    .setDownloader(mHttpClientImplDownloader)
+                    .setDownloader(mHttpClientRedisCacheDownloader)
                     .thread(5);
 
             for (Url url : urlList) {

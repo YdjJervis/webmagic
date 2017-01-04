@@ -8,7 +8,7 @@ import com.eccang.spider.base.pojo.BasePojo;
  * @Description: 跟卖 实体
  * @date 2016/12/2 15:18
  */
-public class FollowSell extends BasePojo{
+public class FollowSell extends BasePojo {
 
     public String batchNum;
     public String siteCode;

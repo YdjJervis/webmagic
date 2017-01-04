@@ -1,6 +1,6 @@
 package com.eccang.spider.amazon.extractor.followsell;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import us.codecraft.webmagic.Page;
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.crawl.FollowSell;
@@ -15,7 +15,7 @@ import java.util.List;
  * @Description: 跟卖抽取器抽象类，做一些公共操作
  * @date 2016/12/24 18:12
  */
-public abstract class AbstractFollowSellExtractor implements FollowSellExtractor{
+public abstract class AbstractFollowSellExtractor implements FollowSellExtractor {
 
     List<FollowSell> sFollowSellList;
 
@@ -37,12 +37,18 @@ public abstract class AbstractFollowSellExtractor implements FollowSellExtractor
 
             String policyHtml = mItemNode.xpath("//span[@class='a-color-secondary']/html()").get();
             if (StringUtils.isNotEmpty(policyHtml)) {
-                followSell.transPolicy = policyHtml.trim().replaceAll("<a.*/a>", "");
+                followSell.transPolicy = policyHtml.trim().replaceAll("<.*?>", " ");
             }
             followSell.condition = mItemNode.xpath("//span[@class='a-size-medium olpCondition a-text-bold']/text()").get().trim();
+
             followSell.sellerID = mItemNode.xpath("//span[@class='a-size-medium a-text-bold']/a/@href").regex("seller=([0-9a-zA-Z]*)").get();
+            followSell.sellerID = StringUtils.isEmpty(followSell.sellerID) ? "Amazon" : followSell.sellerID;
+
             followSell.sellerName = mItemNode.xpath("//span[@class='a-size-medium a-text-bold']/a/text()").get();
+
             followSell.rating = mItemNode.xpath("//p[@class='a-spacing-small']/text()").regex("(\\(.*\\))").get();
+            followSell.rating = "()".equals(followSell.rating) ? null : followSell.rating;
+
             followSell.probability = mItemNode.xpath("//p[@class='a-spacing-small']/a/b/text()").get();
             followSell.starLevel = mItemNode.xpath("//p[@class='a-spacing-small']/i/span/text()").get();
 
@@ -51,4 +57,5 @@ public abstract class AbstractFollowSellExtractor implements FollowSellExtractor
 
         return sFollowSellList;
     }
+
 }

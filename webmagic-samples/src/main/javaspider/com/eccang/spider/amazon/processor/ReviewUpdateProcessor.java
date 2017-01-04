@@ -43,7 +43,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
     private PushQueueService mPushQueueService;
 
     @Override
-    protected void dealReview(Page page) {
+    protected void dealOtherPage(Page page) {
 
         Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
         /* 更改开始爬取的时间 */

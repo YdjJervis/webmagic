@@ -1,4 +1,4 @@
-package us.codecraft.webmagic.amazon.wsclient;
+package com.eccang.amazon.wsclient;
 
 import com.eccang.base.SpringTestCase;
 import com.eccang.pojo.CustomerKeywordRankReq;
@@ -28,16 +28,32 @@ public class KeywordRankWSTest extends SpringTestCase {
         CustomerKeywordRankReq customerKeywordRankReq = new CustomerKeywordRankReq();
         List<CustomerKeywordRankReq.KeywordRank> keywordRanks = new ArrayList<>();
         CustomerKeywordRankReq.KeywordRank keywordRank = customerKeywordRankReq.new KeywordRank();
+
         customerKeywordRankReq.cutomerCode = "EC_001";
         customerKeywordRankReq.platformCode = "ERP";
         customerKeywordRankReq.token = "123456789";
-        keywordRank.setAsin("0596009208");
+
+        /* 添加第一个数据 */
+        keywordRank.setAsin("B01HPI5AM2");
         keywordRank.setSiteCode("US");
-        keywordRank.setKeyword("java");
+        keywordRank.setKeyword("phone");
         keywordRank.setFrequency(2);
         keywordRank.setPriority(0);
         keywordRank.setDepartmentCode("search-alias=aps");
+
         keywordRanks.add(keywordRank);
+
+        /* 添加第二个数据 */
+        keywordRank = customerKeywordRankReq.new KeywordRank();
+
+        keywordRank.setAsin("B01MED1SHR");
+        keywordRank.setSiteCode("UK");
+        keywordRank.setKeyword("phone");
+        keywordRank.setPriority(1);
+        keywordRank.setDepartmentCode("search-alias=aps");
+
+        keywordRanks.add(keywordRank);
+
         customerKeywordRankReq.setData(keywordRanks);
 
         String json = new KeywordRankWSService().getKeywordRankWSPort().addToMonitor(new Gson().toJson(customerKeywordRankReq));

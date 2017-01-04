@@ -36,37 +36,35 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
 
     @Override
     protected void dealOtherPage(Page page) {
-        if (page.getUrl().get().contains("customer-reviews")) {
 
-            String reviewId = page.getUrl().regex(".*customer-reviews/(.*)").get();
-            Review review = mReviewService.findByReviewId(reviewId);
+        String reviewId = page.getUrl().regex(".*customer-reviews/(.*)").get();
+        Review review = mReviewService.findByReviewId(reviewId);
 
-            String star = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']//img").regex(".*stars-([1-5]).*").get();
+        String star = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']//img").regex(".*stars-([1-5]).*").get();
 
-            if (!NumberUtils.isNumber(star)) {
-                sLogger.warn("抱歉，商品已经下架，没有成功解析颗星数：" + star);
-                updateBatchStatus(page, false, false);
-            } else {
-                int stars = Integer.valueOf(star);
-                String title = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
-                String content = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
+        if (!NumberUtils.isNumber(star)) {
+            sLogger.warn("抱歉，商品已经下架，没有成功解析颗星数：" + star);
+            updateBatchStatus(page, false, false);
+        } else {
+            int stars = Integer.valueOf(star);
+            String title = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
+            String content = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
 
-                boolean changed = false;
-                if (review.star != stars || !review.title.equals(title) || review.content.equals(content)) {
-                    changed = true;
-                }
-
-                review.star = stars;
-                review.title = title;
-                review.content = content;
-
-                sLogger.info(review);
-                mReviewService.update(review);
-
-                updateBatchStatus(page, true, changed);
+            boolean changed = false;
+            if (review.star != stars || !review.title.equals(title) || review.content.equals(content)) {
+                changed = true;
             }
 
+            review.star = stars;
+            review.title = title;
+            review.content = content;
+
+            sLogger.info(review);
+            mReviewService.update(review);
+
+            updateBatchStatus(page, true, changed);
         }
+
     }
 
     /**

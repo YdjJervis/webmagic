@@ -1,12 +1,11 @@
 package com.eccang.spider.amazon.service.crawl;
 
+import com.eccang.spider.amazon.dao.crawl.FollowSellDao;
+import com.eccang.spider.amazon.pojo.crawl.FollowSell;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.eccang.spider.amazon.dao.crawl.FollowSellDao;
-import com.eccang.spider.amazon.pojo.crawl.FollowSell;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,17 +21,7 @@ public class FollowSellService {
     private FollowSellDao mDao;
 
     public void addAll(List<FollowSell> followSellList) {
-        List<FollowSell> list = new ArrayList<>();
-
-        for (FollowSell followSell : followSellList) {
-            if (isExist(followSell.batchNum, followSell.siteCode, followSell.asin, followSell.sellerID)) {
-                mDao.update(followSell);
-            } else {
-                list.add(followSell);
-            }
-        }
-
-        if (CollectionUtils.isNotEmpty(list)) {
+        if (CollectionUtils.isNotEmpty(followSellList)) {
             mDao.addAll(followSellList);
         }
     }
@@ -44,11 +33,4 @@ public class FollowSellService {
         return mDao.findAll(followSell);
     }
 
-    public FollowSell find(String batchNum, String siteCode, String asin, String sellerId) {
-        return mDao.find(batchNum, siteCode, asin, sellerId);
-    }
-
-    public boolean isExist(String batchNum, String siteCode, String asin, String sellerId) {
-        return find(batchNum, siteCode, asin, sellerId) != null;
-    }
 }
