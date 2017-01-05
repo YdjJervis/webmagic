@@ -2,24 +2,23 @@ package com.eccang.cxf.review;
 
 import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
-import com.eccang.pojo.*;
+import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.review.*;
-import com.eccang.util.RegexUtil;
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.pojo.relation.AsinRootAsin;
 import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
 import com.eccang.spider.amazon.pojo.relation.CustomerReview;
-import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.service.crawl.ReviewService;
 import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerReviewService;
 import com.eccang.spider.amazon.util.DateUtils;
+import com.eccang.util.RegexUtil;
+import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
@@ -58,13 +57,8 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             return baseRspParam.toJson();
         }
 
-        ReviewReq reviewReq;
-        try {
-            reviewReq = new Gson().fromJson(json, ReviewReq.class);
-        } catch (Exception e) {
-            sLogger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        ReviewReq reviewReq = parseRequestParam(json, baseRspParam, ReviewReq.class);
+        if (reviewReq == null) {
             return baseRspParam.toJson();
         }
 
@@ -124,13 +118,8 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             return baseRspParam.toJson();
         }
 
-        ReviewQueryReq reviewQueryReq;
-        try {
-            reviewQueryReq = new Gson().fromJson(asinJson, ReviewQueryReq.class);
-        } catch (Exception e) {
-            sLogger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        ReviewQueryReq reviewQueryReq = parseRequestParam(asinJson, baseRspParam, ReviewQueryReq.class);
+        if (reviewQueryReq == null) {
             return baseRspParam.toJson();
         }
 
@@ -251,13 +240,8 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             return baseRspParam.toJson();
         }
 
-        ReviewQueryReq reviewQueryReq;
-        try {
-            reviewQueryReq = new Gson().fromJson(json, ReviewQueryReq.class);
-        } catch (Exception e) {
-            sLogger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        ReviewQueryReq reviewQueryReq = parseRequestParam(json, baseRspParam, ReviewQueryReq.class);
+        if (reviewQueryReq == null) {
             return baseRspParam.toJson();
         }
 
@@ -363,13 +347,8 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             return baseRspParam.toJson();
         }
 
-        CustomerReviewUpdateReq customerReviewUpdateReq;
-        try {
-            customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
-        } catch (Exception e) {
-            sLogger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        CustomerReviewUpdateReq customerReviewUpdateReq = parseRequestParam(json, baseRspParam, CustomerReviewUpdateReq.class);
+        if (customerReviewUpdateReq == null) {
             return baseRspParam.toJson();
         }
 
@@ -433,12 +412,8 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             return baseRspParam.toJson();
         }
 
-        CustomerReviewUpdateReq customerReviewUpdateReq;
-        try {
-            customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
-        } catch (Exception e) {
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        CustomerReviewUpdateReq customerReviewUpdateReq = parseRequestParam(json, baseRspParam, CustomerReviewUpdateReq.class);
+        if (customerReviewUpdateReq == null) {
             return baseRspParam.toJson();
         }
 
@@ -517,13 +492,8 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             return baseRspParam.toJson();
         }
 
-        CustomerReviewUpdateReq customerReviewUpdateReq;
-        try {
-            customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
-        } catch (Exception e) {
-            sLogger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        CustomerReviewUpdateReq customerReviewUpdateReq = parseRequestParam(json, baseRspParam, CustomerReviewUpdateReq.class);
+        if (customerReviewUpdateReq == null) {
             return baseRspParam.toJson();
         }
 
@@ -592,7 +562,10 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             return baseRspParam.toJson();
         }
 
-        CustomerReviewUpdateReq customerReviewUpdateReq = new Gson().fromJson(json, CustomerReviewUpdateReq.class);
+        CustomerReviewUpdateReq customerReviewUpdateReq = parseRequestParam(json, baseRspParam, CustomerReviewUpdateReq.class);
+        if (customerReviewUpdateReq == null) {
+            return baseRspParam.toJson();
+        }
         /* 参数验证阶段 */
         boolean isParamQualified = true;
         if (CollectionUtils.isEmpty(customerReviewUpdateReq.data)) {

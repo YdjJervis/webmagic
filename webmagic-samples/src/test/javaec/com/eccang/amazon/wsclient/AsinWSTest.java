@@ -97,8 +97,10 @@ public class AsinWSTest extends SpringTestCase {
             asinReq.data.add(asin);
         }
 
-        System.out.println(new Gson().toJson(asinReq));
-        String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));
+        String param = new Gson().toJson(asinReq);
+        System.out.println(param);
+
+        String json = new AsinWSService().getAsinWSPort().addToCrawl("{\"cutomerCode\":\"EC_001\",\"platformCode\":\"ERP\",\"token\":\"123456789\",\"data\":\"[]\"}");
         System.out.println(json);
 
     }

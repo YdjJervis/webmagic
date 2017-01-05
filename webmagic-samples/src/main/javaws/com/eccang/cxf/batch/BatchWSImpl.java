@@ -6,10 +6,6 @@ import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.asin.BatchAsinRsp;
 import com.eccang.pojo.batch.BatchReq;
 import com.eccang.pojo.review.BatchReviewRsp;
-import com.google.gson.Gson;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.eccang.spider.amazon.pojo.batch.Batch;
 import com.eccang.spider.amazon.pojo.batch.BatchAsin;
 import com.eccang.spider.amazon.pojo.batch.BatchReview;
@@ -19,6 +15,9 @@ import com.eccang.spider.amazon.service.batch.BatchReviewService;
 import com.eccang.spider.amazon.service.batch.BatchService;
 import com.eccang.spider.amazon.service.relation.CustomerReviewService;
 import com.eccang.spider.amazon.util.DateUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -55,13 +54,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             return baseRspParam.toJson();
         }
 
-        BatchReq batchReq;
-        try {
-            batchReq = new Gson().fromJson(json, BatchReq.class);
-        } catch (Exception e) {
-            sLogger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        BatchReq batchReq = parseRequestParam(json, baseRspParam, BatchReq.class);
+        if (batchReq == null) {
             return baseRspParam.toJson();
         }
 

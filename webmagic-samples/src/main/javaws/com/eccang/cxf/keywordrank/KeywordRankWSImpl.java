@@ -2,7 +2,7 @@ package com.eccang.cxf.keywordrank;
 
 import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
-import com.eccang.pojo.*;
+import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.keywordrank.*;
 import com.eccang.spider.amazon.pojo.crawl.GoodsRankInfo;
 import com.eccang.spider.amazon.pojo.crawl.KeywordRank;
@@ -12,7 +12,6 @@ import com.eccang.spider.amazon.service.crawl.KeywordRankService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
 import com.eccang.util.RegexUtil;
-import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,13 +50,8 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
             return baseRspParam.toJson();
         }
 
-        CustomerKeywordRankReq customerKeywordRankReq;
-        try {
-            customerKeywordRankReq = new Gson().fromJson(json, CustomerKeywordRankReq.class);
-        } catch (Exception e) {
-            sLogger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        CustomerKeywordRankReq customerKeywordRankReq = parseRequestParam(json, baseRspParam, CustomerKeywordRankReq.class);
+        if (customerKeywordRankReq == null) {
             return baseRspParam.toJson();
         }
 
@@ -117,13 +111,8 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
             return baseRspParam.toJson();
         }
 
-        CustomerKeywordRankUpdateReq customerKeywordRankUpdateReq;
-        try {
-            customerKeywordRankUpdateReq = new Gson().fromJson(json, CustomerKeywordRankUpdateReq.class);
-        } catch (Exception e) {
-            sLogger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        CustomerKeywordRankUpdateReq customerKeywordRankUpdateReq = parseRequestParam(json, baseRspParam, CustomerKeywordRankUpdateReq.class);
+        if (customerKeywordRankUpdateReq == null) {
             return baseRspParam.toJson();
         }
 
@@ -203,13 +192,8 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
             return baseRspParam.toJson();
         }
 
-        KeywordRankQueryReq keywordRankQueryReq;
-        try {
-            keywordRankQueryReq = new Gson().fromJson(json, KeywordRankQueryReq.class);
-        } catch (Exception e) {
-            sLogger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        KeywordRankQueryReq keywordRankQueryReq = parseRequestParam(json, baseRspParam, KeywordRankQueryReq.class);
+        if (keywordRankQueryReq == null) {
             return baseRspParam.toJson();
         }
 
@@ -250,7 +234,7 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
             KeywordRank keywordRank = new KeywordRank(keywordInfo.getAsin(), keywordInfo.getKeyword(), keywordInfo.getSiteCode(), keywordInfo.getDepartmentCode());
             KeywordRank kwRank = mKeywordRankService.findByObj(keywordRank);
 
-            if(kwRank == null) {
+            if (kwRank == null) {
                 keywordRankQueryRsp.msg = R.RequestMsg.QUERY_DATA_EMPTY;
                 return keywordRankQueryRsp.toJson();
             }

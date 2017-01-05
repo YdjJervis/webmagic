@@ -14,14 +14,14 @@ import java.net.URL;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "AsinWSService", targetNamespace = "http://cxf.eccang.com/", wsdlLocation = "http://192.168.100.109:8080/eccang/ws/asin?wsdl")
+@WebServiceClient(name = "AsinWSService", targetNamespace = "http://asin.cxf.eccang.com/", wsdlLocation = "http://localhost:8080/eccang/ws/asin?wsdl")
 public class AsinWSService
     extends Service
 {
 
     private final static URL ASINWSSERVICE_WSDL_LOCATION;
     private final static WebServiceException ASINWSSERVICE_EXCEPTION;
-    private final static QName ASINWSSERVICE_QNAME = new QName("http://cxf.eccang.com/", "AsinWSService");
+    private final static QName ASINWSSERVICE_QNAME = new QName("http://asin.cxf.eccang.com/", "AsinWSService");
 
     static {
         URL url = null;
@@ -67,7 +67,7 @@ public class AsinWSService
      */
     @WebEndpoint(name = "AsinWSPort")
     public AsinWS getAsinWSPort() {
-        return super.getPort(new QName("http://cxf.eccang.com/", "AsinWSPort"), AsinWS.class);
+        return super.getPort(new QName("http://asin.cxf.eccang.com/", "AsinWSPort"), AsinWS.class);
     }
 
     /**
@@ -79,7 +79,7 @@ public class AsinWSService
      */
     @WebEndpoint(name = "AsinWSPort")
     public AsinWS getAsinWSPort(WebServiceFeature... features) {
-        return super.getPort(new QName("http://cxf.eccang.com/", "AsinWSPort"), AsinWS.class, features);
+        return super.getPort(new QName("http://asin.cxf.eccang.com/", "AsinWSPort"), AsinWS.class, features);
     }
 
     private static URL __getWsdlLocation() {

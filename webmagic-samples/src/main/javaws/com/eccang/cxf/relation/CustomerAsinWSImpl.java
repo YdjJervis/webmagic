@@ -6,14 +6,13 @@ import com.eccang.cxf.asin.AsinWSImpl;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.asin.CustomerAsinReq;
 import com.eccang.pojo.asin.CustomerAsinRsp;
-import com.eccang.util.RegexUtil;
-import com.google.gson.Gson;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
 import com.eccang.spider.amazon.service.relation.CustomerAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
+import com.eccang.util.RegexUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
 import java.util.HashMap;
@@ -44,12 +43,8 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
         }
 
         /* 参数验证阶段 */
-        CustomerAsinReq customerAsinReq;
-        try {
-            customerAsinReq = new Gson().fromJson(jsonArray, CustomerAsinReq.class);
-        } catch (Exception e) {
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_FORMAT_ERROR;
+        CustomerAsinReq customerAsinReq = parseRequestParam(jsonArray, baseRspParam, CustomerAsinReq.class);
+        if (customerAsinReq == null) {
             return baseRspParam.toJson();
         }
 

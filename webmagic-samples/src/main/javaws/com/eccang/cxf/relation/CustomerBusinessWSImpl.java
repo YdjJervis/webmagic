@@ -1,16 +1,15 @@
 package com.eccang.cxf.relation;
 
-import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.business.CustomerBusinessReq;
 import com.eccang.pojo.business.CustomerBusinessRsp;
+import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
+import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
-import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
@@ -37,15 +36,9 @@ public class CustomerBusinessWSImpl extends AbstractSpiderWS implements Customer
             return baseRspParam.toJson();
         }
 
-        CustomerBusinessReq customerBusinessReq;
-        try {
-            customerBusinessReq = new Gson().fromJson(jsonArray, CustomerBusinessReq.class);
-        } catch (Exception e) {
-            logger.info(e);
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_FORMAT_ERROR;
+        CustomerBusinessReq customerBusinessReq = parseRequestParam(jsonArray, baseRspParam, CustomerBusinessReq.class);
+        if (customerBusinessReq == null) {
             return baseRspParam.toJson();
-
         }
 
         /*响应对象公共参数*/

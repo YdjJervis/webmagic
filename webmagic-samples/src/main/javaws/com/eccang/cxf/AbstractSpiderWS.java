@@ -3,17 +3,18 @@ package com.eccang.cxf;
 import com.eccang.R;
 import com.eccang.pojo.BaseReqParam;
 import com.eccang.pojo.BaseRspParam;
-import com.google.gson.Gson;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.pojo.dict.API;
 import com.eccang.spider.amazon.pojo.dict.Customer;
 import com.eccang.spider.amazon.pojo.dict.Platform;
 import com.eccang.spider.amazon.service.dict.APIService;
 import com.eccang.spider.amazon.service.dict.CustomerService;
 import com.eccang.spider.amazon.service.dict.PlatformService;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Jervis
@@ -140,5 +141,17 @@ public abstract class AbstractSpiderWS implements SpiderWS {
         sLogger.error(e);
         baseRspParam.status = R.HttpStatus.SERVER_EXCEPTION;
         baseRspParam.msg = R.RequestMsg.SERVER_EXCEPTION;
+    }
+
+    protected <T> T parseRequestParam(String json, BaseRspParam baseRspParam, Class<T> clazz) {
+        T t = null;
+        try {
+            t = new Gson().fromJson(json, clazz);
+        } catch (JsonSyntaxException e) {
+            sLogger.error(e);
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_FORMAT_ERROR;
+        }
+        return t;
     }
 }

@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * Generated source version: 2.2
  * 
  */
-@WebService(name = "AsinWS", targetNamespace = "http://cxf.eccang.com/")
+@WebService(name = "AsinWS", targetNamespace = "http://asin.cxf.eccang.com/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @XmlSeeAlso({
     ObjectFactory.class
@@ -31,7 +31,7 @@ public interface AsinWS {
      */
     @WebMethod
     @WebResult(partName = "return")
-    public String addToCrawl(
+    public String getAsinsStatus(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
@@ -55,19 +55,7 @@ public interface AsinWS {
      */
     @WebMethod
     @WebResult(partName = "return")
-    public String getAsinsStatus(
-        @WebParam(name = "arg0", partName = "arg0")
-        String arg0);
-
-    /**
-     * 
-     * @param arg0
-     * @return
-     *     returns com.eccang.wsclient.asin.BaseRspParam
-     */
-    @WebMethod
-    @WebResult(partName = "return")
-    public BaseRspParam auth(
+    public String addToCrawl(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
@@ -80,6 +68,18 @@ public interface AsinWS {
     @WebMethod
     @WebResult(partName = "return")
     public String setPriority(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns com.eccang.wsclient.asin.BaseRspParam
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public BaseRspParam auth(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
