@@ -86,6 +86,8 @@ public final class R {
 
         public static final String PARAMETER_DEPARTMENT_CODE_ERROR = "数据列表中，没有传入正确的品类码";
 
+        public static final String QUERY_DATA_EMPTY = "查询到的数据为空";
+
         public static final String PARAMETER_ASIN_EMPTY = "请求参数Asin不能为空";
 
     }

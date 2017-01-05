@@ -247,10 +247,13 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
         keywordRankQueryRsp.msg = baseRspParam.msg;
 
         try {
-            List<KeywordRankQueryRsp.KeywordRankInfo> keywordRankInfos = new ArrayList<>();
-
             KeywordRank keywordRank = new KeywordRank(keywordInfo.getAsin(), keywordInfo.getKeyword(), keywordInfo.getSiteCode(), keywordInfo.getDepartmentCode());
             KeywordRank kwRank = mKeywordRankService.findByObj(keywordRank);
+
+            if(kwRank == null) {
+                keywordRankQueryRsp.msg = R.RequestMsg.QUERY_DATA_EMPTY;
+                return keywordRankQueryRsp.toJson();
+            }
 
             KeywordRankQueryRsp.KeywordRankInfo keywordRankInfo = keywordRankQueryRsp.new KeywordRankInfo();
             keywordRankInfo.setAsin(kwRank.getAsin());
