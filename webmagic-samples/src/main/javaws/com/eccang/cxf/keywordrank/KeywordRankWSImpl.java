@@ -9,7 +9,6 @@ import com.eccang.spider.amazon.pojo.crawl.KeywordRank;
 import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
 import com.eccang.spider.amazon.service.crawl.GoodsRankInfoService;
 import com.eccang.spider.amazon.service.crawl.KeywordRankService;
-import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
 import com.eccang.util.RegexUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -35,8 +34,6 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
 
     @Autowired
     private CustomerKeywordRankService mCustomerKeywordRankService;
-    @Autowired
-    private CustomerBusinessService mCustomerBusinessService;
     @Autowired
     private KeywordRankService mKeywordRankService;
     @Autowired
@@ -65,7 +62,7 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
 
         /* 逻辑处理阶段 */
         CustomerKeywordRankRsp customerKeywordRankRsp = new CustomerKeywordRankRsp();
-        customerKeywordRankRsp.cutomerCode = customerKeywordRankReq.cutomerCode;
+        customerKeywordRankRsp.customerCode = customerKeywordRankReq.cutomerCode;
         customerKeywordRankRsp.status = baseRspParam.status;
         customerKeywordRankRsp.msg = baseRspParam.msg;
 
@@ -92,13 +89,15 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
             customerKeywordRankRsp.data.totalCount = customerKeywordRanks.size();
             customerKeywordRankRsp.data.newCount = customerKeywordRanks.size() - crawledNum;
             customerKeywordRankRsp.data.oldCount = crawledNum;
+
+            /*对应客户下，keywordRank监听业务的使用情况*/
+            Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerKeywordRankReq.cutomerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
+            customerKeywordRankRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
+            customerKeywordRankRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
+
         } catch (Exception e) {
             serverException(customerKeywordRankRsp, e);
         }
-        /*对应客户下，keywordRank监听业务的使用情况*/
-        Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerKeywordRankReq.cutomerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
-        customerKeywordRankRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
-        customerKeywordRankRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
 
         return customerKeywordRankRsp.toJson();
     }
@@ -140,7 +139,7 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
         }
 
         CustomerKeywordRankUpdateRsp customerKeywordRankUpdateRsp = new CustomerKeywordRankUpdateRsp();
-        customerKeywordRankUpdateRsp.cutomerCode = customerKeywordRankUpdateReq.cutomerCode;
+        customerKeywordRankUpdateRsp.customerCode = customerKeywordRankUpdateReq.cutomerCode;
         customerKeywordRankUpdateRsp.status = baseRspParam.status;
         customerKeywordRankUpdateRsp.msg = baseRspParam.msg;
 
@@ -173,14 +172,15 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
                     customerKeywordRankUpdateRsp.data.changed++;
                 }
             }
+
+            /*对应客户下，keywordRank监听业务的使用情况*/
+            Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerKeywordRankUpdateReq.cutomerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
+            customerKeywordRankUpdateRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
+            customerKeywordRankUpdateRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
         } catch (Exception e) {
             serverException(customerKeywordRankUpdateRsp, e);
         }
 
-        /*对应客户下，keywordRank监听业务的使用情况*/
-        Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerKeywordRankUpdateReq.cutomerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
-        customerKeywordRankUpdateRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
-        customerKeywordRankUpdateRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
         return customerKeywordRankUpdateRsp.toJson();
     }
 
@@ -226,7 +226,7 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
         }
 
         KeywordRankQueryRsp keywordRankQueryRsp = new KeywordRankQueryRsp();
-        keywordRankQueryRsp.cutomerCode = baseRspParam.cutomerCode;
+        keywordRankQueryRsp.customerCode = baseRspParam.customerCode;
         keywordRankQueryRsp.status = baseRspParam.status;
         keywordRankQueryRsp.msg = baseRspParam.msg;
 

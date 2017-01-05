@@ -24,4 +24,14 @@
         SELECT * FROM base_amazon_site;
     </select>
 
+    <update id="update" parameterType="Site">
+        UPDATE base_amazon_site
+        SET
+        bas_site = #{site},
+        bas_name = #{name},
+        bas_crawl = #{crawl}
+        where
+        bas_code = #{code}
+    </update>
+
 </mapper>

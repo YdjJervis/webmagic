@@ -97,6 +97,7 @@ public final class R {
         public static final String ASIN_SPIDER = "AS"; /** 爬取asin */
         public static final String MONITOR_SPIDER = "MS"; /** 监听review */
         public static final String KEYWORD_RANK_SPIDER = "KRS"; /** 关键词排名搜索 */
+        public static final String FOLLOW_SELL = "FS"; /** 关键词排名搜索 */
     }
 
     /** 业务统计 */

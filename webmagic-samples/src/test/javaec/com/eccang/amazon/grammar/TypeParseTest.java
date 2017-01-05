@@ -16,9 +16,9 @@ public class TypeParseTest extends TestCase {
     @Test
     public void testParentToChild() {
         BaseRspParam rspParam = new AsinRsp();
-        rspParam.cutomerCode = "001";
+        rspParam.customerCode = "001";
 
         AsinRsp asinRsp = (AsinRsp) rspParam;
-        System.out.println(asinRsp.cutomerCode);
+        System.out.println(asinRsp.customerCode);
     }
 }

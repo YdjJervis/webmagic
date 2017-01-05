@@ -12,7 +12,7 @@ import java.lang.reflect.Modifier;
  */
 public class BaseRspParam {
 
-    public String cutomerCode = "";
+    public String customerCode = "";
     public int status;
     public String msg = "";
 
@@ -36,7 +36,7 @@ public class BaseRspParam {
     @Override
     public String toString() {
         return "BaseRspParam{" +
-                "cutomerCode='" + cutomerCode + '\'' +
+                "customerCode='" + customerCode + '\'' +
                 ", status='" + status + '\'' +
                 ", msg='" + msg + '\'' +
                 '}';

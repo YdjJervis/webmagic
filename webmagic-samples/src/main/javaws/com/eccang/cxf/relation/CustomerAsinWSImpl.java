@@ -63,19 +63,19 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
 
         /* 逻辑处理阶段 */
         CustomerAsinRsp customerAsinRsp = new CustomerAsinRsp();
-        customerAsinRsp.cutomerCode = baseRspParam.cutomerCode;
+        customerAsinRsp.customerCode = baseRspParam.customerCode;
         customerAsinRsp.status = baseRspParam.status;
         customerAsinRsp.msg = baseRspParam.msg;
 
         try {
             for (CustomerAsinReq.Asin asin : customerAsinReq.data) {
-                CustomerAsin customerAsin = new CustomerAsin(customerAsinRsp.cutomerCode, asin.siteCode, asin.asin);
+                CustomerAsin customerAsin = new CustomerAsin(customerAsinRsp.customerCode, asin.siteCode, asin.asin);
                 customerAsin = mCustomerAsinService.find(customerAsin);
                 customerAsin.crawl = asin.crawl;
                 mCustomerAsinService.update(customerAsin);
             }
             /*可用asin的数据量*/
-            Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerAsinRsp.cutomerCode, R.BusinessCode.ASIN_SPIDER);
+            Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(customerAsinRsp.customerCode, R.BusinessCode.ASIN_SPIDER);
             customerAsinRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
             customerAsinRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
         } catch (Exception e) {

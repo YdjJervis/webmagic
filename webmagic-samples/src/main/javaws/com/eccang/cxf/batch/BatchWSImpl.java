@@ -83,7 +83,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
 
         if (batch.type == 0 || batch.type == 2) {
             BatchAsinRsp batchAsinRsp = new BatchAsinRsp();
-            batchAsinRsp.cutomerCode = baseRspParam.cutomerCode;
+            batchAsinRsp.customerCode = baseRspParam.customerCode;
             batchAsinRsp.status = baseRspParam.status;
             batchAsinRsp.msg = baseRspParam.msg;
 
@@ -118,7 +118,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             return batchAsinRsp.toJson();
         } else if (batch.type == 1) {
             BatchReviewRsp batchReviewRsp = new BatchReviewRsp();
-            batchReviewRsp.cutomerCode = baseRspParam.cutomerCode;
+            batchReviewRsp.customerCode = baseRspParam.customerCode;
             batchReviewRsp.status = baseRspParam.status;
             batchReviewRsp.msg = baseRspParam.msg;
 
@@ -135,7 +135,7 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
 
                 List<BatchReview> batchReviewList = mBatchReviewService.findAllByBatchNum(batchReq.data.number);
                 for (BatchReview batchReview : batchReviewList) {
-                    CustomerReview customerReview = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, batchReview.reviewID);
+                    CustomerReview customerReview = mCustomerReviewService.findCustomerReview(baseRspParam.customerCode, batchReview.reviewID);
                     BatchReviewRsp.ReviewMonitor monitor = batchReviewRsp.new ReviewMonitor();
                     monitor.siteCode = batchReview.siteCode;
                     monitor.reviewID = batchReview.reviewID;

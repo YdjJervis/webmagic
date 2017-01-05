@@ -16,7 +16,7 @@ import java.util.List;
 public class ListTest extends TestCase {
 
     @Test
-    public void testAddAll(){
+    public void testAddAll() {
         List<String> list = new ArrayList<String>();
         list.addAll(null);
 
@@ -24,7 +24,7 @@ public class ListTest extends TestCase {
     }
 
     @Test
-    public void testStringList(){
+    public void testStringList() {
         List<String> list = new ArrayList<String>();
         list.add("  纳尼  ");
 
@@ -37,7 +37,7 @@ public class ListTest extends TestCase {
     }
 
     @Test
-    public void testRemoveAll(){
+    public void testRemoveAll() {
         List<String> list = new ArrayList<String>();
         list.add("A");
         list.add("B");
@@ -52,20 +52,28 @@ public class ListTest extends TestCase {
     }
 
     @Test
-    public void testRemoveItem(){
+    public void testRemoveItem() {
         List<StarReviewMap> mapList = new ArrayList<StarReviewMap>();
 
-        StarReviewMap map = new StarReviewMap(1,"Review001");
-        StarReviewMap map2 = new StarReviewMap(2,"Review002");
+        StarReviewMap map = new StarReviewMap(1, "Review001");
+        StarReviewMap map2 = new StarReviewMap(2, "Review002");
 
         mapList.add(map);
         mapList.add(map2);
 
-        StarReviewMap map3 = new StarReviewMap(1,"Review001");
+        StarReviewMap map3 = new StarReviewMap(1, "Review001");
         mapList.remove(map);
 
         System.out.println(mapList);
 
         /* 测试总结：remove是根据地址remove的，上面的String类型能Remove是因为复用了对象池 */
+    }
+
+    @Test
+    public void testAddNull() {
+        List<String> list = new ArrayList<>();
+        list.add(null);
+        list.add(null);
+        System.out.println(list.size());
     }
 }

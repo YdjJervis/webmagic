@@ -3,12 +3,14 @@ package com.eccang.cxf;
 import com.eccang.R;
 import com.eccang.pojo.BaseReqParam;
 import com.eccang.pojo.BaseRspParam;
+import com.eccang.pojo.ValidateMsg;
 import com.eccang.spider.amazon.pojo.dict.API;
 import com.eccang.spider.amazon.pojo.dict.Customer;
 import com.eccang.spider.amazon.pojo.dict.Platform;
 import com.eccang.spider.amazon.service.dict.APIService;
 import com.eccang.spider.amazon.service.dict.CustomerService;
 import com.eccang.spider.amazon.service.dict.PlatformService;
+import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,8 @@ public abstract class AbstractSpiderWS implements SpiderWS {
     private APIService mAPIService;
     @Autowired
     private PlatformService mPlatformService;
+    @Autowired
+    protected CustomerBusinessService mCustomerBusinessService;
 
     protected static final String IS_SUCCESS = "isSuccess";
     protected static final String MESSAGE = "message";
@@ -60,7 +64,7 @@ public abstract class AbstractSpiderWS implements SpiderWS {
             return baseRspParam;
         }
 
-        baseRspParam.cutomerCode = baseReqParam.cutomerCode;
+        baseRspParam.customerCode = baseReqParam.cutomerCode;
 
         /* 授权信息必须存在 */
         if (StringUtils.isEmpty(baseReqParam.cutomerCode) ||
@@ -153,5 +157,9 @@ public abstract class AbstractSpiderWS implements SpiderWS {
             baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_FORMAT_ERROR;
         }
         return t;
+    }
+
+    protected ValidateMsg getValidateMsg(boolean isSuccess, String msg) {
+        return new ValidateMsg(isSuccess, msg);
     }
 }

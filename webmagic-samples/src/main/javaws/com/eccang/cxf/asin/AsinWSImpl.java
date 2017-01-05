@@ -84,7 +84,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         /* 逻辑执行阶段 */
         AsinRsp asinRsp = new AsinRsp();
-        asinRsp.cutomerCode = asinReq.cutomerCode;
+        asinRsp.customerCode = asinReq.cutomerCode;
         asinRsp.status = baseRspParam.status;
         asinRsp.msg = baseRspParam.msg;
 
@@ -123,7 +123,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 parsedBatchAsinList.add(batchAsin);
             }
 
-            Batch batch = mBatchService.addBatch(asinRsp.cutomerCode, parsedBatchAsinList, 0, 1);
+            Batch batch = mBatchService.addBatch(asinRsp.customerCode, parsedBatchAsinList, 0, 1);
 
             /* 全部都是之前已经爬取过的，就直接更新新批次号各个状态 */
             boolean isAllCrawled = true;
@@ -210,18 +210,18 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         /* 逻辑执行阶段 */
         AsinQueryRsp asinQueryRsp = new AsinQueryRsp();
-        asinQueryRsp.cutomerCode = asinQueryReq.cutomerCode;
+        asinQueryRsp.customerCode = asinQueryReq.cutomerCode;
         asinQueryRsp.status = baseRspParam.status;
         asinQueryRsp.msg = baseRspParam.msg;
 
         try {
             CustomerAsin customerAsin;
             for (AsinQueryReq.Asin asin : asinQueryReq.data) {
-                customerAsin = new CustomerAsin(baseRspParam.cutomerCode, asin.siteCode, asin.asin);
+                customerAsin = new CustomerAsin(baseRspParam.customerCode, asin.siteCode, asin.asin);
                 customerAsin = mCustomerAsinService.find(customerAsin);
 
                 if (customerAsin == null) {
-                    sLogger.info("客户（" + baseRspParam.cutomerCode + "）下，不存在asin (" + asin.asin + ").");
+                    sLogger.info("客户（" + baseRspParam.customerCode + "）下，不存在asin (" + asin.asin + ").");
                     continue;
                 }
 
@@ -343,7 +343,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         /* 逻辑处理阶段 */
         AsinPriorityRsp priorityRsp = new AsinPriorityRsp();
-        priorityRsp.cutomerCode = baseRspParam.cutomerCode;
+        priorityRsp.customerCode = baseRspParam.customerCode;
         priorityRsp.status = baseRspParam.status;
         priorityRsp.msg = baseRspParam.msg;
 
@@ -351,7 +351,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             /*改变customer-asin关系表中的优先级即可*/
             CustomerAsin customerAsin;
             for (AsinReq.Asin asin : asinReq.data) {
-                customerAsin = new CustomerAsin(baseRspParam.cutomerCode, asin.siteCode, asin.asin);
+                customerAsin = new CustomerAsin(baseRspParam.customerCode, asin.siteCode, asin.asin);
                 customerAsin = mCustomerAsinService.find(customerAsin);
                 if (customerAsin != null) {
                     if (customerAsin.priority == asin.priority) {
@@ -382,14 +382,14 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         }
 
         CustomerAsinsRsp customerAsinsRsp = new CustomerAsinsRsp();
-        customerAsinsRsp.cutomerCode = baseRspParam.cutomerCode;
+        customerAsinsRsp.customerCode = baseRspParam.customerCode;
         customerAsinsRsp.status = baseRspParam.status;
         customerAsinsRsp.msg = baseRspParam.msg;
 
         customerAsinsRsp.data = new ArrayList<>();
         CustomerAsinsRsp.CustomerAsin cusAsin;
         /*通过客户码查询客户下所有的asin爬取状态*/
-        List<CustomerAsin> customerAsins = mCustomerAsinService.findByCustomerCodeIsOpen(baseRspParam.cutomerCode);
+        List<CustomerAsin> customerAsins = mCustomerAsinService.findByCustomerCodeIsOpen(baseRspParam.customerCode);
 
         for (CustomerAsin customerAsin : customerAsins) {
             cusAsin = customerAsinsRsp.new CustomerAsin();

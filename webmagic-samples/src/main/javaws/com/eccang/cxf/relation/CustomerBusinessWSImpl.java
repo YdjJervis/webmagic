@@ -43,7 +43,7 @@ public class CustomerBusinessWSImpl extends AbstractSpiderWS implements Customer
 
         /*响应对象公共参数*/
         CustomerBusinessRsp customerBusinessRsp = new CustomerBusinessRsp();
-        customerBusinessRsp.cutomerCode = baseRspParam.cutomerCode;
+        customerBusinessRsp.customerCode = baseRspParam.customerCode;
         customerBusinessRsp.status = baseRspParam.status;
         customerBusinessRsp.msg = baseRspParam.msg;
 
@@ -67,7 +67,7 @@ public class CustomerBusinessWSImpl extends AbstractSpiderWS implements Customer
                 cBusiness = customerBusinessRsp.new CustomerBusiness();
                 if (StringUtils.isNotEmpty(businessCode)) {
                     /*通过客户码查询客户业务关系表*/
-                    CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(baseRspParam.cutomerCode, businessCode);
+                    CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(baseRspParam.customerCode, businessCode);
                     cBusiness.setBusinessCode(businessCode);
                     cBusiness.setMaxDataNum(customerBusiness.getMaxData());
                     cBusiness.setUsingDataNum(customerBusiness.getUseData());

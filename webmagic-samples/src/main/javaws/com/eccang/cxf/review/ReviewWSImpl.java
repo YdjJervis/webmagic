@@ -72,7 +72,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
         /* 逻辑处理阶段 */
         ReviewRsp reviewRsp = new ReviewRsp();
-        reviewRsp.cutomerCode = reviewReq.cutomerCode;
+        reviewRsp.customerCode = reviewReq.cutomerCode;
         reviewRsp.status = baseRspParam.status;
         reviewRsp.msg = baseRspParam.msg;
 
@@ -154,7 +154,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
         /* 初始化返回头信息 */
         ReviewQueryRsp reviewQueryRsp = new ReviewQueryRsp();
-        reviewQueryRsp.cutomerCode = baseRspParam.cutomerCode;
+        reviewQueryRsp.customerCode = baseRspParam.customerCode;
         reviewQueryRsp.status = baseRspParam.status;
         reviewQueryRsp.msg = baseRspParam.msg;
 
@@ -180,7 +180,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 pageNum = 1;
             }
 
-            CustomerAsin customerAsin = new CustomerAsin(baseRspParam.cutomerCode, siteCode, asin);
+            CustomerAsin customerAsin = new CustomerAsin(baseRspParam.customerCode, siteCode, asin);
             String rootAsin;
             customerAsin = mCustomerAsinService.find(customerAsin);
             if (customerAsin != null) {
@@ -274,13 +274,13 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
         /* 初始化返回头信息 */
         ReviewQueryRsp reviewQueryRsp = new ReviewQueryRsp();
-        reviewQueryRsp.cutomerCode = baseRspParam.cutomerCode;
+        reviewQueryRsp.customerCode = baseRspParam.customerCode;
         reviewQueryRsp.status = baseRspParam.status;
         reviewQueryRsp.msg = baseRspParam.msg;
 
         try {
 
-            CustomerAsin customerAsin = new CustomerAsin(baseRspParam.cutomerCode, siteCode, asin);
+            CustomerAsin customerAsin = new CustomerAsin(baseRspParam.customerCode, siteCode, asin);
             String rootAsin;
             customerAsin = mCustomerAsinService.find(customerAsin);
             if (customerAsin != null) {
@@ -380,13 +380,13 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         CustomerReviewUpdateRsp customerReviewUpdateRsp = new CustomerReviewUpdateRsp();
-        customerReviewUpdateRsp.cutomerCode = customerReviewUpdateReq.cutomerCode;
+        customerReviewUpdateRsp.customerCode = customerReviewUpdateReq.cutomerCode;
         customerReviewUpdateRsp.status = baseRspParam.status;
         customerReviewUpdateRsp.msg = baseRspParam.msg;
 
         try {
             for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
-                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
+                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.customerCode, customerReview.reviewId);
                 if (customerReview.priority == data.priority) {
                     customerReviewUpdateRsp.data.noChange++;
                 } else {
@@ -448,13 +448,13 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         CustomerReviewUpdateRsp customerReviewUpdateRsp = new CustomerReviewUpdateRsp();
-        customerReviewUpdateRsp.cutomerCode = customerReviewUpdateReq.cutomerCode;
+        customerReviewUpdateRsp.customerCode = customerReviewUpdateReq.cutomerCode;
         customerReviewUpdateRsp.status = baseRspParam.status;
         customerReviewUpdateRsp.msg = baseRspParam.msg;
 
         try {
             for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
-                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
+                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.customerCode, customerReview.reviewId);
 
                 if (data == null) {
                     customerReviewUpdateRsp.msg = R.RequestMsg.PARAMETER_REVIEW_EMPTY__ERROR;
@@ -474,7 +474,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         /*对应客户下，review监听业务的使用情况*/
-        Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(baseRspParam.cutomerCode, R.BusinessCode.MONITOR_SPIDER);
+        Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(baseRspParam.customerCode, R.BusinessCode.MONITOR_SPIDER);
         customerReviewUpdateRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
         customerReviewUpdateRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
 
@@ -525,13 +525,13 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         CustomerReviewUpdateRsp customerReviewUpdateRsp = new CustomerReviewUpdateRsp();
-        customerReviewUpdateRsp.cutomerCode = customerReviewUpdateReq.cutomerCode;
+        customerReviewUpdateRsp.customerCode = customerReviewUpdateReq.cutomerCode;
         customerReviewUpdateRsp.status = baseRspParam.status;
         customerReviewUpdateRsp.msg = baseRspParam.msg;
 
         try {
             for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
-                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
+                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.customerCode, customerReview.reviewId);
 
                 if (data == null) {
                     customerReviewUpdateRsp.msg = R.RequestMsg.PARAMETER_REVIEW_EMPTY__ERROR;
@@ -584,13 +584,13 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         CustomerReviewUpdateRsp customerReviewUpdateRsp = new CustomerReviewUpdateRsp();
-        customerReviewUpdateRsp.cutomerCode = customerReviewUpdateReq.cutomerCode;
+        customerReviewUpdateRsp.customerCode = customerReviewUpdateReq.cutomerCode;
         customerReviewUpdateRsp.status = baseRspParam.status;
         customerReviewUpdateRsp.msg = baseRspParam.msg;
 
         try {
             for (CustomerReviewUpdateReq.CustomerReview customerReview : customerReviewUpdateReq.data) {
-                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.cutomerCode, customerReview.reviewId);
+                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.customerCode, customerReview.reviewId);
                 if (customerReview.frequency == data.frequency &&
                         customerReview.priority == data.priority &&
                         customerReview.crawl == data.crawl) {
@@ -618,13 +618,13 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         }
 
         CustomerReviewRsp customerReviewRsp = new CustomerReviewRsp();
-        customerReviewRsp.cutomerCode = baseRspParam.cutomerCode;
+        customerReviewRsp.customerCode = baseRspParam.customerCode;
         customerReviewRsp.status = baseRspParam.status;
         customerReviewRsp.msg = baseRspParam.msg;
 
         customerReviewRsp.data = new ArrayList<>();
 
-        List<CustomerReview> customerReviewList = mCustomerReviewService.findCustomerReviewsByCustomerCode(baseRspParam.cutomerCode);
+        List<CustomerReview> customerReviewList = mCustomerReviewService.findCustomerReviewsByCustomerCode(baseRspParam.customerCode);
         CustomerReviewRsp.Review review;
         for (CustomerReview customerReview : customerReviewList) {
             review = customerReviewRsp.new Review();

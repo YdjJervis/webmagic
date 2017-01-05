@@ -15,7 +15,7 @@ import com.eccang.spider.amazon.pojo.dict.Site;
 public class SiteService {
 
     @Autowired
-    SiteDao mSiteDao;
+    private SiteDao mSiteDao;
 
     /**
      * @param siteCode 站点码。eg:"CN"
@@ -30,6 +30,10 @@ public class SiteService {
      */
     public Site findByDomain(String domain) {
         return mSiteDao.findByDomain(domain);
+    }
+
+    public int update(Site site) {
+        return mSiteDao.update(site);
     }
 
 }

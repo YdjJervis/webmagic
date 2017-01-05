@@ -35,7 +35,7 @@ public interface BaseDao<T> {
      * 更新一条数据库记录
      * @param obj 元素
      */
-    void update(T obj);
+    int update(T obj);
 
     /**
      * 根据ID查询一条数据库记录
