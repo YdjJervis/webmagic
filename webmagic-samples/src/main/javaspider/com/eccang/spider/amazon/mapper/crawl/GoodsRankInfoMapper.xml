@@ -70,4 +70,14 @@
         WHERE
           bo_batch_num = #{0}
     </select>
+
+    <select id="findByBatchAndKeywordInfo" resultMap="GoodsRankInfoMap">
+         SELECT
+          *
+        FROM
+          spider_amazon_goods
+        WHERE
+          bo_batch_num = #{0} AND saa_asin = #{1} AND sakr_keyword = #{2} AND bas_code = #{3} AND bad_code = #{4}
+    </select>
+
 </mapper>

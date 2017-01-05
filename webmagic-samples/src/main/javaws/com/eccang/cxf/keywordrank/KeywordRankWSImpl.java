@@ -4,8 +4,10 @@ import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.*;
 import com.eccang.pojo.keywordrank.*;
+import com.eccang.spider.amazon.pojo.crawl.GoodsRankInfo;
 import com.eccang.spider.amazon.pojo.crawl.KeywordRank;
 import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
+import com.eccang.spider.amazon.service.crawl.GoodsRankInfoService;
 import com.eccang.spider.amazon.service.crawl.KeywordRankService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
@@ -38,6 +40,8 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
     private CustomerBusinessService mCustomerBusinessService;
     @Autowired
     private KeywordRankService mKeywordRankService;
+    @Autowired
+    private GoodsRankInfoService mGoodsRankInfoService;
 
     @Override
     public String addToMonitor(String json) {
@@ -242,13 +246,45 @@ public class KeywordRankWSImpl extends AbstractSpiderWS implements KeywordRankWS
         keywordRankQueryRsp.status = baseRspParam.status;
         keywordRankQueryRsp.msg = baseRspParam.msg;
 
-        KeywordRank keywordRank = new KeywordRank();
-        keywordRank.setAsin(keywordInfo.getAsin());
-        keywordRank.setKeyword(keywordInfo.getKeyword());
-        keywordRank.setDepartmentCode(keywordInfo.getDepartmentCode());
-        KeywordRank kwRank = mKeywordRankService.findByObj(keywordRank);
+        try {
+            List<KeywordRankQueryRsp.KeywordRankInfo> keywordRankInfos = new ArrayList<>();
 
-        return null;
+            KeywordRank keywordRank = new KeywordRank(keywordInfo.getAsin(), keywordInfo.getKeyword(), keywordInfo.getSiteCode(), keywordInfo.getDepartmentCode());
+            KeywordRank kwRank = mKeywordRankService.findByObj(keywordRank);
+
+            KeywordRankQueryRsp.KeywordRankInfo keywordRankInfo = keywordRankQueryRsp.new KeywordRankInfo();
+            keywordRankInfo.setAsin(kwRank.getAsin());
+            keywordRankInfo.setKeyword(kwRank.getKeyword());
+            keywordRankInfo.setSiteCode(kwRank.getSiteCode());
+            keywordRankInfo.setDepartmentCode(kwRank.getDepartmentCode());
+            keywordRankInfo.setBatchNum(keywordRankQueryReq.getData().getBatchNum());
+            keywordRankInfo.setTotalPages(kwRank.getTotalPages());
+            keywordRankInfo.setEveryPage(kwRank.getEveryPage());
+            keywordRankInfo.setRankNum(kwRank.getRankNum());
+
+            List<KeywordRankQueryRsp.KeywordRankInfo.GoodsInfo> goodsInfos = new ArrayList<>();
+            KeywordRankQueryRsp.KeywordRankInfo.GoodsInfo goodsInfo;
+            List<GoodsRankInfo> goodsRankInfos = mGoodsRankInfoService.findByBatchAndKeywordInfo(keywordRankQueryReq.getData().getBatchNum(), keywordInfo.getAsin(), keywordInfo.getKeyword(), keywordInfo.getSiteCode(), keywordInfo.getDepartmentCode());
+            for (GoodsRankInfo goodsRankInfo : goodsRankInfos) {
+                goodsInfo = keywordRankInfo.new GoodsInfo();
+                goodsInfo.setRankNum(goodsRankInfo.getRankNum());
+                goodsInfo.setTitle(goodsRankInfo.getTitle());
+                goodsInfo.setPrice(goodsRankInfo.getPrice());
+                goodsInfo.setPictureUrl(goodsRankInfo.getGoodsPictureUrl());
+                goodsInfo.setDeliveryMode(goodsRankInfo.getDeliveryMode());
+                goodsInfo.setDistributionMode(goodsRankInfo.getDistributionMode());
+                goodsInfo.setDepartment(goodsRankInfo.getDepartmentInfo());
+                goodsInfo.setOffersNum(goodsRankInfo.getOffersNum());
+                goodsInfo.setGoodsStatus(goodsRankInfo.getGoodsStatus());
+                goodsInfos.add(goodsInfo);
+            }
+            keywordRankInfo.setTop10(goodsInfos);
+            keywordRankQueryRsp.setData(keywordRankInfo);
+        } catch (Exception e) {
+            serverException(keywordRankQueryRsp, e);
+        }
+
+        return keywordRankQueryRsp.toJson();
     }
 
     /**

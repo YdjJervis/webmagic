@@ -25,4 +25,8 @@ public class GoodsRankInfoService {
     public List<GoodsRankInfo> findByBatch(String batchNum) {
         return mGoodsRankInfoDao.findByBatch(batchNum);
     }
+
+    public List<GoodsRankInfo> findByBatchAndKeywordInfo(String batchNum, String asin, String keyword, String siteCode, String departmentCode) {
+        return mGoodsRankInfoDao.findByBatchAndKeywordInfo(batchNum, asin, keyword, siteCode, departmentCode);
+    }
 }

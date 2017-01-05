@@ -15,5 +15,8 @@ import java.util.List;
 public interface GoodsRankInfoDao {
 
     void addAll(List<GoodsRankInfo> goodsRankInfos);
+
     List<GoodsRankInfo> findByBatch(String batchNum);
+
+    List<GoodsRankInfo> findByBatchAndKeywordInfo(String batchNum, String asin, String keyword, String siteCode, String departmentCode);
 }
