@@ -1,14 +1,11 @@
 
 package com.eccang.wsclient.batch;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.eccang.spider.base.util.PropertyUtil;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.*;
+import java.net.URL;
 
 
 /**
@@ -30,8 +27,9 @@ public class BatchWSService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://192.168.100.109:8080/eccang/ws/batch?wsdl");
-        } catch (MalformedURLException ex) {
+            String value = PropertyUtil.getValue("ws.properties", "wsdlLocation");
+            url = new URL(value + "/eccang/ws/batch?wsdl");
+        } catch (Exception ex) {
             e = new WebServiceException(ex);
         }
         BATCHWSSERVICE_WSDL_LOCATION = url;
