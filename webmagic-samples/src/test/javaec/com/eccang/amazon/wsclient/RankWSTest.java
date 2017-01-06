@@ -4,7 +4,7 @@ import com.eccang.base.SpringTestCase;
 import com.eccang.pojo.rank.CusRankReq;
 import com.eccang.pojo.rank.CusRankUpdateReq;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
-import com.eccang.wsclient.rank.KeywordRankWSService;
+import com.eccang.wsclient.rank.RankWSService;
 import com.google.gson.Gson;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class RankWSTest extends SpringTestCase {
 
         cusRankReq.setData(keywordRanks);
 
-        String json = new KeywordRankWSService().getKeywordRankWSPort().addToMonitor(new Gson().toJson(cusRankReq));
+        String json = new RankWSService().getRankWSPort().addToMonitor(new Gson().toJson(cusRankReq));
         System.out.println(json);
     }
 
@@ -75,7 +75,7 @@ public class RankWSTest extends SpringTestCase {
         keywordRanks.add(keywordRank);
         cusRankUpdateReq.setData(keywordRanks);
 
-        String json = new KeywordRankWSService().getKeywordRankWSPort().setStatus(new Gson().toJson(cusRankUpdateReq));
+        String json = new RankWSService().getRankWSPort().setStatus(new Gson().toJson(cusRankUpdateReq));
         System.out.println(json);
     }
 }
