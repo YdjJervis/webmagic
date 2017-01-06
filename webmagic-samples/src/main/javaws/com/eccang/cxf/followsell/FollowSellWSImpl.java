@@ -2,15 +2,15 @@ package com.eccang.cxf.followsell;
 
 import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
+import com.eccang.pojo.BaseReqParam;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.ValidateMsg;
-import com.eccang.pojo.followsell.CusFollowSellAddReq;
-import com.eccang.pojo.followsell.CusFollowSellAddRsp;
-import com.eccang.pojo.followsell.CusFollowSellUpdateReq;
-import com.eccang.pojo.followsell.CusFollowSellUpdateRsp;
+import com.eccang.pojo.followsell.*;
+import com.eccang.spider.amazon.pojo.crawl.FollowSell;
 import com.eccang.spider.amazon.pojo.relation.CustomerFollowSell;
 import com.eccang.spider.amazon.service.crawl.FollowSellService;
 import com.eccang.spider.amazon.service.relation.CustomerFollowSellService;
+import com.eccang.spider.amazon.util.DateUtils;
 import com.eccang.util.RegexUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +33,7 @@ import java.util.Map;
 public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
 
     @Autowired
-    private FollowSellService mService;
+    private FollowSellService mFollowSellService;
     @Autowired
     private CustomerFollowSellService mCustomerFollowSellService;
 
@@ -170,31 +170,91 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
 
     @Override
     public String getFollowSellList(String json) {
-        return null;
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        FollowSellQueryReq followSellQueryReq = parseRequestParam(json, baseRspParam, FollowSellQueryReq.class);
+        if (followSellQueryReq == null) {
+            return baseRspParam.toJson();
+        }
+
+        /* 参数验证阶段 */
+        ValidateMsg msg = checkData(followSellQueryReq);
+        if (!msg.isSuccess) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = msg.msg;
+            return baseRspParam.toJson();
+        }
+
+        /* 逻辑处理阶段 */
+        FollowSellQueryRsp followSellQueryRsp = new FollowSellQueryRsp();
+        followSellQueryRsp.customerCode = baseRspParam.customerCode;
+        followSellQueryRsp.status = baseRspParam.status;
+        followSellQueryRsp.msg = baseRspParam.msg;
+
+        try {
+            List<FollowSell> dbFollowSellList = mFollowSellService.findByBatchNum(followSellQueryReq.data.batchNum);
+
+            for (FollowSell dbFollowSell : dbFollowSellList) {
+                FollowSellQueryRsp.FollowSell followSell = followSellQueryRsp.new FollowSell();
+                followSell.batchNum = dbFollowSell.batchNum;
+                followSell.siteCode = dbFollowSell.siteCode;
+                followSell.asin = dbFollowSell.asin;
+                followSell.sellerId = dbFollowSell.sellerID;
+                followSell.price = dbFollowSell.price;
+                followSell.transPolicy = dbFollowSell.transPolicy;
+                followSell.condition = dbFollowSell.condition;
+                followSell.rating = dbFollowSell.rating;
+                followSell.probability = dbFollowSell.probability;
+                followSell.starLevel = dbFollowSell.starLevel;
+                followSell.createTime = DateUtils.format(dbFollowSell.createTime);
+                followSell.updateTime = DateUtils.format(dbFollowSell.updateTime);
+
+                followSellQueryRsp.data.add(followSell);
+            }
+        } catch (Exception e) {
+            serverException(followSellQueryRsp, e);
+        }
+
+        return followSellQueryRsp.toJson();
     }
 
-    private ValidateMsg checkData(CusFollowSellAddReq followSellReq) {
+    private ValidateMsg checkData(BaseReqParam baseReqParam) {
 
-        if (CollectionUtils.isEmpty(followSellReq.data)) {
-            return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_NULL_ERROR);
+        if (baseReqParam instanceof CusFollowSellAddReq) {
+            CusFollowSellAddReq cusFollowSellAddReq = (CusFollowSellAddReq) baseReqParam;
+
+            if (CollectionUtils.isEmpty(cusFollowSellAddReq.data)) {
+                return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_NULL_ERROR);
+            }
+
+            for (CusFollowSellAddReq.FollowSell followSell : cusFollowSellAddReq.data) {
+                if (!RegexUtil.isSiteCodeQualified(followSell.siteCode)) {
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR);
+                }
+                if (StringUtils.isEmpty(followSell.asin)) {
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_KEYWORD_ASIN_ERROR);
+                }
+                if (!RegexUtil.isFrequencyQualified(followSell.frequency)) {
+                    /*校验爬取频率是否在取值范围内*/
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_REVIEW_FREQUENCY_ERROR);
+                }
+                if (!RegexUtil.isPriorityQualified(followSell.priority)) {
+                    /*校验优先级是否超出范围*/
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR);
+                }
+            }
+        } else if (baseReqParam instanceof FollowSellQueryReq) {
+
+            FollowSellQueryReq followSellQueryReq = (FollowSellQueryReq) baseReqParam;
+            if (!RegexUtil.isBatchNumQualified(followSellQueryReq.data.batchNum)) {
+                return getValidateMsg(false, R.RequestMsg.BATCH_NUM_WRONG);
+            }
         }
 
-        for (CusFollowSellAddReq.FollowSell followSell : followSellReq.data) {
-            if (!RegexUtil.isSiteCodeQualified(followSell.siteCode)) {
-                return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR);
-            }
-            if (StringUtils.isEmpty(followSell.asin)) {
-                return getValidateMsg(false, R.RequestMsg.PARAMETER_KEYWORD_ASIN_ERROR);
-            }
-            if (!RegexUtil.isFrequencyQualified(followSell.frequency)) {
-                /*校验爬取频率是否在取值范围内*/
-                return getValidateMsg(false, R.RequestMsg.PARAMETER_REVIEW_FREQUENCY_ERROR);
-            }
-            if (!RegexUtil.isPriorityQualified(followSell.priority)) {
-                /*校验优先级是否超出范围*/
-                return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR);
-            }
-        }
 
         return getValidateMsg(true, R.RequestMsg.SUCCESS);
     }

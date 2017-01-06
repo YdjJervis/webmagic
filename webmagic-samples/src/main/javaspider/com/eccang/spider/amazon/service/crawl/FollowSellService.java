@@ -33,4 +33,8 @@ public class FollowSellService {
         return mDao.findAll(followSell);
     }
 
+    public List<FollowSell> findByBatchNum(String batchNum) {
+        return mDao.findByBatchNum(batchNum);
+    }
+
 }

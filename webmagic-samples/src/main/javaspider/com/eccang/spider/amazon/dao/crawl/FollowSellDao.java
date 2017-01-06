@@ -17,4 +17,5 @@ public interface FollowSellDao extends BaseDao<FollowSell> {
 
     List<FollowSell> findAll(FollowSell followSell);
 
+    List<FollowSell> findByBatchNum(String batchNum);
 }

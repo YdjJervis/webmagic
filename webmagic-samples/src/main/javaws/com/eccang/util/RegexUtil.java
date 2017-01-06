@@ -51,6 +51,10 @@ public class RegexUtil {
         return StringUtils.isNotEmpty(customerCode);
     }
 
+    public static boolean isBatchNumQualified(String batchNum) {
+        return Pattern.compile("EC.*").matcher(batchNum).matches();
+    }
+
     public static boolean isMonitorStatusQualified(int status) {
         return status == 0 || status == 1;
     }

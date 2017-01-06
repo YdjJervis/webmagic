@@ -92,6 +92,10 @@ public final class R {
 
         public static final String PARAMETER_ASIN_EMPTY = "请求参数asin码不能为空";
 
+        public static final String BATCH_NUM_WRONG = "批次号格式不正确";
+
+
+
     }
 
     /** 业务代码 */

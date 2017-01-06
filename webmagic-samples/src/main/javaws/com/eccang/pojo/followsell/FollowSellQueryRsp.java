@@ -1,6 +1,6 @@
 package com.eccang.pojo.followsell;
 
-import com.eccang.pojo.BaseReqParam;
+import com.eccang.pojo.BaseRspParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * @Description: 跟卖列表查询 返回参数
  * @date 2017/1/6 10:59
  */
-public class FollowSellQueryRsp extends BaseReqParam {
+public class FollowSellQueryRsp extends BaseRspParam {
 
     public List<FollowSell> data = new ArrayList<>();
 

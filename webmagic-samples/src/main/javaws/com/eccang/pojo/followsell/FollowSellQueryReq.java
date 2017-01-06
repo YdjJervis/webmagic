@@ -13,10 +13,6 @@ public class FollowSellQueryReq extends BaseReqParam {
     public FollowSell data = new FollowSell();
 
     public class FollowSell {
-
         public String batchNum;
-        public String siteCode;
-        public String asin;
-
     }
 }
