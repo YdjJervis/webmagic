@@ -4,10 +4,10 @@ import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.ValidateMsg;
-import com.eccang.pojo.followsell.FollowSellReq;
-import com.eccang.pojo.followsell.FollowSellRsp;
-import com.eccang.pojo.followsell.FollowSellUpdateReq;
-import com.eccang.pojo.followsell.FollowSellUpdateRsp;
+import com.eccang.pojo.followsell.CusFollowSellAddReq;
+import com.eccang.pojo.followsell.CusFollowSellAddRsp;
+import com.eccang.pojo.followsell.CusFollowSellUpdateReq;
+import com.eccang.pojo.followsell.CusFollowSellUpdateRsp;
 import com.eccang.spider.amazon.pojo.relation.CustomerFollowSell;
 import com.eccang.spider.amazon.service.crawl.FollowSellService;
 import com.eccang.spider.amazon.service.relation.CustomerFollowSellService;
@@ -46,7 +46,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             return baseRspParam.toJson();
         }
 
-        FollowSellReq followSellReq = parseRequestParam(json, baseRspParam, FollowSellReq.class);
+        CusFollowSellAddReq followSellReq = parseRequestParam(json, baseRspParam, CusFollowSellAddReq.class);
         if (followSellReq == null) {
             return baseRspParam.toJson();
         }
@@ -60,7 +60,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
         }
 
         /* 逻辑处理阶段 */
-        FollowSellRsp followSellRsp = new FollowSellRsp();
+        CusFollowSellAddRsp followSellRsp = new CusFollowSellAddRsp();
         followSellRsp.customerCode = followSellReq.customerCode;
         followSellRsp.status = baseRspParam.status;
         followSellRsp.msg = baseRspParam.msg;
@@ -69,7 +69,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             int crawledNum = 0;
             /* 把客户和跟卖的关系保存起来 */
             List<CustomerFollowSell> cusFollowSellList = new ArrayList<>();
-            for (FollowSellReq.FollowSell followSell : followSellReq.data) {
+            for (CusFollowSellAddReq.FollowSell followSell : followSellReq.data) {
 
                 CustomerFollowSell cusFollowSell = getCustomerFollowSell(followSellReq, followSell);
 
@@ -92,7 +92,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
         return followSellRsp.toJson();
     }
 
-    private CustomerFollowSell getCustomerFollowSell(FollowSellReq followSellReq, FollowSellReq.FollowSell followSell) {
+    private CustomerFollowSell getCustomerFollowSell(CusFollowSellAddReq followSellReq, CusFollowSellAddReq.FollowSell followSell) {
         CustomerFollowSell cusFollowSell = new CustomerFollowSell();
         cusFollowSell.customerCode = followSellReq.customerCode;
         cusFollowSell.siteCode = followSell.siteCode;
@@ -111,7 +111,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             return baseRspParam.toJson();
         }
 
-        FollowSellUpdateReq followSellUpdateReq = parseRequestParam(json, baseRspParam, FollowSellUpdateReq.class);
+        CusFollowSellUpdateReq followSellUpdateReq = parseRequestParam(json, baseRspParam, CusFollowSellUpdateReq.class);
         if (followSellUpdateReq == null) {
             return baseRspParam.toJson();
         }
@@ -125,13 +125,13 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
         }
 
         /* 逻辑处理阶段 */
-        FollowSellUpdateRsp followSellUpdateRsp = new FollowSellUpdateRsp();
+        CusFollowSellUpdateRsp followSellUpdateRsp = new CusFollowSellUpdateRsp();
         followSellUpdateRsp.customerCode = baseRspParam.customerCode;
         followSellUpdateRsp.status = baseRspParam.status;
         followSellUpdateRsp.msg = baseRspParam.msg;
 
         try {
-            for (FollowSellUpdateReq.FollowSell followSell : followSellUpdateReq.data) {
+            for (CusFollowSellUpdateReq.FollowSell followSell : followSellUpdateReq.data) {
 
                 CustomerFollowSell customerFollowSell = getCustomerFollowSell(followSellUpdateReq, followSell);
                 customerFollowSell.crawl = followSell.crawl;
@@ -173,13 +173,13 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
         return null;
     }
 
-    private ValidateMsg checkData(FollowSellReq followSellReq) {
+    private ValidateMsg checkData(CusFollowSellAddReq followSellReq) {
 
         if (CollectionUtils.isEmpty(followSellReq.data)) {
             return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_NULL_ERROR);
         }
 
-        for (FollowSellReq.FollowSell followSell : followSellReq.data) {
+        for (CusFollowSellAddReq.FollowSell followSell : followSellReq.data) {
             if (!RegexUtil.isSiteCodeQualified(followSell.siteCode)) {
                 return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR);
             }

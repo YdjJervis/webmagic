@@ -8,5 +8,5 @@ import com.eccang.pojo.asin.AsinRsp;
  * @Description: 添加跟卖监控WS返回对象
  * @date 2017/1/5
  */
-public class FollowSellRsp extends AsinRsp {
+public class CusFollowSellAddRsp extends AsinRsp {
 }

@@ -11,7 +11,7 @@ import java.util.List;
  * @Description: 添加跟卖监控WS请求对象
  * @date 2017/1/5
  */
-public class FollowSellReq extends BaseReqParam {
+public class CusFollowSellAddReq extends BaseReqParam {
 
     public List<FollowSell> data = new ArrayList<>();
 

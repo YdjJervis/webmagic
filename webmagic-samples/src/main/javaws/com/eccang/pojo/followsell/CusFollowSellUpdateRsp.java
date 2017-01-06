@@ -8,5 +8,5 @@ import com.eccang.pojo.review.CusReviewUpdateRsp;
  * @Description: 设置 客户-跟卖 关系WS响应对象
  * @date 2017/1/2 15:58
  */
-public class FollowSellUpdateRsp extends CusReviewUpdateRsp {
+public class CusFollowSellUpdateRsp extends CusReviewUpdateRsp {
 }
