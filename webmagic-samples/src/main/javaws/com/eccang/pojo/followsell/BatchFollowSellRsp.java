@@ -3,7 +3,6 @@ package com.eccang.pojo.followsell;
 import com.eccang.pojo.BaseRspParam;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,7 +34,7 @@ public class BatchFollowSellRsp extends BaseRspParam {
         public double progress;
         public int isChanged;
         public int priority;
-        public Date createTime;
-        public Date updateTime;
+        public String createTime;
+        public String updateTime;
     }
 }

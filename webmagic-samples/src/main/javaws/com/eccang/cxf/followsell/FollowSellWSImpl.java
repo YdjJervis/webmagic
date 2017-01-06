@@ -165,7 +165,47 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
 
     @Override
     public String getMonitorList(String json) {
-        return null;
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        CusFollowSellQueryReq cusFollowSellQueryReq = parseRequestParam(json, baseRspParam, CusFollowSellQueryReq.class);
+        if (cusFollowSellQueryReq == null) {
+            return baseRspParam.toJson();
+        }
+
+        CusFollowSellQueryRsp cusFollowSellQueryRsp = new CusFollowSellQueryRsp();
+        cusFollowSellQueryRsp.customerCode = baseRspParam.customerCode;
+        cusFollowSellQueryRsp.status = baseRspParam.status;
+        cusFollowSellQueryRsp.msg = baseRspParam.msg;
+
+        try {
+            /*查询数据并封闭到返回对象里*/
+            CusFollowSellQueryRsp.CusFollowSell cusFollowSell;
+
+            List<CustomerFollowSell> cFollowSells = mCustomerFollowSellService.findByCustomer(baseRspParam.customerCode);
+            for (CustomerFollowSell cFollowSell : cFollowSells) {
+                cusFollowSell = cusFollowSellQueryRsp.new CusFollowSell();
+                cusFollowSell.siteCode = cFollowSell.siteCode;
+                cusFollowSell.asin = cFollowSell.asin;
+                cusFollowSell.sellerId = cFollowSell.sellerId;
+                cusFollowSell.crawl = cFollowSell.crawl;
+                cusFollowSell.priority = cFollowSell.priority;
+                cusFollowSell.frequency = cFollowSell.frequency;
+                cusFollowSell.onSell = cFollowSell.onSell;
+                cusFollowSell.extra = cFollowSell.extra;
+                cusFollowSell.syncTime = DateUtils.format(cFollowSell.syncTime);
+                cusFollowSell.createTime = DateUtils.format(cFollowSell.createTime);
+                cusFollowSell.updateTime = DateUtils.format(cFollowSell.updateTime);
+                cusFollowSellQueryRsp.data.add(cusFollowSell);
+            }
+        } catch (Exception e) {
+            serverException(cusFollowSellQueryRsp, e);
+        }
+
+        return cusFollowSellQueryRsp.toJson();
     }
 
     @Override
@@ -254,7 +294,6 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
                 return getValidateMsg(false, R.RequestMsg.BATCH_NUM_WRONG);
             }
         }
-
 
         return getValidateMsg(true, R.RequestMsg.SUCCESS);
     }

@@ -181,8 +181,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                     followSell.progress = batchFollowSell.status == 2 ? 1 : 0;
                     followSell.isChanged = batchFollowSell.isChanged;
                     followSell.priority = batchFollowSell.priority;
-                    followSell.createTime = batchFollowSell.createTime;
-                    followSell.updateTime = batchFollowSell.updateTime;
+                    followSell.createTime = DateUtils.format(batchFollowSell.createTime);
+                    followSell.updateTime = DateUtils.format(batchFollowSell.updateTime);
                     batchFollowSellRsp.data.details.add(followSell);
                 }
             } catch (Exception e) {
@@ -218,8 +218,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                     keywordRank.progress = batchRank.getStatus() == 2 ? 1 : 0;
                     keywordRank.isChanged = batchRank.getIsChanged();
                     keywordRank.priority = batchRank.getPriority();
-                    keywordRank.createTime = batchRank.getCreateTime();
-                    keywordRank.updateTime = batchRank.getUpdateTime();
+                    keywordRank.createTime = DateUtils.format(batchRank.getCreateTime());
+                    keywordRank.updateTime = DateUtils.format(batchRank.getUpdateTime());
                     batchRankRsp.data.details.add(keywordRank);
                 }
             } catch (Exception e) {

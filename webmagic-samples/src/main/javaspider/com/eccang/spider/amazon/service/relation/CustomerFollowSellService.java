@@ -61,4 +61,8 @@ public class CustomerFollowSellService {
     public void update(CustomerFollowSell customerFollowSell) {
         mDao.update(customerFollowSell);
     }
+
+    public List<CustomerFollowSell> findByCustomer(String customer) {
+        return mDao.findByCustomer(customer);
+    }
 }

@@ -11,6 +11,7 @@ import com.eccang.spider.amazon.service.crawl.GoodsRankInfoService;
 import com.eccang.spider.amazon.service.crawl.KeywordRankService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
+import com.eccang.spider.amazon.util.DateUtils;
 import com.eccang.util.RegexUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -298,7 +299,7 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
             List<CusRankRsp.CustomerKeywordRank> customerKeywordRanks = new ArrayList<>();
             CusRankRsp.CustomerKeywordRank customerKeywordRank;
 
-            List<CustomerKeywordRank> ckwRanks = mCustomerKeywordRankService.findCustomerCodeIsOpen(baseRspParam.customerCode);
+            List<CustomerKeywordRank> ckwRanks = mCustomerKeywordRankService.findByCustomer(baseRspParam.customerCode);
             for (CustomerKeywordRank ckwRank : ckwRanks) {
                 customerKeywordRank = cusRankRsp.new CustomerKeywordRank();
                 customerKeywordRank.setSiteCode(ckwRank.getSiteCode());
@@ -308,9 +309,9 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
                 customerKeywordRank.setCrawl(ckwRank.getCrawl());
                 customerKeywordRank.setPriority(ckwRank.getPriority());
                 customerKeywordRank.setFrequency(ckwRank.getFrequency());
-                customerKeywordRank.setSyncTime(ckwRank.getSyncTime());
-                customerKeywordRank.setCreateTime(ckwRank.getCreateTime());
-                customerKeywordRank.setUpdateTime(ckwRank.getUpdateTime());
+                customerKeywordRank.setSyncTime(DateUtils.format(ckwRank.getSyncTime()));
+                customerKeywordRank.setCreateTime(DateUtils.format(ckwRank.getCreateTime()));
+                customerKeywordRank.setUpdateTime(DateUtils.format(ckwRank.getUpdateTime()));
                 customerKeywordRanks.add(customerKeywordRank);
             }
         } catch (Exception e) {

@@ -2,7 +2,6 @@ package com.eccang.pojo.rank;
 
 import com.eccang.pojo.BaseRspParam;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,9 +30,9 @@ public class CusRankRsp extends BaseRspParam {
         private int crawl;
         private int priority;
         private int frequency;
-        private Date syncTime;
-        private Date createTime;
-        private Date updateTime;
+        private String syncTime;
+        private String createTime;
+        private String updateTime;
 
         public String getAsin() {
             return asin;
@@ -91,27 +90,27 @@ public class CusRankRsp extends BaseRspParam {
             this.frequency = frequency;
         }
 
-        public Date getSyncTime() {
+        public String getSyncTime() {
             return syncTime;
         }
 
-        public void setSyncTime(Date syncTime) {
+        public void setSyncTime(String syncTime) {
             this.syncTime = syncTime;
         }
 
-        public Date getCreateTime() {
+        public String getCreateTime() {
             return createTime;
         }
 
-        public void setCreateTime(Date createTime) {
+        public void setCreateTime(String createTime) {
             this.createTime = createTime;
         }
 
-        public Date getUpdateTime() {
+        public String getUpdateTime() {
             return updateTime;
         }
 
-        public void setUpdateTime(Date updateTime) {
+        public void setUpdateTime(String updateTime) {
             this.updateTime = updateTime;
         }
     }

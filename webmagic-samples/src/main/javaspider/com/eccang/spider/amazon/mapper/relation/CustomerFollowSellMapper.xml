@@ -70,6 +70,15 @@
           rar_asin = #{2}
     </select>
 
+    <select id="findByCustomer" resultMap="CustomerFollowSellMap">
+        SELECT
+          *
+        FROM
+          relation_customer_followsell
+        WHERE
+          bec_code = #{0}
+    </select>
+
     <update id="update" parameterType="CustomerFollowSell">
         UPDATE
           relation_customer_followsell

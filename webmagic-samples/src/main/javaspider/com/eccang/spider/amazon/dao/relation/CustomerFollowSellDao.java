@@ -18,4 +18,6 @@ public interface CustomerFollowSellDao extends BaseDao<CustomerFollowSell> {
     List<CustomerFollowSell> findNeedGenerateBatch();
 
     CustomerFollowSell find(String customerCode, String siteCode, String asin);
+
+    List<CustomerFollowSell> findByCustomer(String customer);
 }
