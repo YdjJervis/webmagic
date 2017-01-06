@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * Generated source version: 2.2
  * 
  */
-@WebService(name = "ReviewWS", targetNamespace = "http://cxf.eccang.com/")
+@WebService(name = "ReviewWS", targetNamespace = "http://review.cxf.eccang.com/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @XmlSeeAlso({
     ObjectFactory.class
@@ -31,7 +31,7 @@ public interface ReviewWS {
      */
     @WebMethod
     @WebResult(partName = "return")
-    public String addToMonitor(
+    public String getReviewById(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
@@ -55,7 +55,19 @@ public interface ReviewWS {
      */
     @WebMethod
     @WebResult(partName = "return")
-    public String getReviewById(
+    public String setPriority(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String getReviewsByAsin(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
@@ -79,7 +91,19 @@ public interface ReviewWS {
      */
     @WebMethod
     @WebResult(partName = "return")
-    public String getReviewsByAsin(
+    public String setReviewMonitor(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String addToMonitor(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
@@ -104,30 +128,6 @@ public interface ReviewWS {
     @WebMethod
     @WebResult(partName = "return")
     public String setFrequency(
-        @WebParam(name = "arg0", partName = "arg0")
-        String arg0);
-
-    /**
-     * 
-     * @param arg0
-     * @return
-     *     returns java.lang.String
-     */
-    @WebMethod
-    @WebResult(partName = "return")
-    public String setReviewMonitor(
-        @WebParam(name = "arg0", partName = "arg0")
-        String arg0);
-
-    /**
-     * 
-     * @param arg0
-     * @return
-     *     returns java.lang.String
-     */
-    @WebMethod
-    @WebResult(partName = "return")
-    public String setPriority(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 

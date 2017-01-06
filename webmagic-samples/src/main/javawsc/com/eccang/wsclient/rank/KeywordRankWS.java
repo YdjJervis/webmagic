@@ -1,5 +1,5 @@
 
-package com.eccang.wsclient.customer;
+package com.eccang.wsclient.rank;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -15,12 +15,12 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * Generated source version: 2.2
  * 
  */
-@WebService(name = "CustomerAsinWS", targetNamespace = "http://relation.cxf.eccang.com/")
+@WebService(name = "KeywordRankWS", targetNamespace = "http://cxf.eccang.com/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @XmlSeeAlso({
     ObjectFactory.class
 })
-public interface CustomerAsinWS {
+public interface KeywordRankWS {
 
 
     /**
@@ -31,7 +31,7 @@ public interface CustomerAsinWS {
      */
     @WebMethod
     @WebResult(partName = "return")
-    public String setCrawl(
+    public String addToMonitor(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
@@ -39,11 +39,23 @@ public interface CustomerAsinWS {
      * 
      * @param arg0
      * @return
-     *     returns com.eccang.wsclient.customer.BaseRspParam
+     *     returns com.eccang.wsclient.keywordRank.BaseRspParam
      */
     @WebMethod
     @WebResult(partName = "return")
     public BaseRspParam auth(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String setStatus(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 

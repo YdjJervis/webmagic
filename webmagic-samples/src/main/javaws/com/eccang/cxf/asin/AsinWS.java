@@ -36,4 +36,7 @@ public interface AsinWS extends SpiderWS {
 
     @WebMethod
     String getAsinsStatus(String json);
+
+    @WebMethod
+    String getProductInfo(String json);
 }

@@ -27,7 +27,7 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testChangePriority() {
         AsinPriorityReq priorityReq = new AsinPriorityReq();
-        priorityReq.cutomerCode = "EC_002";
+        priorityReq.customerCode = "EC_002";
         priorityReq.platformCode = "ERP";
         priorityReq.token = "123456789";
 
@@ -45,7 +45,7 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testQueryAsin() {
         AsinQueryReq queryReq = new AsinQueryReq();
-        queryReq.cutomerCode = "EC_002";
+        queryReq.customerCode = "EC_002";
         queryReq.platformCode = "ERP";
         queryReq.token = "123456789";
 
@@ -62,7 +62,7 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testAsinBatchImport() {
         AsinReq asinReq = new AsinReq();
-        asinReq.cutomerCode = "EC_001";
+        asinReq.customerCode = "EC_001";
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
@@ -82,7 +82,7 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testAsinBatchImportMany() {
         AsinReq asinReq = new AsinReq();
-        asinReq.cutomerCode = "EC_001";
+        asinReq.customerCode = "EC_001";
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
@@ -108,7 +108,7 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testGetAsinStatus() {
         AsinReq asinReq = new AsinReq();
-        asinReq.cutomerCode = "EC_001";
+        asinReq.customerCode = "EC_001";
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
         System.out.println(new Gson().toJson(asinReq));

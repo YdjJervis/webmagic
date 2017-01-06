@@ -1,10 +1,10 @@
 package com.eccang.spider.amazon.service.crawl;
 
+import com.eccang.spider.amazon.dao.crawl.ProductDao;
+import com.eccang.spider.amazon.pojo.crawl.Product;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.eccang.spider.amazon.dao.crawl.ProductDao;
-import com.eccang.spider.amazon.pojo.crawl.Product;
 
 /**
  * @author Jervis
@@ -34,5 +34,9 @@ public class ProductService {
 
     public boolean isExist(Product product) {
         return mDao.findByObject(product) != null;
+    }
+
+    public Product findByObject(Product product) {
+        return mDao.findByObject(product);
     }
 }

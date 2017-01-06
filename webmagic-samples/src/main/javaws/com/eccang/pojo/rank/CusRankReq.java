@@ -1,39 +1,34 @@
-package com.eccang.pojo.keywordrank;
+package com.eccang.pojo.rank;
 
 import com.eccang.pojo.BaseReqParam;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hardy
  * @version V0.2
  * @Description:
- * @date 2017/1/4 14:14
+ * @date 2017/1/2 14:08
  */
-public class KeywordRankQueryReq extends BaseReqParam {
+public class CusRankReq extends BaseReqParam {
 
-    private KeywordInfo data;
+    private List<KeywordRank> data = new ArrayList<>();
 
-    public KeywordInfo getData() {
+    public List<KeywordRank> getData() {
         return data;
     }
 
-    public void setData(KeywordInfo data) {
+    public void setData(List<KeywordRank> data) {
         this.data = data;
     }
 
-    public class KeywordInfo {
-        private String batchNum;
+    public class KeywordRank {
         private String asin;
         private String siteCode;
         private String departmentCode;
         private String keyword;
 
-        public String getBatchNum() {
-            return batchNum;
-        }
-
-        public void setBatchNum(String batchNum) {
-            this.batchNum = batchNum;
-        }
 
         public String getAsin() {
             return asin;
@@ -66,5 +61,6 @@ public class KeywordRankQueryReq extends BaseReqParam {
         public void setKeyword(String keyword) {
             this.keyword = keyword;
         }
+
     }
 }

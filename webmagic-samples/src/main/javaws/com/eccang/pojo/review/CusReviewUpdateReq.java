@@ -11,7 +11,7 @@ import java.util.List;
  * @Description:
  * @date 2016/12/12 11:40
  */
-public class CustomerReviewUpdateReq extends BaseReqParam {
+public class CusReviewUpdateReq extends BaseReqParam {
 
     public List<CustomerReview> data = new ArrayList<>();
 

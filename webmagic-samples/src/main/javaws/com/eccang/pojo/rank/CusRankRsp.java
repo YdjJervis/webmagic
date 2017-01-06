@@ -1,36 +1,39 @@
-package com.eccang.pojo.keywordrank;
+package com.eccang.pojo.rank;
 
-import com.eccang.pojo.BaseReqParam;
+import com.eccang.pojo.BaseRspParam;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * @author Hardy
  * @version V0.2
  * @Description:
- * @date 2017/1/2 14:08
+ * @date 2017/1/2 14:14
  */
-public class CustomerKeywordRankReq extends BaseReqParam {
+public class CusRankRsp extends BaseRspParam {
 
-    private List<KeywordRank> data = new ArrayList<>();
+    private List<CustomerKeywordRank> data;
 
-    public List<KeywordRank> getData() {
+    public List<CustomerKeywordRank> getData() {
         return data;
     }
 
-    public void setData(List<KeywordRank> data) {
+    public void setData(List<CustomerKeywordRank> data) {
         this.data = data;
     }
 
-    public class KeywordRank {
+    public class CustomerKeywordRank {
         private String asin;
         private String siteCode;
         private String departmentCode;
         private String keyword;
+        private int crawl;
         private int priority;
         private int frequency;
-        private int crawl;
+        private Date syncTime;
+        private Date createTime;
+        private Date updateTime;
 
         public String getAsin() {
             return asin;
@@ -64,6 +67,14 @@ public class CustomerKeywordRankReq extends BaseReqParam {
             this.keyword = keyword;
         }
 
+        public int getCrawl() {
+            return crawl;
+        }
+
+        public void setCrawl(int crawl) {
+            this.crawl = crawl;
+        }
+
         public int getPriority() {
             return priority;
         }
@@ -80,12 +91,28 @@ public class CustomerKeywordRankReq extends BaseReqParam {
             this.frequency = frequency;
         }
 
-        public int getCrawl() {
-            return crawl;
+        public Date getSyncTime() {
+            return syncTime;
         }
 
-        public void setCrawl(int crawl) {
-            this.crawl = crawl;
+        public void setSyncTime(Date syncTime) {
+            this.syncTime = syncTime;
+        }
+
+        public Date getCreateTime() {
+            return createTime;
+        }
+
+        public void setCreateTime(Date createTime) {
+            this.createTime = createTime;
+        }
+
+        public Date getUpdateTime() {
+            return updateTime;
+        }
+
+        public void setUpdateTime(Date updateTime) {
+            this.updateTime = updateTime;
         }
     }
 }

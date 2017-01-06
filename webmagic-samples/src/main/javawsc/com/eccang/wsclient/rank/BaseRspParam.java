@@ -1,5 +1,5 @@
 
-package com.eccang.wsclient.keywordRank;
+package com.eccang.wsclient.rank;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="cutomerCode" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="customerCode" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="status" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="msg" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="success" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
@@ -30,40 +30,40 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "baseRspParam", propOrder = {
-    "cutomerCode",
+    "customerCode",
     "status",
     "msg",
     "success"
 })
 public class BaseRspParam {
 
-    protected String cutomerCode;
+    protected String customerCode;
     protected int status;
     protected String msg;
     protected boolean success;
 
     /**
-     * Gets the value of the cutomerCode property.
+     * Gets the value of the customerCode property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getCutomerCode() {
-        return cutomerCode;
+    public String getCustomerCode() {
+        return customerCode;
     }
 
     /**
-     * Sets the value of the cutomerCode property.
+     * Sets the value of the customerCode property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setCutomerCode(String value) {
-        this.cutomerCode = value;
+    public void setCustomerCode(String value) {
+        this.customerCode = value;
     }
 
     /**

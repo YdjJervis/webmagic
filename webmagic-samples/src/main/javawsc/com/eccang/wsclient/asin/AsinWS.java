@@ -75,6 +75,18 @@ public interface AsinWS {
      * 
      * @param arg0
      * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String getProductInfo(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
      *     returns com.eccang.wsclient.asin.BaseRspParam
      */
     @WebMethod

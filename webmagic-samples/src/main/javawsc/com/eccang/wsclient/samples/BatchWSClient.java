@@ -15,7 +15,7 @@ public class BatchWSClient {
     public static void main(String[] args) {
 
         BatchReq batchReq = new BatchReq();
-        batchReq.cutomerCode = "EC_001";
+        batchReq.customerCode = "EC_001";
         batchReq.platformCode = "ERP";
         batchReq.token = "123456789";
 

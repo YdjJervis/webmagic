@@ -1,4 +1,4 @@
-package com.eccang.pojo.keywordrank;
+package com.eccang.pojo.rank;
 
 import com.eccang.pojo.BaseRspParam;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * 查询关键词排名搜索到的信息
  * 2017/1/4 14:51
  */
-public class KeywordRankQueryRsp extends BaseRspParam {
+public class RankQueryRsp extends BaseRspParam {
 
     private KeywordRankInfo data;
 

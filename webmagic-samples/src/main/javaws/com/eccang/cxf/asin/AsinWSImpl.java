@@ -2,25 +2,28 @@ package com.eccang.cxf.asin;
 
 import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
-import com.eccang.pojo.*;
+import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.asin.*;
+import com.eccang.spider.amazon.pojo.Asin;
+import com.eccang.spider.amazon.pojo.batch.Batch;
+import com.eccang.spider.amazon.pojo.batch.BatchAsin;
+import com.eccang.spider.amazon.pojo.crawl.Product;
+import com.eccang.spider.amazon.pojo.relation.AsinRootAsin;
+import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
+import com.eccang.spider.amazon.service.AsinService;
+import com.eccang.spider.amazon.service.NoSellService;
+import com.eccang.spider.amazon.service.batch.BatchAsinService;
+import com.eccang.spider.amazon.service.batch.BatchService;
+import com.eccang.spider.amazon.service.crawl.ProductService;
+import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
+import com.eccang.spider.amazon.service.relation.CustomerAsinService;
+import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
+import com.eccang.spider.amazon.util.DateUtils;
 import com.eccang.util.RegexUtil;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.eccang.spider.amazon.pojo.*;
-import com.eccang.spider.amazon.pojo.batch.Batch;
-import com.eccang.spider.amazon.pojo.batch.BatchAsin;
-import com.eccang.spider.amazon.pojo.relation.AsinRootAsin;
-import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
-import com.eccang.spider.amazon.service.*;
-import com.eccang.spider.amazon.service.batch.BatchAsinService;
-import com.eccang.spider.amazon.service.batch.BatchService;
-import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
-import com.eccang.spider.amazon.service.relation.CustomerAsinService;
-import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
-import com.eccang.spider.amazon.util.DateUtils;
 
 import javax.jws.WebService;
 import java.util.*;
@@ -55,6 +58,9 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     @Autowired
     private CustomerBusinessService mCustomerBusinessService;
 
+    @Autowired
+    private ProductService mProductService;
+
     public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
 
@@ -84,7 +90,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         /* 逻辑执行阶段 */
         AsinRsp asinRsp = new AsinRsp();
-        asinRsp.customerCode = asinReq.cutomerCode;
+        asinRsp.customerCode = asinReq.customerCode;
         asinRsp.status = baseRspParam.status;
         asinRsp.msg = baseRspParam.msg;
 
@@ -151,7 +157,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             List<CustomerAsin> customerAsinList = new ArrayList<CustomerAsin>();
             for (AsinReq.Asin asin : asinReq.data) {
                 CustomerAsin customerAsin = new CustomerAsin();
-                customerAsin.customerCode = asinReq.cutomerCode;
+                customerAsin.customerCode = asinReq.customerCode;
                 customerAsin.siteCode = asin.siteCode;
                 customerAsin.asin = asin.asin;
                 customerAsin.star = asin.star;
@@ -161,7 +167,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             }
             mCustomerAsinService.addAll(customerAsinList);
 
-            Map<String, Integer> businessInfo = mCustomerBusinessService.getBusinessInfo(asinReq.cutomerCode, R.BusinessCode.ASIN_SPIDER);
+            Map<String, Integer> businessInfo = mCustomerBusinessService.getBusinessInfo(asinReq.customerCode, R.BusinessCode.ASIN_SPIDER);
             asinRsp.data.usableNum = businessInfo.get(R.BusinessInfo.USABLE_NUM);
             asinRsp.data.hasUsedNum = businessInfo.get(R.BusinessInfo.HAS_USED_NUM);
         } catch (Exception e) {
@@ -210,7 +216,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         /* 逻辑执行阶段 */
         AsinQueryRsp asinQueryRsp = new AsinQueryRsp();
-        asinQueryRsp.customerCode = asinQueryReq.cutomerCode;
+        asinQueryRsp.customerCode = asinQueryReq.customerCode;
         asinQueryRsp.status = baseRspParam.status;
         asinQueryRsp.msg = baseRspParam.msg;
 
@@ -381,18 +387,18 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             return baseRspParam.toJson();
         }
 
-        CustomerAsinsRsp customerAsinsRsp = new CustomerAsinsRsp();
-        customerAsinsRsp.customerCode = baseRspParam.customerCode;
-        customerAsinsRsp.status = baseRspParam.status;
-        customerAsinsRsp.msg = baseRspParam.msg;
+        CusAsinsRsp cusAsinsRsp = new CusAsinsRsp();
+        cusAsinsRsp.customerCode = baseRspParam.customerCode;
+        cusAsinsRsp.status = baseRspParam.status;
+        cusAsinsRsp.msg = baseRspParam.msg;
 
-        customerAsinsRsp.data = new ArrayList<>();
-        CustomerAsinsRsp.CustomerAsin cusAsin;
+        cusAsinsRsp.data = new ArrayList<>();
+        CusAsinsRsp.CustomerAsin cusAsin;
         /*通过客户码查询客户下所有的asin爬取状态*/
         List<CustomerAsin> customerAsins = mCustomerAsinService.findByCustomerCodeIsOpen(baseRspParam.customerCode);
 
         for (CustomerAsin customerAsin : customerAsins) {
-            cusAsin = customerAsinsRsp.new CustomerAsin();
+            cusAsin = cusAsinsRsp.new CustomerAsin();
             cusAsin.asin = customerAsin.asin;
             cusAsin.siteCode = customerAsin.siteCode;
             cusAsin.crawl = customerAsin.crawl;
@@ -403,8 +409,123 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             cusAsin.syncTime = DateUtils.format(customerAsin.syncTime);
             cusAsin.createTime = DateUtils.format(customerAsin.createTime);
             cusAsin.updateTime = DateUtils.format(customerAsin.updateTime);
-            customerAsinsRsp.data.add(cusAsin);
+            cusAsinsRsp.data.add(cusAsin);
         }
-        return customerAsinsRsp.toJson();
+        return cusAsinsRsp.toJson();
+    }
+
+    @Override
+    public String getProductInfo(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        AsinReq asinReq = parseRequestParam(json, baseRspParam, AsinReq.class);
+        if (asinReq == null) {
+            return baseRspParam.toJson();
+        }
+
+        /* 参数验证阶段 */
+        if (CollectionUtils.isEmpty(asinReq.data)) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            return baseRspParam.toJson();
+        }
+
+        String asin;
+        String siteCode;
+        for (AsinReq.Asin asinObj : asinReq.data) {
+            if (asinObj == null) {
+                continue;
+            }
+            asin = asinObj.asin;
+            siteCode = asinObj.siteCode;
+
+            if (StringUtils.isEmpty(asin)) {
+                baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+                baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_LIST_ERROR;
+                return baseRspParam.toJson();
+            }
+            if (!RegexUtil.isSiteCodeQualified(siteCode)) {
+                baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+                baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR;
+                return baseRspParam.toJson();
+            }
+        }
+
+        ProductRsp productRsp = new ProductRsp();
+        productRsp.customerCode = asinReq.customerCode;
+        productRsp.status = baseRspParam.status;
+        productRsp.msg = baseRspParam.msg;
+
+        /*返回数据集合*/
+        List<ProductRsp.ProductInfo> productInfos = new ArrayList<>();
+
+        /* 查询数据 */
+        ProductRsp.ProductInfo productInfo;
+        Product product;
+        CustomerAsin customerAsin;
+        for (AsinReq.Asin asinObj : asinReq.data) {
+            /*判断asin在客户下是否存在*/
+            customerAsin = new CustomerAsin();
+            customerAsin.asin = asinObj.asin;
+            customerAsin.customerCode = baseRspParam.customerCode;
+            customerAsin.siteCode = asinObj.siteCode;
+            if (mCustomerAsinService.isExist(customerAsin)) {
+                sLogger.info("客户" + baseRspParam.customerCode + "下，不存在asin(" + asinObj.asin + ").");
+                continue;
+            }
+
+            productInfo = productRsp.new ProductInfo();
+            /*查询asin对应的rootAsin*/
+            AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asinObj.asin, asinObj.siteCode);
+            productInfo.setAsin(asinObj.asin);
+            productInfo.setRootAsin(asinRootAsin.rootAsin);
+
+            /*通过rootAsin查询首页信息*/
+            product = new Product();
+            product.rootAsin = asinRootAsin.rootAsin;
+            product.siteCode = asinRootAsin.siteCode;
+            product = mProductService.findByObject(product);
+
+            if (product == null) {
+                sLogger.info("asin : " + asinObj.asin + "，首页信息不存在.");
+                continue;
+            }
+
+            productInfo.setSellerId(handleStr(product.sellerID));
+            productInfo.setSellerName(handleStr(product.sellerName));
+            productInfo.setTransId(handleStr(product.transID));
+            productInfo.setTransName(handleStr(product.transName));
+            productInfo.setTitle(handleStr(product.title));
+            productInfo.setPrice(handleStr(product.price));
+            productInfo.setImgUrl(handleStr(product.imgUrl));
+            productInfo.setReviewNum(handleStr(product.reviewNum));
+            productInfo.setReviewStar(handleStr(product.reviewStar));
+            productInfo.setReplyNum(handleStr(product.replyNum));
+            productInfo.setAmazonDelivery(product.amazonDelivery ? 1 : 0);
+            productInfo.setFollowSellNum(handleStr(product.followSellNum));
+            productInfo.setAddedTime(handleStr(product.addedTime));
+            productInfo.setCategory(handleStr(product.category));
+            productInfo.setFeature(handleStr(product.extra));
+
+            productInfos.add(productInfo);
+        }
+        productRsp.setData(productInfos);
+
+        return productRsp.toJson();
+    }
+
+    /***
+     *让参数不为null字符串
+     */
+    private String handleStr(String str) {
+        if (str == null) {
+            return "";
+        } else {
+            return str;
+        }
     }
 }

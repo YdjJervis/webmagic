@@ -8,7 +8,7 @@ import com.eccang.pojo.BaseRspParam;
  * @Description:
  * @date 2016/12/12 11:51
  */
-public class CustomerReviewUpdateRsp extends BaseRspParam {
+public class CusReviewUpdateRsp extends BaseRspParam {
 
     public Effect data = new Effect();
 

@@ -64,10 +64,10 @@ public abstract class AbstractSpiderWS implements SpiderWS {
             return baseRspParam;
         }
 
-        baseRspParam.customerCode = baseReqParam.cutomerCode;
+        baseRspParam.customerCode = baseReqParam.customerCode;
 
         /* 授权信息必须存在 */
-        if (StringUtils.isEmpty(baseReqParam.cutomerCode) ||
+        if (StringUtils.isEmpty(baseReqParam.customerCode) ||
                 StringUtils.isEmpty(baseReqParam.platformCode) || StringUtils.isEmpty(baseReqParam.token)) {
             sLogger.warn("permission info is not complete !!!");
             sLogger.warn(baseReqParam);
@@ -78,7 +78,7 @@ public abstract class AbstractSpiderWS implements SpiderWS {
         }
 
         /* 客户信息授权校验 */
-        Customer customer = mCustomerService.findByCode(baseReqParam.cutomerCode);
+        Customer customer = mCustomerService.findByCode(baseReqParam.customerCode);
         if (customer == null) {
             sLogger.warn("customer is not exist !!!");
             baseRspParam.setSuccess(false);

@@ -5,9 +5,8 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
 
 
 /**
@@ -16,7 +15,8 @@ import javax.xml.ws.ResponseWrapper;
  * Generated source version: 2.2
  * 
  */
-@WebService(name = "BatchWS", targetNamespace = "http://cxf.eccang.com/")
+@WebService(name = "BatchWS", targetNamespace = "http://batch.cxf.eccang.com/")
+@SOAPBinding(style = SOAPBinding.Style.RPC)
 @XmlSeeAlso({
     ObjectFactory.class
 })
@@ -30,11 +30,9 @@ public interface BatchWS {
      *     returns java.lang.String
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getBatchInfo", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.batch.GetBatchInfo")
-    @ResponseWrapper(localName = "getBatchInfoResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.batch.GetBatchInfoResponse")
+    @WebResult(partName = "return")
     public String getBatchInfo(
-        @WebParam(name = "arg0", targetNamespace = "")
+        @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
     /**
@@ -44,11 +42,9 @@ public interface BatchWS {
      *     returns com.eccang.wsclient.batch.BaseRspParam
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "auth", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.batch.Auth")
-    @ResponseWrapper(localName = "authResponse", targetNamespace = "http://cxf.eccang.com/", className = "com.eccang.wsclient.batch.AuthResponse")
+    @WebResult(partName = "return")
     public BaseRspParam auth(
-        @WebParam(name = "arg0", targetNamespace = "")
+        @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
 }

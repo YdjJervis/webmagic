@@ -20,7 +20,7 @@ public class ReviewWSTest extends SpringTestCase {
     public void query() {
 
         ReviewQueryReq queryReq = new ReviewQueryReq();
-        queryReq.cutomerCode = "EC_001";
+        queryReq.customerCode = "EC_001";
         queryReq.platformCode = "ERP";
         queryReq.token = "123456789";
 
@@ -37,7 +37,7 @@ public class ReviewWSTest extends SpringTestCase {
     public void add() {
         ReviewReq reviewReq = new ReviewReq();
 
-        reviewReq.cutomerCode = "EC_002";
+        reviewReq.customerCode = "EC_002";
         reviewReq.platformCode = "ERP";
         reviewReq.token = "123456789";
 
@@ -63,7 +63,7 @@ public class ReviewWSTest extends SpringTestCase {
     public void setFrequency() {
         ReviewReq reviewReq = new ReviewReq();
 
-        reviewReq.cutomerCode = "EC_002";
+        reviewReq.customerCode = "EC_002";
         reviewReq.platformCode = "ERP";
         reviewReq.token = "123456789";
 
@@ -81,7 +81,7 @@ public class ReviewWSTest extends SpringTestCase {
     public void setPriority() {
         ReviewReq reviewReq = new ReviewReq();
 
-        reviewReq.cutomerCode = "EC_002";
+        reviewReq.customerCode = "EC_002";
         reviewReq.platformCode = "ERP";
         reviewReq.token = "123456789";
 
@@ -99,7 +99,7 @@ public class ReviewWSTest extends SpringTestCase {
     public void getReviewStatusTest() {
         ReviewReq reviewReq = new ReviewReq();
 
-        reviewReq.cutomerCode = "EC_001";
+        reviewReq.customerCode = "EC_001";
         reviewReq.platformCode = "ERP";
         reviewReq.token = "123456789";
 

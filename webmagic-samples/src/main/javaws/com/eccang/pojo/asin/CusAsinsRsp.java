@@ -10,9 +10,9 @@ import java.util.List;
  * @Description:
  * @date 2016/12/23 18:17
  */
-public class CustomerAsinsRsp extends BaseRspParam {
+public class CusAsinsRsp extends BaseRspParam {
 
-    public List<CustomerAsinsRsp.CustomerAsin> data;
+    public List<CusAsinsRsp.CustomerAsin> data;
 
     public class CustomerAsin {
         public String asin;

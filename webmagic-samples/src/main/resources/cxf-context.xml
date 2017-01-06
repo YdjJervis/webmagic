@@ -7,6 +7,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
           	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
             http://cxf.apache.org/jaxrs
+            http://cxf.apache.org/schemas/jaxrs.xsd
             http://cxf.apache.org/jaxws
             http://cxf.apache.org/schemas/jaxws.xsd
             http://cxf.apache.org/core
@@ -53,9 +54,9 @@
         </jaxws:serviceBean>
     </jaxws:server>
 
-    <jaxws:server id="keywordRankWS" serviceClass="com.eccang.cxf.keywordrank.KeywordRankWS" address="/keywordRank">
+    <jaxws:server id="keywordRankWS" serviceClass="com.eccang.cxf.rank.RankWS" address="/rank">
         <jaxws:serviceBean>
-            <bean class="com.eccang.cxf.keywordrank.KeywordRankWSImpl" />
+            <bean class="com.eccang.cxf.rank.RankWSImpl" />
         </jaxws:serviceBean>
     </jaxws:server>
 

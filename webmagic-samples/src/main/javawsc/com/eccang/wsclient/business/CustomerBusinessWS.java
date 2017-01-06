@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * Generated source version: 2.2
  * 
  */
-@WebService(name = "CustomerBusinessWS", targetNamespace = "http://cxf.eccang.com/")
+@WebService(name = "CustomerBusinessWS", targetNamespace = "http://relation.cxf.eccang.com/")
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 @XmlSeeAlso({
     ObjectFactory.class

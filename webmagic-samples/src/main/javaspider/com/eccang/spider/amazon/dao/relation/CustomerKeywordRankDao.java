@@ -14,8 +14,13 @@ import java.util.List;
  */
 @Repository
 public interface CustomerKeywordRankDao extends BaseDao<CustomerKeywordRank> {
+
     List<CustomerKeywordRank> findByCustomer(String customerCode);
+
     List<CustomerKeywordRank> findNeedGenerateBatch();
+
     List<CustomerKeywordRank> findCustomerCodeIsOpen(String customerCode);
+
     CustomerKeywordRank findByObj(CustomerKeywordRank customerKeywordRank);
+
 }

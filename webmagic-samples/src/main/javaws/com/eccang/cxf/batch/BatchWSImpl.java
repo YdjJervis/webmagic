@@ -5,14 +5,12 @@ import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.asin.BatchAsinRsp;
 import com.eccang.pojo.batch.BatchReq;
+import com.eccang.pojo.followsell.BatchFollowSellRsp;
+import com.eccang.pojo.rank.BatchRankRsp;
 import com.eccang.pojo.review.BatchReviewRsp;
-import com.eccang.spider.amazon.pojo.batch.Batch;
-import com.eccang.spider.amazon.pojo.batch.BatchAsin;
-import com.eccang.spider.amazon.pojo.batch.BatchReview;
+import com.eccang.spider.amazon.pojo.batch.*;
 import com.eccang.spider.amazon.pojo.relation.CustomerReview;
-import com.eccang.spider.amazon.service.batch.BatchAsinService;
-import com.eccang.spider.amazon.service.batch.BatchReviewService;
-import com.eccang.spider.amazon.service.batch.BatchService;
+import com.eccang.spider.amazon.service.batch.*;
 import com.eccang.spider.amazon.service.relation.CustomerReviewService;
 import com.eccang.spider.amazon.util.DateUtils;
 import org.apache.commons.lang.StringUtils;
@@ -42,6 +40,12 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
 
     @Autowired
     private CustomerReviewService mCustomerReviewService;
+
+    @Autowired
+    private BatchRankService mBatchRankService;
+
+    @Autowired
+    private BatchFollowSellService mBatchFollowSellService;
 
     Logger sLogger = Logger.getLogger(getClass());
 
@@ -99,8 +103,9 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 batchAsinRsp.data.updateTime = DateUtils.format(batch.updateTime);
 
                 List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batchReq.data.number);
+                BatchAsinRsp.Asin asin;
                 for (BatchAsin batchAsin : batchAsinList) {
-                    BatchAsinRsp.Asin asin = batchAsinRsp.new Asin();
+                    asin = batchAsinRsp.new Asin();
                     asin.siteCode = batchAsin.siteCode;
                     asin.asin = batchAsin.asin;
                     asin.rootAsin = batchAsin.rootAsin == null ? "" : batchAsin.rootAsin;
@@ -150,6 +155,78 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             }
 
             return batchReviewRsp.toJson();
+        } else if (batch.type == 3) {
+            BatchFollowSellRsp batchFollowSellRsp = new BatchFollowSellRsp();
+            batchFollowSellRsp.customerCode = baseRspParam.customerCode;
+            batchFollowSellRsp.status = baseRspParam.status;
+            batchFollowSellRsp.msg = baseRspParam.msg;
+
+            try {
+                batchFollowSellRsp.data.createTime = DateUtils.format(batch.createTime);
+                batchFollowSellRsp.data.number = batchReq.data.number;
+                batchFollowSellRsp.data.type = batch.type;
+                batchFollowSellRsp.data.status = batch.status;
+                batchFollowSellRsp.data.times = batch.times;
+                batchFollowSellRsp.data.startTime = DateUtils.format(batch.startTime);
+                batchFollowSellRsp.data.finishTime = DateUtils.format(batch.finishTime);
+                batchFollowSellRsp.data.progress = batch.progress;
+                batchFollowSellRsp.data.updateTime = DateUtils.format(batch.updateTime);
+
+                List<BatchFollowSell> batchFollowSells = mBatchFollowSellService.findAllByBatchNum(batchReq.data.number);
+                BatchFollowSellRsp.FollowSell followSell;
+                for (BatchFollowSell batchFollowSell : batchFollowSells) {
+                    followSell = batchFollowSellRsp.new FollowSell();
+                    followSell.asin = batchFollowSell.asin;
+                    followSell.siteCode = batchFollowSell.siteCode;
+                    followSell.progress = batchFollowSell.status == 2 ? 1 : 0;
+                    followSell.isChanged = batchFollowSell.isChanged;
+                    followSell.priority = batchFollowSell.priority;
+                    followSell.createTime = batchFollowSell.createTime;
+                    followSell.updateTime = batchFollowSell.updateTime;
+                    batchFollowSellRsp.data.details.add(followSell);
+                }
+            } catch (Exception e) {
+                serverException(batchFollowSellRsp, e);
+            }
+
+            return batchFollowSellRsp.toJson();
+        } else if (batch.type == 4) {
+            BatchRankRsp batchRankRsp = new BatchRankRsp();
+            batchRankRsp.customerCode = baseRspParam.customerCode;
+            batchRankRsp.status = baseRspParam.status;
+            batchRankRsp.msg = baseRspParam.msg;
+
+            try {
+                batchRankRsp.data.createTime = DateUtils.format(batch.createTime);
+                batchRankRsp.data.number = batchReq.data.number;
+                batchRankRsp.data.type = batch.type;
+                batchRankRsp.data.status = batch.status;
+                batchRankRsp.data.times = batch.times;
+                batchRankRsp.data.startTime = DateUtils.format(batch.startTime);
+                batchRankRsp.data.finishTime = DateUtils.format(batch.finishTime);
+                batchRankRsp.data.progress = batch.progress;
+                batchRankRsp.data.updateTime = DateUtils.format(batch.updateTime);
+
+                BatchRankRsp.KeywordRank keywordRank;
+                List<BatchRank> batchRanks = mBatchRankService.findByBatch(batchReq.data.number);
+                for (BatchRank batchRank : batchRanks) {
+                    keywordRank = batchRankRsp.new KeywordRank();
+                    keywordRank.siteCode = batchRank.getSiteCode();
+                    keywordRank.departmentCode = batchRank.getDepartmentCode();
+                    keywordRank.keyword = batchRank.getKeyword();
+                    keywordRank.asin = batchRank.getAsin();
+                    keywordRank.progress = batchRank.getStatus() == 2 ? 1 : 0;
+                    keywordRank.isChanged = batchRank.getIsChanged();
+                    keywordRank.priority = batchRank.getPriority();
+                    keywordRank.createTime = batchRank.getCreateTime();
+                    keywordRank.updateTime = batchRank.getUpdateTime();
+                    batchRankRsp.data.details.add(keywordRank);
+                }
+            } catch (Exception e) {
+                serverException(batchRankRsp, e);
+            }
+
+            return batchRankRsp.toJson();
         }
         return null;
     }

@@ -11,7 +11,7 @@ import java.util.List;
  * @Description: 客户ASIN关系 请求参数
  * @date 2016/11/23 16:16
  */
-public class CustomerAsinReq extends BaseReqParam {
+public class CusAsinReq extends BaseReqParam {
 
     public List<Asin> data = new ArrayList<Asin>();
 

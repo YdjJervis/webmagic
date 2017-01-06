@@ -10,7 +10,7 @@ import java.util.List;
  * @Description:
  * @date 2016/12/23 16:55
  */
-public class CustomerReviewRsp extends BaseRspParam {
+public class CusReviewRsp extends BaseRspParam {
 
     public List<Review> data;
 

@@ -1,5 +1,5 @@
 
-package com.eccang.wsclient.keywordRank;
+package com.eccang.wsclient.rank;
 
 import com.eccang.spider.base.util.PropertyUtil;
 

@@ -2,8 +2,8 @@ package com.eccang.cxf.relation;
 
 import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseRspParam;
-import com.eccang.pojo.business.CustomerBusinessReq;
-import com.eccang.pojo.business.CustomerBusinessRsp;
+import com.eccang.pojo.business.CusBusinessReq;
+import com.eccang.pojo.business.CusBusinessRsp;
 import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.google.gson.Gson;
@@ -36,35 +36,35 @@ public class CustomerBusinessWSImpl extends AbstractSpiderWS implements Customer
             return baseRspParam.toJson();
         }
 
-        CustomerBusinessReq customerBusinessReq = parseRequestParam(jsonArray, baseRspParam, CustomerBusinessReq.class);
-        if (customerBusinessReq == null) {
+        CusBusinessReq cusBusinessReq = parseRequestParam(jsonArray, baseRspParam, CusBusinessReq.class);
+        if (cusBusinessReq == null) {
             return baseRspParam.toJson();
         }
 
         /*响应对象公共参数*/
-        CustomerBusinessRsp customerBusinessRsp = new CustomerBusinessRsp();
-        customerBusinessRsp.customerCode = baseRspParam.customerCode;
-        customerBusinessRsp.status = baseRspParam.status;
-        customerBusinessRsp.msg = baseRspParam.msg;
+        CusBusinessRsp cusBusinessRsp = new CusBusinessRsp();
+        cusBusinessRsp.customerCode = baseRspParam.customerCode;
+        cusBusinessRsp.status = baseRspParam.status;
+        cusBusinessRsp.msg = baseRspParam.msg;
 
         try {
             /*需要查询的业务码对象集合*/
-            List<CustomerBusinessReq.Business> businessList = customerBusinessReq.getData();
+            List<CusBusinessReq.Business> businessList = cusBusinessReq.getData();
 
             if (businessList == null || businessList.size() == 0) {
                 logger.info("查询所需要的业务码参数为空.");
-                customerBusinessRsp.msg = "请求参数错误，查询业务码不能为空.";
-                customerBusinessRsp.status = 413;
-                return customerBusinessRsp.toJson();
+                cusBusinessRsp.msg = "请求参数错误，查询业务码不能为空.";
+                cusBusinessRsp.status = 413;
+                return cusBusinessRsp.toJson();
             }
 
             /*查询到的客户下的业务详情*/
-            List<CustomerBusinessRsp.CustomerBusiness> customerBusinessList = new ArrayList<CustomerBusinessRsp.CustomerBusiness>();
-            CustomerBusinessRsp.CustomerBusiness cBusiness;
-            for (CustomerBusinessReq.Business business : businessList) {
+            List<CusBusinessRsp.CustomerBusiness> customerBusinessList = new ArrayList<CusBusinessRsp.CustomerBusiness>();
+            CusBusinessRsp.CustomerBusiness cBusiness;
+            for (CusBusinessReq.Business business : businessList) {
                 /*业务码*/
                 String businessCode = business.getBusinessCode();
-                cBusiness = customerBusinessRsp.new CustomerBusiness();
+                cBusiness = cusBusinessRsp.new CustomerBusiness();
                 if (StringUtils.isNotEmpty(businessCode)) {
                     /*通过客户码查询客户业务关系表*/
                     CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(baseRspParam.customerCode, businessCode);
@@ -77,10 +77,10 @@ public class CustomerBusinessWSImpl extends AbstractSpiderWS implements Customer
                     logger.info("查询的业务码不能为空.");
                 }
             }
-            customerBusinessRsp.setCustomerBusiness(customerBusinessList);
+            cusBusinessRsp.setCustomerBusiness(customerBusinessList);
         } catch (Exception e) {
-            serverException(customerBusinessRsp, e);
+            serverException(cusBusinessRsp, e);
         }
-        return new Gson().toJson(customerBusinessRsp);
+        return new Gson().toJson(cusBusinessRsp);
     }
 }

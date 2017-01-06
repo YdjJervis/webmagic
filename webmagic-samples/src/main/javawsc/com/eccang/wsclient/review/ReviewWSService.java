@@ -1,11 +1,14 @@
 
 package com.eccang.wsclient.review;
 
-import com.eccang.spider.base.util.PropertyUtil;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
+import javax.xml.ws.WebEndpoint;
+import javax.xml.ws.WebServiceClient;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -14,22 +17,21 @@ import java.net.URL;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "ReviewWSService", targetNamespace = "http://cxf.eccang.com/", wsdlLocation = "http://192.168.100.109:8080/eccang/ws/review?wsdl")
+@WebServiceClient(name = "ReviewWSService", targetNamespace = "http://review.cxf.eccang.com/", wsdlLocation = "http://192.168.100.109:8080/eccang/ws/review?wsdl")
 public class ReviewWSService
     extends Service
 {
 
     private final static URL REVIEWWSSERVICE_WSDL_LOCATION;
     private final static WebServiceException REVIEWWSSERVICE_EXCEPTION;
-    private final static QName REVIEWWSSERVICE_QNAME = new QName("http://cxf.eccang.com/", "ReviewWSService");
+    private final static QName REVIEWWSSERVICE_QNAME = new QName("http://review.cxf.eccang.com/", "ReviewWSService");
 
     static {
         URL url = null;
         WebServiceException e = null;
         try {
-            String value = PropertyUtil.getValue("ws.properties", "spiderWSIPPort");
-            url = new URL(value + "/eccang/ws/review?wsdl");
-        } catch (Exception ex) {
+            url = new URL("http://192.168.100.109:8080/eccang/ws/review?wsdl");
+        } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
         REVIEWWSSERVICE_WSDL_LOCATION = url;
@@ -67,7 +69,7 @@ public class ReviewWSService
      */
     @WebEndpoint(name = "ReviewWSPort")
     public ReviewWS getReviewWSPort() {
-        return super.getPort(new QName("http://cxf.eccang.com/", "ReviewWSPort"), ReviewWS.class);
+        return super.getPort(new QName("http://review.cxf.eccang.com/", "ReviewWSPort"), ReviewWS.class);
     }
 
     /**
@@ -79,7 +81,7 @@ public class ReviewWSService
      */
     @WebEndpoint(name = "ReviewWSPort")
     public ReviewWS getReviewWSPort(WebServiceFeature... features) {
-        return super.getPort(new QName("http://cxf.eccang.com/", "ReviewWSPort"), ReviewWS.class, features);
+        return super.getPort(new QName("http://review.cxf.eccang.com/", "ReviewWSPort"), ReviewWS.class, features);
     }
 
     private static URL __getWsdlLocation() {

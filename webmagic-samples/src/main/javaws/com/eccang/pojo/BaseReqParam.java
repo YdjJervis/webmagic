@@ -8,14 +8,14 @@ package com.eccang.pojo;
  */
 public class BaseReqParam {
 
-    public String cutomerCode;
+    public String customerCode;
     public String platformCode;
     public String token;
 
     @Override
     public String toString() {
         return "BaseReqParam{" +
-                "cutomerCode='" + cutomerCode + '\'' +
+                "customerCode='" + customerCode + '\'' +
                 ", platformCode='" + platformCode + '\'' +
                 ", token='" + token + '\'' +
                 '}';

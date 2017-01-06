@@ -1,6 +1,6 @@
 package com.eccang.wsclient.samples;
 
-import com.eccang.pojo.business.CustomerBusinessReq;
+import com.eccang.pojo.business.CusBusinessReq;
 import com.eccang.wsclient.business.CustomerBusinessWSService;
 import com.google.gson.Gson;
 
@@ -20,13 +20,13 @@ public class BusinessWSClient {
     }
 
     private static void query() {
-        CustomerBusinessReq queryReq = new CustomerBusinessReq();
-        queryReq.cutomerCode = "EC_001";
+        CusBusinessReq queryReq = new CusBusinessReq();
+        queryReq.customerCode = "EC_001";
         queryReq.platformCode = "ERP";
         queryReq.token = "123456789";
 
-        List<CustomerBusinessReq.Business> reqData = new ArrayList<CustomerBusinessReq.Business>();
-        CustomerBusinessReq.Business business = queryReq.new Business();
+        List<CusBusinessReq.Business> reqData = new ArrayList<CusBusinessReq.Business>();
+        CusBusinessReq.Business business = queryReq.new Business();
         business.setBusinessCode("MS");
         reqData.add(business);
         queryReq.setData(reqData);

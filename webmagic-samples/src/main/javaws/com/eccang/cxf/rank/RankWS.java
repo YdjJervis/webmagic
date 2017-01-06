@@ -1,4 +1,4 @@
-package com.eccang.cxf.keywordrank;
+package com.eccang.cxf.rank;
 
 import com.eccang.cxf.SpiderWS;
 
@@ -14,7 +14,7 @@ import javax.jws.soap.SOAPBinding;
  */
 @WebService
 @SOAPBinding(style = SOAPBinding.Style.RPC)
-public interface KeywordRankWS extends SpiderWS {
+public interface RankWS extends SpiderWS {
 
     @WebMethod
     String addToMonitor(String json);
@@ -25,4 +25,6 @@ public interface KeywordRankWS extends SpiderWS {
     @WebMethod
     String getKeywordRankInfo(String json);
 
+    @WebMethod
+    String getMonitorList(String json);
 }

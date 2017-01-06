@@ -88,7 +88,9 @@ public final class R {
 
         public static final String QUERY_DATA_EMPTY = "查询到的数据为空";
 
-        public static final String PARAMETER_ASIN_EMPTY = "请求参数Asin不能为空";
+        public static final String PARAMETER_QUERY_NULL_ERROR = "查询对象为空";
+
+        public static final String PARAMETER_ASIN_EMPTY = "请求参数asin码不能为空";
 
     }
 

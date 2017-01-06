@@ -61,7 +61,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
 
         /* 逻辑处理阶段 */
         FollowSellRsp followSellRsp = new FollowSellRsp();
-        followSellRsp.customerCode = followSellReq.cutomerCode;
+        followSellRsp.customerCode = followSellReq.customerCode;
         followSellRsp.status = baseRspParam.status;
         followSellRsp.msg = baseRspParam.msg;
 
@@ -83,7 +83,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             followSellRsp.data.oldCount = crawledNum;
 
             /*对应客户下，keywordRank监听业务的使用情况*/
-            Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(followSellReq.cutomerCode, R.BusinessCode.FOLLOW_SELL);
+            Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(followSellReq.customerCode, R.BusinessCode.FOLLOW_SELL);
             followSellRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
             followSellRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
 
     private CustomerFollowSell getCustomerFollowSell(FollowSellReq followSellReq, FollowSellReq.FollowSell followSell) {
         CustomerFollowSell cusFollowSell = new CustomerFollowSell();
-        cusFollowSell.customerCode = followSellReq.cutomerCode;
+        cusFollowSell.customerCode = followSellReq.customerCode;
         cusFollowSell.siteCode = followSell.siteCode;
         cusFollowSell.asin = followSell.asin;
         cusFollowSell.sellerId = followSell.sellerId;

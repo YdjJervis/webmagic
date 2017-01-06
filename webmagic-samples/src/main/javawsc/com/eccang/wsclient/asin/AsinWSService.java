@@ -1,11 +1,14 @@
 
 package com.eccang.wsclient.asin;
 
-import com.eccang.spider.base.util.PropertyUtil;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
+import javax.xml.ws.WebEndpoint;
+import javax.xml.ws.WebServiceClient;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.WebServiceFeature;
 
 
 /**
@@ -14,7 +17,7 @@ import java.net.URL;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "AsinWSService", targetNamespace = "http://asin.cxf.eccang.com/", wsdlLocation = "http://localhost:8080/eccang/ws/asin?wsdl")
+@WebServiceClient(name = "AsinWSService", targetNamespace = "http://asin.cxf.eccang.com/", wsdlLocation = "http://192.168.100.109:8080/eccang/ws/asin?wsdl")
 public class AsinWSService
     extends Service
 {
@@ -27,9 +30,8 @@ public class AsinWSService
         URL url = null;
         WebServiceException e = null;
         try {
-            String value = PropertyUtil.getValue("ws.properties", "spiderWSIPPort");
-            url = new URL(value + "/eccang/ws/asin?wsdl");
-        } catch (java.lang.Exception ex) {
+            url = new URL("http://192.168.100.109:8080/eccang/ws/asin?wsdl");
+        } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
         ASINWSSERVICE_WSDL_LOCATION = url;

@@ -10,7 +10,7 @@ import java.util.List;
  * 查询客户业务使用情况的对象
  * 2016/12/15 17:40
  */
-public class CustomerBusinessReq extends BaseReqParam {
+public class CusBusinessReq extends BaseReqParam {
 
 
     private List<Business> data;
