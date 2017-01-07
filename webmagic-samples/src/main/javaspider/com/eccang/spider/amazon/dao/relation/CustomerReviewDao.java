@@ -22,7 +22,7 @@ public interface CustomerReviewDao extends BaseDao<CustomerReview> {
      */
     List<CustomerReview> findNeedGenerateBatch();
 
-    List<CustomerReview> findCustomerReviewIsOpen(String customerCode);
+    int findUsedCount(String customerCode);
 
     List<CustomerReview> findCustomerReviewsByCustomerCode(String customerCode);
 

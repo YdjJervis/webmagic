@@ -355,7 +355,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         /* 参数验证阶段 */
         if (CollectionUtils.isEmpty(cusReviewUpdateReq.data)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
@@ -421,7 +421,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         if (CollectionUtils.isEmpty(cusReviewUpdateReq.data)) {
             /*校验传入的请求是否为null*/
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
@@ -500,7 +500,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         /* 参数验证阶段 */
         if (CollectionUtils.isEmpty(cusReviewUpdateReq.data)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
@@ -656,7 +656,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         checkResult.put(IS_SUCCESS, "0");
         if (CollectionUtils.isEmpty(reviews)) {
             /*校验请求数据列表是否为空*/
-            checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_ASIN_NULL_ERROR);
+            checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_DATA_NULL_ERROR);
             return checkResult;
         }
 

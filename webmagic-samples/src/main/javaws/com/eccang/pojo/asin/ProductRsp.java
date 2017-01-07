@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ProductRsp extends BaseRspParam {
 
-    private List<ProductInfo> data;
+    public List<ProductInfo> data;
 
     public List<ProductInfo> getData() {
         return data;
@@ -23,25 +23,25 @@ public class ProductRsp extends BaseRspParam {
     }
 
     public class ProductInfo {
-        private String asin;
-        private String rootAsin;
-        private String siteCode;
-        private String sellerId; /*卖家id*/
-        private String sellerName; /*卖家名称*/
-        private String transId; /*运输方id*/
-        private String transName;
-        private String title;
-        private String price;
-        private String imgUrl;
-        private String reviewNum; /*评论数量*/
-        private String reviewStar;
-        private String reviewTime; /*最后一条评论的时间*/
-        private String replyNum; /*回复数*/
-        private int amazonDelivery; /*是否是亚马逊配送*/
-        private String followSellNum;
-        private String addedTime; /*上架时间*/
-        private String category; /*排行*/
-        private String feature; /*产品卖点特征*/
+        public String asin;
+        public String rootAsin;
+        public String siteCode;
+        public String sellerId; /*卖家id*/
+        public String sellerName; /*卖家名称*/
+        public String transId; /*运输方id*/
+        public String transName;
+        public String title;
+        public String price;
+        public String imgUrl;
+        public String reviewNum; /*评论数量*/
+        public String reviewStar;
+        public String reviewTime; /*最后一条评论的时间*/
+        public String replyNum; /*回复数*/
+        public int amazonDelivery; /*是否是亚马逊配送*/
+        public String followSellNum;
+        public String addedTime; /*上架时间*/
+        public String category; /*排行*/
+        public String feature; /*产品卖点特征*/
 
         public String getAsin() {
             return asin;

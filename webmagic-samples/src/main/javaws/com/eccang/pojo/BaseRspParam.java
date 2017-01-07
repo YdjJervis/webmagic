@@ -43,6 +43,6 @@ public class BaseRspParam {
     }
 
     public String toJson(){
-        return new GsonBuilder().excludeFieldsWithModifiers(Modifier.PRIVATE).create().toJson(this);
+        return new GsonBuilder().serializeNulls().excludeFieldsWithModifiers(Modifier.PRIVATE).create().toJson(this);
     }
 }

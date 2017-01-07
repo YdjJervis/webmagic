@@ -39,8 +39,8 @@ public class CustomerKeywordRankService {
         return mCustomerKeywordRankDao.findNeedGenerateBatch();
     }
 
-    public List<CustomerKeywordRank> findCustomerCodeIsOpen(String customerCode) {
-        return mCustomerKeywordRankDao.findCustomerCodeIsOpen(customerCode);
+    public int findUsedCount(String customerCode) {
+        return mCustomerKeywordRankDao.findUsedCount(customerCode);
     }
 
     public CustomerKeywordRank findByObj(CustomerKeywordRank customerKeywordRank) {

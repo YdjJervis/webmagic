@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class CusRankRsp extends BaseRspParam {
 
-    private List<CustomerKeywordRank> data;
+    public List<CustomerKeywordRank> data;
 
     public List<CustomerKeywordRank> getData() {
         return data;
@@ -23,16 +23,16 @@ public class CusRankRsp extends BaseRspParam {
     }
 
     public class CustomerKeywordRank {
-        private String asin;
-        private String siteCode;
-        private String departmentCode;
-        private String keyword;
-        private int crawl;
-        private int priority;
-        private int frequency;
-        private String syncTime;
-        private String createTime;
-        private String updateTime;
+        public String asin;
+        public String siteCode;
+        public String departmentCode;
+        public String keyword;
+        public int crawl;
+        public int priority;
+        public int frequency;
+        public String syncTime;
+        public String createTime;
+        public String updateTime;
 
         public String getAsin() {
             return asin;

@@ -40,8 +40,8 @@
         WHERE rcr_crawl = 1 AND rcr_on_sell = 1 AND CURRENT_TIMESTAMP - rcr_finish_time > rcr_frequency * 3600 or rcr_finish_time IS NULL;
     </select>
 
-    <select id="findCustomerReviewIsOpen" resultMap="CustomerReviewResultMap">
-        SELECT * FROM relation_customer_review
+    <select id="findUsedCount" resultType="int">
+        SELECT count(*) FROM relation_customer_review
         WHERE rcr_crawl = 1 AND bec_code = #{0}
     </select>
     <select id="findCustomerReviewsByCustomerCode" resultMap="CustomerReviewResultMap">

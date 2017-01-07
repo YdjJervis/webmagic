@@ -82,11 +82,11 @@
         AND
         rca_on_sell = 1
         AND
-        CURRENT_TIMESTAMP - rca_sync_time > rca_frequency * 3600;
+        CURRENT_TIMESTAMP - rca_sync_time > rca_frequency * 3600 or rca_sync_time is NULL ;
     </select>
 
-    <select id="findByCustomerCodeIsOpen" resultMap="CustomerAsinMap">
-        select * from relation_customer_asin
+    <select id="findUsedCount" resultType="int">
+        select count(*) from relation_customer_asin
         WHERE
         bec_code = #{0}
         AND

@@ -90,7 +90,7 @@
     <select id="findByCustomer" resultMap="CustomerRankKeywordMap" parameterType="java.lang.String">
         SELECT
           *
-        FOR
+        FROM
           relation_customer_keyword_rank
         WHERE
           bec_code = #{0}
@@ -105,9 +105,10 @@
           CURRENT_TIMESTAMP - rcrk_sync_time > rcrk_frequency * 3600
           OR rcrk_sync_time is null;
     </select>
-    <select id="findCustomerCodeIsOpen" resultMap="CustomerRankKeywordMap">
+
+    <select id="findUsedCount" resultType="int">
         SELECT
-          *
+          count(*)
         FROM
           relation_customer_keyword_rank
         WHERE
@@ -121,5 +122,8 @@
           relation_customer_keyword_rank
         WHERE
           saa_asin = #{asin} AND rcrk_keyword = #{keyword} AND bec_code = #{customerCode} AND bas_code = #{siteCode} AND bad_code = #{departmentCode}
+          <if test="customerCode != null">
+              AND bec_code = #{customerCode}
+          </if>
     </select>
 </mapper>

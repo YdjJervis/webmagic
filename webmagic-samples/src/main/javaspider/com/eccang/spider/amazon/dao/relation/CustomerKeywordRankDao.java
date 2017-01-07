@@ -19,7 +19,7 @@ public interface CustomerKeywordRankDao extends BaseDao<CustomerKeywordRank> {
 
     List<CustomerKeywordRank> findNeedGenerateBatch();
 
-    List<CustomerKeywordRank> findCustomerCodeIsOpen(String customerCode);
+    int findUsedCount(String customerCode);
 
     CustomerKeywordRank findByObj(CustomerKeywordRank customerKeywordRank);
 

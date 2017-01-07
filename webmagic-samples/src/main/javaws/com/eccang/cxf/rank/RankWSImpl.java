@@ -120,7 +120,7 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         /* 参数验证阶段 */
         if (CollectionUtils.isEmpty(cusRankUpdateReq.getData())) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
@@ -199,6 +199,12 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         }
 
         /* 参数验证阶段 */
+        if(rankQueryReq.getData() == null) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
+            return baseRspParam.toJson();
+        }
+
         RankQueryReq.KeywordInfo keywordInfo = rankQueryReq.getData();
         if (StringUtils.isEmpty(keywordInfo.getBatchNum())) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
@@ -207,10 +213,10 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         }
         if (StringUtils.isEmpty(keywordInfo.getAsin())) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_EMPTY;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_KEYWORD_ASIN_ERROR;
             return baseRspParam.toJson();
         }
-        if (RegexUtil.isSiteCodeQualified(keywordInfo.getSiteCode())) {
+        if (!RegexUtil.isSiteCodeQualified(keywordInfo.getSiteCode())) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR;
             return baseRspParam.toJson();
@@ -232,6 +238,19 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         rankQueryRsp.msg = baseRspParam.msg;
 
         try {
+            /*判断关键词是否在监听中*/
+            CustomerKeywordRank customerKeywordRank = new CustomerKeywordRank();
+            customerKeywordRank.setCustomerCode(baseRspParam.customerCode);
+            customerKeywordRank.setAsin(keywordInfo.getAsin());
+            customerKeywordRank.setSiteCode(keywordInfo.getSiteCode());
+            customerKeywordRank.setDepartmentCode(keywordInfo.getDepartmentCode());
+            customerKeywordRank.setKeyword(keywordInfo.getKeyword());
+            if (!mCustomerKeywordRankService.isExist(customerKeywordRank)) {
+                rankQueryRsp.status = R.HttpStatus.PARAM_WRONG;
+                rankQueryRsp.msg = R.RequestMsg.PARAMETER_KEYWORD_EMPTY__ERROR;
+                return rankQueryRsp.toJson();
+            }
+
             KeywordRank keywordRank = new KeywordRank(keywordInfo.getAsin(), keywordInfo.getKeyword(), keywordInfo.getSiteCode(), keywordInfo.getDepartmentCode());
             KeywordRank kwRank = mKeywordRankService.findByObj(keywordRank);
 
@@ -283,12 +302,6 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
             return baseRspParam.toJson();
         }
 
-        CusRankReq cusRankReq = parseRequestParam(json, baseRspParam, CusRankReq.class);
-        if (cusRankReq == null) {
-            return baseRspParam.toJson();
-        }
-
-
         CusRankRsp cusRankRsp = new CusRankRsp();
         cusRankRsp.customerCode = baseRspParam.customerCode;
         cusRankRsp.status = baseRspParam.status;
@@ -314,6 +327,7 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
                 customerKeywordRank.setUpdateTime(DateUtils.format(ckwRank.getUpdateTime()));
                 customerKeywordRanks.add(customerKeywordRank);
             }
+            cusRankRsp.setData(customerKeywordRanks);
         } catch (Exception e) {
             serverException(cusRankRsp, e);
         }
@@ -330,7 +344,7 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         checkResult.put(IS_SUCCESS, "0");
         if (CollectionUtils.isEmpty(keywordRanks)) {
             /*校验请求数据列表是否为空*/
-            checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_ASIN_NULL_ERROR);
+            checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_DATA_NULL_ERROR);
             return checkResult;
         }
 

@@ -14,7 +14,6 @@ import com.eccang.spider.amazon.service.batch.BatchService;
 import com.eccang.spider.amazon.service.dict.IpsInfoManageService;
 import com.eccang.spider.amazon.service.dict.IpsSwitchManageService;
 import com.eccang.spider.amazon.service.dict.SiteService;
-import com.eccang.spider.amazon.util.RedisUtils;
 import com.eccang.spider.amazon.util.ValidateProxyUtils;
 import com.eccang.spider.base.service.UserAgentService;
 import com.eccang.spider.downloader.AbuProxyDownloader;
@@ -123,7 +122,7 @@ public abstract class BasePageProcessor implements PageProcessor {
         } else if (isValidatePage(page)) {
             dealValidate(page);
         } else {
-            RedisUtils.hset("page", page.getUrl().get(), page.getHtml().get());
+//            RedisUtils.hset("page", page.getUrl().get(), page.getHtml().get());
             dealOtherPage(page);
         }
     }
@@ -326,7 +325,7 @@ public abstract class BasePageProcessor implements PageProcessor {
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
-                    .setDownloader(mHttpClientRedisCacheDownloader)
+                    .setDownloader(mHttpClientImplDownloader)
                     .thread(5);
 
             for (Url url : urlList) {

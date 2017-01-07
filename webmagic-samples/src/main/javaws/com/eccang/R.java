@@ -48,7 +48,7 @@ public final class R {
 
         public static final String PARAMETER_ASIN_FORMAT_ERROR = "数据列表格式不正确";
 
-        public static final String PARAMETER_ASIN_NULL_ERROR = "数据列表内容为空";
+        public static final String PARAMETER_DATA_NULL_ERROR = "数据列表内容为空";
 
         public static final String PARAMETER_ASIN_LIST_ERROR = "请求Asin中传存在空的Asin码";
 

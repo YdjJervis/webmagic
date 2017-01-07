@@ -16,15 +16,15 @@ import java.net.URLEncoder;
  */
 public class CustomerKeywordRankServiceTest extends SpringTestCase {
     @Autowired
-    CustomerKeywordRankService mCustomerKeywordRankService;
+    private CustomerKeywordRankService mCustomerKeywordRankService;
 
     @Test
     public void add() {
         CustomerKeywordRank customerKeywordRank = new CustomerKeywordRank();
-        customerKeywordRank.setAsin("B00IA530JA");
-        customerKeywordRank.setKeyword(URLEncoder.encode("Robinet"));
+        customerKeywordRank.setAsin("1338099132");
+        customerKeywordRank.setKeyword(URLEncoder.encode("book"));
         customerKeywordRank.setCustomerCode("EC_001");
-        customerKeywordRank.setSiteCode("FR");
+        customerKeywordRank.setSiteCode("US");
         customerKeywordRank.setDepartmentCode("search-alias=aps");
         customerKeywordRank.setCrawl(1);
         customerKeywordRank.setPriority(0);

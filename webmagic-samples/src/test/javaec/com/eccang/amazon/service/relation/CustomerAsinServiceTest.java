@@ -40,8 +40,8 @@ public class CustomerAsinServiceTest extends SpringTestCase {
     @Test
     public void testAddAll() {
         List<CustomerAsin> list = new ArrayList<CustomerAsin>();
-        list.add(initCustomerAsin("system","asin002"));
-        list.add(initCustomerAsin("system","asin003"));
+        list.add(initCustomerAsin("US","B01M0MN61Y"));
+        list.add(initCustomerAsin("US","B01AMZLDJO"));
 
         mService.addAll(list);
     }

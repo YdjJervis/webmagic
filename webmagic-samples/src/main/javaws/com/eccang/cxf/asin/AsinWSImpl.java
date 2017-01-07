@@ -76,7 +76,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         /* 参数验证阶段 */
         if (CollectionUtils.isEmpty(asinReq.data)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
@@ -202,7 +202,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
         if (CollectionUtils.isEmpty(asinQueryReq.data)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
@@ -334,7 +334,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         /*校验data数据是不是null*/
         if (CollectionUtils.isEmpty(asinReq.data)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
@@ -395,7 +395,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         cusAsinsRsp.data = new ArrayList<>();
         CusAsinsRsp.CustomerAsin cusAsin;
         /*通过客户码查询客户下所有的asin爬取状态*/
-        List<CustomerAsin> customerAsins = mCustomerAsinService.findByCustomerCodeIsOpen(baseRspParam.customerCode);
+        List<CustomerAsin> customerAsins = mCustomerAsinService.findByCustomerCode(baseRspParam.customerCode);
 
         for (CustomerAsin customerAsin : customerAsins) {
             cusAsin = cusAsinsRsp.new CustomerAsin();
@@ -430,7 +430,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         /* 参数验证阶段 */
         if (CollectionUtils.isEmpty(asinReq.data)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
@@ -438,7 +438,9 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         String siteCode;
         for (AsinReq.Asin asinObj : asinReq.data) {
             if (asinObj == null) {
-                continue;
+                baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+                baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_LIST_ASIN_ERROR;
+                return baseRspParam.toJson();
             }
             asin = asinObj.asin;
             siteCode = asinObj.siteCode;
@@ -473,7 +475,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             customerAsin.asin = asinObj.asin;
             customerAsin.customerCode = baseRspParam.customerCode;
             customerAsin.siteCode = asinObj.siteCode;
-            if (mCustomerAsinService.isExist(customerAsin)) {
+            if (!mCustomerAsinService.isExist(customerAsin)) {
                 sLogger.info("客户" + baseRspParam.customerCode + "下，不存在asin(" + asinObj.asin + ").");
                 continue;
             }
@@ -481,6 +483,12 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             productInfo = productRsp.new ProductInfo();
             /*查询asin对应的rootAsin*/
             AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asinObj.asin, asinObj.siteCode);
+
+            if(asinRootAsin == null) {
+                sLogger.info("asin : " + asinObj.asin + "，asin与rootAsin关系表中不存在");
+                continue;
+            }
+
             productInfo.setAsin(asinObj.asin);
             productInfo.setRootAsin(asinRootAsin.rootAsin);
 

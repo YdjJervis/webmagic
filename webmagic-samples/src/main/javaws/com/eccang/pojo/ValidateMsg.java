@@ -11,7 +11,7 @@ import com.eccang.R;
 public class ValidateMsg {
 
     public boolean isSuccess = true;
-    public String msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+    public String msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
 
     public ValidateMsg(boolean isSuccess, String msg) {
         this.isSuccess = isSuccess;

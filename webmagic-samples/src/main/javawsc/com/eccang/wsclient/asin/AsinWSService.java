@@ -27,7 +27,7 @@ public class AsinWSService
         URL url = null;
         WebServiceException e = null;
         try {
-            String value = PropertyUtil.getValue("ws.properties", "wsdlLocation");
+            String value = PropertyUtil.getValue("ws.properties", "spiderWSIPPort");
             url = new URL(value + "/eccang/ws/asin?wsdl");
         } catch (java.lang.Exception ex) {
             e = new WebServiceException(ex);

@@ -98,14 +98,11 @@ public class CustomerBusinessService {
         /* 查询客户下asin开启数 */
         int useNum;
         if (businessCode.equalsIgnoreCase(R.BusinessCode.ASIN_SPIDER)) {
-            List<CustomerAsin> cusAList = mCustomerAsinDao.findByCustomerCodeIsOpen(customerCode);
-            useNum = cusAList.size();
+            useNum = mCustomerAsinDao.findUsedCount(customerCode);
         } else if (businessCode.equalsIgnoreCase(R.BusinessCode.MONITOR_SPIDER)) {
-            List<CustomerReview> cusRList = mCustomerReviewDao.findCustomerReviewIsOpen(customerCode);
-            useNum = cusRList.size();
+            useNum = mCustomerReviewDao.findUsedCount(customerCode);
         } else if (businessCode.equalsIgnoreCase(R.BusinessCode.KEYWORD_RANK_SPIDER)) {
-            List<CustomerKeywordRank> ckrList = mCustomerKeywordRankDao.findCustomerCodeIsOpen(customerCode);
-            useNum = ckrList.size();
+            useNum = mCustomerKeywordRankDao.findUsedCount(customerCode);
         } else if (businessCode.equalsIgnoreCase(R.BusinessCode.FOLLOW_SELL)) {
             useNum = mCustomerFollowSellService.findUsedCount(customerCode);
         } else {

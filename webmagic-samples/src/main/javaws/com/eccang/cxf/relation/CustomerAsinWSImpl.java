@@ -50,7 +50,7 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
 
         if (CollectionUtils.isEmpty(cusAsinReq.data)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_NULL_ERROR;
+            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 

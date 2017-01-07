@@ -24,10 +24,11 @@ public class CusRankReq extends BaseReqParam {
     }
 
     public class KeywordRank {
-        private String asin;
-        private String siteCode;
-        private String departmentCode;
-        private String keyword;
+        public String asin;
+        public String siteCode;
+        public String departmentCode;
+        public String keyword;
+        public int frequency;
 
 
         public String getAsin() {
@@ -62,5 +63,12 @@ public class CusRankReq extends BaseReqParam {
             this.keyword = keyword;
         }
 
+        public int getFrequency() {
+            return frequency;
+        }
+
+        public void setFrequency(int frequency) {
+            this.frequency = frequency;
+        }
     }
 }

@@ -59,7 +59,7 @@ public class CustomerAsinService {
         return mCustomerAsinDao.findNeedGenerateBatch();
     }
 
-    public List<CustomerAsin> findByCustomerCodeIsOpen(String customerCode) {
-        return mCustomerAsinDao.findByCustomerCodeIsOpen(customerCode);
+    public int findUsedCount(String customerCode) {
+        return mCustomerAsinDao.findUsedCount(customerCode);
     }
 }

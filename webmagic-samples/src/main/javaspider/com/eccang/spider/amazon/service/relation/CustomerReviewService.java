@@ -74,7 +74,7 @@ public class CustomerReviewService {
         }
     }
 
-    public List<CustomerReview> findCustomerReviewIsOpen(String customerCode) {
-        return mCustomerReviewDao.findCustomerReviewIsOpen(customerCode);
+    public int findUsedCount(String customerCode) {
+        return mCustomerReviewDao.findUsedCount(customerCode);
     }
 }

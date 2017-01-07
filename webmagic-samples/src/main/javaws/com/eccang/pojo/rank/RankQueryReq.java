@@ -10,7 +10,7 @@ import com.eccang.pojo.BaseReqParam;
  */
 public class RankQueryReq extends BaseReqParam {
 
-    private KeywordInfo data;
+    public KeywordInfo data;
 
     public KeywordInfo getData() {
         return data;
@@ -21,11 +21,11 @@ public class RankQueryReq extends BaseReqParam {
     }
 
     public class KeywordInfo {
-        private String batchNum;
-        private String asin;
-        private String siteCode;
-        private String departmentCode;
-        private String keyword;
+        public String batchNum;
+        public String asin;
+        public String siteCode;
+        public String departmentCode;
+        public String keyword;
 
         public String getBatchNum() {
             return batchNum;

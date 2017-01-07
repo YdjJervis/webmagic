@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class RankReq extends BaseReqParam {
 
-    private List<RankReq.KeywordRank> data = new ArrayList<>();
+    public List<RankReq.KeywordRank> data = new ArrayList<>();
 
     public List<RankReq.KeywordRank> getData() {
         return data;
@@ -24,13 +24,13 @@ public class RankReq extends BaseReqParam {
     }
 
     public class KeywordRank {
-        private String asin;
-        private String siteCode;
-        private String departmentCode;
-        private String keyword;
-        private int crawl;
-        private int priority;
-        private int frequency;
+        public String asin;
+        public String siteCode;
+        public String departmentCode;
+        public String keyword;
+        public int crawl;
+        public int priority;
+        public int frequency;
 
         public String getAsin() {
             return asin;

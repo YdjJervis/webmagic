@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class RankQueryRsp extends BaseRspParam {
 
-    private KeywordRankInfo data;
+    public KeywordRankInfo data;
 
     public KeywordRankInfo getData() {
         return data;
@@ -23,15 +23,15 @@ public class RankQueryRsp extends BaseRspParam {
     }
 
     public class KeywordRankInfo {
-        private String asin;
-        private String keyword;
-        private String siteCode;
-        private String departmentCode;
-        private int totalPages;
-        private int everyPage;
-        private int rankNum;
-        private String batchNum;
-        private List<GoodsInfo> top10;
+        public String asin;
+        public String keyword;
+        public String siteCode;
+        public String departmentCode;
+        public int totalPages;
+        public int everyPage;
+        public int rankNum;
+        public String batchNum;
+        public List<GoodsInfo> top10;
 
         public String getBatchNum() {
             return batchNum;
@@ -106,15 +106,15 @@ public class RankQueryRsp extends BaseRspParam {
         }
 
         public class GoodsInfo {
-            private int rankNum;
-            private String title;
-            private String price;
-            private String deliveryMode; /*发货方式*/
-            private String distributionMode; /*配送方式*/
-            private String pictureUrl;
-            private int offersNum; /*跟卖数*/
-            private String department; /*品类信息*/
-            private String goodsStatus;
+            public int rankNum;
+            public String title;
+            public String price;
+            public String deliveryMode; /*发货方式*/
+            public String distributionMode; /*配送方式*/
+            public String pictureUrl;
+            public int offersNum; /*跟卖数*/
+            public String department; /*品类信息*/
+            public String goodsStatus;
 
             public int getRankNum() {
                 return rankNum;

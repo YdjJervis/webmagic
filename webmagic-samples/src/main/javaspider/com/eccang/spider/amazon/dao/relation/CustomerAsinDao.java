@@ -21,5 +21,5 @@ public interface CustomerAsinDao extends BaseDao<CustomerAsin> {
 
     List<CustomerAsin> findNeedGenerateBatch();
 
-    List<CustomerAsin> findByCustomerCodeIsOpen(String customerCode);
+    int findUsedCount(String customerCode);
 }
