@@ -86,7 +86,7 @@ public class AsinWSTest extends SpringTestCase {
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
-        List<ImportData> importDataList = mImportDataService.find("US");
+        List<ImportData> importDataList = mImportDataService.find("US",100);
 
         for (ImportData importData : importDataList) {
             AsinReq.Asin asin = asinReq.new Asin();

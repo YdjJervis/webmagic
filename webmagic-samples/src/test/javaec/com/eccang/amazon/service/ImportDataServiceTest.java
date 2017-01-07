@@ -22,13 +22,13 @@ public class ImportDataServiceTest extends SpringTestCase {
     @Test
     public void findBySite() {
        String siteCode = "US";
-        List<ImportData> importDataList = mImportDataService.findBySite(siteCode);
+        List<ImportData> importDataList = mImportDataService.findBySite(siteCode,100);
         System.out.println(importDataList);
     }
 
     @Test
     public void findAll() {
-        List<ImportData> importDataList = mImportDataService.findAll();
+        List<ImportData> importDataList = mImportDataService.findAll(100);
         System.out.println(importDataList);
     }
 

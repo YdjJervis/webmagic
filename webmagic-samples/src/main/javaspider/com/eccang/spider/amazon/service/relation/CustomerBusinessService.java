@@ -36,6 +36,9 @@ public class CustomerBusinessService {
     @Autowired
     CustomerKeywordRankDao mCustomerKeywordRankDao;
 
+    @Autowired
+    private CustomerFollowSellService mCustomerFollowSellService;
+
     /**
      * 新增一条数据
      */
@@ -103,6 +106,8 @@ public class CustomerBusinessService {
         } else if (businessCode.equalsIgnoreCase(R.BusinessCode.KEYWORD_RANK_SPIDER)) {
             List<CustomerKeywordRank> ckrList = mCustomerKeywordRankDao.findCustomerCodeIsOpen(customerCode);
             useNum = ckrList.size();
+        } else if (businessCode.equalsIgnoreCase(R.BusinessCode.FOLLOW_SELL)) {
+            useNum = mCustomerFollowSellService.findUsedCount(customerCode);
         } else {
             useNum = 0;
         }

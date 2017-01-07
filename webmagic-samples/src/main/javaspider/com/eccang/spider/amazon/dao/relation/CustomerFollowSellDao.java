@@ -1,8 +1,8 @@
 package com.eccang.spider.amazon.dao.relation;
 
-import org.springframework.stereotype.Repository;
 import com.eccang.spider.amazon.pojo.relation.CustomerFollowSell;
 import com.eccang.spider.base.dao.BaseDao;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -20,4 +20,6 @@ public interface CustomerFollowSellDao extends BaseDao<CustomerFollowSell> {
     CustomerFollowSell find(String customerCode, String siteCode, String asin);
 
     List<CustomerFollowSell> findByCustomer(String customer);
+
+    int findUsedCount(String customerCode);
 }

@@ -79,6 +79,13 @@
           bec_code = #{0}
     </select>
 
+    <select id="findUsedCount" resultType="int">
+        SELECT COUNT(*) FROM
+        relation_customer_followsell
+        WHERE
+        rcf_crawl = 1 AND bec_code = #{0}
+    </select>
+
     <update id="update" parameterType="CustomerFollowSell">
         UPDATE
           relation_customer_followsell

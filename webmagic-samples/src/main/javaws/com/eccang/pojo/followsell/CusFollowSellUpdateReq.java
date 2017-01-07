@@ -1,8 +1,5 @@
 package com.eccang.pojo.followsell;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Hardy
  * @version V0.2
@@ -10,10 +7,4 @@ import java.util.List;
  * @date 2017/1/2 15:58
  */
 public class CusFollowSellUpdateReq extends CusFollowSellAddReq {
-
-    public List<FollowSell> data = new ArrayList<>();
-
-    public class FollowSell extends CusFollowSellAddReq.FollowSell {
-        public int crawl;
-    }
 }

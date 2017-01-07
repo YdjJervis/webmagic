@@ -21,6 +21,7 @@ public class CusFollowSellAddReq extends BaseReqParam {
         public String sellerId;
         public int frequency;
         public int priority;
+        public int crawl;
     }
 
 }

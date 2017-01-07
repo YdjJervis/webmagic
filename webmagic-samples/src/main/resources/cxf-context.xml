@@ -60,5 +60,12 @@
         </jaxws:serviceBean>
     </jaxws:server>
 
+    <!-- 跟卖 -->
+    <jaxws:server id="followSellWS" serviceClass="com.eccang.cxf.followsell.FollowSellWS" address="/followSell">
+        <jaxws:serviceBean>
+            <bean class="com.eccang.cxf.followsell.FollowSellWSImpl" />
+        </jaxws:serviceBean>
+    </jaxws:server>
+
 </beans>
 

@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface ImportDataDao {
 
-    List<ImportData> findBySite(String siteCode);
+    List<ImportData> findBySite(String siteCode, int limit);
 
-    List<ImportData> findAll();
+    List<ImportData> findAll(int limit);
 }

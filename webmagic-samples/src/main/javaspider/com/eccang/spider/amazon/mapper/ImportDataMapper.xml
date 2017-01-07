@@ -3,7 +3,7 @@
 <mapper namespace="com.eccang.spider.amazon.dao.ImportDataDao">
     <resultMap id="ImportDataMap" type="ImportData">
         <result property="asin" column="asin"/>
-        <result property="siteCode" column="siteCode" />
+        <result property="siteCode" column="siteCode"/>
     </resultMap>
 
     <select id="findBySite" resultMap="ImportDataMap" parameterType="java.lang.String">
@@ -13,7 +13,7 @@
           test_asin_source
         WHERE
           siteCode = #{0}
-        limit 30
+        limit #{1};
     </select>
 
     <select id="findAll" resultMap="ImportDataMap">
@@ -21,6 +21,6 @@
           *
         FROM
           test_asin_source
-        limit 100
+        limit #{0};
     </select>
 </mapper>

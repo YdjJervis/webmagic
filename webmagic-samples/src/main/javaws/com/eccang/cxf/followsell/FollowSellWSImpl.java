@@ -72,7 +72,9 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             for (CusFollowSellAddReq.FollowSell followSell : followSellReq.data) {
 
                 CustomerFollowSell cusFollowSell = getCustomerFollowSell(followSellReq, followSell);
-
+                if (mCustomerFollowSellService.isExist(cusFollowSell.customerCode, cusFollowSell.siteCode, cusFollowSell.asin)) {
+                    ++crawledNum;
+                }
                 cusFollowSellList.add(cusFollowSell);
             }
 
@@ -299,7 +301,14 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
                     /*校验优先级是否超出范围*/
                     return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR);
                 }
+
+                if (baseReqParam instanceof CusFollowSellUpdateReq) {
+                    if (!RegexUtil.isCrawlStatusQualified(followSell.crawl)) {
+                        return getValidateMsg(false, R.RequestMsg.PARAMETER_STATUS_ERROR);
+                    }
+                }
             }
+
         } else if (baseReqParam instanceof FollowSellQueryReq) {
 
             FollowSellQueryReq followSellQueryReq = (FollowSellQueryReq) baseReqParam;
@@ -319,7 +328,6 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
                     return getValidateMsg(false, R.RequestMsg.PARAMETER_KEYWORD_ASIN_ERROR);
                 }
             }
-
         }
 
         return getValidateMsg(true, R.RequestMsg.SUCCESS);

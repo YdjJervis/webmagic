@@ -19,19 +19,19 @@ public class ImportDataService {
     @Autowired
     ImportDataDao mImportDataDao;
 
-    public List<ImportData> findBySite(String siteCode) {
-        return mImportDataDao.findBySite(siteCode);
+    public List<ImportData> findBySite(String siteCode,int limit) {
+        return mImportDataDao.findBySite(siteCode, limit);
     }
 
-    public List<ImportData> findAll() {
-        return mImportDataDao.findAll();
+    public List<ImportData> findAll(int limit) {
+        return mImportDataDao.findAll(limit);
     }
 
-    public List<ImportData> find(String siteCode) {
-        if(StringUtils.isNotEmpty(siteCode)) {
-            return mImportDataDao.findBySite(siteCode);
+    public List<ImportData> find(String siteCode, int limit) {
+        if (StringUtils.isNotEmpty(siteCode)) {
+            return mImportDataDao.findBySite(siteCode,limit);
         } else {
-            return mImportDataDao.findAll();
+            return findAll(limit);
         }
     }
 }

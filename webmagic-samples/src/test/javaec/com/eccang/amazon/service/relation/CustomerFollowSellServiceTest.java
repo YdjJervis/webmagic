@@ -29,8 +29,8 @@ public class CustomerFollowSellServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void addAll(){
-        List<ImportData> importDataList = mImportDataService.find("US");
+    public void addAll() {
+        List<ImportData> importDataList = mImportDataService.find("US", 100);
 
         List<CustomerFollowSell> list = new ArrayList<>();
         for (ImportData importData : importDataList) {

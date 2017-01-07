@@ -76,7 +76,7 @@ public final class R {
 
         public static final String PARAMETER_REVIEW_NOT_EXIST__ERROR = "此评论不存在";
 
-        public static final String PARAMETER_KEYWORD_ASIN_ERROR = "请求的Keyword中存在空的Asin码";
+        public static final String PARAMETER_KEYWORD_ASIN_ERROR = "请求列表中存在空的Asin码";
 
         public static final String PARAMETER_KEYWORD_EMPTY__ERROR = "客户下，查询的监听keyword排名不存在";
 

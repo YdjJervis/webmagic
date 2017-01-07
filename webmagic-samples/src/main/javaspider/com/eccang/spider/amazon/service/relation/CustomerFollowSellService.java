@@ -1,11 +1,11 @@
 package com.eccang.spider.amazon.service.relation;
 
+import com.eccang.spider.amazon.dao.relation.CustomerFollowSellDao;
+import com.eccang.spider.amazon.pojo.relation.CustomerFollowSell;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.eccang.spider.amazon.dao.relation.CustomerFollowSellDao;
-import com.eccang.spider.amazon.pojo.relation.CustomerFollowSell;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,5 +64,9 @@ public class CustomerFollowSellService {
 
     public List<CustomerFollowSell> findByCustomer(String customer) {
         return mDao.findByCustomer(customer);
+    }
+
+    public int findUsedCount(String customerCode) {
+        return mDao.findUsedCount(customerCode);
     }
 }
