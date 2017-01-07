@@ -13,22 +13,27 @@ import java.util.List;
  */
 public class FollowSellQueryRsp extends BaseRspParam {
 
-    public List<FollowSell> data = new ArrayList<>();
+    public List<FollowSellCommon> data = new ArrayList<>();
 
-    public class FollowSell {
+    public class FollowSellCommon {
 
         public String batchNum;
         public String siteCode;
         public String asin;
-        public String sellerId;
-        public String price;
-        public String transPolicy;
-        public String condition;
-        public String rating;
-        public String probability;
-        public String starLevel;
-        public String createTime;
-        public String updateTime;
+
+        public List<FollowSell> list = new ArrayList<>();
+
+        public class FollowSell {
+            public String sellerId;
+            public String price;
+            public String transPolicy;
+            public String condition;
+            public String rating;
+            public String probability;
+            public String starLevel;
+            public String createTime;
+            public String updateTime;
+        }
 
 
     }

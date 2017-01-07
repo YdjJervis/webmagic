@@ -57,15 +57,10 @@
         select * from spider_amazon_followsell
         WHERE
         bo_batch_num = #{batchNum}
-        <if test="siteCode != null">
-            and bas_code = #{siteCode}
-        </if>
-        <if test="asin != null">
-            and saa_asin = #{asin}
-        </if>
-        <if test="sellerID != null">
-            and saf_seller_id = #{sellerID}
-        </if>;
+        and
+        bas_code = #{siteCode}
+        and
+        saa_asin = #{asin}
     </select>
 
     <select id="findByBatchNum" resultMap="FollowSellResultMap">

@@ -236,25 +236,38 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
         followSellQueryRsp.msg = baseRspParam.msg;
 
         try {
-            List<FollowSell> dbFollowSellList = mFollowSellService.findByBatchNum(followSellQueryReq.data.batchNum);
+            for (FollowSellQueryReq.FollowSell followSellParams : followSellQueryReq.data) {
+                List<FollowSell> dbFollowSellList = mFollowSellService.findAll(new FollowSell(followSellParams.batchNum, followSellParams.siteCode, followSellParams.asin));
 
-            for (FollowSell dbFollowSell : dbFollowSellList) {
-                FollowSellQueryRsp.FollowSell followSell = followSellQueryRsp.new FollowSell();
-                followSell.batchNum = dbFollowSell.batchNum;
-                followSell.siteCode = dbFollowSell.siteCode;
-                followSell.asin = dbFollowSell.asin;
-                followSell.sellerId = dbFollowSell.sellerID;
-                followSell.price = dbFollowSell.price;
-                followSell.transPolicy = dbFollowSell.transPolicy;
-                followSell.condition = dbFollowSell.condition;
-                followSell.rating = dbFollowSell.rating;
-                followSell.probability = dbFollowSell.probability;
-                followSell.starLevel = dbFollowSell.starLevel;
-                followSell.createTime = DateUtils.format(dbFollowSell.createTime);
-                followSell.updateTime = DateUtils.format(dbFollowSell.updateTime);
+                if (CollectionUtils.isEmpty(dbFollowSellList)) {
+                    continue;
+                }
 
-                followSellQueryRsp.data.add(followSell);
+                FollowSellQueryRsp.FollowSellCommon followSellCommon = followSellQueryRsp.new FollowSellCommon();
+                followSellCommon.batchNum = followSellParams.batchNum;
+                followSellCommon.siteCode = followSellParams.siteCode;
+                followSellCommon.asin = followSellParams.asin;
+
+                for (FollowSell dbFollowSell : dbFollowSellList) {
+
+                    FollowSellQueryRsp.FollowSellCommon.FollowSell followSell = followSellCommon.new FollowSell();
+
+                    followSell.sellerId = dbFollowSell.sellerID;
+                    followSell.price = dbFollowSell.price;
+                    followSell.transPolicy = dbFollowSell.transPolicy;
+                    followSell.condition = dbFollowSell.condition;
+                    followSell.rating = dbFollowSell.rating;
+                    followSell.probability = dbFollowSell.probability;
+                    followSell.starLevel = dbFollowSell.starLevel;
+                    followSell.createTime = DateUtils.format(dbFollowSell.createTime);
+                    followSell.updateTime = DateUtils.format(dbFollowSell.updateTime);
+
+                    followSellCommon.list.add(followSell);
+                }
+
+                followSellQueryRsp.data.add(followSellCommon);
             }
+
         } catch (Exception e) {
             serverException(followSellQueryRsp, e);
         }
@@ -290,9 +303,23 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
         } else if (baseReqParam instanceof FollowSellQueryReq) {
 
             FollowSellQueryReq followSellQueryReq = (FollowSellQueryReq) baseReqParam;
-            if (!RegexUtil.isBatchNumQualified(followSellQueryReq.data.batchNum)) {
-                return getValidateMsg(false, R.RequestMsg.BATCH_NUM_WRONG);
+
+            if (CollectionUtils.isEmpty(followSellQueryReq.data)) {
+                return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_NULL_ERROR);
             }
+
+            for (FollowSellQueryReq.FollowSell followSell : followSellQueryReq.data) {
+                if (!RegexUtil.isBatchNumQualified(followSell.batchNum)) {
+                    return getValidateMsg(false, R.RequestMsg.BATCH_NUM_WRONG);
+                }
+                if (!RegexUtil.isSiteCodeQualified(followSell.siteCode)) {
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR);
+                }
+                if (StringUtils.isEmpty(followSell.asin)) {
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_KEYWORD_ASIN_ERROR);
+                }
+            }
+
         }
 
         return getValidateMsg(true, R.RequestMsg.SUCCESS);

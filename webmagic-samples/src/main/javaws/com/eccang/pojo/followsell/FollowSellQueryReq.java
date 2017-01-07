@@ -2,6 +2,9 @@ package com.eccang.pojo.followsell;
 
 import com.eccang.pojo.BaseReqParam;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.2
@@ -10,9 +13,11 @@ import com.eccang.pojo.BaseReqParam;
  */
 public class FollowSellQueryReq extends BaseReqParam {
 
-    public FollowSell data = new FollowSell();
+    public List<FollowSell> data = new ArrayList<>();
 
     public class FollowSell {
         public String batchNum;
+        public String siteCode;
+        public String asin;
     }
 }

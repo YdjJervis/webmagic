@@ -25,6 +25,15 @@ public class FollowSell extends BasePojo {
     public String probability;
     public String starLevel;
 
+    public FollowSell() {
+    }
+
+    public FollowSell(String batchNum, String siteCode, String asin) {
+        this.batchNum = batchNum;
+        this.siteCode = siteCode;
+        this.asin = asin;
+    }
+
     @Override
     public String toString() {
         return "FollowSell{" +
