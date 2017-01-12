@@ -57,6 +57,15 @@
         bo_status = #{0};
     </select>
 
+    <select id="findByCustomer" resultMap="BatchResultMap">
+        SELECT
+          *
+        FROM
+          batch_order
+        WHERE
+          bec_code = #{0}
+    </select>
+
     <update id="update" parameterType="Batch">
         UPDATE batch_order SET
         bec_code = #{customerCode},

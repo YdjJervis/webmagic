@@ -47,4 +47,16 @@ public interface BatchWS {
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String getBatches(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
 }

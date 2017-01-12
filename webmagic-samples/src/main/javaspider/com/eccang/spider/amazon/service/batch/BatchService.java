@@ -91,4 +91,7 @@ public class BatchService {
         return list;
     }
 
+    public List<Batch> findByCustomer(String customerCode) {
+        return mBatchDao.findByCustomer(customerCode);
+    }
 }

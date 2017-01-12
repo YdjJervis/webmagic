@@ -18,4 +18,6 @@ public interface BatchDao extends BaseDao<Batch> {
     Batch findByBatchNumber(String batchNumber);
 
     List<Batch> findByStatus(int status);
+
+    List<Batch> findByCustomer(String customerCode);
 }

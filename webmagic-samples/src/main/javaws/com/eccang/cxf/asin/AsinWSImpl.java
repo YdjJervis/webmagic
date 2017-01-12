@@ -503,37 +503,26 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 continue;
             }
 
-            productInfo.setSellerId(handleStr(product.sellerID));
-            productInfo.setSellerName(handleStr(product.sellerName));
-            productInfo.setTransId(handleStr(product.transID));
-            productInfo.setTransName(handleStr(product.transName));
-            productInfo.setTitle(handleStr(product.title));
-            productInfo.setPrice(handleStr(product.price));
-            productInfo.setImgUrl(handleStr(product.imgUrl));
-            productInfo.setReviewNum(handleStr(product.reviewNum));
-            productInfo.setReviewStar(handleStr(product.reviewStar));
-            productInfo.setReplyNum(handleStr(product.replyNum));
+            productInfo.setSellerId(product.sellerID);
+            productInfo.setSellerName(product.sellerName);
+            productInfo.setTransId(product.transID);
+            productInfo.setTransName(product.transName);
+            productInfo.setTitle(product.title);
+            productInfo.setPrice(product.price);
+            productInfo.setImgUrl(product.imgUrl);
+            productInfo.setReviewNum(product.reviewNum);
+            productInfo.setReviewStar(product.reviewStar);
+            productInfo.setReplyNum(product.replyNum);
             productInfo.setAmazonDelivery(product.amazonDelivery ? 1 : 0);
-            productInfo.setFollowSellNum(handleStr(product.followSellNum));
-            productInfo.setAddedTime(handleStr(product.addedTime));
-            productInfo.setCategory(handleStr(product.category));
-            productInfo.setFeature(handleStr(product.extra));
+            productInfo.setFollowSellNum(product.followSellNum);
+            productInfo.setAddedTime(product.addedTime);
+            productInfo.setCategory(product.category);
+            productInfo.setFeature(product.extra);
 
             productInfos.add(productInfo);
         }
         productRsp.setData(productInfos);
 
         return productRsp.toJson();
-    }
-
-    /***
-     *让参数不为null字符串
-     */
-    private String handleStr(String str) {
-        if (str == null) {
-            return "";
-        } else {
-            return str;
-        }
     }
 }

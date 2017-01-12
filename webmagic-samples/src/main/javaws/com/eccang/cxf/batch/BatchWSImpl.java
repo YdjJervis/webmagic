@@ -5,6 +5,7 @@ import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.asin.BatchAsinRsp;
 import com.eccang.pojo.batch.BatchReq;
+import com.eccang.pojo.batch.BatchRsp;
 import com.eccang.pojo.followsell.BatchFollowSellRsp;
 import com.eccang.pojo.rank.BatchRankRsp;
 import com.eccang.pojo.review.BatchReviewRsp;
@@ -13,6 +14,7 @@ import com.eccang.spider.amazon.pojo.relation.CustomerReview;
 import com.eccang.spider.amazon.service.batch.*;
 import com.eccang.spider.amazon.service.relation.CustomerReviewService;
 import com.eccang.spider.amazon.util.DateUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -229,5 +231,47 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
             return batchRankRsp.toJson();
         }
         return null;
+    }
+
+    @Override
+    public String getBatches(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        BatchRsp batchRsp = new BatchRsp();
+        batchRsp.customerCode = baseRspParam.customerCode;
+        batchRsp.status = baseRspParam.status;
+        batchRsp.msg = baseRspParam.msg;
+
+        try {
+            /*通过客户码查询总单*/
+            List<Batch> batchList = mBatchService.findByCustomer(baseRspParam.customerCode);
+            if (CollectionUtils.isEmpty(batchList)) {
+                return batchRsp.toJson();
+            }
+
+            BatchRsp.BatchInfo batchInfo;
+            for (Batch batch : batchList) {
+                batchInfo = batchRsp.new BatchInfo();
+                batchInfo.number = batch.number;
+                batchInfo.importType = batch.isImport;
+                batchInfo.type = batch.type;
+                batchInfo.status = batch.status;
+                batchInfo.times = batch.times;
+                batchInfo.startTime = DateUtils.format(batch.startTime);
+                batchInfo.progress = batch.progress;
+                batchInfo.finishTime = DateUtils.format(batch.finishTime);
+                batchInfo.createTime = DateUtils.format(batch.createTime);
+                batchInfo.updateTime = DateUtils.format(batch.updateTime);
+                batchRsp.data.add(batchInfo);
+            }
+        } catch (Exception e) {
+            serverException(batchRsp, e);
+        }
+
+        return batchRsp.toJson();
     }
 }

@@ -21,4 +21,10 @@ public class RegexTest extends TestCase{
             System.out.println(matcher.group(1));
         }
     }
+
+    @Test
+    public void testProductUrl() {
+        boolean b = "https://www.amazon.com/dp/B01LYA47X5?psc=1".matches(".*/dp/[0-9A-Za-z]*.*");
+        System.out.println(b);
+    }
 }

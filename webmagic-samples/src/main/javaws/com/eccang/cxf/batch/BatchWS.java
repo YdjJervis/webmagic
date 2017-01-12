@@ -21,4 +21,7 @@ public interface BatchWS extends SpiderWS {
      */
     @WebMethod
     String getBatchInfo(String json);
+
+    @WebMethod
+    String getBatches(String json);
 }
