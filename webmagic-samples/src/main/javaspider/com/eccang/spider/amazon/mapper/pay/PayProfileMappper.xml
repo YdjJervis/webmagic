@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.pay.PayProfileDao">
+
+    <resultMap id="PayProfileResultMap" type="PayProfile">
+        <id property="id" column="bppp_id"/>
+        <result property="businessCode" column="besb_code"/>
+        <result property="urlPrice" column="bppp_url_price"/>
+        <result property="priorityMutiple" column="bppp_priority_mutiple"/>
+        <result property="customMutiple" column="bppp_custom_mutiple"/>
+        <result property="createTime" column="bppp_create_time"/>
+        <result property="updateTime" column="bppp_update_time"/>
+    </resultMap>
+
+</mapper>

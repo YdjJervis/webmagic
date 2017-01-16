@@ -314,7 +314,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             FollowSellQueryReq followSellQueryReq = (FollowSellQueryReq) baseReqParam;
 
             if (CollectionUtils.isEmpty(followSellQueryReq.data)) {
-                return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_LIST_ASIN_ERROR);
+                return getValidateMsg(false, R.RequestMsg.PARAMETER_DATA_NULL_ERROR);
             }
 
             for (FollowSellQueryReq.FollowSell followSell : followSellQueryReq.data) {

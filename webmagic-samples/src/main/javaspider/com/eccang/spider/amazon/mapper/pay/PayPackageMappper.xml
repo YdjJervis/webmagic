@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.pay.PayPackageDao">
+
+    <resultMap id="PayPackageResultMap" type="PayPackage">
+        <id property="id" column="bpp_id"/>
+        <result property="code" column="bpp_code"/>
+        <result property="status" column="bpp_status"/>
+        <result property="stubCode" column="bpps_code"/>
+        <result property="createTime" column="bpp_create_time"/>
+        <result property="updateTime" column="bpp_update_time"/>
+    </resultMap>
+
+    <select id="findByCode" resultMap="PayPackageResultMap">
+        select * from base_pay_package
+        WHERE
+        besb_code = #{0};
+    </select>
+
+    <update id="update" parameterType="PayPackage">
+        UPDATE base_pay_package
+        SET
+        besb_code = #{businessCode},
+        bppp_url_price = #{urlPrice},
+        bppp_priority_mutiple = #{priorityMutiple},
+        bppp_custom_mutiple = #{customMutiple}
+    </update>
+
+</mapper>
