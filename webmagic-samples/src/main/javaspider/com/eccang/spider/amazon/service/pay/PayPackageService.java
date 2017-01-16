@@ -1,6 +1,7 @@
 package com.eccang.spider.amazon.service.pay;
 
 import com.eccang.spider.amazon.dao.pay.PayPackageDao;
+import com.eccang.spider.amazon.pojo.pay.PayPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +17,12 @@ public class PayPackageService {
     @Autowired
     private PayPackageDao mDao;
 
+    public void add(PayPackage payPackage) {
+        mDao.add(payPackage);
+    }
+
+    public PayPackage findByCode(int payPackageCode) {
+        return mDao.findByPayPackageCode(payPackageCode);
+    }
 
 }

@@ -2,8 +2,6 @@ package com.eccang.spider.amazon.pojo.pay;
 
 import com.eccang.spider.base.pojo.BasePojo;
 
-import java.util.Date;
-
 /**
  * @author Jervis
  * @version V0.2
@@ -12,13 +10,13 @@ import java.util.Date;
  */
 public class PayPackageStub extends BasePojo {
 
-    public String code;
+    public int code;
     public int custom;
     public String businessCode;
     public int priority;
     public int frequency;
     public int count;
-    public Date averageTime;
+    public int averageTime;
     public float price;
 
     @Override

@@ -4,6 +4,8 @@ import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
 import com.eccang.spider.base.dao.BaseDao;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.1
@@ -13,5 +15,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PayPackageStubDao extends BaseDao<PayPackageStub> {
 
-
+    List<PayPackageStub> findByStubCode(int code);
 }

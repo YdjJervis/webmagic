@@ -12,10 +12,22 @@
         <result property="updateTime" column="bpp_update_time"/>
     </resultMap>
 
-    <select id="findByCode" resultMap="PayPackageResultMap">
+    <insert id="add" parameterType="PayPackage">
+        INSERT INTO base_pay_package(
+        bpp_code,
+        bpp_status,
+        bpps_code
+        ) VALUES (
+        #{code},
+        #{status},
+        #{stubCode}
+        )
+    </insert>
+
+    <select id="findByPayPackageCode" resultMap="PayPackageResultMap">
         select * from base_pay_package
         WHERE
-        besb_code = #{0};
+        bpp_code = #{0};
     </select>
 
     <update id="update" parameterType="PayPackage">

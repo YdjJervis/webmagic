@@ -10,4 +10,18 @@
         <result column="rcpp_update_time" property="updateTime"/>
     </resultMap>
 
+    <insert id="add" parameterType="CustomerPayPackage">
+        INSERT INTO base_pay_package(
+        bpp_code,
+        rcpp_status
+        ) VALUES (
+        #{packageCode},
+        #{status}
+        );
+    </insert>
+
+    <select id="findByCode" resultMap="CustomerPayPackageMap">
+        SELECT * FROM base_pay_package WHERE bpp_code = #{0};
+    </select>
+
 </mapper>

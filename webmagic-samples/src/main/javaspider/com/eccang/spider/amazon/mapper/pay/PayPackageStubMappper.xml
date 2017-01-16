@@ -17,4 +17,35 @@
         <result property="updateTime" column="bpps_update_time"/>
     </resultMap>
 
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO base_pay_package_sub(
+        bpps_code,
+        bpps_custom,
+        besb_code,
+        bpps_priority,
+        bpps_frequency,
+        bpps_count,
+        bpps_average_time,
+        bpps_price
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.code},
+            #{item.custom},
+            #{item.businessCode},
+            #{item.priority},
+            #{item.frequency},
+            #{item.count},
+            #{item.averageTime},
+            #{item.priority}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findByStubCode" resultMap="PayPackageStubResultMap">
+        SELECT * FROM base_pay_package_sub
+        WHERE bpps_code = #{0};
+    </select>
+
 </mapper>
