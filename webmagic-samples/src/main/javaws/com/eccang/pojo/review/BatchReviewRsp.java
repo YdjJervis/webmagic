@@ -21,7 +21,8 @@ public class BatchReviewRsp extends BaseRspParam {
         public String createTime;
         public int type;
         public int status; /*批次爬取状态*/
-        public int times;
+        public int timesTotal;
+        public int timesValid;
         public String startTime;
         public String finishTime;
         public double progress;

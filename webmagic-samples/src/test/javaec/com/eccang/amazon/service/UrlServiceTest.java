@@ -1,5 +1,6 @@
 package com.eccang.amazon.service;
 
+import com.eccang.spider.base.util.UrlUtils;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ public class UrlServiceTest extends SpringTestCase {
     public void testAdd() {
 
         Url url = getUrl();
-        url.urlMD5 = "MD5001";
         mUrlService.add(url);
     }
 
@@ -43,14 +43,14 @@ public class UrlServiceTest extends SpringTestCase {
 
     private Url getUrl() {
         Url url = new Url();
-        url.urlMD5 = "Md5002";
-        url.siteCode = "CN";
-        url.asin = "B009P4OWJ2";
+        url.urlMD5 = UrlUtils.md5("https://www.amazon.com/bestsellers");
+        url.asin = "";
         url.status = 0;
         url.priority = 0;
-        url.url = "https://www.amazon.cn/product-reviews/B00HYRXT4G";
-        url.parentUrl = "test";
-        url.siteCode = "CN";
+        url.url = "https://www.amazon.com/bestsellers";
+        url.type = 6;
+        url.parentUrl = "";
+        url.siteCode = "US";
         return url;
     }
 

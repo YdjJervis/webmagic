@@ -1,5 +1,6 @@
 package com.eccang.spider.amazon.processor;
 
+import com.eccang.R;
 import com.eccang.spider.amazon.pojo.Asin;
 import com.eccang.spider.amazon.pojo.ImgValidateResult;
 import com.eccang.spider.amazon.pojo.Url;
@@ -115,6 +116,8 @@ public abstract class BasePageProcessor implements PageProcessor {
 
         updateUrlStatus(page, true);
 
+        updateBatchOrder(page);
+
         if (isPage404(page)) {
             dealPageNotFound(page);
         } else if (mSet.contains(page.getStatusCode())) {
@@ -170,6 +173,19 @@ public abstract class BasePageProcessor implements PageProcessor {
 
     protected Url getUrl(Page page) {
         return (Url) page.getRequest().getExtra(URL_EXTRA);
+    }
+
+    /**
+     * 更新批次总单中有效请求数或请求总数
+     */
+    private void updateBatchOrder(Page page) {
+        Url url = getUrl(page);
+        /*更新总单的总请求数*/
+        mBatchService.updateTimes(url.batchNum, true);
+
+        if(page.getStatusCode() == R.HttpStatus.SUCCESS && !isValidatePage(page)) {
+            mBatchService.updateTimes(url.batchNum, false);
+        }
     }
 
     /**
@@ -326,7 +342,7 @@ public abstract class BasePageProcessor implements PageProcessor {
 
             Spider mSpider = Spider.create(this)
                     .setDownloader(mHttpClientImplDownloader)
-                    .thread(5);
+                    .thread(1);
 
             for (Url url : urlList) {
                 Request request = new Request(url.url);

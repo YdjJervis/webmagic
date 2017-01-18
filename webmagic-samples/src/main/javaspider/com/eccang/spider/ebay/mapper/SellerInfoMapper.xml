@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.ebay.dao.SellerInfoDao">
+    <resultMap id="SellerInfoMap" type="com.eccang.spider.ebay.pojo.SellerInfo">
+        <id column="sesi_id" property="id"/>
+        <result column="seu_category_name" property="categoryName"/>
+        <result column="sesi_url" property="url"/>
+        <result column="sesi_seller_name" property="sellerName"/>
+        <result column="sesi_seller_address" property="address"/>
+        <result column="sesi_seller_phone" property="phone"/>
+        <result column="sesi_seller_email" property="email"/>
+        <result column="sesi_seller_fax" property="fax"/>
+        <result column="sesi_extra" property="extra"/>
+        <result column="sesi_create_time" property="createTime"/>
+        <result column="sesi_update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="add" parameterType="SellerInfo">
+        INSERT INTO spider_ebay_seller_info(
+          seu_category_name,
+          sesi_url,
+          sesi_seller_name,
+          sesi_seller_address,
+          sesi_seller_phone,
+          sesi_seller_email,
+          sesi_seller_fax,
+          sesi_extra
+        ) VALUES (
+          #{categoryName},
+          #{url},
+          #{sellerName},
+          #{address},
+          #{phone},
+          #{email},
+          #{fax},
+          #{extra}
+        )
+    </insert>
+
+    <select id="findBySellerName" resultMap="SellerInfoMap">
+        SELECT
+          *
+        FROM
+          spider_ebay_seller_info
+        WHERE
+          sesi_seller_name = #{0}
+    </select>
+</mapper>

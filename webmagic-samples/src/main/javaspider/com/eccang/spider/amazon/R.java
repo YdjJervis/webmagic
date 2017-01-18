@@ -33,6 +33,16 @@ public final class R {
          * 关键字搜索爬取
          */
         public static final int KEYWORD_RANK = 5;
+
+        /**
+         * top100品类爬取
+         */
+        public static final int TOP_100_DEPARTMENT = 6;
+
+        /**
+         * top100品类产品爬取
+         */
+        public static final int TOP_100_DEP_PRODUCT = 7;
     }
 
     /**

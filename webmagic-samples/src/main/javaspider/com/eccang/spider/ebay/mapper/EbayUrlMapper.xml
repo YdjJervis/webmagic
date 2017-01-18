@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.ebay.dao.EbayUrlDao">
+
+    <resultMap id="EbayUrlMap" type="com.eccang.spider.ebay.pojo.EbayUrl">
+        <id column="seu_id" property="id" />
+        <result column="seu_category_name" property="categoryName" />
+        <result column="seu_url" property="url" />
+        <result column="seu_type" property="type" />
+        <result column="seu_status" property="status" />
+        <result column="seu_crawling" property="crawling" />
+        <result column="seu_extra" property="extra" />
+        <result column="seu_create_time" property="createTime" />
+        <result column="seu_update_time" property="updateTime" />
+    </resultMap>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_ebay_url(
+          seu_category_name,
+          seu_url,
+          seu_status,
+          seu_type,
+          seu_extra
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+              #{item.categoryName},
+              #{item.url},
+              #{item.status},
+              #{item.type},
+              #{item.extra}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.eccang.spider.ebay.pojo.EbayUrl">
+      UPDATE
+        spider_ebay_url
+      SET
+        seu_category_name = #{categoryName},
+        seu_url = #{url},
+        seu_type = #{type},
+        seu_status = #{status},
+        seu_crawling = #{crawling},
+        seu_extra = #{extra}
+      WHERE
+        seu_id = #{id}
+    </update>
+
+    <select id="findCategoryUrl" parameterType="int" resultMap="EbayUrlMap">
+        SELECT
+          *
+        FROM
+          spider_ebay_url
+        WHERE
+          seu_type in (0,1) and seu_status != 200 and seu_crawling = 0
+        limit #{0}
+    </select>
+
+    <select id="findProductUrl" resultMap="EbayUrlMap">
+        SELECT
+          *
+        FROM
+          spider_ebay_url
+        WHERE
+          seu_type = 2 and seu_status != 200 and seu_crawling = 0
+        limit #{0}
+    </select>
+</mapper>

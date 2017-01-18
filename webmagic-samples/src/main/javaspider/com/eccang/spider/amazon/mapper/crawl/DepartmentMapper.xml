@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.crawl.DepartmentDao">
+
+    <resultMap id="DepartmentMap" type="Department">
+        <id column="sad_id" property="id" />
+        <result column="sad_dep_name" property="depName" />
+        <result column="sad_p_dep_name" property="parentDepName" />
+        <result column="sad_dep_tab" property="depTab" />
+        <result column="sad_dep_url" property="depUrl" />
+        <result column="sad_dep_level" property="depLevel" />
+        <result column="sad_extra" property="extra" />
+        <result column="sad_sync_time" property="syncTime" />
+        <result column="sad_create_time" property="createTime" />
+        <result column="sad_update_time" property="updateTime" />
+    </resultMap>
+
+    <select id="findAll" resultMap="DepartmentMap">
+      SELECT
+        *
+      FROM
+        spider_amazon_department
+    </select>
+
+    <select id="findByName" resultMap="DepartmentMap">
+        SELECT
+        *
+        FROM
+        spider_amazon_department
+        WHERE
+        sad_dep_name = #{0}
+    </select>
+
+    <select id="findByNames" resultMap="DepartmentMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_department
+        WHERE
+          sad_dep_name = #{0} AND sad_p_dep_name = #{1}
+    </select>
+
+    <select id="findByNameAndUrl" resultMap="DepartmentMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_department
+        WHERE
+          sad_dep_name = #{0} AND sad_dep_url = #{depUrl}
+    </select>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_amazon_department(
+          sad_dep_name,
+          sad_p_dep_name,
+          sad_dep_tab,
+          sad_dep_url,
+          sad_dep_level,
+          sad_extra,
+          sad_sync_time
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+              #{item.depName},
+              #{item.parentDepName},
+              #{item.depTab},
+              #{item.depUrl},
+              #{item.depLevel},
+              #{item.extra},
+              #{item.syncTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="Department">
+        UPDATE
+          spider_amazon_department
+        SET
+          sad_dep_tab = #{depTab},
+          sad_dep_url = #{depUrl},
+          sad_dep_level = #{depLevel},
+          sad_extra = #{extra},
+          sad_sync_time #{syncTime}
+        WHERE
+          sad_dep_name = #{depName} AND sad_p_dep_name = #{parentDepName}
+    </update>
+</mapper>

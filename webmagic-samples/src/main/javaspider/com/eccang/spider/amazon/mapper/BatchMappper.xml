@@ -10,7 +10,8 @@
         <result property="isImport" column="bo_import"/>
         <result property="type" column="bo_type"/>
         <result property="status" column="bo_status"/>
-        <result property="times" column="bo_times"/>
+        <result property="timesTotal" column="bo_times_total"/>
+        <result property="timesValid" column="bo_times_valid"/>
         <result property="startTime" column="bo_start_time"/>
         <result property="progress" column="bo_progress"/>
         <result property="finishTime" column="bo_finish_time"/>
@@ -26,7 +27,8 @@
         bo_import,
         bo_type,
         bo_status,
-        bo_times,
+        bo_times_total,
+        bo_times_valid,
         bo_start_time,
         bo_finish_time,
         bo_progress,
@@ -37,7 +39,8 @@
         #{isImport},
         #{type},
         #{status},
-        #{times},
+        #{timesTotal},
+        #{timesValid},
         #{startTime},
         #{finishTime},
         #{progress},
@@ -72,13 +75,31 @@
         bo_import = #{isImport},
         bo_type = #{type},
         bo_status = #{status},
-        bo_times = #{times},
+        bo_times_total = #{timesTotal},
         bo_start_time = #{startTime},
         bo_progress = #{progress},
         bo_finish_time = #{finishTime},
         bo_extra = #{extra}
         WHERE
         bo_batch_num = #{number}
+    </update>
+
+    <update id="updateTimesTotal">
+        UPDATE
+          batch_order
+        SET
+          bo_times_total = bo_times_total + 1
+        WHERE
+          bo_batch_num = #{0}
+    </update>
+
+    <update id="updateTimesValid">
+        UPDATE
+          batch_order
+        SET
+          bo_times_valid = bo_times_valid + 1
+        WHERE
+          bo_batch_num = #{0}
     </update>
 
 </mapper>

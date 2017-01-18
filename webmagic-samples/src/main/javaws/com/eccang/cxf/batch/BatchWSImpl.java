@@ -98,7 +98,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 batchAsinRsp.data.createTime = DateUtils.format(batch.createTime);
                 batchAsinRsp.data.type = batch.type;
                 batchAsinRsp.data.status = batch.status;
-                batchAsinRsp.data.times = batch.times;
+                batchAsinRsp.data.timesTotal = batch.timesTotal;
+                batchAsinRsp.data.timesValid = batch.timesValid;
                 batchAsinRsp.data.startTime = DateUtils.format(batch.startTime);
                 batchAsinRsp.data.finishTime = DateUtils.format(batch.finishTime);
                 batchAsinRsp.data.progress = batch.progress;
@@ -134,7 +135,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 batchReviewRsp.data.number = batchReq.data.number;
                 batchReviewRsp.data.type = batch.type;
                 batchReviewRsp.data.status = batch.status;
-                batchReviewRsp.data.times = batch.times;
+                batchReviewRsp.data.timesTotal = batch.timesTotal;
+                batchReviewRsp.data.timesValid = batch.timesValid;
                 batchReviewRsp.data.startTime = DateUtils.format(batch.startTime);
                 batchReviewRsp.data.finishTime = DateUtils.format(batch.finishTime);
                 batchReviewRsp.data.progress = batch.progress;
@@ -168,7 +170,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 batchFollowSellRsp.data.number = batchReq.data.number;
                 batchFollowSellRsp.data.type = batch.type;
                 batchFollowSellRsp.data.status = batch.status;
-                batchFollowSellRsp.data.times = batch.times;
+                batchFollowSellRsp.data.timesTotal = batch.timesTotal;
+                batchFollowSellRsp.data.timesValid = batch.timesValid;
                 batchFollowSellRsp.data.startTime = DateUtils.format(batch.startTime);
                 batchFollowSellRsp.data.finishTime = DateUtils.format(batch.finishTime);
                 batchFollowSellRsp.data.progress = batch.progress;
@@ -203,7 +206,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 batchRankRsp.data.number = batchReq.data.number;
                 batchRankRsp.data.type = batch.type;
                 batchRankRsp.data.status = batch.status;
-                batchRankRsp.data.times = batch.times;
+                batchRankRsp.data.timesTotal = batch.timesTotal;
+                batchRankRsp.data.timesValid = batch.timesValid;
                 batchRankRsp.data.startTime = DateUtils.format(batch.startTime);
                 batchRankRsp.data.finishTime = DateUtils.format(batch.finishTime);
                 batchRankRsp.data.progress = batch.progress;
@@ -260,7 +264,8 @@ public class BatchWSImpl extends AbstractSpiderWS implements BatchWS {
                 batchInfo.importType = batch.isImport;
                 batchInfo.type = batch.type;
                 batchInfo.status = batch.status;
-                batchInfo.times = batch.times;
+                batchInfo.timesTotal = batch.timesTotal;
+                batchInfo.timesValid = batch.timesValid;
                 batchInfo.startTime = DateUtils.format(batch.startTime);
                 batchInfo.progress = batch.progress;
                 batchInfo.finishTime = DateUtils.format(batch.finishTime);

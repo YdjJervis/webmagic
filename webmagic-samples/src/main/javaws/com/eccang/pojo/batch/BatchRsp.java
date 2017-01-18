@@ -20,7 +20,8 @@ public class BatchRsp extends BaseRspParam {
         public int importType; //导入类型
         public int type;  //爬取类型
         public int status; //爬取状态
-        public int times; //请求url次数
+        public int timesTotal; //请求url总次数
+        public int timesValid; //请求url有效次数
         public String startTime;
         public float progress; //批次进度
         public String finishTime;

@@ -20,6 +20,7 @@
     <typeAliases>
         <package name="com.eccang.spider.amazon.pojo"/>
         <package name="com.eccang.spider.base.pojo"/>
+        <package name="com.eccang.spider.ebay.pojo"/>
     </typeAliases>
 
     <mappers>

@@ -48,7 +48,8 @@ public class StockProcessorTest implements PageProcessor {
         if(url.matches(".*/gp/cart/view.html/.*")) {
             //统计库存
             NameValuePair[] nameValuePairs = extraReqStockParam(page);
-            Map nameValuePair = new HashMap();            Request request = new Request("https://www.amazon.com/gp/cart/ajax-update.html/ref=ox_sc_update_quantity_1%7C50%7C60");
+            Map nameValuePair = new HashMap();
+            Request request = new Request("https://www.amazon.com/gp/cart/ajax-update.html/ref=ox_sc_update_quantity_1%7C50%7C60");
 
             nameValuePair.put("nameValuePair", nameValuePairs);
             request.setExtras(nameValuePair);

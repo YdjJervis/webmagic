@@ -17,7 +17,8 @@ public class Batch extends BasePojo {
     public int isImport;
     public int type;
     public int status;
-    public int times;
+    public int timesTotal;
+    public int timesValid;
     public Date startTime;
     public Date finishTime;
     public float progress;
@@ -30,7 +31,8 @@ public class Batch extends BasePojo {
                 ", isImport=" + isImport +
                 ", type=" + type +
                 ", status=" + status +
-                ", times=" + times +
+                ", timesTotal=" + timesTotal +
+                ", timesValid=" + timesValid +
                 ", startTime=" + startTime +
                 ", finishTime=" + finishTime +
                 ", progress=" + progress +

@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -59,8 +60,20 @@ public class RegexUtil {
         return status == 0 || status == 1;
     }
 
+    /**
+     * ebay判断品类是否存在子品类
+     */
+    public static String reg(String str, String reg) {
+        String result = null;
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(str);
+        while(matcher.find()){
+            result = matcher.group();
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
-        System.out.println(isStarRegex("0-0-1-1-0"));
-        System.out.println(isSiteCodeQualified("CN"));
+        System.out.println(reg("(100)","(\\d+?[,]?\\d+?)"));
     }
 }

@@ -6,7 +6,7 @@
         <result property="siteCode" column="siteCode"/>
     </resultMap>
 
-    <select id="findBySite" resultMap="ImportDataMap" parameterType="java.lang.String">
+    <select id="findBySite" resultMap="ImportDataMap">
         SELECT
           *
         FROM

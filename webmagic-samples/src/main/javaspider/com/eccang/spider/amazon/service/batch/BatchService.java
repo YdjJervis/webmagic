@@ -94,4 +94,16 @@ public class BatchService {
     public List<Batch> findByCustomer(String customerCode) {
         return mBatchDao.findByCustomer(customerCode);
     }
+
+    /**
+     * 更新总单有效请求数或请求总数
+     * @param bo false:有效请求数，true:请求总数
+     */
+    public void updateTimes(String batchNum, boolean bo) {
+        if(!bo) {
+            mBatchDao.updateTimesValid(batchNum);
+        } else {
+            mBatchDao.updateTimesTotal(batchNum);
+        }
+    }
 }
