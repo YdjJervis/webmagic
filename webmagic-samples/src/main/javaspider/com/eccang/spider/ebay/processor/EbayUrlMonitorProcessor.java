@@ -70,7 +70,7 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
             }
         }
 
-        List<Selectable> nodes = page.getHtml().xpath("//*[@id='e1-6']/div[@class='rlp-b']//div[@class='cat-link ']/a").nodes();
+        List<Selectable> nodes = page.getHtml().xpath("//*[@id='e1-6']/div[@class='rlp-b']//div[@class='cat-link']/a").nodes();
 
         if (CollectionUtils.isNotEmpty(nodes)) {
             List<EbayUrl> urls = new ArrayList<>();
@@ -110,6 +110,9 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
      * @param index 页数
      */
     private void extractProductsListing(Page page, int index) {
+        if(index > 49) {
+            index = 49;
+        }
         List<EbayUrl> urls = new ArrayList<>();
         EbayUrl url;
         List<Selectable> nodes = page.getHtml().xpath("//*[@id='Pagination']//td[@class='pages']/a").nodes();
