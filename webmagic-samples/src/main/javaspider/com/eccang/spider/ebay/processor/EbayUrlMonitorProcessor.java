@@ -61,6 +61,7 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
 
         List<Selectable> selectables = page.getHtml().xpath("//*[@id='e1-6']/div[@class='rlp-b']//div[@class='cat-link']/span").nodes();
         if (CollectionUtils.isNotEmpty(selectables)) {
+
             String str = selectables.get(0).xpath("/span/text()").get();
             String productNum = RegexUtil.reg(str, "(\\d+[,]?\\d+)");
             if(StringUtils.isEmpty(productNum) || productNum.equalsIgnoreCase("0")) {

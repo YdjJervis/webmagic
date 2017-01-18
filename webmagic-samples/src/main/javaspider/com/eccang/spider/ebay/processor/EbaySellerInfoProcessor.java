@@ -64,6 +64,7 @@ public class EbaySellerInfoProcessor extends EbayProcessor implements ScheduledT
         List<Selectable> selects = page.getHtml().xpath("//*[@id='e12']//div[@class='bsi-c2']/div").nodes();
         if (CollectionUtils.isNotEmpty(selects)) {
             for (Selectable select : selects) {
+
                 String contactName = select.xpath("/div/span").nodes().get(0).xpath("/span/text()").get();
                 String contactValue = select.xpath("/div/span").nodes().get(1).xpath("/span/text()").get();
                 if (StringUtils.isNotEmpty(contactName) && StringUtils.isNotEmpty(contactValue)) {
