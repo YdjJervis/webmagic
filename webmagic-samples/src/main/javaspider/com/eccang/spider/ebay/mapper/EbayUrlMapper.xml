@@ -6,7 +6,9 @@
     <resultMap id="EbayUrlMap" type="com.eccang.spider.ebay.pojo.EbayUrl">
         <id column="seu_id" property="id" />
         <result column="seu_category_name" property="categoryName" />
+        <result column="seu_url_md5" property="urlMD5" />
         <result column="seu_url" property="url" />
+        <result column="bas_code" property="siteCode" />
         <result column="seu_type" property="type" />
         <result column="seu_status" property="status" />
         <result column="seu_crawling" property="crawling" />
@@ -18,7 +20,9 @@
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO spider_ebay_url(
           seu_category_name,
+          seu_url_md5,
           seu_url,
+          bas_code,
           seu_status,
           seu_type,
           seu_extra
@@ -26,7 +30,9 @@
         <foreach collection="list" index="index" item="item" separator=",">
             (
               #{item.categoryName},
+              #{item.urlMD5},
               #{item.url},
+              #{item.siteCode},
               #{item.status},
               #{item.type},
               #{item.extra}
@@ -40,6 +46,7 @@
       SET
         seu_category_name = #{categoryName},
         seu_url = #{url},
+        bas_code = #{siteCode},
         seu_type = #{type},
         seu_status = #{status},
         seu_crawling = #{crawling},
@@ -54,8 +61,17 @@
         FROM
           spider_ebay_url
         WHERE
-          seu_type in (0,1) and seu_status != 200 and seu_crawling = 0
+          seu_type in (0,1) and seu_status != 200 and seu_status != 404 and seu_crawling = 0
         limit #{0}
+    </select>
+
+    <select id="findProductListing" resultMap="EbayUrlMap">
+        SELECT
+          *
+        FROM
+          spider_ebay_url
+        WHERE
+          seu_type = 2 and seu_status != 200 and seu_status != 404 and seu_crawling = 0
     </select>
 
     <select id="findProductUrl" resultMap="EbayUrlMap">
@@ -64,7 +80,17 @@
         FROM
           spider_ebay_url
         WHERE
-          seu_type = 2 and seu_status != 200 and seu_crawling = 0
+          seu_type = 2 and seu_status != 200 and seu_status != 404 and seu_crawling = 0
         limit #{0}
+    </select>
+
+    <select id="deleteById" parameterType="EbayUrl">
+        DELETE FROM spider_ebay_url
+        WHERE seu_id = #{id}
+    </select>
+
+    <select id="findProductUrlCount" resultType="int">
+        SELECT COUNT(*) FROM spider_ebay_url
+        WHERE seu_url_md5 = #{0}
     </select>
 </mapper>

@@ -17,7 +17,9 @@ public interface DepartmentDao extends BaseDao<Department> {
 
     List<Department> findByName(String depName);
 
-    Department findByNameAndUrl(String depName, String depUrl);
+    Department findByNameAndUrlMD5(String depName, String depUrl);
 
     Department findByNames(String depName, String pDepName);
+
+    List<Department> findByParent(String pDepName, String urlMD5);
 }

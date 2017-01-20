@@ -1,8 +1,7 @@
 package com.eccang.spider.ebay.processor;
 
-import com.eccang.spider.amazon.pojo.Url;
 import com.eccang.spider.base.service.UserAgentService;
-import com.eccang.spider.downloader.HttpClientImplDownloader;
+import com.eccang.spider.downloader.EbayHttpClientImplDownloader;
 import com.eccang.spider.ebay.pojo.EbayUrl;
 import com.eccang.spider.ebay.service.EbayUrlService;
 import com.eccang.spider.ebay.service.SellerInfoService;
@@ -41,7 +40,7 @@ public abstract class EbayProcessor implements PageProcessor {
     @Autowired
     SellerInfoService mSellerInfoService;
     @Autowired
-    HttpClientImplDownloader mHttpClientImplDownloader;
+    EbayHttpClientImplDownloader mEbayHttpClientImplDownloader;
 
     @Override
     public void process(Page page) {
@@ -89,8 +88,8 @@ public abstract class EbayProcessor implements PageProcessor {
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
-                    .setDownloader(mHttpClientImplDownloader)
-                    .thread(15);
+                    .setDownloader(mEbayHttpClientImplDownloader)
+                    .thread(100);
 
             for (EbayUrl url : urlList) {
                 Request request = new Request(url.url);

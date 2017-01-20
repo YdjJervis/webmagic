@@ -16,6 +16,7 @@ public class Department extends BasePojo {
     public String parentDepName;
     public String depTab;
     public String depUrl;
+    public String urlMD5;
     public int depLevel;
     public Date syncTime;
 
@@ -26,6 +27,7 @@ public class Department extends BasePojo {
                 ", parentDepName='" + parentDepName + '\'' +
                 ", depTab='" + depTab + '\'' +
                 ", depUrl='" + depUrl + '\'' +
+                ", urlMD5='" + urlMD5 + '\'' +
                 ", depLevel=" + depLevel + '\'' +
                 ", syncTime=" + syncTime +
                 '}';

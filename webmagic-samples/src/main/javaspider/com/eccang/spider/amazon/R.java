@@ -40,9 +40,14 @@ public final class R {
         public static final int TOP_100_DEPARTMENT = 6;
 
         /**
-         * top100品类产品爬取
+         * top100商品分类爬取
          */
-        public static final int TOP_100_DEP_PRODUCT = 7;
+        public static final int TOP_100_CLASSIFY = 7;
+
+        /**
+         * top100品类商品爬取
+         */
+        public static final int TOP_100_PRODUCT = 8;
     }
 
     /**
@@ -64,7 +69,10 @@ public final class R {
         public static final String UK = "UK";
         public static final String DE = "DE";
         public static final String FR = "FR";
+        public static final String IT = "IT"; //意大利
+        public static final String ES = "ES"; //西班牙
         public static final String JP = "JP";
+        public static final String CA = "CA"; //加拿大
     }
 
     public static final class KeywordRank {

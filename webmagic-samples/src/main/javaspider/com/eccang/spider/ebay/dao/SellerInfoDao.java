@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SellerInfoDao {
     void add(SellerInfo sellerInfo);
-    SellerInfo findBySellerName(String sellerName);
+    SellerInfo findBySellerName(String sellerName, String siteCode);
 }

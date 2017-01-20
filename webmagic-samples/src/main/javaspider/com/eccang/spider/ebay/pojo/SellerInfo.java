@@ -11,6 +11,7 @@ import com.eccang.spider.base.pojo.BasePojo;
 public class SellerInfo extends BasePojo {
     public String categoryName;
     public String url;
+    public String siteCode;
     public String sellerName;
     public String address;
     public String phone;
@@ -22,6 +23,7 @@ public class SellerInfo extends BasePojo {
         return "SellerInfo{" +
                 "categoryName='" + categoryName + '\'' +
                 ", url='" + url + '\'' +
+                ", siteCode='" + siteCode + '\'' +
                 ", sellerName='" + sellerName + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +

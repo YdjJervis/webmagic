@@ -1,5 +1,6 @@
 package com.eccang.amazon.processor;
 
+import com.eccang.spider.amazon.R;
 import com.eccang.spider.base.util.UrlUtils;
 import com.eccang.spider.ebay.pojo.EbayUrl;
 import com.eccang.spider.ebay.pojo.SellerInfo;
@@ -30,7 +31,8 @@ public class EbayProcessorTest implements PageProcessor {
 
     @Override
     public void process(Page page) {
-
+        SellerInfo sellerInfo = extractSellerInfo(page);
+        System.out.println(sellerInfo.toString());
     }
 
     @Override
@@ -64,6 +66,7 @@ public class EbayProcessorTest implements PageProcessor {
 
                 url.url = "http://www.ebay.com/sch/i.html?_nkw=&_in_kw=1&_ex_kw=&_sacat=" + url.url + "&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=15&_stpos=510000&_sargn=-1%26saslc%3D1&_fsradio2=%26LH_LocatedIn%3D1&_salic=45&LH_SubLocation=1&_sop=12&_dmd=1&_ipg=200";
                 url.type = 0;
+                url.siteCode = R.SiteCode.DE;
                 result.add(url);
             }
         }
@@ -80,7 +83,7 @@ public class EbayProcessorTest implements PageProcessor {
             return sellerInfo;
         }
         sellerInfo.sellerName = page.getHtml().xpath("//*[@id='mbgLink']/span/text()").get();
-        List<Selectable> selectables = page.getHtml().xpath("//*[@id='e12']//div[@class='bsi-c1']/div").nodes();
+        List<Selectable> selectables = page.getHtml().xpath("//*[@class='bscd']/div[@class='bsi-c1']/div").nodes();
 
         if(CollectionUtils.isNotEmpty(selectables)) {
             StringBuffer sb = new StringBuffer();
@@ -91,7 +94,7 @@ public class EbayProcessorTest implements PageProcessor {
             sellerInfo.address = sb.toString();
         }
 
-        List<Selectable> selects = page.getHtml().xpath("//*[@id='e12']//div[@class='bsi-c2']/div").nodes();
+        List<Selectable> selects = page.getHtml().xpath("//*[@class='bscd']/div[@class='bsi-c2']/div").nodes();
         if(CollectionUtils.isNotEmpty(selects)) {
             for (Selectable select : selects) {
                 String contactName = select.xpath("/div/span").nodes().get(0).xpath("/span/text()").get();
@@ -114,7 +117,8 @@ public class EbayProcessorTest implements PageProcessor {
      * 解析品类URL，并添加数据库
      */
     private void extractChildCategoryUrl(Page page) {
-        List<Selectable> nodes = page.getHtml().xpath("//*[@id='e1-6']/div[@class='rlp-b']//div[@class='cat-link ']/a").nodes();
+        List<Selectable> nodes = page.getHtml().xpath("//*[@id='LeftNavCategoryContainer']//div[@class='rlp-b']//div[@class='cat-link ']/a").nodes();
+
         if(CollectionUtils.isNotEmpty(nodes)) {
             List<EbayUrl> urls = new ArrayList<>();
             EbayUrl url;
@@ -182,7 +186,7 @@ public class EbayProcessorTest implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        Request request = new Request("http://www.ebay.com/sch/Childrens-Jewelry/84605/i.html?_nkw=&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=15&_stpos=510000&_sop=12&_dmd=1&_ipg=200&LH_LocatedIn=45");
+        Request request = new Request("http://www.ebay.ca/itm/4-color-Hot-Mom-Baby-Stroller-3-in-1-Travel-System-and-Bassinet-Baby-Stroller-/222380927231?var=&hash=item33c6efa8ff:m:mrXxebJSrcEhu9qW0a3FDtg");
         Spider.create(new EbayProcessorTest())
                 .thread(1)
                 .addRequest(request)

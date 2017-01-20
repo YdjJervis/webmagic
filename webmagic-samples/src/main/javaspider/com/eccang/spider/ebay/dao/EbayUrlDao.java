@@ -21,4 +21,10 @@ public interface EbayUrlDao {
     List<EbayUrl> findCategoryUrl(int limit);
 
     List<EbayUrl> findProductUrl(int limit);
+
+    void deleteById(EbayUrl ebayUrl);
+
+    List<EbayUrl> findProductListing();
+
+    int findProductUrlCount(String urlMD5);
 }

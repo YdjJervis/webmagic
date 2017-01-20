@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.amazon.dao.top100.SellingProductDao">
+
+    <resultMap id="SellingProductMap" type="SellingProduct">
+        <id column="" property="id"/>
+        <result column="satd_url" property="url"/>
+        <result column="satd_url_md5" property="urlMD5"/>
+        <result column="bas_code" property="siteCode"/>
+        <result column="sad_dep_name" property="depName"/>
+        <result column="satd_classify" property="classify"/>
+        <result column="satd_asin" property="asin"/>
+        <result column="satd_rank_num" property="rankNum"/>
+        <result column="satd_name" property="name"/>
+        <result column="satd_img_url" property="imgUrl"/>
+        <result column="satd_review_star" property="reviewStar"/>
+        <result column="satd_review_num" property="reviewNum"/>
+        <result column="satd_price" property="price"/>
+        <result column="satd_amazon_delivery" property="amazonDelivery"/>
+        <result column="satd_stock" property="stock"/>
+        <result column="satd_extra" property="extra"/>
+        <result column="satd_create_time" property="createTime"/>
+        <result column="satd_update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_amazon_top100_product(
+          satd_url,
+          satd_url_md5,
+          bas_code,
+          sad_dep_name,
+          satd_classify,
+          satd_asin,
+          satd_rank_num,
+          satd_name,
+          satd_img_url,
+          satd_review_star,
+          satd_review_num,
+          satd_price,
+          satd_amazon_delivery,
+          satd_stock,
+          satd_extra
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+              #{item.url},
+              #{item.urlMD5},
+              #{item.siteCode},
+              #{item.depName},
+              #{item.classify},
+              #{item.asin},
+              #{item.rankNum},
+              #{item.name},
+              #{item.imgUrl},
+              #{item.reviewStar},
+              #{item.reviewNum},
+              #{item.price},
+              #{item.amazonDelivery},
+              #{item.stock},
+              #{item.extra}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

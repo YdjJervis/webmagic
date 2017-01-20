@@ -4,11 +4,12 @@
 
     <resultMap id="DepartmentMap" type="Department">
         <id column="sad_id" property="id" />
-        <result column="sad_dep_name" property="depName" />
-        <result column="sad_p_dep_name" property="parentDepName" />
-        <result column="sad_dep_tab" property="depTab" />
-        <result column="sad_dep_url" property="depUrl" />
-        <result column="sad_dep_level" property="depLevel" />
+        <result column="sad_name" property="depName" />
+        <result column="sad_p_name" property="parentDepName" />
+        <result column="sad_tab" property="depTab" />
+        <result column="sad_url" property="depUrl" />
+        <result column="sad_url_md5" property="urlMD5" />
+        <result column="sad_level" property="depLevel" />
         <result column="sad_extra" property="extra" />
         <result column="sad_sync_time" property="syncTime" />
         <result column="sad_create_time" property="createTime" />
@@ -28,7 +29,7 @@
         FROM
         spider_amazon_department
         WHERE
-        sad_dep_name = #{0}
+        sad_name = #{0}
     </select>
 
     <select id="findByNames" resultMap="DepartmentMap">
@@ -37,25 +38,34 @@
         FROM
           spider_amazon_department
         WHERE
-          sad_dep_name = #{0} AND sad_p_dep_name = #{1}
+          sad_name = #{0} AND sad_p_name = #{1}
     </select>
 
-    <select id="findByNameAndUrl" resultMap="DepartmentMap">
+    <select id="findByNameAndUrlMD5" resultMap="DepartmentMap">
         SELECT
           *
         FROM
           spider_amazon_department
         WHERE
-          sad_dep_name = #{0} AND sad_dep_url = #{depUrl}
+          sad_name = #{0} AND sad_url_md5 = #{1}
+    </select>
+
+    <select id="findByParent" resultMap="DepartmentMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_department
+        WHERE
+          sad_p_name = #{0} and sad_url_md5 = #{1}
     </select>
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO spider_amazon_department(
-          sad_dep_name,
-          sad_p_dep_name,
-          sad_dep_tab,
-          sad_dep_url,
-          sad_dep_level,
+          sad_name,
+          sad_p_name,
+          sad_tab,
+          sad_url,
+          sad_level,
           sad_extra,
           sad_sync_time
         ) VALUES
@@ -76,12 +86,12 @@
         UPDATE
           spider_amazon_department
         SET
-          sad_dep_tab = #{depTab},
-          sad_dep_url = #{depUrl},
-          sad_dep_level = #{depLevel},
+          sad_tab = #{depTab},
+          sad_url = #{depUrl},
+          sad_level = #{depLevel},
           sad_extra = #{extra},
           sad_sync_time #{syncTime}
         WHERE
-          sad_dep_name = #{depName} AND sad_p_dep_name = #{parentDepName}
+          sad_name = #{depName} AND sad_p_name = #{parentDepName}
     </update>
 </mapper>

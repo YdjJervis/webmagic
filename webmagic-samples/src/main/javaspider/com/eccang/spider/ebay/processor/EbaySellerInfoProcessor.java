@@ -1,5 +1,6 @@
 package com.eccang.spider.ebay.processor;
 
+import com.eccang.spider.amazon.R;
 import com.eccang.spider.base.monitor.ScheduledTask;
 import com.eccang.spider.ebay.pojo.SellerInfo;
 import com.eccang.spider.ebay.pojo.EbayUrl;
@@ -22,9 +23,10 @@ public class EbaySellerInfoProcessor extends EbayProcessor implements ScheduledT
 
     @Override
     protected void dealOtherPage(Page page) {
-        SellerInfo sellerInfo = extractSellerInfo(page);
-        if(sellerInfo != null) {
-            if (mSellerInfoService.isExistSeller(sellerInfo.sellerName)) {
+        EbayUrl ebayUrl = getUrl(page);
+        SellerInfo sellerInfo = extractSellerInfo(page, ebayUrl);
+        if (sellerInfo != null) {
+            if (mSellerInfoService.isExistSeller(sellerInfo.sellerName, ebayUrl.siteCode)) {
                 sLogger.info("database has existed sellerName:" + sellerInfo.sellerName);
             } else {
                 mSellerInfoService.add(sellerInfo);
@@ -35,23 +37,22 @@ public class EbaySellerInfoProcessor extends EbayProcessor implements ScheduledT
         }
     }
 
-    private SellerInfo extractSellerInfo(Page page) {
+    private SellerInfo extractSellerInfo(Page page, EbayUrl ebayUrl) {
         SellerInfo sellerInfo = new SellerInfo();
 
-        if(page.getHtml().xpath("//*[@id='bsi-c']").nodes().size() == 0) {
+        if (page.getHtml().xpath("//*[@id='bsi-c']").nodes().size() == 0) {
             return null;
         }
-        EbayUrl url = getUrl(page);
-        sellerInfo.categoryName = url.categoryName;
-        sellerInfo.url = url.url;
+        sellerInfo.categoryName = ebayUrl.categoryName;
+        sellerInfo.url = ebayUrl.url;
+        sellerInfo.siteCode = ebayUrl.siteCode;
         sellerInfo.sellerName = page.getHtml().xpath("//*[@id='mbgLink']/span/text()").get();
-        List<Selectable> selectables = page.getHtml().xpath("//*[@id='e12']//div[@class='bsi-c1']/div").nodes();
-
+        List<Selectable> selectables = page.getHtml().xpath("//*[@class='bscd']/div[@class='bsi-c1']/div").nodes();
         if (CollectionUtils.isNotEmpty(selectables)) {
             StringBuffer sb = new StringBuffer();
             String info = page.getHtml().xpath("//*[@id='bsi-c']/div[@class='bsi-cnt']/div[@class='bsi-bn']/text()").get();
 
-            if(StringUtils.isNotEmpty(info) && info.equalsIgnoreCase("null")) {
+            if (StringUtils.isNotEmpty(info) && info.equalsIgnoreCase("null")) {
                 sb.append(page.getHtml().xpath("//*[@id='bsi-c']/div[@class='bsi-cnt']/div[@class='bsi-bn']/text()").get() + ";");
             }
 
@@ -61,31 +62,82 @@ public class EbaySellerInfoProcessor extends EbayProcessor implements ScheduledT
             sellerInfo.address = sb.toString();
         }
 
-        List<Selectable> selects = page.getHtml().xpath("//*[@id='e12']//div[@class='bsi-c2']/div").nodes();
+        List<Selectable> selects = page.getHtml().xpath("//*[@class='bscd']/div[@class='bsi-c2']/div").nodes();
+        String contactName;
+        String contactValue;
         if (CollectionUtils.isNotEmpty(selects)) {
             for (Selectable select : selects) {
+                contactName = select.xpath("/div/span").nodes().get(0).xpath("/span/text()").get();
+                contactValue = select.xpath("/div/span").nodes().get(1).xpath("/span/text()").get();
+                extractContact(sellerInfo, contactName, contactValue, ebayUrl.siteCode);
 
-                String contactName = select.xpath("/div/span").nodes().get(0).xpath("/span/text()").get();
-                String contactValue = select.xpath("/div/span").nodes().get(1).xpath("/span/text()").get();
-                if (StringUtils.isNotEmpty(contactName) && StringUtils.isNotEmpty(contactValue)) {
-                    if (contactName.toLowerCase().contains("phone")) {
-                        sellerInfo.phone = contactValue;
-                    } else if (contactName.toLowerCase().contains("email")) {
-                        sellerInfo.email = contactValue;
-                    } else if (contactName.toLowerCase().contains("fax")) {
-                        sellerInfo.fax = contactValue;
-                    }
+            }
+        }
+        return sellerInfo;
+    }
+
+    /**
+     * 解析联系方式（手机号，邮箱，传真）
+     */
+    private void extractContact(SellerInfo sellerInfo, String contactName, String contactValue, String siteCode) {
+        if (StringUtils.isNotEmpty(contactName) && StringUtils.isNotEmpty(contactValue)) {
+            if (siteCode.equalsIgnoreCase(R.SiteCode.US)) {
+                if (contactName.toLowerCase().contains("phone")) {
+                    sellerInfo.phone = contactValue;
+                } else if (contactName.toLowerCase().contains("email")) {
+                    sellerInfo.email = contactValue;
+                } else if (contactName.toLowerCase().contains("fax")) {
+                    sellerInfo.fax = contactValue;
+                }
+            } else if (siteCode.equalsIgnoreCase(R.SiteCode.DE)) {
+                if (contactName.toLowerCase().contains("telefon")) {
+                    sellerInfo.phone = contactValue;
+                } else if (contactName.toLowerCase().contains("e-mail")) {
+                    sellerInfo.email = contactValue;
+                } else if (contactName.toLowerCase().contains("fax")) {
+                    sellerInfo.fax = contactValue;
+                }
+            } else if (siteCode.equalsIgnoreCase(R.SiteCode.FR)) {
+                if (contactName.toLowerCase().contains("téléphone")) {
+                    sellerInfo.phone = contactValue;
+                } else if (contactName.toLowerCase().contains("e-mail")) {
+                    sellerInfo.email = contactValue;
+                } else if (contactName.toLowerCase().contains("fax")) {
+                    sellerInfo.fax = contactValue;
+                }
+            } else if (siteCode.equalsIgnoreCase(R.SiteCode.IT)) {
+                if (contactName.toLowerCase().contains("telefono")) {
+                    sellerInfo.phone = contactValue;
+                } else if (contactName.toLowerCase().contains("email")) {
+                    sellerInfo.email = contactValue;
+                } else if (contactName.toLowerCase().contains("fax")) {
+                    sellerInfo.fax = contactValue;
+                }
+            } else if (siteCode.equalsIgnoreCase(R.SiteCode.ES)) {
+                if (contactName.toLowerCase().contains("teléfono")) {
+                    sellerInfo.phone = contactValue;
+                } else if (contactName.toLowerCase().contains("correo electrónico")) {
+                    sellerInfo.email = contactValue;
+                } else if (contactName.toLowerCase().contains("fax")) {
+                    sellerInfo.fax = contactValue;
+                }
+            } else if (siteCode.equalsIgnoreCase(R.SiteCode.CA)) {
+                if(contactName.toLowerCase().contains("phone")) {
+                    sellerInfo.phone = contactValue;
+                } else if(contactName.toLowerCase().contains("email")) {
+                    sellerInfo.email = contactValue;
+                } else if(contactName.toLowerCase().contains("fax")) {
+                    sellerInfo.fax = contactValue;
                 }
             }
         }
-
-        return sellerInfo;
     }
+
 
     @Override
     public void execute() {
         sLogger.info("开始执行 卖家信息 爬取任务...");
-        List<EbayUrl> urlList = mEbayUrlService.findProductUrl(15);
+        List<EbayUrl> urlList = mEbayUrlService.findProductUrl(100);
         startToCrawl(urlList);
     }
 }

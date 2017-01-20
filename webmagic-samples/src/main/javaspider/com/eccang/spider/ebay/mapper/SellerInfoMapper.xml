@@ -5,6 +5,7 @@
         <id column="sesi_id" property="id"/>
         <result column="seu_category_name" property="categoryName"/>
         <result column="sesi_url" property="url"/>
+        <result column="bas_code" property="siteCode"/>
         <result column="sesi_seller_name" property="sellerName"/>
         <result column="sesi_seller_address" property="address"/>
         <result column="sesi_seller_phone" property="phone"/>
@@ -19,6 +20,7 @@
         INSERT INTO spider_ebay_seller_info(
           seu_category_name,
           sesi_url,
+          bas_code,
           sesi_seller_name,
           sesi_seller_address,
           sesi_seller_phone,
@@ -28,6 +30,7 @@
         ) VALUES (
           #{categoryName},
           #{url},
+          #{siteCode},
           #{sellerName},
           #{address},
           #{phone},
@@ -43,6 +46,6 @@
         FROM
           spider_ebay_seller_info
         WHERE
-          sesi_seller_name = #{0}
+          sesi_seller_name = #{0} and bas_code = #{1}
     </select>
 </mapper>

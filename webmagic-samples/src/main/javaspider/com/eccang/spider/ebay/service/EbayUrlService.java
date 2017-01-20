@@ -34,4 +34,16 @@ public class EbayUrlService {
     public List<EbayUrl> findProductUrl(int limit) {
         return mDao.findProductUrl(limit);
     }
+
+    public void deleteById(EbayUrl ebayUrl) {
+        mDao.deleteById(ebayUrl);
+    }
+
+    public List<EbayUrl> findProductListing() {
+        return mDao.findProductListing();
+    }
+
+    public boolean isExsit(String urlMD5) {
+        return mDao.findProductUrlCount(urlMD5) > 0;
+    }
 }

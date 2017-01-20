@@ -20,7 +20,7 @@ public class SellerInfoService {
         mDao.add(sellerInfo);
     }
 
-    public boolean isExistSeller(String sellerName) {
-        return mDao.findBySellerName(sellerName) != null;
+    public boolean isExistSeller(String sellerName, String siteCode) {
+        return mDao.findBySellerName(sellerName, siteCode) != null;
     }
 }

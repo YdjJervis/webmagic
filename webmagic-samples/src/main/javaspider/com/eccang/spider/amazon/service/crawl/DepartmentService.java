@@ -43,10 +43,17 @@ public class DepartmentService {
     }
 
     /**
-     * 根据品类名与品类url查询品类信息
+     * 根据品类名与品类urlMD5查询品类信息
      */
-    public Department findByNameAndUrl(String depName, String depUrl) {
-        return mDao.findByNameAndUrl(depName, depUrl);
+    public Department findByNameAndUrlMD5(String depName, String depUrl) {
+        return mDao.findByNameAndUrlMD5(depName, depUrl);
+    }
+
+    /**
+     * 查询父品类下的子品类信息
+     */
+    public List<Department> findByParent(String pDepName, String urlMD5) {
+        return mDao.findByParent(pDepName, urlMD5);
     }
 
     /**

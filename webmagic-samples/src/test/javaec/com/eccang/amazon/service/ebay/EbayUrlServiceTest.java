@@ -1,9 +1,12 @@
 package com.eccang.amazon.service.ebay;
 
 import com.eccang.base.SpringTestCase;
+import com.eccang.spider.base.util.UrlUtils;
 import com.eccang.spider.ebay.pojo.EbayUrl;
 import com.eccang.spider.ebay.service.EbayUrlService;
 import com.eccang.spider.ebay.service.SellerInfoService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -49,6 +52,21 @@ public class EbayUrlServiceTest extends SpringTestCase{
 
     @Test
     public void isExisted(){
-        System.out.println(mSellerInfoService.isExistSeller("asdf"));
+        System.out.println(mSellerInfoService.isExistSeller("asdf", "US"));
+    }
+
+    @Test
+    public void deleteById() {
+        List<EbayUrl> categoryUrl = mService.findCategoryUrl(15);
+        while(CollectionUtils.isNotEmpty(categoryUrl)) {
+            for (EbayUrl ebayUrl : categoryUrl) {
+                String indexStr = UrlUtils.getValue(ebayUrl.url, "_pgn");
+                if(StringUtils.isNotEmpty(indexStr) && Integer.valueOf(indexStr) > 49) {
+                    System.out.println(ebayUrl);
+                    mService.deleteById(ebayUrl);
+                }
+            }
+            categoryUrl = mService.findCategoryUrl(15);
+        }
     }
 }

@@ -25,13 +25,14 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
     @Override
     public void execute() {
         sLogger.info("开始执行 解析品类url 爬取任务...");
-        List<EbayUrl> urlList = mEbayUrlService.findCategoryUrl(15);
+        List<EbayUrl> urlList = mEbayUrlService.findCategoryUrl(30);
         startToCrawl(urlList);
     }
 
     @Override
     protected void dealOtherPage(Page page) {
-        if (getUrl(page).type == 0) {
+        EbayUrl url = getUrl(page);
+        if (url.type == 0) {
             /*解析品类URL，并添加数据库*/
             extractChildCategoryUrl(page);
 
@@ -59,26 +60,32 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
      */
     private void extractChildCategoryUrl(Page page) {
 
-        List<Selectable> selectables = page.getHtml().xpath("//*[@id='e1-6']/div[@class='rlp-b']//div[@class='cat-link']/span").nodes();
-        if (CollectionUtils.isNotEmpty(selectables)) {
+        List<Selectable> selectables = page.getHtml().xpath("//*[@id='LeftNavCategoryContainer']//div[@class='rlp-b']//div[@class='cat-link']/span[@class='cnt']").nodes();
 
-            String str = selectables.get(0).xpath("/span/text()").get();
+        if (CollectionUtils.isNotEmpty(selectables)) {
+            int index = selectables.size() > 1 ? 1 : 0;
+            String str = selectables.get(index).xpath("/span/text()").get();
             String productNum = RegexUtil.reg(str, "(\\d+[,]?\\d+)");
-            if(StringUtils.isEmpty(productNum) || productNum.equalsIgnoreCase("0")) {
-                sLogger.info("品类（"+getUrl(page).categoryName + ")下没有子品类存在；url:" + getUrl(page).url);
+            if (StringUtils.isEmpty(productNum) || productNum.equalsIgnoreCase("0")) {
+                sLogger.info("品类（" + getUrl(page).categoryName + ")下没有子品类存在；url:" + getUrl(page).url);
                 return;
             }
         }
 
-        List<Selectable> nodes = page.getHtml().xpath("//*[@id='e1-6']/div[@class='rlp-b']//div[@class='cat-link']/a").nodes();
-
+        List<Selectable> nodes = page.getHtml().xpath("//*[@id='LeftNavCategoryContainer']//div[@class='rlp-b']//div[@class='cat-link ']/a").nodes();
         if (CollectionUtils.isNotEmpty(nodes)) {
             List<EbayUrl> urls = new ArrayList<>();
             EbayUrl url;
             for (Selectable node : nodes) {
                 url = new EbayUrl();
                 url.url = node.xpath("/a/@href").get();
+                url.urlMD5 = UrlUtils.md5(url.url);
+                if (mEbayUrlService.isExsit(url.urlMD5)) {
+                    sLogger.info("============= url(" + url.url + ") has existed.");
+                    continue;
+                }
                 url.categoryName = node.xpath("/a/text()").get();
+                url.siteCode = getUrl(page).siteCode;
                 url.type = 0;
                 urls.add(url);
             }
@@ -110,9 +117,7 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
      * @param index 页数
      */
     private void extractProductsListing(Page page, int index) {
-        if(index > 49) {
-            index = 49;
-        }
+        index = index > 49 ? 49 : index;
         List<EbayUrl> urls = new ArrayList<>();
         EbayUrl url;
         List<Selectable> nodes = page.getHtml().xpath("//*[@id='Pagination']//td[@class='pages']/a").nodes();
@@ -121,7 +126,9 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
             for (int i = 1; i < index; i++) {
                 url = new EbayUrl();
                 url.url = UrlUtils.setValue(pageUrl, "_pgn", String.valueOf(i));
+                url.urlMD5 = UrlUtils.md5(url.url);
                 url.categoryName = getUrl(page).categoryName;
+                url.siteCode = getUrl(page).siteCode;
                 url.type = 1;
                 url.toString();
                 urls.add(url);
@@ -143,8 +150,14 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
             for (Selectable selectable : selectables) {
                 ebayUrl = new EbayUrl();
                 ebayUrl.url = selectable.xpath("/a/@href").get();
+                ebayUrl.urlMD5 = UrlUtils.md5(ebayUrl.url);
+                if (mEbayUrlService.isExsit(ebayUrl.urlMD5)) {
+                    sLogger.info("============= urlMD5(" + ebayUrl.urlMD5 + "),url(" + ebayUrl.url + ") has existed.");
+                    continue;
+                }
                 ebayUrl.type = 2;
                 ebayUrl.categoryName = getUrl(page).categoryName;
+                ebayUrl.siteCode = getUrl(page).siteCode;
                 ebayUrl.toString();
                 urls.add(ebayUrl);
             }
