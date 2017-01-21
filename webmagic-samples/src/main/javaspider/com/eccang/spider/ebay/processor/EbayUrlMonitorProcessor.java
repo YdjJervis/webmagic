@@ -187,7 +187,7 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
                     continue;
                 }
 
-                url.url = "http://www.ebay.de/sch/i.html?_nkw=&_in_kw=1&_ex_kw=&_sacat=" + url.url + "&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=10&_fpos=&LH_SubLocation=1&_sargn=-1%26saslc%3D0&_fsradio2=%26LH_LocatedIn%3D1&_salic=45&_saact=77&LH_SALE_CURRENCY=0&_sop=12&_dmd=1&_ipg=200";
+                url.url = "http://www.ebay.fr/sch/i.html?_nkw=&_in_kw=1&_ex_kw=&_sacat="+url.url+"&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=15&_stpos=518000&_sargn=-1%26saslc%3D1&_fsradio2=%26LH_LocatedIn%3D1&_salic=45&LH_SubLocation=1&_sop=12&_dmd=1&_ipg=200";
                 url.siteCode = getUrl(page).siteCode;
                 url.urlMD5 = UrlUtils.md5(url.url);
                 url.type = 0;

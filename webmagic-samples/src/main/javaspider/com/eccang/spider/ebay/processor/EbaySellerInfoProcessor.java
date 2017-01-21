@@ -145,7 +145,7 @@ public class EbaySellerInfoProcessor extends EbayProcessor implements ScheduledT
     @Override
     public void execute() {
         sLogger.info("开始执行 卖家信息 爬取任务...");
-        List<EbayUrl> urlList = mEbayUrlService.findProductUrl(100);
+        List<EbayUrl> urlList = mEbayUrlService.findProductUrl(50);
         startToCrawl(urlList);
     }
 }

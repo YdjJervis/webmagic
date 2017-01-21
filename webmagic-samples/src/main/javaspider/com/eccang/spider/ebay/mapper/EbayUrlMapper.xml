@@ -41,7 +41,7 @@
         </foreach>
     </insert>
 
-    <insert id="add" parameterType="java.util.List">
+    <insert id="add" parameterType="EbayUrl">
         INSERT INTO spider_ebay_url(
           seu_category_name,
           seu_url_md5,

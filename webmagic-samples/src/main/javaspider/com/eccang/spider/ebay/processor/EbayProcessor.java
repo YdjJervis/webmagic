@@ -93,7 +93,7 @@ public abstract class EbayProcessor implements PageProcessor {
 
             Spider mSpider = Spider.create(this)
                     .setDownloader(mEbayHttpClientImplDownloader)
-                    .thread(100);
+                    .thread(50);
 
             for (EbayUrl url : urlList) {
                 Request request = new Request(url.url);
