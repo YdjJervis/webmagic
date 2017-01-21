@@ -64,11 +64,16 @@ public class RegexUtil {
      * ebay判断品类是否存在子品类
      */
     public static String reg(String str, String reg) {
+
         String result = null;
-        Pattern pattern = Pattern.compile(reg);
-        Matcher matcher = pattern.matcher(str);
-        while(matcher.find()){
-            result = matcher.group();
+        try {
+            Pattern pattern = Pattern.compile(reg);
+            Matcher matcher = pattern.matcher(str);
+            while (matcher.find()) {
+                result = matcher.group();
+            }
+        } catch (Exception e) {
+            result = "0";
         }
         return result;
     }
