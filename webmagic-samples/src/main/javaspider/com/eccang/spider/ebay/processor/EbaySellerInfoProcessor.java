@@ -24,17 +24,25 @@ public class EbaySellerInfoProcessor extends EbayProcessor implements ScheduledT
     @Override
     protected void dealOtherPage(Page page) {
         EbayUrl ebayUrl = getUrl(page);
+
         SellerInfo sellerInfo = extractSellerInfo(page, ebayUrl);
         if (sellerInfo != null) {
             if (mSellerInfoService.isExistSeller(sellerInfo.sellerName, ebayUrl.siteCode)) {
                 sLogger.info("database has existed sellerName:" + sellerInfo.sellerName);
             } else {
+                ebayUrl.isSeller = 1;
                 mSellerInfoService.add(sellerInfo);
                 sLogger.info("add sellerName(" + sellerInfo.sellerName + ") success.");
             }
         } else {
+            ebayUrl.isSeller = 0;
             sLogger.info("产品url:" + getUrl(page).url + "中，不存在卖家信息.");
         }
+        mEbayUrlService.update(ebayUrl);
+
+        /*删除成功的URL，入库到历史表中*/
+        mEbayUrlHistoryService.add(ebayUrl);
+        mEbayUrlService.deleteById(ebayUrl);
     }
 
     private SellerInfo extractSellerInfo(Page page, EbayUrl ebayUrl) {

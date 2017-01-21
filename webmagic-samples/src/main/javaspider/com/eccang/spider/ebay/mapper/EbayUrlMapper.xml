@@ -13,6 +13,7 @@
         <result column="seu_status" property="status" />
         <result column="seu_crawling" property="crawling" />
         <result column="seu_extra" property="extra" />
+        <result column="seu_is_seller" property="isSeller" />
         <result column="seu_create_time" property="createTime" />
         <result column="seu_update_time" property="updateTime" />
     </resultMap>
@@ -40,6 +41,26 @@
         </foreach>
     </insert>
 
+    <insert id="add" parameterType="java.util.List">
+        INSERT INTO spider_ebay_url(
+          seu_category_name,
+          seu_url_md5,
+          seu_url,
+          bas_code,
+          seu_status,
+          seu_type,
+          seu_extra
+        ) VALUES (
+          #{categoryName},
+          #{urlMD5},
+          #{url},
+          #{siteCode},
+          #{status},
+          #{type},
+          #{extra}
+        )
+    </insert>
+
     <update id="update" parameterType="com.eccang.spider.ebay.pojo.EbayUrl">
       UPDATE
         spider_ebay_url
@@ -50,7 +71,8 @@
         seu_type = #{type},
         seu_status = #{status},
         seu_crawling = #{crawling},
-        seu_extra = #{extra}
+        seu_extra = #{extra},
+        seu_is_seller = #{isSeller}
       WHERE
         seu_id = #{id}
     </update>
@@ -93,4 +115,5 @@
         SELECT COUNT(*) FROM spider_ebay_url
         WHERE seu_url_md5 = #{0}
     </select>
+
 </mapper>

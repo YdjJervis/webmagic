@@ -16,6 +16,8 @@ public interface EbayUrlDao {
 
     void addAll(List<EbayUrl> urls);
 
+    void add(EbayUrl ebayUrl);
+
     void update(EbayUrl url);
 
     List<EbayUrl> findCategoryUrl(int limit);

@@ -1,12 +1,18 @@
 package com.eccang.amazon.processor;
 
+import com.eccang.base.SpringTestCase;
 import com.eccang.spider.amazon.R;
+import com.eccang.spider.amazon.processor.BasePageProcessor;
 import com.eccang.spider.base.util.UrlUtils;
+import com.eccang.spider.downloader.EbayHttpClientImplDownloader;
 import com.eccang.spider.ebay.pojo.EbayUrl;
 import com.eccang.spider.ebay.pojo.SellerInfo;
+import com.eccang.spider.ebay.service.EbayUrlService;
 import com.eccang.util.RegexUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
@@ -31,8 +37,7 @@ public class EbayProcessorTest implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        SellerInfo sellerInfo = extractSellerInfo(page);
-        System.out.println(sellerInfo.toString());
+        extractProductsCount(page);
     }
 
     @Override
@@ -64,8 +69,9 @@ public class EbayProcessorTest implements PageProcessor {
                     continue;
                 }
 
-                url.url = "http://www.ebay.com/sch/i.html?_nkw=&_in_kw=1&_ex_kw=&_sacat=" + url.url + "&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=15&_stpos=510000&_sargn=-1%26saslc%3D1&_fsradio2=%26LH_LocatedIn%3D1&_salic=45&LH_SubLocation=1&_sop=12&_dmd=1&_ipg=200";
+                url.url = "http://www.ebay.de/sch/i.html?_nkw=&_in_kw=1&_ex_kw=&_sacat=" + url.url + "&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=10&_fpos=&LH_SubLocation=1&_sargn=-1%26saslc%3D0&_fsradio2=%26LH_LocatedIn%3D1&_salic=45&_saact=77&LH_SALE_CURRENCY=0&_sop=12&_dmd=1&_ipg=200";
                 url.type = 0;
+                url.urlMD5 = UrlUtils.md5(url.url);
                 url.siteCode = R.SiteCode.DE;
                 result.add(url);
             }
@@ -117,17 +123,27 @@ public class EbayProcessorTest implements PageProcessor {
      * 解析品类URL，并添加数据库
      */
     private void extractChildCategoryUrl(Page page) {
-        List<Selectable> nodes = page.getHtml().xpath("//*[@id='LeftNavCategoryContainer']//div[@class='rlp-b']//div[@class='cat-link ']/a").nodes();
+        List<Selectable> selectables = page.getHtml().xpath("//*[@id='LeftNavCategoryContainer']//div[@class='rlp-b']//div[@class='cat-link']").nodes();
 
-        if(CollectionUtils.isNotEmpty(nodes)) {
-            List<EbayUrl> urls = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(selectables)) {
+            String str;
+            String productNum;
+            boolean isHasChildNode = false;
             EbayUrl url;
-            for (Selectable node : nodes) {
-                url = new EbayUrl();
-                url.url = node.xpath("/a/@href").get();
-                url.categoryName = node.xpath("/a/text()").get();
-                url.type = 0;
-                urls.add(url);
+            List<EbayUrl> urls = new ArrayList<>();
+            for (int i = 0; i < selectables.size(); i++) {
+                str = selectables.get(i).xpath("/div/span[@class='cnt']/text()").get();
+                productNum = RegexUtil.reg(str, "([0-9]{1,}[.]?[0-9]*)");
+                if (StringUtils.isNotEmpty(productNum) && !productNum.equalsIgnoreCase("0")) {
+                    isHasChildNode = true;
+
+                    url = new EbayUrl();
+                    url.url = selectables.get(i).xpath("/div/a/@href").get();
+                    url.urlMD5 = UrlUtils.md5(url.url);
+                    url.categoryName = selectables.get(i).xpath("/div/a/text()").get();
+                    url.type = 0;
+                    urls.add(url);
+                }
             }
         }
     }
@@ -138,9 +154,9 @@ public class EbayProcessorTest implements PageProcessor {
     private int extractProductsCount(Page page) {
         String productsCounts = page.getHtml().xpath("//*[@id='bciw']/div/span[@class='listingscnt']/text()").get();
         int productsCount = 0;
-        if(StringUtils.isNotEmpty(productsCounts)) {
-            productsCounts = productsCounts.replace("listings", "");
-            if(productsCounts.contains(",")) {
+        if (StringUtils.isNotEmpty(productsCounts)) {
+            productsCounts = RegexUtil.reg(productsCounts, "([0-9]{1,}[,]?[0-9]*)");
+            if (productsCounts.contains(",")) {
                 productsCounts = productsCounts.replace(",", "");
             }
             productsCount = Integer.valueOf(productsCounts.trim());
@@ -186,7 +202,7 @@ public class EbayProcessorTest implements PageProcessor {
     }
 
     public static void main(String[] args) {
-        Request request = new Request("http://www.ebay.ca/itm/4-color-Hot-Mom-Baby-Stroller-3-in-1-Travel-System-and-Bassinet-Baby-Stroller-/222380927231?var=&hash=item33c6efa8ff:m:mrXxebJSrcEhu9qW0a3FDtg");
+        Request request = new Request("http://www.ebay.de/sch/Business-Industrie/12576/i.html?_nkw=&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=10&_fpos=&LH_SALE_CURRENCY=0&_sop=12&_dmd=1&LH_LocatedIn=45&_pgn=50&_skc=9800&rt=nc");
         Spider.create(new EbayProcessorTest())
                 .thread(1)
                 .addRequest(request)

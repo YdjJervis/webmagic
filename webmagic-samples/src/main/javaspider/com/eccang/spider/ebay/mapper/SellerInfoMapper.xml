@@ -40,9 +40,9 @@
         )
     </insert>
 
-    <select id="findBySellerName" resultMap="SellerInfoMap">
+    <select id="findBySellerName" resultType="int">
         SELECT
-          *
+          count(*)
         FROM
           spider_ebay_seller_info
         WHERE

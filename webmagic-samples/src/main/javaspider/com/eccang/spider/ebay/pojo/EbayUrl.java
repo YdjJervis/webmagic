@@ -16,6 +16,7 @@ public class EbayUrl extends BasePojo {
     public int type;
     public int status;
     public int crawling;
+    public int isSeller; //是否存在在卖家
 
     @Override
     public String toString() {
@@ -27,6 +28,7 @@ public class EbayUrl extends BasePojo {
                 ", type=" + type + '\'' +
                 ", crawling=" + crawling + '\'' +
                 ", status=" + status +
+                ", isSeller=" + isSeller +
                 '}';
     }
 }

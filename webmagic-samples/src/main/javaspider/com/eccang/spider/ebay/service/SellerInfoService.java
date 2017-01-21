@@ -21,6 +21,6 @@ public class SellerInfoService {
     }
 
     public boolean isExistSeller(String sellerName, String siteCode) {
-        return mDao.findBySellerName(sellerName, siteCode) != null;
+        return mDao.findBySellerName(sellerName, siteCode) > 0;
     }
 }

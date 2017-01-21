@@ -2,6 +2,7 @@ package com.eccang.spider.ebay.service;
 
 import com.eccang.spider.ebay.dao.EbayUrlDao;
 import com.eccang.spider.ebay.pojo.EbayUrl;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,21 @@ import java.util.List;
 @Service
 public class EbayUrlService {
 
+    Logger sLogger = Logger.getLogger(getClass());
+
     @Autowired
     EbayUrlDao mDao;
 
     public void addAll(List<EbayUrl> urls) {
         mDao.addAll(urls);
+    }
+
+    public void add(EbayUrl ebayUrl) {
+        if(mDao.findProductUrlCount(ebayUrl.urlMD5) < 1) {
+            mDao.add(ebayUrl);
+        } else {
+            sLogger.info("url has existed. " + ebayUrl.toString());
+        }
     }
 
     public void update(EbayUrl url) {
@@ -43,7 +54,7 @@ public class EbayUrlService {
         return mDao.findProductListing();
     }
 
-    public boolean isExsit(String urlMD5) {
+    public boolean isExist(String urlMD5) {
         return mDao.findProductUrlCount(urlMD5) > 0;
     }
 }

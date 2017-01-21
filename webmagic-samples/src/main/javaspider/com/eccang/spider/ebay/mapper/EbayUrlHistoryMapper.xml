@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eccang.spider.ebay.dao.EbayUrlHistoryDao">
+
+
+    <insert id="add" parameterType="com.eccang.spider.ebay.pojo.EbayUrl">
+        INSERT INTO spider_ebay_url_history(
+          seuh_category_name,
+          seuh_url_md5,
+          seuh_url,
+          bas_code,
+          seuh_type,
+          seuh_extra,
+          seuh_is_seller
+        ) VALUES (
+          #{categoryName},
+          #{urlMD5},
+          #{url},
+          #{siteCode},
+          #{type},
+          #{extra},
+          #{isSeller}
+        )
+    </insert>
+
+    <select id="findCount" resultType="int">
+        SELECT count(*) FROM spider_ebay_url_history
+        WHERE seuh_url_md5 = #{0}
+    </select>
+</mapper>

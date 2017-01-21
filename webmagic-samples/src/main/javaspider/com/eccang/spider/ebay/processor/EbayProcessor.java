@@ -2,7 +2,9 @@ package com.eccang.spider.ebay.processor;
 
 import com.eccang.spider.base.service.UserAgentService;
 import com.eccang.spider.downloader.EbayHttpClientImplDownloader;
+import com.eccang.spider.ebay.dao.EbayUrlHistoryDao;
 import com.eccang.spider.ebay.pojo.EbayUrl;
+import com.eccang.spider.ebay.service.EbayUrlHistoryService;
 import com.eccang.spider.ebay.service.EbayUrlService;
 import com.eccang.spider.ebay.service.SellerInfoService;
 import com.google.common.collect.Sets;
@@ -37,6 +39,8 @@ public abstract class EbayProcessor implements PageProcessor {
     UserAgentService mUserAgentService;
     @Autowired
     EbayUrlService mEbayUrlService;
+    @Autowired
+    EbayUrlHistoryService mEbayUrlHistoryService;
     @Autowired
     SellerInfoService mSellerInfoService;
     @Autowired

@@ -32,6 +32,11 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
     @Override
     protected void dealOtherPage(Page page) {
         EbayUrl url = getUrl(page);
+
+        /*删除成功的URL，入库到历史表中*/
+        mEbayUrlHistoryService.add(url);
+        mEbayUrlService.deleteById(url);
+
         if (url.type == 0) {
             /*解析品类URL，并添加数据库*/
             extractChildCategoryUrl(page);
@@ -43,7 +48,7 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
             if (productsCount != 0) {
                 int index = productsCount % 200 > 0 ? (productsCount / 200) + 1 : productsCount / 200;
                 if (index > 1) {
-                    extractProductsListing(page, index);
+                    extractProductsListing(page, index+1);
                 }
 
                 /*解析第个品类下第一页的产品url，并存入数据库中*/
@@ -60,37 +65,35 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
      */
     private void extractChildCategoryUrl(Page page) {
 
-        List<Selectable> selectables = page.getHtml().xpath("//*[@id='LeftNavCategoryContainer']//div[@class='rlp-b']//div[@class='cat-link']/span[@class='cnt']").nodes();
+        List<Selectable> selectables = page.getHtml().xpath("//*[@id='LeftNavCategoryContainer']//div[@class='rlp-b']//div[@class='cat-link']").nodes();
 
         if (CollectionUtils.isNotEmpty(selectables)) {
-            int index = selectables.size() > 1 ? 1 : 0;
-            String str = selectables.get(index).xpath("/span/text()").get();
-            String productNum = RegexUtil.reg(str, "(\\d+[,]?\\d+)");
-            if (StringUtils.isEmpty(productNum) || productNum.equalsIgnoreCase("0")) {
-                sLogger.info("品类（" + getUrl(page).categoryName + ")下没有子品类存在；url:" + getUrl(page).url);
-                return;
-            }
-        }
-
-        List<Selectable> nodes = page.getHtml().xpath("//*[@id='LeftNavCategoryContainer']//div[@class='rlp-b']//div[@class='cat-link ']/a").nodes();
-        if (CollectionUtils.isNotEmpty(nodes)) {
-            List<EbayUrl> urls = new ArrayList<>();
+            String str;
+            String productNum;
+            boolean isHasChildNode = false;
             EbayUrl url;
-            for (Selectable node : nodes) {
-                url = new EbayUrl();
-                url.url = node.xpath("/a/@href").get();
-                url.urlMD5 = UrlUtils.md5(url.url);
-                if (mEbayUrlService.isExsit(url.urlMD5)) {
-                    sLogger.info("============= url(" + url.url + ") has existed.");
-                    continue;
+            for (int i = 0; i < selectables.size(); i++) {
+                str = selectables.get(i).xpath("/div/span[@class='cnt']/text()").get();
+                productNum = RegexUtil.reg(str, "([0-9]{1,}[.]?[0-9]*)");
+                if (StringUtils.isNotEmpty(productNum) && !productNum.equalsIgnoreCase("0")) {
+                    isHasChildNode = true;
+
+                    url = new EbayUrl();
+                    url.url = selectables.get(i).xpath("/div/a/@href").get();
+                    url.urlMD5 = UrlUtils.md5(url.url);
+                    if (mEbayUrlService.isExist(url.urlMD5)) {
+                        sLogger.info("============= url(" + url.url + ") has existed.");
+                        continue;
+                    }
+                    url.categoryName = selectables.get(i).xpath("/div/a/text()").get();
+                    url.siteCode = getUrl(page).siteCode;
+                    url.type = 0;
+                    mEbayUrlService.add(url);
                 }
-                url.categoryName = node.xpath("/a/text()").get();
-                url.siteCode = getUrl(page).siteCode;
-                url.type = 0;
-                urls.add(url);
             }
-            if (CollectionUtils.isNotEmpty(urls)) {
-                mEbayUrlService.addAll(urls);
+
+            if(!isHasChildNode) {
+                sLogger.info("品类（" + getUrl(page).categoryName + ")下没有子品类存在；url:" + getUrl(page).url);
             }
         }
     }
@@ -102,7 +105,7 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
         String productsCounts = page.getHtml().xpath("//*[@id='bciw']/div/span[@class='listingscnt']/text()").get();
         int productsCount = 0;
         if (StringUtils.isNotEmpty(productsCounts)) {
-            productsCounts = productsCounts.replace("listings", "");
+            productsCounts = RegexUtil.reg(productsCounts, "([0-9]{1,}[,]?[0-9]*)");
             if (productsCounts.contains(",")) {
                 productsCounts = productsCounts.replace(",", "");
             }
@@ -117,24 +120,26 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
      * @param index 页数
      */
     private void extractProductsListing(Page page, int index) {
-        index = index > 49 ? 49 : index;
+        index = index > 50 ? 50 : index;
         List<EbayUrl> urls = new ArrayList<>();
         EbayUrl url;
         List<Selectable> nodes = page.getHtml().xpath("//*[@id='Pagination']//td[@class='pages']/a").nodes();
         if (CollectionUtils.isNotEmpty(nodes)) {
             String pageUrl = nodes.get(1).xpath("/a/@href").get();
-            for (int i = 1; i < index; i++) {
+            for (int i = 2; i < index; i++) {
                 url = new EbayUrl();
                 url.url = UrlUtils.setValue(pageUrl, "_pgn", String.valueOf(i));
+                url.url = UrlUtils.setValue(url.url, "_skc", String.valueOf((i-1)*200));
                 url.urlMD5 = UrlUtils.md5(url.url);
                 url.categoryName = getUrl(page).categoryName;
                 url.siteCode = getUrl(page).siteCode;
                 url.type = 1;
-                url.toString();
                 urls.add(url);
             }
             if (CollectionUtils.isNotEmpty(urls)) {
-                mEbayUrlService.addAll(urls);
+                for (EbayUrl ebayUrl : urls) {
+                    mEbayUrlService.add(ebayUrl);
+                }
             }
         }
     }
@@ -151,18 +156,19 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
                 ebayUrl = new EbayUrl();
                 ebayUrl.url = selectable.xpath("/a/@href").get();
                 ebayUrl.urlMD5 = UrlUtils.md5(ebayUrl.url);
-                if (mEbayUrlService.isExsit(ebayUrl.urlMD5)) {
+                if (mEbayUrlService.isExist(ebayUrl.urlMD5)) {
                     sLogger.info("============= urlMD5(" + ebayUrl.urlMD5 + "),url(" + ebayUrl.url + ") has existed.");
                     continue;
                 }
                 ebayUrl.type = 2;
                 ebayUrl.categoryName = getUrl(page).categoryName;
                 ebayUrl.siteCode = getUrl(page).siteCode;
-                ebayUrl.toString();
                 urls.add(ebayUrl);
             }
             if (CollectionUtils.isNotEmpty(urls)) {
-                mEbayUrlService.addAll(urls);
+                for (EbayUrl url : urls) {
+                    mEbayUrlService.add(url);
+                }
             }
         }
     }
@@ -181,7 +187,9 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
                     continue;
                 }
 
-                url.url = "http://www.ebay.com/sch/i.html?_nkw=&_in_kw=1&_ex_kw=&_sacat=" + url.url + "&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=15&_stpos=510000&_sargn=-1%26saslc%3D1&_fsradio2=%26LH_LocatedIn%3D1&_salic=45&LH_SubLocation=1&_sop=12&_dmd=1&_ipg=200";
+                url.url = "http://www.ebay.de/sch/i.html?_nkw=&_in_kw=1&_ex_kw=&_sacat=" + url.url + "&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=10&_fpos=&LH_SubLocation=1&_sargn=-1%26saslc%3D0&_fsradio2=%26LH_LocatedIn%3D1&_salic=45&_saact=77&LH_SALE_CURRENCY=0&_sop=12&_dmd=1&_ipg=200";
+                url.siteCode = getUrl(page).siteCode;
+                url.urlMD5 = UrlUtils.md5(url.url);
                 url.type = 0;
                 result.add(url);
             }
