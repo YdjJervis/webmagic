@@ -1,9 +1,6 @@
 package com.eccang.spider.base.monitor;
 
 /**
- * 定时任务接口
- */
-/**
  * @author Jervis
  * @version V0.1
  * @Description: 定时任务接口，此项目所有定时任务都必须实现此接口，然后在applicationContext.xml里面配置

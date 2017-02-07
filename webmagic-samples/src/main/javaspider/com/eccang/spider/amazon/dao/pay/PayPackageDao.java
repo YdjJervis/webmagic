@@ -4,6 +4,8 @@ import com.eccang.spider.amazon.pojo.pay.PayPackage;
 import com.eccang.spider.base.dao.BaseDao;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.1
@@ -13,5 +15,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PayPackageDao extends BaseDao<PayPackage> {
 
-    PayPackage findByPayPackageCode(int code);
+    List<PayPackage> findByPayPackageCode(int payPackageCode);
+
+    PayPackage findByCode(int payPackageCode,int stubCode);
 }

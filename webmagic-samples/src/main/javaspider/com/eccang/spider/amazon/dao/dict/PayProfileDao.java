@@ -1,6 +1,6 @@
-package com.eccang.spider.amazon.dao.pay;
+package com.eccang.spider.amazon.dao.dict;
 
-import com.eccang.spider.amazon.pojo.pay.PayProfile;
+import com.eccang.spider.amazon.pojo.dict.PayProfile;
 import com.eccang.spider.base.dao.BaseDao;
 import org.springframework.stereotype.Repository;
 

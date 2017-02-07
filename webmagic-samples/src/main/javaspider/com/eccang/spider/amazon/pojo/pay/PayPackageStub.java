@@ -13,6 +13,7 @@ public class PayPackageStub extends BasePojo {
     public int code;
     public int custom;
     public String businessCode;
+    public int day;
     public int priority;
     public int frequency;
     public int count;
@@ -22,9 +23,10 @@ public class PayPackageStub extends BasePojo {
     @Override
     public String toString() {
         return "PayPackageStub{" +
-                "code='" + code + '\'' +
+                "code=" + code +
                 ", custom=" + custom +
                 ", businessCode='" + businessCode + '\'' +
+                ", day=" + day +
                 ", priority=" + priority +
                 ", frequency=" + frequency +
                 ", count=" + count +

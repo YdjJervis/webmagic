@@ -23,8 +23,8 @@ public class PayPackageStubService {
         mDao.addAll(payPackageStubList);
     }
 
-    public List<PayPackageStub> findByStubCode(int code) {
-        return mDao.findByStubCode(code);
+    public PayPackageStub findByCode(int code) {
+        return mDao.findByCode(code);
     }
 
 }

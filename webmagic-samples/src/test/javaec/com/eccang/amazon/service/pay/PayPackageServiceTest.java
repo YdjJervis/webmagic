@@ -20,8 +20,20 @@ public class PayPackageServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void find(){
-        System.out.println(mService.findByCode(1));
+    public void findByPayPackageCode() {
+        System.out.println(mService.findByPayPackageCode(1));
+    }
+
+    @Test
+    public void findByCode() {
+        System.out.println(mService.findByCode(1, 2));
+    }
+
+    @Test
+    public void update() {
+        PayPackage payPackage = mService.findByCode(1, 2);
+        payPackage.status = 0;
+        mService.update(payPackage);
     }
 
 

@@ -30,13 +30,22 @@
         bpp_code = #{0};
     </select>
 
+    <select id="findByCode" resultMap="PayPackageResultMap">
+        select * from base_pay_package
+        WHERE
+        bpp_code = #{0}
+        and
+        bpps_code = #{1}
+    </select>
+
     <update id="update" parameterType="PayPackage">
         UPDATE base_pay_package
         SET
-        besb_code = #{businessCode},
-        bppp_url_price = #{urlPrice},
-        bppp_priority_mutiple = #{priorityMutiple},
-        bppp_custom_mutiple = #{customMutiple}
+        bpp_status = #{status}
+        where
+        bpp_code = #{code}
+        and
+        bpps_code = #{stubCode}
     </update>
 
 </mapper>

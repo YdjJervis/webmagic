@@ -8,11 +8,12 @@
         <result property="code" column="bpps_code"/>
         <result property="custom" column="bpps_custom"/>
         <result property="businessCode" column="besb_code"/>
+        <result property="day" column="bpps_day"/>
         <result property="priority" column="bpps_priority"/>
         <result property="frequency" column="bpps_frequency"/>
         <result property="count" column="bpps_count"/>
         <result property="averageTime" column="bpps_average_time"/>
-        <result property="priority" column="bpps_price"/>
+        <result property="price" column="bpps_price"/>
         <result property="createTime" column="bpps_create_time"/>
         <result property="updateTime" column="bpps_update_time"/>
     </resultMap>
@@ -22,6 +23,7 @@
         bpps_code,
         bpps_custom,
         besb_code,
+        bpps_day,
         bpps_priority,
         bpps_frequency,
         bpps_count,
@@ -34,6 +36,7 @@
             #{item.code},
             #{item.custom},
             #{item.businessCode},
+            #{item.day},
             #{item.priority},
             #{item.frequency},
             #{item.count},
@@ -43,7 +46,7 @@
         </foreach>
     </insert>
 
-    <select id="findByStubCode" resultMap="PayPackageStubResultMap">
+    <select id="findByCode" resultMap="PayPackageStubResultMap">
         SELECT * FROM base_pay_package_sub
         WHERE bpps_code = #{0};
     </select>

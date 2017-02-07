@@ -10,13 +10,15 @@ import com.eccang.spider.base.pojo.BasePojo;
  */
 public class CustomerPayPackage extends BasePojo{
 
+    public String customerCode;
     public String packageCode;
     public int status;
 
     @Override
     public String toString() {
         return "CustomerPayPackage{" +
-                "packageCode='" + packageCode + '\'' +
+                "customerCode='" + customerCode + '\'' +
+                ", packageCode='" + packageCode + '\'' +
                 ", status=" + status +
                 '}';
     }

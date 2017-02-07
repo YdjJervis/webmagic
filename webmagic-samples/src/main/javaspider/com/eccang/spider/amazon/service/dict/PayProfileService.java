@@ -1,7 +1,7 @@
-package com.eccang.spider.amazon.service.pay;
+package com.eccang.spider.amazon.service.dict;
 
-import com.eccang.spider.amazon.dao.pay.PayProfileDao;
-import com.eccang.spider.amazon.pojo.pay.PayProfile;
+import com.eccang.spider.amazon.dao.dict.PayProfileDao;
+import com.eccang.spider.amazon.pojo.dict.PayProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -5,6 +5,8 @@ import com.eccang.spider.amazon.pojo.pay.PayPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.1
@@ -21,8 +23,16 @@ public class PayPackageService {
         mDao.add(payPackage);
     }
 
-    public PayPackage findByCode(int payPackageCode) {
+    public List<PayPackage> findByPayPackageCode(int payPackageCode) {
         return mDao.findByPayPackageCode(payPackageCode);
+    }
+
+    public PayPackage findByCode(int payPackageCode, int stubCode) {
+        return mDao.findByCode(payPackageCode, stubCode);
+    }
+
+    public void update(PayPackage payPackage) {
+        mDao.update(payPackage);
     }
 
 }

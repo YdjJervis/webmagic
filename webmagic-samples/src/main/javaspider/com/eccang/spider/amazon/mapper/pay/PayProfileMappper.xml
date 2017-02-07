@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.eccang.spider.amazon.dao.pay.PayProfileDao">
+<mapper namespace="com.eccang.spider.amazon.dao.dict.PayProfileDao">
 
     <resultMap id="PayProfileResultMap" type="PayProfile">
         <id property="id" column="bppp_id"/>
@@ -12,5 +12,22 @@
         <result property="createTime" column="bppp_create_time"/>
         <result property="updateTime" column="bppp_update_time"/>
     </resultMap>
+
+    <select id="findByCode" resultMap="PayProfileResultMap">
+        select * from base_pay_package_profile
+        WHERE
+        besb_code = #{0};
+    </select>
+
+    <update id="update" parameterType="PayProfile">
+        UPDATE base_pay_package_profile
+        SET
+        bppp_url_price = #{urlPrice},
+        bppp_priority_mutiple = #{priorityMutiple},
+        bppp_custom_mutiple = #{customMutiple}
+        where
+        besb_code = #{businessCode};
+
+    </update>
 
 </mapper>

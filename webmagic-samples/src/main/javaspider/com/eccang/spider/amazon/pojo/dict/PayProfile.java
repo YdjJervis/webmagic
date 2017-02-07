@@ -1,4 +1,4 @@
-package com.eccang.spider.amazon.pojo.pay;
+package com.eccang.spider.amazon.pojo.dict;
 
 import com.eccang.spider.base.pojo.BasePojo;
 

@@ -1,8 +1,8 @@
-package com.eccang.amazon.service.pay;
+package com.eccang.amazon.service.dict;
 
 import com.eccang.base.SpringTestCase;
-import com.eccang.spider.amazon.pojo.pay.PayProfile;
-import com.eccang.spider.amazon.service.pay.PayProfileService;
+import com.eccang.spider.amazon.pojo.dict.PayProfile;
+import com.eccang.spider.amazon.service.dict.PayProfileService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +19,7 @@ public class PayProfileServiceTest extends SpringTestCase {
     @Test
     public void update() {
         PayProfile payProfile = mService.findByCode("AS");
-        payProfile.urlPrice = 0.01f;
+        payProfile.urlPrice = 0.03f;
         mService.update(payProfile);
     }
 

@@ -34,8 +34,8 @@ public class PayPackageStubServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void find(){
-        System.out.println(mService.findByStubCode(1));
+    public void findByCode(){
+        System.out.println(mService.findByCode(1));
     }
 
 }
