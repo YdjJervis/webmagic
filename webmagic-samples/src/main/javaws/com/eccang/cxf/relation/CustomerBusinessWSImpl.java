@@ -69,9 +69,9 @@ public class CustomerBusinessWSImpl extends AbstractSpiderWS implements Customer
                     /*通过客户码查询客户业务关系表*/
                     CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(baseRspParam.customerCode, businessCode);
                     cBusiness.setBusinessCode(businessCode);
-                    cBusiness.setMaxDataNum(customerBusiness.getMaxData());
-                    cBusiness.setUsingDataNum(customerBusiness.getUseData());
-                    cBusiness.setUsableDataNum(customerBusiness.getMaxData() - customerBusiness.getUseData());
+                    cBusiness.setMaxDataNum(customerBusiness.maxData);
+                    cBusiness.setUsingDataNum(customerBusiness.useData);
+                    cBusiness.setUsableDataNum(customerBusiness.maxData - customerBusiness.useData);
                     customerBusinessList.add(cBusiness);
                 } else {
                     logger.info("查询的业务码不能为空.");

@@ -1,16 +1,13 @@
 package com.eccang.spider.amazon.service.relation;
 
 import com.eccang.R;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.dao.relation.CustomerAsinDao;
 import com.eccang.spider.amazon.dao.relation.CustomerBusinessDao;
 import com.eccang.spider.amazon.dao.relation.CustomerKeywordRankDao;
 import com.eccang.spider.amazon.dao.relation.CustomerReviewDao;
-import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
 import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
-import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
-import com.eccang.spider.amazon.pojo.relation.CustomerReview;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -112,12 +109,12 @@ public class CustomerBusinessService {
         CustomerBusiness customerBusiness = mCustomerBusinessDao.findByCode(customerCode, businessCode);
 
         /*更新*/
-        if (customerBusiness.getUseData() != useNum) {
-            customerBusiness.setUseData(useNum);
+        if (customerBusiness.useData != useNum) {
+            customerBusiness.useData = useNum;
             mCustomerBusinessDao.updateOne(customerBusiness);
         }
 
-        result.put(R.BusinessInfo.USABLE_NUM, customerBusiness.getMaxData() - useNum);
+        result.put(R.BusinessInfo.USABLE_NUM, customerBusiness.maxData - useNum);
         result.put(R.BusinessInfo.HAS_USED_NUM, useNum);
 
         return result;

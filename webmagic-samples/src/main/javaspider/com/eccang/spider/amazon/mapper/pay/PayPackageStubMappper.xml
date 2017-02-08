@@ -41,7 +41,7 @@
             #{item.frequency},
             #{item.count},
             #{item.averageTime},
-            #{item.priority}
+            #{item.price}
             )
         </foreach>
     </insert>

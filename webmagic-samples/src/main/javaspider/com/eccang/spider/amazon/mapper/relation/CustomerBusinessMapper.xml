@@ -7,8 +7,9 @@
         <result column="besb_code" property="businessCode" />
         <result column="rcb_max_data" property="maxData" />
         <result column="rcb_use_data" property="useData" />
-        <result column="rcb_create_date" property="createDate" />
-        <result column="rcb_update_date" property="updateDate" />
+        <result column="rcb_extra" property="extra" />
+        <result column="rcb_create_date" property="createTime" />
+        <result column="rcb_update_date" property="updateTime" />
     </resultMap>
 
     <insert id="addOne" parameterType="Business">
@@ -16,12 +17,14 @@
           bec_code,
           besb_code,
           rcb_max_data,
-          rcb_use_data
+          rcb_use_data,
+          rcb_extra
         ) VALUES (
           #{customerCode},
           #{businessCode},
           #{maxData},
-          #{updateDate}
+          #{updateDate},
+          #{extra}
         )
     </insert>
 
@@ -30,13 +33,15 @@
           bec_code,
           besb_code,
           rcb_max_data,
-          rcb_use_data
+          rcb_use_data,
+          rcb_extra
         ) VALUES
         <foreach collection="list" index="index" item="item" separator=",">
           #{item.customerCode},
           #{item.businessCode},
           #{item.maxData},
-          #{item.updateDate}
+          #{item.updateDate},
+          #{item.extra}
         </foreach>
     </insert>
 
@@ -45,7 +50,8 @@
           relation_customer_business
         SET
           rcb_max_data = #{maxData},
-          rcb_use_data = #{useData}
+          rcb_use_data = #{useData},
+          rcb_extra = #{extra}
         WHERE
           bec_code = #{customerCode} AND besb_code = #{businessCode}
     </update>
