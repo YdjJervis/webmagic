@@ -16,7 +16,27 @@ import javax.jws.soap.SOAPBinding;
 @SOAPBinding(style = SOAPBinding.Style.RPC)
 public interface PayPackageWS extends SpiderWS {
 
+    /**
+     * 购买固定套餐
+     */
     @WebMethod
     String buy(String json);
 
+    /**
+     * 购买自定义套餐
+     */
+    @WebMethod
+    String buyCustom(String json);
+
+    /**
+     * 查询固定套餐列表
+     */
+    @WebMethod
+    String getList(String json);
+
+    /**
+     * 查询自己订购的套餐
+     */
+    @WebMethod
+    String getPaied(String json);
 }

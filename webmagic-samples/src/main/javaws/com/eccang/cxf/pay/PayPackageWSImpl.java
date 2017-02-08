@@ -7,6 +7,8 @@ import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.ValidateMsg;
 import com.eccang.pojo.pay.CusPayAddReq;
 import com.eccang.pojo.pay.CusPayAddRsp;
+import com.eccang.pojo.pay.CusPayCustomAddReq;
+import com.eccang.pojo.pay.CusPayCustomAddRsp;
 import com.eccang.spider.amazon.pojo.pay.PayPackage;
 import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
 import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
@@ -17,6 +19,7 @@ import com.eccang.spider.amazon.service.pay.PayPackageStubService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerPayPackageService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
@@ -61,7 +64,7 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             return baseRspParam.toJson();
         }
 
-        /*  参数验证阶段 */
+        /* 参数验证阶段 */
         ValidateMsg validateMsg = checkData(payPackageReq);
         if (!validateMsg.isSuccess) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
@@ -76,12 +79,52 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
         payPackageRsp.msg = baseRspParam.msg;
 
         try {
+            /* 把客户和套餐的关系保存起来 */
+            CustomerPayPackage cusPayPackage = new CustomerPayPackage();
+            cusPayPackage.customerCode = payPackageReq.customerCode;
+            cusPayPackage.packageCode = payPackageReq.data.payPackageCode;
+            mCustomerPayPackageService.add(cusPayPackage);
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+        }
+
+        return payPackageRsp.toJson();
+    }
+
+    @Override
+    public String buyCustom(String json) {
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        CusPayCustomAddReq payPackageReq = parseRequestParam(json, baseRspParam, CusPayCustomAddReq.class);
+        if (payPackageReq == null) {
+            return baseRspParam.toJson();
+        }
+
+        /* 参数验证阶段 */
+        ValidateMsg validateMsg = checkData(payPackageReq);
+        if (!validateMsg.isSuccess) {
+            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
+            baseRspParam.msg = validateMsg.msg;
+            return baseRspParam.toJson();
+        }
+
+        /* 逻辑处理阶段 */
+        CusPayCustomAddRsp payPackageRsp = new CusPayCustomAddRsp();
+        payPackageRsp.customerCode = payPackageReq.customerCode;
+        payPackageRsp.status = baseRspParam.status;
+        payPackageRsp.msg = baseRspParam.msg;
+
+        try {
             String payPackageCode = generatePayPackageCode();
 
             /* 子业务套餐入库 */
             List<PayPackageStub> payPackageStubList = new ArrayList<>();
             PayPackageStub stub;
-            for (CusPayAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
+            for (CusPayCustomAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
                 stub = new PayPackageStub();
                 stub.code = generateStubCode();
                 stub.custom = 1;
@@ -119,26 +162,42 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
         }
 
         return payPackageRsp.toJson();
+    }
 
+    @Override
+    public String getList(String json) {
+        return null;
+    }
+
+    @Override
+    public String getPaied(String json) {
+        return null;
     }
 
     private ValidateMsg checkData(BaseReqParam baseReqParam) {
 
-        if (baseReqParam instanceof CusPayAddReq) {
-            CusPayAddReq payPackageReq = (CusPayAddReq) baseReqParam;
+        if (baseReqParam instanceof CusPayCustomAddReq) {
+            CusPayCustomAddReq payPackageReq = (CusPayCustomAddReq) baseReqParam;
 
             if (CollectionUtils.isEmpty(payPackageReq.data)) {
                 return getValidateMsg(false, R.RequestMsg.PARAMETER_DATA_NULL_ERROR);
             }
 
-            for (CusPayAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
+            for (CusPayCustomAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
                 break;
             }
 
+        } else if (baseReqParam instanceof CusPayAddReq) {
+            CusPayAddReq payPackageReq = (CusPayAddReq) baseReqParam;
+
+            if (StringUtils.isEmpty(payPackageReq.data.payPackageCode)) {
+                return getValidateMsg(false, R.RequestMsg.PARAMETER_DATA_NULL_ERROR);
+            }
         }
 
         return getValidateMsg(true, R.RequestMsg.SUCCESS);
     }
+
 
     private String generatePayPackageCode() {
         String code = UUID.randomUUID().toString().substring(0, 6);
