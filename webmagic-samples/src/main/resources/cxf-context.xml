@@ -67,5 +67,12 @@
         </jaxws:serviceBean>
     </jaxws:server>
 
+    <!--订购套餐-->
+    <jaxws:server id="payPackageWS" serviceClass="com.eccang.cxf.pay.PayPackageWS" address="/payPackage">
+        <jaxws:serviceBean>
+            <bean class="com.eccang.cxf.pay.PayPackageWSImpl" />
+        </jaxws:serviceBean>
+    </jaxws:server>
+
 </beans>
 

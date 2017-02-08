@@ -1,7 +1,8 @@
 package com.eccang.spider.amazon.dao.relation;
 
-import org.springframework.stereotype.Repository;
 import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
+import com.eccang.spider.base.dao.BaseDao;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,15 +13,9 @@ import java.util.List;
  * @date 2016/12/15 16:32
  */
 @Repository
-public interface CustomerBusinessDao {
+public interface CustomerBusinessDao extends BaseDao<CustomerBusiness> {
 
-    void addOne(CustomerBusiness customerBusiness);
-
-    void addAll(List<CustomerBusiness> customerBusinessList);
-
-    void deleteOne(String customerCode, String businessCode);
-
-    void updateOne(CustomerBusiness customerBusiness);
+    void delete(String customerCode, String businessCode);
 
     List<CustomerBusiness> findAll();
 

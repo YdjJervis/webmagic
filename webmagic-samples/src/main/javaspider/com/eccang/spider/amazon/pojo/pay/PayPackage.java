@@ -10,9 +10,9 @@ import com.eccang.spider.base.pojo.BasePojo;
  */
 public class PayPackage extends BasePojo {
 
-    public int code;
+    public String code;
     public int status = 1;
-    public int stubCode;
+    public String stubCode;
 
     @Override
     public String toString() {

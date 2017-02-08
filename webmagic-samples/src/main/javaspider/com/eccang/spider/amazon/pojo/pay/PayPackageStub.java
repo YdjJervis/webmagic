@@ -10,7 +10,7 @@ import com.eccang.spider.base.pojo.BasePojo;
  */
 public class PayPackageStub extends BasePojo {
 
-    public int code;
+    public String code;
     public int custom;
     public String businessCode;
     public int day;

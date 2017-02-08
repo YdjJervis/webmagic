@@ -8,11 +8,11 @@ import com.eccang.spider.base.pojo.BasePojo;
  * @Description: 客户跟收费套餐的关系
  * @date 2017/1/16 15:53
  */
-public class CustomerPayPackage extends BasePojo{
+public class CustomerPayPackage extends BasePojo {
 
     public String customerCode;
     public String packageCode;
-    public int status;
+    public int status = 1;
 
     @Override
     public String toString() {

@@ -12,7 +12,7 @@
     </resultMap>
 
     <insert id="add" parameterType="CustomerPayPackage">
-        INSERT INTO base_pay_package(
+        INSERT INTO relation_customer_pay_package(
         bec_code,
         bpp_code,
         rcpp_status
@@ -24,7 +24,7 @@
     </insert>
 
     <select id="findByCode" resultMap="CustomerPayPackageMap">
-        SELECT * FROM base_pay_package WHERE bpp_code = #{0};
+        SELECT * FROM relation_customer_pay_package WHERE bpp_code = #{0};
     </select>
 
 </mapper>

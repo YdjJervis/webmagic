@@ -13,5 +13,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PayPackageStubDao extends BaseDao<PayPackageStub> {
 
-    PayPackageStub findByCode(int code);
 }

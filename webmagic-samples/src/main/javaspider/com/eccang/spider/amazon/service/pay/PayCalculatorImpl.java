@@ -18,10 +18,6 @@ import java.util.List;
 public class PayCalculatorImpl implements PayCalculator {
 
     @Autowired
-    private PayPackageService mPayPackageService;
-    @Autowired
-    private PayPackageStubService mPayPackageStubService;
-    @Autowired
     private PayProfileService mPayProfileService;
 
     @Override

@@ -23,11 +23,11 @@ public class PayPackageService {
         mDao.add(payPackage);
     }
 
-    public List<PayPackage> findByPayPackageCode(int payPackageCode) {
+    public List<PayPackage> findByPayPackageCode(String payPackageCode) {
         return mDao.findByPayPackageCode(payPackageCode);
     }
 
-    public PayPackage findByCode(int payPackageCode, int stubCode) {
+    public PayPackage findByCode(String payPackageCode, String stubCode) {
         return mDao.findByCode(payPackageCode, stubCode);
     }
 

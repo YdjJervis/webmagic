@@ -14,24 +14,24 @@ public class PayPackageServiceTest extends SpringTestCase {
     @Test
     public void add() {
         PayPackage payPackage = new PayPackage();
-        payPackage.code = 1;
-        payPackage.stubCode = 1;
+        payPackage.code = "1";
+        payPackage.stubCode = "1";
         mService.add(payPackage);
     }
 
     @Test
     public void findByPayPackageCode() {
-        System.out.println(mService.findByPayPackageCode(1));
+        System.out.println(mService.findByPayPackageCode("1"));
     }
 
     @Test
     public void findByCode() {
-        System.out.println(mService.findByCode(1, 2));
+        System.out.println(mService.findByCode("1", "2"));
     }
 
     @Test
     public void update() {
-        PayPackage payPackage = mService.findByCode(1, 2);
+        PayPackage payPackage = mService.findByCode("1", "2");
         payPackage.status = 0;
         mService.update(payPackage);
     }

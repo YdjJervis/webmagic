@@ -19,11 +19,11 @@ public class PayPackageStubServiceTest extends SpringTestCase {
         List<PayPackageStub> list = new ArrayList<>();
 
         PayPackageStub stub = new PayPackageStub();
-        stub.code = 1;
+        stub.code = "1";
         stub.priority = 3;
         stub.count = 300;
         stub.frequency = 3;
-        stub.custom=1;
+        stub.custom = 1;
         stub.averageTime = 300;
         stub.price = 300;
         stub.businessCode = "AS";
@@ -34,8 +34,8 @@ public class PayPackageStubServiceTest extends SpringTestCase {
     }
 
     @Test
-    public void findByCode(){
-        System.out.println(mService.findByCode(1));
+    public void findByCode() {
+        System.out.println(mService.findByCode("1"));
     }
 
 }

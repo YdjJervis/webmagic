@@ -39,8 +39,12 @@ public class CustomerBusinessService {
     /**
      * 新增一条数据
      */
-    public void addOne(CustomerBusiness customerBusiness) {
-        mCustomerBusinessDao.addOne(customerBusiness);
+    public void add(CustomerBusiness customerBusiness) {
+        if (isExist(customerBusiness.customerCode, customerBusiness.businessCode)) {
+            update(customerBusiness);
+        } else {
+            mCustomerBusinessDao.add(customerBusiness);
+        }
     }
 
     /**
@@ -53,15 +57,15 @@ public class CustomerBusinessService {
     /**
      * 删除
      */
-    public void deleteOne(String customerCode, String businessCode) {
-        mCustomerBusinessDao.deleteOne(customerCode, businessCode);
+    public void delete(String customerCode, String businessCode) {
+        mCustomerBusinessDao.delete(customerCode, businessCode);
     }
 
     /**
      * 更新
      */
-    public void updateOne(CustomerBusiness customerBusiness) {
-        mCustomerBusinessDao.updateOne(customerBusiness);
+    public void update(CustomerBusiness customerBusiness) {
+        mCustomerBusinessDao.update(customerBusiness);
     }
 
     /**
@@ -83,6 +87,10 @@ public class CustomerBusinessService {
      */
     public CustomerBusiness findByCode(String customerCode, String businessCode) {
         return mCustomerBusinessDao.findByCode(customerCode, businessCode);
+    }
+
+    public boolean isExist(String customerCode, String businessCode) {
+        return findByCode(customerCode, businessCode) != null;
     }
 
     /**
@@ -111,7 +119,7 @@ public class CustomerBusinessService {
         /*更新*/
         if (customerBusiness.useData != useNum) {
             customerBusiness.useData = useNum;
-            mCustomerBusinessDao.updateOne(customerBusiness);
+            mCustomerBusinessDao.update(customerBusiness);
         }
 
         result.put(R.BusinessInfo.USABLE_NUM, customerBusiness.maxData - useNum);
