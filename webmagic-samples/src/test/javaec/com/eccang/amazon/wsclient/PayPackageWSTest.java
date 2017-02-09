@@ -3,6 +3,7 @@ package com.eccang.amazon.wsclient;
 import com.eccang.base.SpringTestCase;
 import com.eccang.pojo.pay.CusPayAddReq;
 import com.eccang.pojo.pay.CusPayCustomAddReq;
+import com.eccang.pojo.pay.PaiedQueryReq;
 import com.eccang.pojo.pay.PayPackageQueryReq;
 import com.eccang.wsclient.pay.PayPackageWSService;
 import com.google.gson.Gson;
@@ -66,7 +67,12 @@ public class PayPackageWSTest extends SpringTestCase {
 
     @Test
     public void getPaied(){
+        PaiedQueryReq req = new PaiedQueryReq();
+        req.customerCode = "EC_001";
+        req.platformCode = "ERP";
+        req.token = "123456789";
 
+        System.out.println(new PayPackageWSService().getPayPackageWSPort().getPaied(new Gson().toJson(req)));
     }
 
 }

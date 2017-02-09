@@ -5,6 +5,8 @@ import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.1
@@ -21,8 +23,8 @@ public class CustomerPayPackageService {
         mDao.add(customerPayPackage);
     }
 
-    public CustomerPayPackage findByCode(String code) {
-        return mDao.findByCode(code);
+    public List<CustomerPayPackage> findByCustomerCode(String customerCode) {
+        return mDao.findByCustomerCode(customerCode);
     }
 
 

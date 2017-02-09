@@ -4,6 +4,8 @@ import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
 import com.eccang.spider.base.dao.BaseDao;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Jervis
  * @version V0.20
@@ -14,4 +16,5 @@ import org.springframework.stereotype.Repository;
 public interface CustomerPayPackageDao extends BaseDao<CustomerPayPackage> {
 
 
+    List<CustomerPayPackage> findByCustomerCode(String customerCode);
 }

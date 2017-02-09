@@ -185,32 +185,7 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
         try {
             /* 查询内建的套餐 */
             List<PayPackage> payPackageList = mPayPackageService.findBuildIn();
-
-            PayPackageQueryRsp.PayPackage payPackage;
-            for (PayPackage pay : payPackageList) {
-                List<PayPackageStub> stubList = mPayPackageStubService.findByPayPackage(pay.code);
-
-                payPackage = payPackageRsp.new PayPackage();
-                payPackage.payPackageCode = pay.code;
-
-                for (PayPackageStub packageStub : stubList) {
-                    PayPackageQueryRsp.PayPackage.PayPackageStub payPackageStub = payPackage.new PayPackageStub();
-
-                    payPackageStub.businessCode = packageStub.businessCode;
-                    payPackageStub.day = packageStub.day;
-                    payPackageStub.priority = packageStub.priority;
-                    payPackageStub.frequency = packageStub.frequency;
-                    payPackageStub.count = packageStub.count;
-                    payPackageStub.averageTime = packageStub.averageTime;
-                    payPackageStub.price = packageStub.price;
-
-                    payPackage.price += packageStub.price;
-
-                    payPackage.stubs.add(payPackageStub);
-                }
-                payPackageRsp.data.add(payPackage);
-            }
-
+            parsePayPackage(payPackageRsp, payPackageList);
 
         } catch (Exception e) {
             serverException(baseRspParam, e);
@@ -219,9 +194,68 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
         return payPackageRsp.toJson();
     }
 
+    private void parsePayPackage(PayPackageQueryRsp payPackageRsp, List<PayPackage> payPackageList) {
+        for (PayPackage pay : payPackageList) {
+            List<PayPackageStub> stubList = mPayPackageStubService.findByPayPackage(pay.code);
+
+            PayPackageQueryRsp.PayPackage payPackage = payPackageRsp.new PayPackage();
+            payPackage.payPackageCode = pay.code;
+
+            for (PayPackageStub packageStub : stubList) {
+                PayPackageQueryRsp.PayPackage.PayPackageStub payPackageStub = payPackage.new PayPackageStub();
+
+                payPackageStub.businessCode = packageStub.businessCode;
+                payPackageStub.day = packageStub.day;
+                payPackageStub.priority = packageStub.priority;
+                payPackageStub.frequency = packageStub.frequency;
+                payPackageStub.count = packageStub.count;
+                payPackageStub.averageTime = packageStub.averageTime;
+                payPackageStub.price = packageStub.price;
+
+                payPackage.price += packageStub.price;
+
+                payPackage.stubs.add(payPackageStub);
+            }
+            payPackageRsp.data.add(payPackage);
+        }
+    }
+
     @Override
     public String getPaied(String json) {
-        return null;
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        PaiedQueryReq paiedQueryReq = parseRequestParam(json, baseRspParam, PaiedQueryReq.class);
+        if (paiedQueryReq == null) {
+            return baseRspParam.toJson();
+        }
+
+        /* 逻辑处理阶段 */
+        PayPackageQueryRsp payPackageRsp = new PayPackageQueryRsp();
+        payPackageRsp.customerCode = paiedQueryReq.customerCode;
+        payPackageRsp.status = baseRspParam.status;
+        payPackageRsp.msg = baseRspParam.msg;
+
+        try {
+            /* 查询客户订购过的所有套餐 */
+            List<CustomerPayPackage> customerPayPackageList = mCustomerPayPackageService.findByCustomerCode(paiedQueryReq.customerCode);
+
+            List<PayPackage> payPackageList = new ArrayList<>();
+            for (CustomerPayPackage customerPayPackage : customerPayPackageList) {
+                payPackageList.add(mPayPackageService.findByCode(customerPayPackage.packageCode));
+            }
+
+            /* 查询内建的套餐 */
+            parsePayPackage(payPackageRsp, payPackageList);
+
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+        }
+
+        return payPackageRsp.toJson();
     }
 
     private ValidateMsg checkData(BaseReqParam baseReqParam) {

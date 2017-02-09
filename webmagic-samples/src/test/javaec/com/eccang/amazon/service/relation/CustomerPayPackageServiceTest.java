@@ -20,4 +20,9 @@ public class CustomerPayPackageServiceTest extends SpringTestCase {
         mService.add(payPackage);
     }
 
+    @Test
+    public void findByCustomerCode(){
+        System.out.println(mService.findByCustomerCode("EC_001"));
+    }
+
 }
