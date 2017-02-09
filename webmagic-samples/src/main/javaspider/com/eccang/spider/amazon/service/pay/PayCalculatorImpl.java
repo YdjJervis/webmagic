@@ -21,19 +21,19 @@ public class PayCalculatorImpl implements PayCalculator {
     private PayProfileService mPayProfileService;
 
     @Override
-    public int calculate(List<PayPackageStub> payPackageStubList) {
+    public int calculate(List<PayPackageStub> payPackageStubList, int custom) {
 
         int price = 0;
 
         for (PayPackageStub payPackageStub : payPackageStubList) {
-            price += calculate(payPackageStub);
+            price += calculate(payPackageStub, custom);
         }
 
         return price;
     }
 
     @Override
-    public int calculate(PayPackageStub payPackageStub) {
+    public int calculate(PayPackageStub payPackageStub, int custom) {
 
         int totalUrl = 0;
         Double totalPrice;
@@ -68,7 +68,7 @@ public class PayCalculatorImpl implements PayCalculator {
         Double rcpp = rcp * Math.pow(payProfile.priorityMutiple, 4 - payPackageStub.priority);//带优先级时
         totalPrice = rcpp;
 
-        if (payPackageStub.custom == 1) {
+        if (custom == 1) {
             totalPrice = rcpp * payProfile.customMutiple;//属于自定义套餐的，应该再乘以一个基数
         }
 

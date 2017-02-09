@@ -10,8 +10,8 @@ import com.eccang.spider.base.pojo.BasePojo;
  */
 public class PayPackageStub extends BasePojo {
 
-    public String code;
-    public int custom;
+    public String stubCode;
+    public String payPackageCode;
     public String businessCode;
     public int day;
     public int priority;
@@ -23,8 +23,8 @@ public class PayPackageStub extends BasePojo {
     @Override
     public String toString() {
         return "PayPackageStub{" +
-                "code=" + code +
-                ", custom=" + custom +
+                "stubCode='" + stubCode + '\'' +
+                ", payPackageCode='" + payPackageCode + '\'' +
                 ", businessCode='" + businessCode + '\'' +
                 ", day=" + day +
                 ", priority=" + priority +

@@ -5,10 +5,7 @@ import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseReqParam;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.ValidateMsg;
-import com.eccang.pojo.pay.CusPayAddReq;
-import com.eccang.pojo.pay.CusPayAddRsp;
-import com.eccang.pojo.pay.CusPayCustomAddReq;
-import com.eccang.pojo.pay.CusPayCustomAddRsp;
+import com.eccang.pojo.pay.*;
 import com.eccang.spider.amazon.pojo.pay.PayPackage;
 import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
 import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
@@ -126,21 +123,15 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             PayPackageStub stub;
             for (CusPayCustomAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
                 stub = new PayPackageStub();
-                stub.code = generateStubCode();
-                stub.custom = 1;
+                stub.stubCode = generateStubCode();
+                stub.payPackageCode = payPackageCode;
                 stub.businessCode = payPackageStub.businessCode;
                 stub.day = payPackageStub.day;
                 stub.priority = payPackageStub.priority;
                 stub.frequency = payPackageStub.frequency;
                 stub.count = payPackageStub.count;
-                stub.price = mPayCalculator.calculate(stub);
+                stub.price = mPayCalculator.calculate(stub, 1);
                 payPackageStubList.add(stub);
-
-                /* 总业务套餐入库 */
-                PayPackage payPackage = new PayPackage();
-                payPackage.code = payPackageCode;
-                payPackage.stubCode = stub.code;
-                mPayPackageService.add(payPackage);
 
                 /* 同步到限制表 */
                 CustomerBusiness cusBussiness = new CustomerBusiness();
@@ -151,12 +142,20 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             }
             mPayPackageStubService.addAll(payPackageStubList);
 
+            /* 总业务套餐入库 */
+            PayPackage payPackage = new PayPackage();
+            payPackage.code = payPackageCode;
+            payPackage.custom = 1;
+            mPayPackageService.add(payPackage);
+
             /* 把客户和套餐的关系保存起来 */
             CustomerPayPackage cusPayPackage = new CustomerPayPackage();
             cusPayPackage.customerCode = payPackageReq.customerCode;
             cusPayPackage.packageCode = payPackageCode;
             mCustomerPayPackageService.add(cusPayPackage);
 
+            /* 把套餐码返回给调用处 */
+            payPackageRsp.data.payPackageCode = payPackageCode;
         } catch (Exception e) {
             serverException(baseRspParam, e);
         }
@@ -166,7 +165,58 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
 
     @Override
     public String getList(String json) {
-        return null;
+        BaseRspParam baseRspParam = auth(json);
+
+        if (!baseRspParam.isSuccess()) {
+            return baseRspParam.toJson();
+        }
+
+        PayPackageQueryReq payPackageQueryReq = parseRequestParam(json, baseRspParam, PayPackageQueryReq.class);
+        if (payPackageQueryReq == null) {
+            return baseRspParam.toJson();
+        }
+
+        /* 逻辑处理阶段 */
+        PayPackageQueryRsp payPackageRsp = new PayPackageQueryRsp();
+        payPackageRsp.customerCode = payPackageQueryReq.customerCode;
+        payPackageRsp.status = baseRspParam.status;
+        payPackageRsp.msg = baseRspParam.msg;
+
+        try {
+            /* 查询内建的套餐 */
+            List<PayPackage> payPackageList = mPayPackageService.findBuildIn();
+
+            PayPackageQueryRsp.PayPackage payPackage;
+            for (PayPackage pay : payPackageList) {
+                List<PayPackageStub> stubList = mPayPackageStubService.findByPayPackage(pay.code);
+
+                payPackage = payPackageRsp.new PayPackage();
+                payPackage.payPackageCode = pay.code;
+
+                for (PayPackageStub packageStub : stubList) {
+                    PayPackageQueryRsp.PayPackage.PayPackageStub payPackageStub = payPackage.new PayPackageStub();
+
+                    payPackageStub.businessCode = packageStub.businessCode;
+                    payPackageStub.day = packageStub.day;
+                    payPackageStub.priority = packageStub.priority;
+                    payPackageStub.frequency = packageStub.frequency;
+                    payPackageStub.count = packageStub.count;
+                    payPackageStub.averageTime = packageStub.averageTime;
+                    payPackageStub.price = packageStub.price;
+
+                    payPackage.price += packageStub.price;
+
+                    payPackage.stubs.add(payPackageStub);
+                }
+                payPackageRsp.data.add(payPackage);
+            }
+
+
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+        }
+
+        return payPackageRsp.toJson();
     }
 
     @Override
@@ -201,7 +251,7 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
 
     private String generatePayPackageCode() {
         String code = UUID.randomUUID().toString().substring(0, 6);
-        if (CollectionUtils.isNotEmpty(mPayPackageService.findByPayPackageCode(code))) {
+        if (mPayPackageService.findByCode(code) != null) {
             return generatePayPackageCode();
         } else {
             return code;

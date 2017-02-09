@@ -7,7 +7,7 @@
         <id property="id" column="bpp_id"/>
         <result property="code" column="bpp_code"/>
         <result property="status" column="bpp_status"/>
-        <result property="stubCode" column="bpps_code"/>
+        <result property="custom" column="bpp_custom"/>
         <result property="createTime" column="bpp_create_time"/>
         <result property="updateTime" column="bpp_update_time"/>
     </resultMap>
@@ -16,36 +16,33 @@
         INSERT INTO base_pay_package(
         bpp_code,
         bpp_status,
-        bpps_code
+        bpp_custom
         ) VALUES (
         #{code},
         #{status},
-        #{stubCode}
+        #{custom}
         )
     </insert>
-
-    <select id="findByPayPackageCode" resultMap="PayPackageResultMap">
-        select * from base_pay_package
-        WHERE
-        bpp_code = #{0};
-    </select>
 
     <select id="findByCode" resultMap="PayPackageResultMap">
         select * from base_pay_package
         WHERE
         bpp_code = #{0}
-        and
-        bpps_code = #{1}
+    </select>
+
+    <select id="findBuildIn" resultMap="PayPackageResultMap">
+        select * from base_pay_package
+        WHERE
+        bpp_custom = 0;
     </select>
 
     <update id="update" parameterType="PayPackage">
         UPDATE base_pay_package
         SET
-        bpp_status = #{status}
+        bpp_status = #{status},
+        bpp_custom = #{custom}
         where
         bpp_code = #{code}
-        and
-        bpps_code = #{stubCode}
     </update>
 
 </mapper>

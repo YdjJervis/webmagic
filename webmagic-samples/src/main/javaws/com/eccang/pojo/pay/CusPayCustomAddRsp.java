@@ -14,7 +14,7 @@ public class CusPayCustomAddRsp extends BaseRspParam {
 
     public class PayPackage {
 
-        public int payPackageCode;
+        public String payPackageCode;
     }
 
 }

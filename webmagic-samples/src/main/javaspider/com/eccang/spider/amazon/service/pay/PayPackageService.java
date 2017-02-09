@@ -23,16 +23,19 @@ public class PayPackageService {
         mDao.add(payPackage);
     }
 
-    public List<PayPackage> findByPayPackageCode(String payPackageCode) {
-        return mDao.findByPayPackageCode(payPackageCode);
-    }
-
-    public PayPackage findByCode(String payPackageCode, String stubCode) {
-        return mDao.findByCode(payPackageCode, stubCode);
+    public PayPackage findByCode(String payPackageCode) {
+        return mDao.findByCode(payPackageCode);
     }
 
     public void update(PayPackage payPackage) {
         mDao.update(payPackage);
+    }
+
+    /**
+     * @return 内建的套餐列表
+     */
+    public List<PayPackage> findBuildIn(){
+        return mDao.findBuildIn();
     }
 
 }

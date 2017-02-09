@@ -20,13 +20,12 @@ public class PayCalculatorTest extends SpringTestCase {
     @Test
     public void calculate() {
         PayPackageStub payPackageStub = new PayPackageStub();
-        payPackageStub.custom = 0;
         payPackageStub.frequency = 24;
         payPackageStub.priority = 4;
         payPackageStub.businessCode = "MS";
         payPackageStub.count = 50;
         payPackageStub.day = 30;
 
-        System.out.println(mPayCalculator.calculate(payPackageStub));
+        System.out.println(mPayCalculator.calculate(payPackageStub,1));
     }
 }

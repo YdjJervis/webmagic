@@ -12,14 +12,14 @@ public class PayPackage extends BasePojo {
 
     public String code;
     public int status = 1;
-    public String stubCode;
+    public int custom;
 
     @Override
     public String toString() {
         return "PayPackage{" +
                 "code='" + code + '\'' +
                 ", status=" + status +
-                ", stubCode=" + stubCode +
+                ", custom=" + custom +
                 '}';
     }
 }

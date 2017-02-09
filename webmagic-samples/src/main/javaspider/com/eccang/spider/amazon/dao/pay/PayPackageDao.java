@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface PayPackageDao extends BaseDao<PayPackage> {
 
-    List<PayPackage> findByPayPackageCode(String payPackageCode);
+    PayPackage findByCode(String payPackageCode);
 
-    PayPackage findByCode(String payPackageCode,String stubCode);
+    List<PayPackage> findBuildIn();
 }

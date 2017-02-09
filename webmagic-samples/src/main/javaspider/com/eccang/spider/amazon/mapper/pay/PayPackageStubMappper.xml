@@ -5,8 +5,8 @@
 
     <resultMap id="PayPackageStubResultMap" type="PayPackageStub">
         <id property="id" column="bpps_id"/>
-        <result property="code" column="bpps_code"/>
-        <result property="custom" column="bpps_custom"/>
+        <result property="stubCode" column="bpps_code"/>
+        <result property="payPackageCode" column="bpp_code"/>
         <result property="businessCode" column="besb_code"/>
         <result property="day" column="bpps_day"/>
         <result property="priority" column="bpps_priority"/>
@@ -21,7 +21,7 @@
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO base_pay_package_sub(
         bpps_code,
-        bpps_custom,
+        bpp_code,
         besb_code,
         bpps_day,
         bpps_priority,
@@ -33,8 +33,8 @@
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
-            #{item.code},
-            #{item.custom},
+            #{item.stubCode},
+            #{item.payPackageCode},
             #{item.businessCode},
             #{item.day},
             #{item.priority},
@@ -50,5 +50,26 @@
         SELECT * FROM base_pay_package_sub
         WHERE bpps_code = #{0};
     </select>
+
+    <select id="findByPayPackage" resultMap="PayPackageStubResultMap">
+        SELECT * FROM base_pay_package_sub
+        WHERE
+        bpp_code = #{0};
+    </select>
+
+    <update id="update" parameterType="PayPackageStub">
+        UPDATE base_pay_package_sub
+        SET
+        bpp_code = #{payPackageCode},
+        besb_code = #{businessCode},
+        bpps_day = #{day},
+        bpps_priority = #{priority},
+        bpps_frequency = #{frequency},
+        bpps_count = #{count},
+        bpps_average_time = #{averageTime},
+        bpps_price = #{price}
+        where
+        bpps_code = #{stubCode}
+    </update>
 
 </mapper>

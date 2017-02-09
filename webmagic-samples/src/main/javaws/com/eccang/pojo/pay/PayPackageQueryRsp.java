@@ -16,6 +16,19 @@ public class PayPackageQueryRsp extends BaseRspParam {
     public List<PayPackage> data = new ArrayList<>();
 
     public class PayPackage {
+        public String payPackageCode;
+        public int price;
 
+        public List<PayPackageStub> stubs = new ArrayList<>();
+
+        public class PayPackageStub {
+            public String businessCode;
+            public int day;
+            public int priority;
+            public int frequency;
+            public int count;
+            public int averageTime;
+            public float price;
+        }
     }
 }
