@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.pay.PayPackageLogDao">
+
+    <resultMap id="PayPackageLogMap" type="PayPackageLog">
+        <id property="id" column="ppl_id"/>
+        <result property="customerCode" column="bec_code"/>
+        <result property="curd" column="ppl_curd"/>
+        <result property="describe" column="ppl_describe"/>
+        <result property="price" column="ppl_price"/>
+        <result property="createTime" column="ppl_create_time"/>
+        <result property="updateTime" column="ppl_update_time"/>
+    </resultMap>
+
+    <insert id="add" parameterType="PayPackageLog">
+        INSERT INTO pay_package_log(
+        bec_code,
+        ppl_curd,
+        ppl_describe,
+        ppl_price
+        ) VALUES (
+        #{customerCode},
+        #{curd},
+        #{describe},
+        #{price}
+        )
+    </insert>
+
+    <select id="findByCusCode" resultMap="PayPackageLogMap">
+        select * from pay_package_log
+        WHERE bec_code = #{0};
+    </select>
+
+
+</mapper>

@@ -53,6 +53,8 @@ public class PayPackageStubService {
         return findByCode(code) != null;
     }
 
-
+    public int findTotalPrice(String payPackageCode){
+        return mDao.findTotalPrice(payPackageCode);
+    }
 
 }

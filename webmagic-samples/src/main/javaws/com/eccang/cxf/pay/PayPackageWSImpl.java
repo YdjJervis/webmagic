@@ -7,10 +7,12 @@ import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.ValidateMsg;
 import com.eccang.pojo.pay.*;
 import com.eccang.spider.amazon.pojo.pay.PayPackage;
+import com.eccang.spider.amazon.pojo.pay.PayPackageLog;
 import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
 import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
 import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
 import com.eccang.spider.amazon.service.pay.PayCalculatorImpl;
+import com.eccang.spider.amazon.service.pay.PayPackageLogService;
 import com.eccang.spider.amazon.service.pay.PayPackageService;
 import com.eccang.spider.amazon.service.pay.PayPackageStubService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
@@ -46,6 +48,8 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
     private PayCalculatorImpl mPayCalculator;
     @Autowired
     private CustomerBusinessService mCustomerBusinessService;
+    @Autowired
+    private PayPackageLogService mPayPackageLogService;
 
     @Override
     public String buy(String json) {
@@ -81,6 +85,14 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             cusPayPackage.customerCode = payPackageReq.customerCode;
             cusPayPackage.packageCode = payPackageReq.data.payPackageCode;
             mCustomerPayPackageService.add(cusPayPackage);
+
+            /* 最后记录套餐操作日志 */
+            PayPackageLog log = new PayPackageLog(payPackageReq.customerCode);
+            log.curd = PayPackageLog.Curd.ADD;
+            log.describe = PayPackageLog.Describe.MSG_1;
+            log.price = mPayPackageStubService.findTotalPrice(cusPayPackage.packageCode);
+            mPayPackageLogService.add(log);
+
         } catch (Exception e) {
             serverException(baseRspParam, e);
         }
@@ -156,6 +168,13 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
 
             /* 把套餐码返回给调用处 */
             payPackageRsp.data.payPackageCode = payPackageCode;
+
+            /* 最后记录套餐操作日志 */
+            PayPackageLog log = new PayPackageLog(payPackageReq.customerCode);
+            log.curd = PayPackageLog.Curd.ADD;
+            log.describe = PayPackageLog.Describe.MSG_2;
+            log.price = mPayPackageStubService.findTotalPrice(cusPayPackage.packageCode);
+            mPayPackageLogService.add(log);
         } catch (Exception e) {
             serverException(baseRspParam, e);
         }

@@ -57,6 +57,12 @@
         bpp_code = #{0};
     </select>
 
+    <select id="findTotalPrice" resultType="int">
+        SELECT sum(bpps_price) FROM base_pay_package_sub
+        WHERE
+        bpp_code = #{0};
+    </select>
+
     <update id="update" parameterType="PayPackageStub">
         UPDATE base_pay_package_sub
         SET

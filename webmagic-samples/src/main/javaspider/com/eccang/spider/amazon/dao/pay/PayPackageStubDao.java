@@ -16,4 +16,7 @@ import java.util.List;
 public interface PayPackageStubDao extends BaseDao<PayPackageStub> {
 
     List<PayPackageStub> findByPayPackage(String payPackageCode);
+
+    int findTotalPrice(String payPackageCode);
+
 }
