@@ -45,11 +45,11 @@
         rar_root_asin = #{rootAsin},
         rcpi_extra = #{extra}
         WHERE
-        bec_code = #{0}
+        bec_code = #{customerCode}
         AND
-        bas_code = #{1}
+        bas_code = #{siteCode}
         AND
-        rar_asin = #{2}
+        rar_asin = #{asin}
     </update>
 
 </mapper>
