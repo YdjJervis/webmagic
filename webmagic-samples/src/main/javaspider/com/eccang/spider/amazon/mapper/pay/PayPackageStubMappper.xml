@@ -63,6 +63,14 @@
         bpp_code = #{0};
     </select>
 
+    <select id="find" resultMap="PayPackageStubResultMap">
+        SELECT * FROM base_pay_package_sub
+        WHERE
+        bpp_code = #{0}
+        and
+        besb_code = #{1};
+    </select>
+
     <update id="update" parameterType="PayPackageStub">
         UPDATE base_pay_package_sub
         SET

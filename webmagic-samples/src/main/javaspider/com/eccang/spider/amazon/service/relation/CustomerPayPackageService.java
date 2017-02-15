@@ -27,5 +27,9 @@ public class CustomerPayPackageService {
         return mDao.findByCustomerCode(customerCode);
     }
 
+    public CustomerPayPackage findActived(String customerCode){
+        return mDao.findActived(customerCode);
+    }
+
 
 }

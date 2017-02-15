@@ -69,7 +69,6 @@ public class AsinWSTest extends SpringTestCase {
         AsinReq.Asin asin = asinReq.new Asin();
         asin.asin = "0071809252";
         asin.siteCode = "US";
-        asin.priority = 0;
         asin.star = "0-0-1-1-1";
         asinReq.data.add(asin);
 
@@ -86,13 +85,12 @@ public class AsinWSTest extends SpringTestCase {
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
-        List<ImportData> importDataList = mImportDataService.find(null,10);
+        List<ImportData> importDataList = mImportDataService.find(null,500);
 
         for (ImportData importData : importDataList) {
             AsinReq.Asin asin = asinReq.new Asin();
             asin.asin = importData.getAsin();
             asin.siteCode = importData.getSiteCode();
-            asin.priority = 0;
             asin.star = "0-0-1-1-1";
             asinReq.data.add(asin);
         }

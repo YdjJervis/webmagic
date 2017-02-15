@@ -15,7 +15,7 @@ import java.net.URL;
  * JAX-WS RI 2.2.4-b01
  * Generated source version: 2.2
  */
-@WebServiceClient(name = "ImageOCRService", targetNamespace = "http://tempuri.org/", wsdlLocation = "http://119.28.63.234:1800/ImageOCRService.svc?singleWsdl")
+@WebServiceClient(name = "ImageOCRService", targetNamespace = "http://tempuri.org/", wsdlLocation = "http://119.28.63.234:1800/ImageOCRService.svc?wsdl")
 public class ImageOCRService
         extends Service {
 
@@ -28,7 +28,7 @@ public class ImageOCRService
         WebServiceException e = null;
         try {
             String value = PropertyUtil.getValue("ws.properties", "wsdlLocation");
-            url = new URL(value + "/ImageOCRService.svc?singleWsdl");
+            url = new URL(value + "/ImageOCRService.svc?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         } catch (Exception ex) {

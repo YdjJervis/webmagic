@@ -32,7 +32,7 @@ public class PayPackageStubService {
             }
         }
 
-        if(CollectionUtils.isNotEmpty(list)){
+        if (CollectionUtils.isNotEmpty(list)) {
             mDao.addAll(list);
         }
     }
@@ -45,7 +45,11 @@ public class PayPackageStubService {
         return mDao.findByCode(code);
     }
 
-    public List<PayPackageStub> findByPayPackage(String payPackageCode){
+    public PayPackageStub find(String payPackageCode, String bussinessCode) {
+        return mDao.find(payPackageCode, bussinessCode);
+    }
+
+    public List<PayPackageStub> findByPayPackage(String payPackageCode) {
         return mDao.findByPayPackage(payPackageCode);
     }
 
@@ -53,7 +57,7 @@ public class PayPackageStubService {
         return findByCode(code) != null;
     }
 
-    public int findTotalPrice(String payPackageCode){
+    public int findTotalPrice(String payPackageCode) {
         return mDao.findTotalPrice(payPackageCode);
     }
 

@@ -26,7 +26,7 @@ public class PayPackageWSTest extends SpringTestCase {
 
         CusPayCustomAddReq.PayPackageStub stub = cusPayCustomAddReq.new PayPackageStub();
         stub.businessCode = "AS";
-        stub.count = 300;
+        stub.count = 20;
         stub.frequency = 24;
         stub.priority = 4;
         stub.day = 30;
@@ -34,8 +34,24 @@ public class PayPackageWSTest extends SpringTestCase {
 
         stub = cusPayCustomAddReq.new PayPackageStub();
         stub.businessCode = "MS";
-        stub.count = 200;
+        stub.count = 10;
         stub.frequency = 24;
+        stub.priority = 4;
+        stub.day = 30;
+        cusPayCustomAddReq.data.add(stub);
+
+        stub = cusPayCustomAddReq.new PayPackageStub();
+        stub.businessCode = "KRS";
+        stub.count = 5;
+        stub.frequency = 24;
+        stub.priority = 4;
+        stub.day = 30;
+        cusPayCustomAddReq.data.add(stub);
+
+        stub = cusPayCustomAddReq.new PayPackageStub();
+        stub.businessCode = "FS";
+        stub.count = 5;
+        stub.frequency = 12;
         stub.priority = 4;
         stub.day = 30;
         cusPayCustomAddReq.data.add(stub);
@@ -58,7 +74,7 @@ public class PayPackageWSTest extends SpringTestCase {
     @Test
     public void getList(){
         PayPackageQueryReq req = new PayPackageQueryReq();
-        req.customerCode = "EC_001";
+        req.customerCode = "EC_002";
         req.platformCode = "ERP";
         req.token = "123456789";
 
@@ -68,7 +84,7 @@ public class PayPackageWSTest extends SpringTestCase {
     @Test
     public void getPaied(){
         PaiedQueryReq req = new PaiedQueryReq();
-        req.customerCode = "EC_001";
+        req.customerCode = "EC_002";
         req.platformCode = "ERP";
         req.token = "123456789";
 

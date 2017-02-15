@@ -29,4 +29,12 @@
         bec_code = #{0}
     </select>
 
+    <select id="findActived" resultMap="CustomerPayPackageMap">
+        SELECT * FROM relation_customer_pay_package
+        WHERE
+        bec_code = #{0}
+        and
+        rcpp_status = 1;
+    </select>
+
 </mapper>

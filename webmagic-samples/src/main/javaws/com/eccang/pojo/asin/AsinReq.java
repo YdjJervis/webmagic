@@ -20,7 +20,6 @@ public class AsinReq extends BaseReqParam {
         public String siteCode;
         public String asin;
         public String star;
-        public int priority;
     }
 
     public static void main(String[] args) {

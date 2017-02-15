@@ -5,19 +5,26 @@ import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.asin.*;
 import com.eccang.spider.amazon.pojo.Asin;
+import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.batch.Batch;
 import com.eccang.spider.amazon.pojo.batch.BatchAsin;
 import com.eccang.spider.amazon.pojo.crawl.Product;
+import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
 import com.eccang.spider.amazon.pojo.relation.AsinRootAsin;
 import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
+import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
+import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
 import com.eccang.spider.amazon.service.AsinService;
+import com.eccang.spider.amazon.service.BusinessService;
 import com.eccang.spider.amazon.service.NoSellService;
 import com.eccang.spider.amazon.service.batch.BatchAsinService;
 import com.eccang.spider.amazon.service.batch.BatchService;
 import com.eccang.spider.amazon.service.crawl.ProductService;
+import com.eccang.spider.amazon.service.pay.PayPackageStubService;
 import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
+import com.eccang.spider.amazon.service.relation.CustomerPayPackageService;
 import com.eccang.spider.amazon.util.DateUtils;
 import com.eccang.util.RegexUtil;
 import com.google.gson.Gson;
@@ -61,6 +68,14 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     @Autowired
     private ProductService mProductService;
 
+    @Autowired
+    private BusinessService mBusinessService;
+
+    @Autowired
+    private CustomerPayPackageService mCustomerPayPackageService;
+    @Autowired
+    private PayPackageStubService mPayPackageStubService;
+
     public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
 
@@ -80,7 +95,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             return baseRspParam.toJson();
         }
 
-        Map<String, String> checkResult = checkAsinData(asinReq.data, 1);
+        Map<String, String> checkResult = checkAsinData(asinReq, 1);
 
         if (checkResult.get(IS_SUCCESS).equalsIgnoreCase("0")) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
@@ -95,6 +110,10 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         asinRsp.msg = baseRspParam.msg;
 
         try {
+            /* 从套餐取出该客户该业务的一些默认配置 */
+            CustomerPayPackage customerPayPackage = mCustomerPayPackageService.findActived(asinReq.customerCode);
+            PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, R.BusinessCode.ASIN_SPIDER);
+
             /* 转换成批次Asin批次详单表 */
             List<BatchAsin> parsedBatchAsinList = new ArrayList<>();
 
@@ -108,6 +127,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 batchAsin.star = asin.star;
                 batchAsin.type = 0;
                 batchAsin.status = 0;
+                batchAsin.priority = payPackageStub.priority;
 
                 AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin.asin, asin.siteCode);
                 /* 已经爬取过的商品，把爬取完成的大字段同步过来 */
@@ -154,7 +174,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             asinRsp.data.oldCount = crawledNum;
 
             /* 把ASIN和客户的关系统计起来 */
-            List<CustomerAsin> customerAsinList = new ArrayList<CustomerAsin>();
+            List<CustomerAsin> customerAsinList = new ArrayList<>();
             for (AsinReq.Asin asin : asinReq.data) {
                 CustomerAsin customerAsin = new CustomerAsin();
                 customerAsin.customerCode = asinReq.customerCode;
@@ -163,6 +183,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 customerAsin.star = asin.star;
                 customerAsin.frequency = R.AsinSetting.UPDATE_FREQUENCY;
                 customerAsin.onSell = mNoSellService.isExist(new Asin(asin.siteCode, asin.asin)) ? 0 : 1;
+                customerAsin.priority = payPackageStub.priority;
                 customerAsinList.add(customerAsin);
             }
             mCustomerAsinService.addAll(customerAsinList);
@@ -207,7 +228,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         }
 
         /* 参数验证阶段 */
-        Map<String, String> checkResult = checkAsinData(asinReq.data, 3);
+        Map<String, String> checkResult = checkAsinData(asinReq, 3);
         if (checkResult.get(IS_SUCCESS).equalsIgnoreCase("0")) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = checkResult.get(MESSAGE);
@@ -243,7 +264,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                     /*根rootAsin不存在：1.asin下架；2.asin还没有爬取过*/
                     dbAsin = new Asin();
                     dbAsin.siteCode = asin.siteCode;
-                    dbAsin.rootAsin = asinRootAsin.rootAsin;
+                    dbAsin.rootAsin = asin.asin;
                     if (mNoSellService.isExist(dbAsin)) {
                         resultAsin.onSell = 0;
                     } else {
@@ -274,14 +295,28 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
     /**
      * 校验asin列表中的数据
-     * 1:asin导入校验
-     * 2：修改asin优先级
-     * 3:asin的查询
+     * 业务导入限制，套餐限制
+     * asin导入校验
+     * 修改asin优先级
+     * asin的查询
      */
-    private Map<String, String> checkAsinData(List<AsinReq.Asin> asins, int type) {
+    private Map<String, String> checkAsinData(AsinReq asinReq, int type) {
         Map<String, String> result = new HashMap<>();
 
-        for (AsinReq.Asin asin : asins) {
+        /* 对业务限制量和套餐总量限制 */
+        Business business = mBusinessService.findByCode(R.BusinessCode.ASIN_SPIDER);
+        if (asinReq.data.size() > business.getImportLimit()) {
+            result.put(MESSAGE, R.RequestMsg.BUSSINESS_LIMIT);
+            return result;
+        }
+
+        CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(asinReq.customerCode, R.BusinessCode.ASIN_SPIDER);
+        if (asinReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
+            result.put(MESSAGE, R.RequestMsg.PAY_PACKAGE_LIMIT);
+            return result;
+        }
+
+        for (AsinReq.Asin asin : asinReq.data) {
             result.put(IS_SUCCESS, "0");
             if (asin == null) {
                 result.put(MESSAGE, R.RequestMsg.PARAMETER_ASIN_LIST_ASIN_ERROR);
@@ -305,12 +340,6 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 }
             }
 
-            if (type == 1 || type == 2) {
-                if (!RegexUtil.isPriorityQualified(asin.priority)) {
-                    result.put(MESSAGE, R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR);
-                    return result;
-                }
-            }
         }
 
         result.put(IS_SUCCESS, "1");
@@ -318,6 +347,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         return result;
     }
 
+    @Deprecated
     @Override
     public String setPriority(String jsonArray) {
         BaseRspParam baseRspParam = auth(jsonArray);
@@ -339,7 +369,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         }
 
         /* 参数验证阶段 */
-        Map<String, String> checkResult = checkAsinData(asinReq.data, 2);
+        Map<String, String> checkResult = checkAsinData(asinReq, 2);
         if (checkResult.get(IS_SUCCESS).equalsIgnoreCase("0")) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = checkResult.get(MESSAGE);
@@ -360,13 +390,13 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 customerAsin = new CustomerAsin(baseRspParam.customerCode, asin.siteCode, asin.asin);
                 customerAsin = mCustomerAsinService.find(customerAsin);
                 if (customerAsin != null) {
-                    if (customerAsin.priority == asin.priority) {
+                    /*if (customerAsin.priority == asin.priority) {
                         priorityRsp.data.noChange++;
                     } else {
                         customerAsin.priority = asin.priority;
                         mCustomerAsinService.update(customerAsin);
                         priorityRsp.data.changed++;
-                    }
+                    }*/
                 } else {
                     /*不存在的asin*/
                     priorityRsp.data.noChange++;
@@ -484,7 +514,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             /*查询asin对应的rootAsin*/
             AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asinObj.asin, asinObj.siteCode);
 
-            if(asinRootAsin == null) {
+            if (asinRootAsin == null) {
                 sLogger.info("asin : " + asinObj.asin + "，asin与rootAsin关系表中不存在");
                 continue;
             }

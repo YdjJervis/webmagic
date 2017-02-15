@@ -17,4 +17,6 @@ public interface CustomerPayPackageDao extends BaseDao<CustomerPayPackage> {
 
 
     List<CustomerPayPackage> findByCustomerCode(String customerCode);
+
+    CustomerPayPackage findActived(String customerCode);
 }

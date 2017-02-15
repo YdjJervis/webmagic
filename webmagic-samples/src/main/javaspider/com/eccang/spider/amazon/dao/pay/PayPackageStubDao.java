@@ -19,4 +19,5 @@ public interface PayPackageStubDao extends BaseDao<PayPackageStub> {
 
     int findTotalPrice(String payPackageCode);
 
+    PayPackageStub find(String payPackageCode, String bussinessCode);
 }

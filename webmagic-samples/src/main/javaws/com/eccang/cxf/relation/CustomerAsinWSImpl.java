@@ -6,7 +6,10 @@ import com.eccang.cxf.asin.AsinWSImpl;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.asin.CusAsinReq;
 import com.eccang.pojo.asin.CusAsinRsp;
+import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
+import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
+import com.eccang.spider.amazon.service.BusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.util.RegexUtil;
@@ -16,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +35,9 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
 
     @Autowired
     private CustomerBusinessService mCustomerBusinessService;
+
+    @Autowired
+    private BusinessService mBusinessService;
 
     @Override
     public String setCrawl(String jsonArray) {
@@ -54,7 +59,7 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
             return baseRspParam.toJson();
         }
 
-        Map<String, String> checkResult = checkData(cusAsinReq.data);
+        Map<String, String> checkResult = checkData(cusAsinReq);
         if (checkResult.get(IS_SUCCESS).equalsIgnoreCase("0")) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = checkResult.get(MESSAGE);
@@ -88,10 +93,37 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
     /**
      * 校验数据
      */
-    private Map<String, String> checkData(List<CusAsinReq.Asin> asins) {
+    private Map<String, String> checkData(CusAsinReq cusAsinReq) {
         Map<String, String> result = new HashMap<>();
 
-        for (CusAsinReq.Asin asin : asins) {
+        int reopenCount = 0;//重新打开的量 = 关闭状态调为打开的 - 打开状态调为关闭的
+        for (CusAsinReq.Asin asin : cusAsinReq.data) {
+            CustomerAsin customerAsin = new CustomerAsin(cusAsinReq.customerCode, asin.siteCode, asin.asin);
+            customerAsin = mCustomerAsinService.find(customerAsin);
+
+            if (customerAsin.crawl != asin.crawl) {
+                if (customerAsin.crawl == 0 && asin.crawl == 1) {
+                    reopenCount++;
+                } else {
+                    reopenCount--;
+                }
+            }
+        }
+
+        /* 对业务限制量和套餐总量限制 */
+        Business business = mBusinessService.findByCode(R.BusinessCode.ASIN_SPIDER);
+        if (cusAsinReq.data.size() > business.getImportLimit()) {
+            result.put(MESSAGE, R.RequestMsg.BUSSINESS_LIMIT);
+            return result;
+        }
+
+        CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(cusAsinReq.customerCode, R.BusinessCode.ASIN_SPIDER);
+        if (reopenCount > customerBusiness.maxData - customerBusiness.useData) {
+            result.put(MESSAGE, R.RequestMsg.PAY_PACKAGE_LIMIT);
+            return result;
+        }
+
+        for (CusAsinReq.Asin asin : cusAsinReq.data) {
             result.put(IS_SUCCESS, "0");
 
             if (asin == null) {

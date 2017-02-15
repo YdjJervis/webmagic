@@ -6,6 +6,7 @@
         <result column="besb_code" property="businessCode" />
         <result column="besb_name" property="businessName" />
         <result column="besb_status" property="status" />
+        <result column="besb_import_limit" property="importLimit" />
         <result column="besb_create_date" property="createDate" />
         <result column="besb_update_date" property="updateDate" />
     </resultMap>
@@ -15,24 +16,28 @@
           besb_code,
           besb_name,
           besb_status,
+          besb_import_limit
         ) VALUES (
           #{businessCode},
           #{businessName},
-          #{status}
+          #{status},
+          #{importLimit}
         )
     </insert>
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO base_eccang_spider_business (
-          besb_code,
-          besb_name,
-          besb_status,
+        besb_code,
+        besb_name,
+        besb_status,
+        besb_import_limit
         ) VALUES
         <foreach collection="list" item="item" index="index" separator=",">
           (
             #{item.businessCode},
             #{item.businessName},
-            #{item.status}
+            #{item.status},
+            #{item.importLimit}
           )
         </foreach>
     </insert>
@@ -42,7 +47,8 @@
           base_eccang_spider_business
         SET
           besb_name = #{businessName},
-          besb_status = #{status}
+          besb_status = #{status},
+          besb_import_limit = #{importLimit}
         WHERE
           besb_code = #{businessCode}
     </update>

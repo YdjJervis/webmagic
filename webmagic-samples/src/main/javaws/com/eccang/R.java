@@ -94,7 +94,8 @@ public final class R {
 
         public static final String BATCH_NUM_WRONG = "批次号格式不正确";
 
-
+        public static final String BUSSINESS_LIMIT = "数量超过该业务限制";
+        public static final String PAY_PACKAGE_LIMIT = "数量超过套餐限制";
 
     }
 
