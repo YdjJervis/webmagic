@@ -60,16 +60,16 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
             for (CustomerKeywordRank customerKeywordRank : rckList) {
                 batchRank = new BatchRank();
                 batchRank.setBatchNum(batch.number);
-                batchRank.setKeyword(customerKeywordRank.getKeyword());
-                batchRank.setSiteCode(customerKeywordRank.getSiteCode());
-                batchRank.setAsin(customerKeywordRank.getAsin());
-                batchRank.setDepartmentCode(customerKeywordRank.getDepartmentCode());
+                batchRank.setKeyword(customerKeywordRank.keyword);
+                batchRank.setSiteCode(customerKeywordRank.siteCode);
+                batchRank.setAsin(customerKeywordRank.asin);
+                batchRank.setDepartmentCode(customerKeywordRank.departmentCode);
                 batchRank.setType(R.CrawlType.KEYWORD_RANK);
-                batchRank.setPriority(customerKeywordRank.getPriority());
+                batchRank.setPriority(customerKeywordRank.priority);
 
                 needAddList.add(batchRank);
 
-                customerKeywordRank.setSyncTime(currentTime);
+                customerKeywordRank.syncTime = currentTime;
                 mCustomerKeywordRankService.update(customerKeywordRank);
             }
 

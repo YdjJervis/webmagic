@@ -42,7 +42,7 @@ public class GenerateBatchMonitor {
             } else if (item instanceof CustomerFollowSell) {
                 customerCode = ((CustomerFollowSell) item).customerCode;
             } else if (item instanceof CustomerKeywordRank) {
-                customerCode = ((CustomerKeywordRank)item).getCustomerCode();
+                customerCode = ((CustomerKeywordRank)item).customerCode;
             }
 
             if (customerListMap.get(customerCode) == null) {

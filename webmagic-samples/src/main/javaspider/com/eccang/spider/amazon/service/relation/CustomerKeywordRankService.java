@@ -1,10 +1,12 @@
 package com.eccang.spider.amazon.service.relation;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.dao.relation.CustomerKeywordRankDao;
 import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +26,17 @@ public class CustomerKeywordRankService {
     }
 
     public void addAll(List<CustomerKeywordRank> customerKeywordRanks) {
-        mCustomerKeywordRankDao.addAll(customerKeywordRanks);
+        List<CustomerKeywordRank> list = new ArrayList<>();
+        for (CustomerKeywordRank rank : customerKeywordRanks) {
+            if (isExist(rank)) {
+                update(rank);
+            } else {
+                list.add(rank);
+            }
+        }
+        if (CollectionUtils.isNotEmpty(list)) {
+            mCustomerKeywordRankDao.addAll(list);
+        }
     }
 
     public List<CustomerKeywordRank> findByCustomer(String customerCode) {

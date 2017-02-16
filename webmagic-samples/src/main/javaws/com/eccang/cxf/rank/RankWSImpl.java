@@ -4,13 +4,20 @@ import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.rank.*;
+import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.crawl.GoodsRankInfo;
 import com.eccang.spider.amazon.pojo.crawl.KeywordRank;
+import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
+import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
 import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
+import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
+import com.eccang.spider.amazon.service.BusinessService;
 import com.eccang.spider.amazon.service.crawl.GoodsRankInfoService;
 import com.eccang.spider.amazon.service.crawl.KeywordRankService;
+import com.eccang.spider.amazon.service.pay.PayPackageStubService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
+import com.eccang.spider.amazon.service.relation.CustomerPayPackageService;
 import com.eccang.spider.amazon.util.DateUtils;
 import com.eccang.util.RegexUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -19,7 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Hardy
@@ -39,6 +49,13 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
     private KeywordRankService mKeywordRankService;
     @Autowired
     private GoodsRankInfoService mGoodsRankInfoService;
+
+    @Autowired
+    private BusinessService mBusinessService;
+    @Autowired
+    private CustomerPayPackageService mCustomerPayPackageService;
+    @Autowired
+    private PayPackageStubService mPayPackageStubService;
 
     @Override
     public String addToMonitor(String json) {
@@ -61,6 +78,26 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
             return baseRspParam.toJson();
         }
 
+        try {
+            /* 业务及套餐限制验证 */
+            Business business = mBusinessService.findByCode(R.BusinessCode.KEYWORD_RANK_SPIDER);
+            if (rankReq.data.size() > business.getImportLimit()) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
+                return baseRspParam.toJson();
+            }
+
+            CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(rankReq.customerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
+            if (rankReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
+                return baseRspParam.toJson();
+            }
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+            return baseRspParam.toJson();
+        }
+
         /* 逻辑处理阶段 */
         RankRsp rankRsp = new RankRsp();
         rankRsp.customerCode = rankReq.customerCode;
@@ -68,18 +105,22 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         rankRsp.msg = baseRspParam.msg;
 
         try {
+            /* 从套餐取出该客户该业务的一些默认配置 */
+            CustomerPayPackage customerPayPackage = mCustomerPayPackageService.findActived(rankReq.customerCode);
+            PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
+
             int crawledNum = 0;
             /* 把客户和keywordRank的关系保存起来 */
             List<CustomerKeywordRank> customerKeywordRanks = new ArrayList<>();
             for (RankReq.KeywordRank keywordRank : rankReq.getData()) {
                 CustomerKeywordRank customerKeywordRank = new CustomerKeywordRank();
-                customerKeywordRank.setCustomerCode(rankReq.customerCode);
-                customerKeywordRank.setSiteCode(keywordRank.getSiteCode());
-                customerKeywordRank.setAsin(keywordRank.getAsin());
-                customerKeywordRank.setKeyword(keywordRank.getKeyword());
-                customerKeywordRank.setDepartmentCode(keywordRank.getDepartmentCode());
-                customerKeywordRank.setPriority(keywordRank.getPriority());
-                customerKeywordRank.setFrequency(keywordRank.getFrequency());
+                customerKeywordRank.customerCode = rankReq.customerCode;
+                customerKeywordRank.siteCode = keywordRank.siteCode;
+                customerKeywordRank.asin = keywordRank.asin;
+                customerKeywordRank.keyword = keywordRank.keyword;
+                customerKeywordRank.departmentCode = keywordRank.departmentCode;
+                customerKeywordRank.priority = payPackageStub.priority;
+                customerKeywordRank.frequency = payPackageStub.frequency;
                 if (mCustomerKeywordRankService.isExist(customerKeywordRank)) {
                     crawledNum++;
                 }
@@ -130,12 +171,54 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
 
         for (RankReq.KeywordRank keywordRank : cusRankUpdateReq.getData()) {
 
-            if (!RegexUtil.isCrawlStatusQualified(keywordRank.getCrawl())) {
+            if (!RegexUtil.isCrawlStatusQualified(keywordRank.crawl)) {
                 baseRspParam.msg = R.RequestMsg.PARAMETER_STATUS_ERROR;
                 return baseRspParam.toJson();
             }
         }
 
+        try {
+            /* 业务及套餐限制验证 */
+            int reopenCount = 0;//重新打开的量 = 关闭状态调为打开的 - 打开状态调为关闭的
+            for (CusRankUpdateReq.KeywordRank cr : cusRankUpdateReq.data) {
+                CustomerKeywordRank ckr = new CustomerKeywordRank();
+                ckr.asin = cr.asin;
+                ckr.keyword = cr.keyword;
+                ckr.customerCode = cusRankUpdateReq.customerCode;
+                ckr.siteCode = cr.siteCode;
+                ckr.departmentCode = cr.departmentCode;
+
+                CustomerKeywordRank customerKeywordRank = mCustomerKeywordRankService.findByObj(ckr);
+
+                if (customerKeywordRank.crawl != cr.crawl) {
+                    if (customerKeywordRank.crawl == 0 && cr.crawl == 1) {
+                        reopenCount++;
+                    } else {
+                        reopenCount--;
+                    }
+                }
+            }
+
+            /* 对业务限制量和套餐总量限制 */
+            Business business = mBusinessService.findByCode(R.BusinessCode.KEYWORD_RANK_SPIDER);
+            if (cusRankUpdateReq.data.size() > business.getImportLimit()) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
+                return baseRspParam.toJson();
+            }
+
+            CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(cusRankUpdateReq.customerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
+            if (reopenCount > customerBusiness.maxData - customerBusiness.useData) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
+                return baseRspParam.toJson();
+            }
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+            return baseRspParam.toJson();
+        }
+
+        /* 逻辑处理阶段 */
         CusRankUpdateRsp cusRankUpdateRsp = new CusRankUpdateRsp();
         cusRankUpdateRsp.customerCode = cusRankUpdateReq.customerCode;
         cusRankUpdateRsp.status = baseRspParam.status;
@@ -145,11 +228,11 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
             CustomerKeywordRank customerKeywordRank;
             for (RankReq.KeywordRank keywordRank : cusRankUpdateReq.getData()) {
                 customerKeywordRank = new CustomerKeywordRank();
-                customerKeywordRank.setCustomerCode(cusRankUpdateReq.customerCode);
-                customerKeywordRank.setSiteCode(keywordRank.getSiteCode());
-                customerKeywordRank.setAsin(keywordRank.getAsin());
-                customerKeywordRank.setKeyword(keywordRank.getKeyword());
-                customerKeywordRank.setDepartmentCode(keywordRank.getDepartmentCode());
+                customerKeywordRank.customerCode = cusRankUpdateReq.customerCode;
+                customerKeywordRank.siteCode = keywordRank.siteCode;
+                customerKeywordRank.asin = keywordRank.asin;
+                customerKeywordRank.keyword = keywordRank.keyword;
+                customerKeywordRank.departmentCode = keywordRank.departmentCode;
                 CustomerKeywordRank cKeywordRank = mCustomerKeywordRankService.findByObj(customerKeywordRank);
 
                 if (cKeywordRank == null) {
@@ -157,15 +240,10 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
                     return cusRankUpdateRsp.toJson();
                 }
 
-                if (keywordRank.getPriority() == cKeywordRank.getPriority() &&
-                        keywordRank.getFrequency() == cKeywordRank.getFrequency() &&
-                        keywordRank.getCrawl() == cKeywordRank.getCrawl()) {
-
+                if (keywordRank.crawl == cKeywordRank.crawl) {
                     cusRankUpdateRsp.data.noChange++;
                 } else {
-                    cKeywordRank.setPriority(keywordRank.getPriority());
-                    cKeywordRank.setFrequency(keywordRank.getFrequency());
-                    cKeywordRank.setCrawl(keywordRank.getCrawl());
+                    cKeywordRank.crawl = keywordRank.crawl;
                     mCustomerKeywordRankService.update(cKeywordRank);
                     cusRankUpdateRsp.data.changed++;
                 }
@@ -196,34 +274,34 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         }
 
         /* 参数验证阶段 */
-        if(rankQueryReq.getData() == null) {
+        if (rankQueryReq.getData() == null) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
             return baseRspParam.toJson();
         }
 
         RankQueryReq.KeywordInfo keywordInfo = rankQueryReq.getData();
-        if (StringUtils.isEmpty(keywordInfo.getBatchNum())) {
+        if (StringUtils.isEmpty(keywordInfo.batchNum)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_BATCH_NUM_ERROR;
             return baseRspParam.toJson();
         }
-        if (StringUtils.isEmpty(keywordInfo.getAsin())) {
+        if (StringUtils.isEmpty(keywordInfo.asin)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_KEYWORD_ASIN_ERROR;
             return baseRspParam.toJson();
         }
-        if (!RegexUtil.isSiteCodeQualified(keywordInfo.getSiteCode())) {
+        if (!RegexUtil.isSiteCodeQualified(keywordInfo.siteCode)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR;
             return baseRspParam.toJson();
         }
-        if (StringUtils.isEmpty(keywordInfo.getKeyword())) {
+        if (StringUtils.isEmpty(keywordInfo.keyword)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_KEYWORD_EMPTY;
             return baseRspParam.toJson();
         }
-        if (StringUtils.isEmpty(keywordInfo.getDepartmentCode())) {
+        if (StringUtils.isEmpty(keywordInfo.departmentCode)) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
             baseRspParam.msg = R.RequestMsg.PARAMETER_DEPARTMENT_CODE_EMPTY;
             return baseRspParam.toJson();
@@ -237,18 +315,18 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         try {
             /*判断关键词是否在监听中*/
             CustomerKeywordRank customerKeywordRank = new CustomerKeywordRank();
-            customerKeywordRank.setCustomerCode(baseRspParam.customerCode);
-            customerKeywordRank.setAsin(keywordInfo.getAsin());
-            customerKeywordRank.setSiteCode(keywordInfo.getSiteCode());
-            customerKeywordRank.setDepartmentCode(keywordInfo.getDepartmentCode());
-            customerKeywordRank.setKeyword(keywordInfo.getKeyword());
+            customerKeywordRank.customerCode = baseRspParam.customerCode;
+            customerKeywordRank.asin = keywordInfo.asin;
+            customerKeywordRank.siteCode = keywordInfo.siteCode;
+            customerKeywordRank.departmentCode = keywordInfo.departmentCode;
+            customerKeywordRank.keyword = keywordInfo.keyword;
             if (!mCustomerKeywordRankService.isExist(customerKeywordRank)) {
                 rankQueryRsp.status = R.HttpStatus.PARAM_WRONG;
                 rankQueryRsp.msg = R.RequestMsg.PARAMETER_KEYWORD_EMPTY__ERROR;
                 return rankQueryRsp.toJson();
             }
 
-            KeywordRank keywordRank = new KeywordRank(keywordInfo.getAsin(), keywordInfo.getKeyword(), keywordInfo.getSiteCode(), keywordInfo.getDepartmentCode());
+            KeywordRank keywordRank = new KeywordRank(keywordInfo.asin, keywordInfo.keyword, keywordInfo.siteCode, keywordInfo.departmentCode);
             KeywordRank kwRank = mKeywordRankService.findByObj(keywordRank);
 
             if (kwRank == null) {
@@ -261,14 +339,14 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
             keywordRankInfo.setKeyword(kwRank.getKeyword());
             keywordRankInfo.setSiteCode(kwRank.getSiteCode());
             keywordRankInfo.setDepartmentCode(kwRank.getDepartmentCode());
-            keywordRankInfo.setBatchNum(rankQueryReq.getData().getBatchNum());
+            keywordRankInfo.setBatchNum(rankQueryReq.getData().batchNum);
             keywordRankInfo.setTotalPages(kwRank.getTotalPages());
             keywordRankInfo.setEveryPage(kwRank.getEveryPage());
             keywordRankInfo.setRankNum(kwRank.getRankNum());
 
             List<RankQueryRsp.KeywordRankInfo.GoodsInfo> goodsInfos = new ArrayList<>();
             RankQueryRsp.KeywordRankInfo.GoodsInfo goodsInfo;
-            List<GoodsRankInfo> goodsRankInfos = mGoodsRankInfoService.findByBatchAndKeywordInfo(rankQueryReq.getData().getBatchNum(), keywordInfo.getAsin(), keywordInfo.getKeyword(), keywordInfo.getSiteCode(), keywordInfo.getDepartmentCode());
+            List<GoodsRankInfo> goodsRankInfos = mGoodsRankInfoService.findByBatchAndKeywordInfo(rankQueryReq.getData().batchNum, keywordInfo.asin, keywordInfo.keyword, keywordInfo.siteCode, keywordInfo.departmentCode);
             for (GoodsRankInfo goodsRankInfo : goodsRankInfos) {
                 goodsInfo = keywordRankInfo.new GoodsInfo();
                 goodsInfo.setRankNum(goodsRankInfo.getRankNum());
@@ -312,16 +390,16 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
             List<CustomerKeywordRank> ckwRanks = mCustomerKeywordRankService.findByCustomer(baseRspParam.customerCode);
             for (CustomerKeywordRank ckwRank : ckwRanks) {
                 customerKeywordRank = cusRankRsp.new CustomerKeywordRank();
-                customerKeywordRank.setSiteCode(ckwRank.getSiteCode());
-                customerKeywordRank.setDepartmentCode(ckwRank.getDepartmentCode());
-                customerKeywordRank.setKeyword(ckwRank.getKeyword());
-                customerKeywordRank.setAsin(ckwRank.getAsin());
-                customerKeywordRank.setCrawl(ckwRank.getCrawl());
-                customerKeywordRank.setPriority(ckwRank.getPriority());
-                customerKeywordRank.setFrequency(ckwRank.getFrequency());
-                customerKeywordRank.setSyncTime(DateUtils.format(ckwRank.getSyncTime()));
-                customerKeywordRank.setCreateTime(DateUtils.format(ckwRank.getCreateTime()));
-                customerKeywordRank.setUpdateTime(DateUtils.format(ckwRank.getUpdateTime()));
+                customerKeywordRank.setSiteCode(ckwRank.siteCode);
+                customerKeywordRank.setDepartmentCode(ckwRank.departmentCode);
+                customerKeywordRank.setKeyword(ckwRank.keyword);
+                customerKeywordRank.setAsin(ckwRank.asin);
+                customerKeywordRank.setCrawl(ckwRank.crawl);
+                customerKeywordRank.setPriority(ckwRank.priority);
+                customerKeywordRank.setFrequency(ckwRank.frequency);
+                customerKeywordRank.setSyncTime(DateUtils.format(ckwRank.syncTime));
+                customerKeywordRank.setCreateTime(DateUtils.format(ckwRank.createTime));
+                customerKeywordRank.setUpdateTime(DateUtils.format(ckwRank.updateTime));
                 customerKeywordRanks.add(customerKeywordRank);
             }
             cusRankRsp.setData(customerKeywordRanks);
@@ -353,41 +431,30 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
                 return checkResult;
             }
 
-            if (StringUtils.isEmpty(keywordRank.getKeyword())) {
+            if (StringUtils.isEmpty(keywordRank.keyword)) {
                 /*校验keyword是不为空*/
                 checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_KEYWORD_EMPTY);
                 return checkResult;
             }
 
-            if (StringUtils.isEmpty(keywordRank.getAsin())) {
+            if (StringUtils.isEmpty(keywordRank.asin)) {
                 /*校验keywordRank是否有空的asin码*/
                 checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_KEYWORD_ASIN_ERROR);
                 return checkResult;
             }
 
-            if (!RegexUtil.isSiteCodeQualified(keywordRank.getSiteCode())) {
+            if (!RegexUtil.isSiteCodeQualified(keywordRank.siteCode)) {
                 /*校验keywordRank中站点码是否正确（为空或不在存在）*/
                 checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_ASIN_SITECODE_ERROR);
                 return checkResult;
             }
 
-            if (StringUtils.isEmpty(keywordRank.getDepartmentCode())) {
+            if (StringUtils.isEmpty(keywordRank.departmentCode)) {
                 /*校验keywordRank中品类码是否正确（为空或不在存在）*/
                 checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_DEPARTMENT_CODE_ERROR);
                 return checkResult;
             }
 
-            if (!RegexUtil.isFrequencyQualified(keywordRank.getFrequency())) {
-                /*校验爬取频率是否在取值范围内*/
-                checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_REVIEW_FREQUENCY_ERROR);
-                return checkResult;
-            }
-
-            if (!RegexUtil.isPriorityQualified(keywordRank.getPriority())) {
-                /*校验优先级是否超出范围*/
-                checkResult.put(MESSAGE, R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR);
-                return checkResult;
-            }
         }
 
         checkResult.put(IS_SUCCESS, "1");

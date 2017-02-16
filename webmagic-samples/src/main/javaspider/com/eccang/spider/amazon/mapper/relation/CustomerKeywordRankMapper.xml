@@ -25,9 +25,7 @@
           bad_code,
           rcrk_crawl,
           rcrk_priority,
-          rcrk_frequency,
-          rcrk_create_time,
-          rcrk_update_time
+          rcrk_frequency
         ) VALUES (
           #{asin},
           #{keyword},
@@ -36,9 +34,7 @@
           #{departmentCode},
           #{crawl},
           #{priority},
-          #{frequency},
-          CURRENT_TIMESTAMP,
-          CURRENT_TIMESTAMP
+          #{frequency}
         )
     </insert>
 
@@ -50,9 +46,7 @@
           bas_code,
           bad_code,
           rcrk_priority,
-          rcrk_frequency,
-          rcrk_create_time,
-          rcrk_update_time
+          rcrk_frequency
         ) VALUES
         <foreach collection="list" index="index" item="item" separator=",">
           (
@@ -62,9 +56,7 @@
             #{item.siteCode},
             #{item.departmentCode},
             #{item.priority},
-            #{item.frequency},
-            CURRENT_TIMESTAMP,
-            CURRENT_TIMESTAMP
+            #{item.frequency}
           )
         </foreach>
     </insert>
@@ -81,8 +73,7 @@
           rcrk_crawl = #{crawl},
           rcrk_priority = #{priority},
           rcrk_frequency = #{frequency},
-          rcrk_sync_time = #{syncTime},
-          rcrk_update_time = CURRENT_TIMESTAMP
+          rcrk_sync_time = #{syncTime}
         WHERE
           rcrk_id = #{id}
     </update>
