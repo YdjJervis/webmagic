@@ -1,12 +1,14 @@
 package com.eccang.amazon.wsclient;
 
+import com.eccang.base.SpringTestCase;
+import com.eccang.pojo.review.CusReviewUpdateReq;
 import com.eccang.pojo.review.ReviewQueryReq;
 import com.eccang.pojo.review.ReviewReq;
+import com.eccang.spider.amazon.service.crawl.ReviewService;
 import com.eccang.wsclient.review.ReviewWSService;
 import com.google.gson.Gson;
 import org.junit.Test;
-import com.eccang.base.SpringTestCase;
-import com.eccang.spider.amazon.pojo.crawl.Review;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Jervis
@@ -15,6 +17,9 @@ import com.eccang.spider.amazon.pojo.crawl.Review;
  * @date 2016/12/22 13:52
  */
 public class ReviewWSTest extends SpringTestCase {
+
+    @Autowired
+    private ReviewService mReviewService;
 
     @Test
     public void query() {
@@ -34,7 +39,7 @@ public class ReviewWSTest extends SpringTestCase {
     }
 
     @Test
-    public void add() {
+    public void addToMonitor() {
         ReviewReq reviewReq = new ReviewReq();
 
         reviewReq.customerCode = "EC_002";
@@ -42,17 +47,23 @@ public class ReviewWSTest extends SpringTestCase {
         reviewReq.token = "123456789";
 
 
-        Review re = new Review();
+        /*Review re = new Review();
         re.star = 1;
-//        List<Review> reviewList = mReviewService.findAll(re);
-//        for (Review reviewLoop : reviewList) {
+        List<Review> reviewList = mReviewService.findAll(re);
+        for (Review reviewLoop : reviewList) {
             ReviewReq.Review review = reviewReq.new Review();
-            review.priority = 2;
             review.reviewId = "Tx164I0R2U1QE3";
             review.siteCode = "US";
             review.asin = "B00HYAL84G";
-            review.frequency = 4;
             reviewReq.data.add(review);
+        }*/
+
+//        for (int i = 0; i < 10; i++) {
+        ReviewReq.Review review = reviewReq.new Review();
+        review.reviewId = "Tx164I0R2U1QE" + 11;
+        review.siteCode = "US";
+        review.asin = "B00HYAL84G";
+        reviewReq.data.add(review);
 //        }
 
         String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq));
@@ -60,38 +71,19 @@ public class ReviewWSTest extends SpringTestCase {
     }
 
     @Test
-    public void setFrequency() {
-        ReviewReq reviewReq = new ReviewReq();
+    public void setReviewMonitor() {
+        CusReviewUpdateReq req = new CusReviewUpdateReq();
 
-        reviewReq.customerCode = "EC_002";
-        reviewReq.platformCode = "ERP";
-        reviewReq.token = "123456789";
+        req.customerCode = "EC_002";
+        req.platformCode = "ERP";
+        req.token = "123456789";
 
-        ReviewReq.Review review1 = reviewReq.new Review();
-        review1.reviewId = "Tx164I0R2U1QE3";
-        review1.frequency = 8;
+        CusReviewUpdateReq.CustomerReview review1 = req.new CustomerReview();
+        review1.reviewId = "Tx164I0R2U1QE4";
+        review1.crawl = 1;
+        req.data.add(review1);
 
-        reviewReq.data.add(review1);
-
-        String json = new ReviewWSService().getReviewWSPort().setFrequency(new Gson().toJson(reviewReq));
-        System.out.println(json);
-    }
-
-    @Test
-    public void setPriority() {
-        ReviewReq reviewReq = new ReviewReq();
-
-        reviewReq.customerCode = "EC_002";
-        reviewReq.platformCode = "ERP";
-        reviewReq.token = "123456789";
-
-        ReviewReq.Review review1 = reviewReq.new Review();
-        review1.reviewId = "Tx164I0R2U1QE3";
-        review1.priority = 3;
-
-        reviewReq.data.add(review1);
-
-        String json = new ReviewWSService().getReviewWSPort().setPriority(new Gson().toJson(reviewReq));
+        String json = new ReviewWSService().getReviewWSPort().setReviewMonitor(new Gson().toJson(req));
         System.out.println(json);
     }
 

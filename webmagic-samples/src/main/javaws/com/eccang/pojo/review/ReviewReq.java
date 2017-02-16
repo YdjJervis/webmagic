@@ -20,8 +20,6 @@ public class ReviewReq extends BaseReqParam {
         public String siteCode;
         public String asin;
         public String reviewId;
-        public int frequency;
-        public int priority;
     }
 
     public static void main(String[] args) {

@@ -16,10 +16,7 @@ public class CusReviewUpdateReq extends BaseReqParam {
     public List<CustomerReview> data = new ArrayList<>();
 
     public class CustomerReview{
-        public String customerCode;
         public String reviewId;
-        public int priority;
         public int crawl;
-        public int frequency;
     }
 }
