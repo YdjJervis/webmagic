@@ -21,6 +21,8 @@ public final class R {
         public static final int PARAM_WRONG = 413;
         /** 服务器异常 */
         public static final int SERVER_EXCEPTION = 500;
+        /** 数量限制 */
+        public static final int COUNT_LIMIT = 414;
     }
 
     public static final class RequestMsg{

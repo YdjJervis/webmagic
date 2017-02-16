@@ -103,6 +103,26 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             return baseRspParam.toJson();
         }
 
+        try {
+            /* 业务及套餐限制验证 */
+            Business business = mBusinessService.findByCode(R.BusinessCode.ASIN_SPIDER);
+            if (asinReq.data.size() > business.getImportLimit()) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
+                return baseRspParam.toJson();
+            }
+
+            CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(asinReq.customerCode, R.BusinessCode.ASIN_SPIDER);
+            if (asinReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
+                return baseRspParam.toJson();
+            }
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+            return baseRspParam.toJson();
+        }
+
         /* 逻辑执行阶段 */
         AsinRsp asinRsp = new AsinRsp();
         asinRsp.customerCode = asinReq.customerCode;
@@ -110,6 +130,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         asinRsp.msg = baseRspParam.msg;
 
         try {
+
             /* 从套餐取出该客户该业务的一些默认配置 */
             CustomerPayPackage customerPayPackage = mCustomerPayPackageService.findActived(asinReq.customerCode);
             PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, R.BusinessCode.ASIN_SPIDER);
@@ -302,19 +323,6 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
      */
     private Map<String, String> checkAsinData(AsinReq asinReq, int type) {
         Map<String, String> result = new HashMap<>();
-
-        /* 对业务限制量和套餐总量限制 */
-        Business business = mBusinessService.findByCode(R.BusinessCode.ASIN_SPIDER);
-        if (asinReq.data.size() > business.getImportLimit()) {
-            result.put(MESSAGE, R.RequestMsg.BUSSINESS_LIMIT);
-            return result;
-        }
-
-        CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(asinReq.customerCode, R.BusinessCode.ASIN_SPIDER);
-        if (asinReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
-            result.put(MESSAGE, R.RequestMsg.PAY_PACKAGE_LIMIT);
-            return result;
-        }
 
         for (AsinReq.Asin asin : asinReq.data) {
             result.put(IS_SUCCESS, "0");
