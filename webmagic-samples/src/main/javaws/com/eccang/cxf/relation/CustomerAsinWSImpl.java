@@ -66,6 +66,41 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
             return baseRspParam.toJson();
         }
 
+        try {
+            /* 业务及套餐限制验证 */
+            int reopenCount = 0;//重新打开的量 = 关闭状态调为打开的 - 打开状态调为关闭的
+            for (CusAsinReq.Asin asin : cusAsinReq.data) {
+                CustomerAsin customerAsin = new CustomerAsin(cusAsinReq.customerCode, asin.siteCode, asin.asin);
+                customerAsin = mCustomerAsinService.find(customerAsin);
+
+                if (customerAsin.crawl != asin.crawl) {
+                    if (customerAsin.crawl == 0 && asin.crawl == 1) {
+                        reopenCount++;
+                    } else {
+                        reopenCount--;
+                    }
+                }
+            }
+
+            /* 对业务限制量和套餐总量限制 */
+            Business business = mBusinessService.findByCode(R.BusinessCode.ASIN_SPIDER);
+            if (cusAsinReq.data.size() > business.getImportLimit()) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
+                return baseRspParam.toJson();
+            }
+
+            CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(cusAsinReq.customerCode, R.BusinessCode.ASIN_SPIDER);
+            if (reopenCount > customerBusiness.maxData - customerBusiness.useData) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
+                return baseRspParam.toJson();
+            }
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+            return baseRspParam.toJson();
+        }
+
         /* 逻辑处理阶段 */
         CusAsinRsp cusAsinRsp = new CusAsinRsp();
         cusAsinRsp.customerCode = baseRspParam.customerCode;
@@ -95,33 +130,6 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
      */
     private Map<String, String> checkData(CusAsinReq cusAsinReq) {
         Map<String, String> result = new HashMap<>();
-
-        int reopenCount = 0;//重新打开的量 = 关闭状态调为打开的 - 打开状态调为关闭的
-        for (CusAsinReq.Asin asin : cusAsinReq.data) {
-            CustomerAsin customerAsin = new CustomerAsin(cusAsinReq.customerCode, asin.siteCode, asin.asin);
-            customerAsin = mCustomerAsinService.find(customerAsin);
-
-            if (customerAsin.crawl != asin.crawl) {
-                if (customerAsin.crawl == 0 && asin.crawl == 1) {
-                    reopenCount++;
-                } else {
-                    reopenCount--;
-                }
-            }
-        }
-
-        /* 对业务限制量和套餐总量限制 */
-        Business business = mBusinessService.findByCode(R.BusinessCode.ASIN_SPIDER);
-        if (cusAsinReq.data.size() > business.getImportLimit()) {
-            result.put(MESSAGE, R.RequestMsg.BUSSINESS_LIMIT);
-            return result;
-        }
-
-        CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(cusAsinReq.customerCode, R.BusinessCode.ASIN_SPIDER);
-        if (reopenCount > customerBusiness.maxData - customerBusiness.useData) {
-            result.put(MESSAGE, R.RequestMsg.PAY_PACKAGE_LIMIT);
-            return result;
-        }
 
         for (CusAsinReq.Asin asin : cusAsinReq.data) {
             result.put(IS_SUCCESS, "0");

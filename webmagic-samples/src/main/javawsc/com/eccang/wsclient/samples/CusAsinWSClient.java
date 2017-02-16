@@ -28,8 +28,20 @@ public class CusAsinWSClient {
 
         CusAsinReq.Asin asin1 = asinReq.new Asin();
 
-        asin1.asin = "B00HYAL84G";
-        asin1.siteCode = "US";
+        asin1.asin = "B01LXA42FB";
+        asin1.siteCode = "UK";
+        asin1.crawl = 1;
+        asinReq.data.add(asin1);
+
+        asin1 = asinReq.new Asin();
+        asin1.asin = "B01FPAJ2A8";
+        asin1.siteCode = "DE";
+        asin1.crawl = 1;
+        asinReq.data.add(asin1);
+
+        asin1 = asinReq.new Asin();
+        asin1.asin = "B01H89KA6Y";
+        asin1.siteCode = "FR";
         asin1.crawl = 1;
         asinReq.data.add(asin1);
 

@@ -62,12 +62,12 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testAsinBatchImport() {
         AsinReq asinReq = new AsinReq();
-        asinReq.customerCode = "EC_001";
+        asinReq.customerCode = "EC_002";
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
         AsinReq.Asin asin = asinReq.new Asin();
-        asin.asin = "0071809252";
+        asin.asin = "0071809251";
         asin.siteCode = "US";
         asin.star = "0-0-1-1-1";
         asinReq.data.add(asin);
@@ -81,11 +81,11 @@ public class AsinWSTest extends SpringTestCase {
     @Test
     public void testAsinBatchImportMany() {
         AsinReq asinReq = new AsinReq();
-        asinReq.customerCode = "EC_001";
+        asinReq.customerCode = "EC_002";
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
-        List<ImportData> importDataList = mImportDataService.find(null,500);
+        List<ImportData> importDataList = mImportDataService.find(null,20);
 
         for (ImportData importData : importDataList) {
             AsinReq.Asin asin = asinReq.new Asin();
