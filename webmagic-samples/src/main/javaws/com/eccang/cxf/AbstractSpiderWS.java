@@ -7,10 +7,13 @@ import com.eccang.pojo.ValidateMsg;
 import com.eccang.spider.amazon.pojo.dict.API;
 import com.eccang.spider.amazon.pojo.dict.Customer;
 import com.eccang.spider.amazon.pojo.dict.Platform;
+import com.eccang.spider.amazon.service.BusinessService;
 import com.eccang.spider.amazon.service.dict.APIService;
 import com.eccang.spider.amazon.service.dict.CustomerService;
 import com.eccang.spider.amazon.service.dict.PlatformService;
+import com.eccang.spider.amazon.service.pay.PayPackageStubService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
+import com.eccang.spider.amazon.service.relation.CustomerPayPackageService;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +38,13 @@ public abstract class AbstractSpiderWS implements SpiderWS {
     private PlatformService mPlatformService;
     @Autowired
     protected CustomerBusinessService mCustomerBusinessService;
+
+    @Autowired
+    protected BusinessService mBusinessService;
+    @Autowired
+    protected CustomerPayPackageService mCustomerPayPackageService;
+    @Autowired
+    protected PayPackageStubService mPayPackageStubService;
 
     protected static final String IS_SUCCESS = "isSuccess";
     protected static final String MESSAGE = "message";

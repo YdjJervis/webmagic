@@ -24,10 +24,11 @@ public class FollowSellWSTest extends SpringTestCase {
 
     @Test
     public void addToMonitor() {
-        List<ImportData> importDataList = mImportDataService.find(null, 3);
+        List<ImportData> importDataList = mImportDataService.find(null, 6);
+        importDataList = importDataList.subList(5, 6);
 
         CusFollowSellAddReq req = new CusFollowSellAddReq();
-        req.customerCode = "EC_001";
+        req.customerCode = "EC_002";
         req.platformCode = "ERP";
         req.token = "123456789";
 
@@ -35,8 +36,6 @@ public class FollowSellWSTest extends SpringTestCase {
             CusFollowSellAddReq.FollowSell followSell = req.new FollowSell();
             followSell.siteCode = importData.getSiteCode();
             followSell.asin = importData.getAsin();
-            followSell.frequency = 2;
-            followSell.priority = 3;
             req.data.add(followSell);
         }
 
@@ -64,41 +63,24 @@ public class FollowSellWSTest extends SpringTestCase {
 
     @Test
     public void setStatus() {
-        /* 查询 */
-        CusFollowSellQueryReq req = new CusFollowSellQueryReq();
-        req.customerCode = "EC_001";
-        req.platformCode = "ERP";
-        req.token = "123456789";
-
-        String params = new Gson().toJson(req);
-        System.out.println(params);
-
-        String result = new FollowSellWSService().getFollowSellWSPort().getMonitorList(params);
-        CusFollowSellQueryRsp rsp = new Gson().fromJson(result, CusFollowSellQueryRsp.class);
 
         /* 修改 */
         CusFollowSellUpdateReq updateReq = new CusFollowSellUpdateReq();
-        updateReq.customerCode = "EC_001";
+        updateReq.customerCode = "EC_002";
         updateReq.platformCode = "ERP";
         updateReq.token = "123456789";
 
-        for (CusFollowSellQueryRsp.CusFollowSell cusFollowSell : rsp.data) {
-            CusFollowSellUpdateReq.FollowSell followSell = updateReq.new FollowSell();
-            followSell.siteCode = cusFollowSell.siteCode;
-            followSell.asin = cusFollowSell.asin;
-            followSell.frequency = cusFollowSell.frequency;
-            followSell.priority = cusFollowSell.priority;
-            followSell.sellerId = "Seller004";
-            followSell.crawl = 0;
-            updateReq.data.add(followSell);
-        }
+        CusFollowSellUpdateReq.FollowSell followSell = updateReq.new FollowSell();
+        followSell.siteCode = "UK";
+        followSell.asin = "B01LXA42FB";
+        followSell.sellerId = "Seller004";
+        followSell.crawl = 1;
+        updateReq.data.add(followSell);
 
-        params = new Gson().toJson(updateReq);
+        String params = new Gson().toJson(updateReq);
         System.out.println(params);
 
-        params = "{\"data\":[],\"customerCode\":\"EC_001\",\"platformCode\":\"ERP\",\"token\":\"123456789\"}";
-
-        result = new FollowSellWSService().getFollowSellWSPort().setStatus(params);
+        String result = new FollowSellWSService().getFollowSellWSPort().setStatus(params);
         System.out.println(result);
 
     }

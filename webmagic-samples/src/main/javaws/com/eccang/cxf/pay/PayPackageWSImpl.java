@@ -14,9 +14,7 @@ import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
 import com.eccang.spider.amazon.service.pay.PayCalculatorImpl;
 import com.eccang.spider.amazon.service.pay.PayPackageLogService;
 import com.eccang.spider.amazon.service.pay.PayPackageService;
-import com.eccang.spider.amazon.service.pay.PayPackageStubService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
-import com.eccang.spider.amazon.service.relation.CustomerPayPackageService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +37,6 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
 
     @Autowired
     private PayPackageService mPayPackageService;
-    @Autowired
-    private PayPackageStubService mPayPackageStubService;
-    @Autowired
-    private CustomerPayPackageService mCustomerPayPackageService;
 
     @Autowired
     private PayCalculatorImpl mPayCalculator;

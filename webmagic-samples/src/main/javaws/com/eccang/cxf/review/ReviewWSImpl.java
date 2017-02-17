@@ -8,10 +8,11 @@ import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
 import com.eccang.spider.amazon.pojo.relation.*;
-import com.eccang.spider.amazon.service.BusinessService;
 import com.eccang.spider.amazon.service.crawl.ReviewService;
-import com.eccang.spider.amazon.service.pay.PayPackageStubService;
-import com.eccang.spider.amazon.service.relation.*;
+import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
+import com.eccang.spider.amazon.service.relation.CustomerAsinService;
+import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
+import com.eccang.spider.amazon.service.relation.CustomerReviewService;
 import com.eccang.spider.amazon.util.DateUtils;
 import com.eccang.util.RegexUtil;
 import com.google.common.collect.Sets;
@@ -48,13 +49,6 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
     @Autowired
     private CustomerBusinessService mCustomerBusinessService;
-
-    @Autowired
-    private BusinessService mBusinessService;
-    @Autowired
-    private CustomerPayPackageService mCustomerPayPackageService;
-    @Autowired
-    private PayPackageStubService mPayPackageStubService;
 
     public String addToMonitor(String json) {
         BaseRspParam baseRspParam = auth(json);

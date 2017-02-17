@@ -11,13 +11,10 @@ import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
 import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
 import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
 import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
-import com.eccang.spider.amazon.service.BusinessService;
 import com.eccang.spider.amazon.service.crawl.GoodsRankInfoService;
 import com.eccang.spider.amazon.service.crawl.KeywordRankService;
-import com.eccang.spider.amazon.service.pay.PayPackageStubService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
 import com.eccang.spider.amazon.service.relation.CustomerKeywordRankService;
-import com.eccang.spider.amazon.service.relation.CustomerPayPackageService;
 import com.eccang.spider.amazon.util.DateUtils;
 import com.eccang.util.RegexUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -49,13 +46,6 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
     private KeywordRankService mKeywordRankService;
     @Autowired
     private GoodsRankInfoService mGoodsRankInfoService;
-
-    @Autowired
-    private BusinessService mBusinessService;
-    @Autowired
-    private CustomerPayPackageService mCustomerPayPackageService;
-    @Autowired
-    private PayPackageStubService mPayPackageStubService;
 
     @Override
     public String addToMonitor(String json) {

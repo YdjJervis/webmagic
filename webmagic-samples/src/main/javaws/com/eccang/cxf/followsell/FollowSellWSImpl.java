@@ -6,8 +6,12 @@ import com.eccang.pojo.BaseReqParam;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.ValidateMsg;
 import com.eccang.pojo.followsell.*;
+import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.crawl.FollowSell;
+import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
+import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
 import com.eccang.spider.amazon.pojo.relation.CustomerFollowSell;
+import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
 import com.eccang.spider.amazon.service.crawl.FollowSellService;
 import com.eccang.spider.amazon.service.relation.CustomerFollowSellService;
 import com.eccang.spider.amazon.util.DateUtils;
@@ -59,6 +63,26 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             return baseRspParam.toJson();
         }
 
+        try {
+            /* 业务及套餐限制验证 */
+            Business business = mBusinessService.findByCode(R.BusinessCode.FOLLOW_SELL);
+            if (followSellReq.data.size() > business.getImportLimit()) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
+                return baseRspParam.toJson();
+            }
+
+            CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(followSellReq.customerCode, R.BusinessCode.FOLLOW_SELL);
+            if (followSellReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
+                return baseRspParam.toJson();
+            }
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+            return baseRspParam.toJson();
+        }
+
         /* 逻辑处理阶段 */
         CusFollowSellAddRsp followSellRsp = new CusFollowSellAddRsp();
         followSellRsp.customerCode = followSellReq.customerCode;
@@ -95,13 +119,17 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
     }
 
     private CustomerFollowSell getCustomerFollowSell(CusFollowSellAddReq followSellReq, CusFollowSellAddReq.FollowSell followSell) {
+        /* 从套餐取出该客户该业务的一些默认配置 */
+        CustomerPayPackage customerPayPackage = mCustomerPayPackageService.findActived(followSellReq.customerCode);
+        PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, R.BusinessCode.FOLLOW_SELL);
+
         CustomerFollowSell cusFollowSell = new CustomerFollowSell();
         cusFollowSell.customerCode = followSellReq.customerCode;
         cusFollowSell.siteCode = followSell.siteCode;
         cusFollowSell.asin = followSell.asin;
         cusFollowSell.sellerId = followSell.sellerId;
-        cusFollowSell.priority = followSell.priority;
-        cusFollowSell.frequency = followSell.frequency;
+        cusFollowSell.priority = payPackageStub.priority;
+        cusFollowSell.frequency = payPackageStub.frequency;
         return cusFollowSell;
     }
 
@@ -126,6 +154,41 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             return baseRspParam.toJson();
         }
 
+        try {
+            /* 业务及套餐限制验证 */
+            int reopenCount = 0;//重新打开的量 = 关闭状态调为打开的 - 打开状态调为关闭的
+            for (CusFollowSellUpdateReq.FollowSell followSell : followSellUpdateReq.data) {
+
+                CustomerFollowSell customerFollowSell = mCustomerFollowSellService.find(followSellUpdateReq.customerCode, followSell.siteCode, followSell.asin);
+
+                if (customerFollowSell.crawl != followSell.crawl) {
+                    if (customerFollowSell.crawl == 0 && followSell.crawl == 1) {
+                        reopenCount++;
+                    } else {
+                        reopenCount--;
+                    }
+                }
+            }
+
+            /* 对业务限制量和套餐总量限制 */
+            Business business = mBusinessService.findByCode(R.BusinessCode.FOLLOW_SELL);
+            if (followSellUpdateReq.data.size() > business.getImportLimit()) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
+                return baseRspParam.toJson();
+            }
+
+            CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(followSellUpdateReq.customerCode, R.BusinessCode.FOLLOW_SELL);
+            if (reopenCount > customerBusiness.maxData - customerBusiness.useData) {
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
+                return baseRspParam.toJson();
+            }
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+            return baseRspParam.toJson();
+        }
+
         /* 逻辑处理阶段 */
         CusFollowSellUpdateRsp followSellUpdateRsp = new CusFollowSellUpdateRsp();
         followSellUpdateRsp.customerCode = baseRspParam.customerCode;
@@ -144,8 +207,6 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
                 }
 
                 if (customerFollowSell.crawl != dbCusFollowSell.crawl
-                        || customerFollowSell.frequency != dbCusFollowSell.frequency
-                        || customerFollowSell.priority != dbCusFollowSell.priority
                         || !customerFollowSell.sellerId.equals(dbCusFollowSell.sellerId)) {
                     followSellUpdateRsp.data.changed++;
                     mCustomerFollowSellService.update(customerFollowSell);
@@ -293,15 +354,6 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
                 if (StringUtils.isEmpty(followSell.asin)) {
                     return getValidateMsg(false, R.RequestMsg.PARAMETER_KEYWORD_ASIN_ERROR);
                 }
-                if (!RegexUtil.isFrequencyQualified(followSell.frequency)) {
-                    /*校验爬取频率是否在取值范围内*/
-                    return getValidateMsg(false, R.RequestMsg.PARAMETER_REVIEW_FREQUENCY_ERROR);
-                }
-                if (!RegexUtil.isPriorityQualified(followSell.priority)) {
-                    /*校验优先级是否超出范围*/
-                    return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR);
-                }
-
                 if (baseReqParam instanceof CusFollowSellUpdateReq) {
                     if (!RegexUtil.isCrawlStatusQualified(followSell.crawl)) {
                         return getValidateMsg(false, R.RequestMsg.PARAMETER_STATUS_ERROR);

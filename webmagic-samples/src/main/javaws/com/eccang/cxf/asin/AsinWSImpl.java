@@ -15,16 +15,13 @@ import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
 import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
 import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
 import com.eccang.spider.amazon.service.AsinService;
-import com.eccang.spider.amazon.service.BusinessService;
 import com.eccang.spider.amazon.service.NoSellService;
 import com.eccang.spider.amazon.service.batch.BatchAsinService;
 import com.eccang.spider.amazon.service.batch.BatchService;
 import com.eccang.spider.amazon.service.crawl.ProductService;
-import com.eccang.spider.amazon.service.pay.PayPackageStubService;
 import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
-import com.eccang.spider.amazon.service.relation.CustomerPayPackageService;
 import com.eccang.spider.amazon.util.DateUtils;
 import com.eccang.util.RegexUtil;
 import com.google.gson.Gson;
@@ -67,14 +64,6 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
 
     @Autowired
     private ProductService mProductService;
-
-    @Autowired
-    private BusinessService mBusinessService;
-
-    @Autowired
-    private CustomerPayPackageService mCustomerPayPackageService;
-    @Autowired
-    private PayPackageStubService mPayPackageStubService;
 
     public String addToCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
