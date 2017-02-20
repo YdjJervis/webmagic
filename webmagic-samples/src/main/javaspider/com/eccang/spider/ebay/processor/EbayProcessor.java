@@ -51,6 +51,11 @@ public abstract class EbayProcessor implements PageProcessor {
         updateUrlStatus(page);
         if(page.getStatusCode() == 200) {
             dealOtherPage(page);
+
+            /*删除成功的URL，入库到历史表中*/
+            EbayUrl ebayUrl = getUrl(page);
+            mEbayUrlHistoryService.add(ebayUrl);
+            mEbayUrlService.deleteById(ebayUrl);
         }
     }
 

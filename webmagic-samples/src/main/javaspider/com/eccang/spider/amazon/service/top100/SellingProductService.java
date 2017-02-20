@@ -19,6 +19,11 @@ public class SellingProductService {
     SellingProductDao mDao;
 
     public void addAll(List<SellingProduct> products) {
-        mDao.addAll(products);
+        for (SellingProduct product : products) {
+            if(mDao.count(product.urlMD5) > 0) {
+                continue;
+            }
+            mDao.add(product);
+        }
     }
 }

@@ -13,4 +13,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SellingProductDao extends BaseDao<SellingProduct> {
 
+    int count(String urlMD5);
+
 }

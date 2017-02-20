@@ -21,6 +21,8 @@ public interface UrlDao extends BaseDao<Url> {
      */
     List<Url> findByType(int type);
 
+    List<Url> findTop100();
+
     /**
      * @return 指定站点的ASIN的Url列表
      */
@@ -37,10 +39,14 @@ public interface UrlDao extends BaseDao<Url> {
 
     Url findByUrlMd5(String urlMd5);
 
+    int findByUrlMD5Count(String urlMD5);
+
     /**
      * @param type 0-全量；1-监听；2-更新
      */
     void deleteByType(int type);
 
     List<Url> findByBatchNum(String batchNumber);
+
+    List<Url> findByBatchNumAndSite(String batchNum, String siteCode);
 }

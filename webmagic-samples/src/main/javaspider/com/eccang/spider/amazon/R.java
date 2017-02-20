@@ -59,6 +59,7 @@ public final class R {
         public static final int REVIEW_UPDATE = 2;
         public static final int FOLLOW_SELL = 3;
         public static final int KEYWORD_RANK = 4;
+        public static final int TOP_100 = 5;
     }
 
     /**
@@ -73,6 +74,15 @@ public final class R {
         public static final String ES = "ES"; //西班牙
         public static final String JP = "JP";
         public static final String CA = "CA"; //加拿大
+        public static final String AU = "AU"; //澳大利亚
+        public static final String NL = "NL"; //荷兰
+        public static final String CH = "CH"; //瑞士
+        public static final String SG = "SG"; //新加坡
+        public static final String PL = "PL"; //波兰
+        public static final String AT = "AT"; //奥地利
+        public static final String IE = "IE"; //爱尔兰
+        public static final String MY = "MY"; //马来西亚
+        public static final String PH = "PH"; //菲律宾
     }
 
     public static final class KeywordRank {
@@ -82,6 +92,12 @@ public final class R {
         public static final String DEPARTMENT = "url"; /*搜索关键词品类参数*/
     }
 
+    /**
+     *top100对应站点的热销商品排名url
+     */
+    public static final class Top100 {
+        public static final String US = "https://www.amazon.com/bestsellers";
+    }
     /** 业务代码 */
     public static final class BusinessCode {
         public static final String ASIN_SPIDER = "AS"; /** 爬取asin */

@@ -35,7 +35,7 @@ public class UrlServiceTest extends SpringTestCase {
 
         Url url = getUrl();
 
-        List<Url> urlList = new ArrayList<Url>();
+        List<Url> urlList = new ArrayList<>();
         urlList.add(url);
 
         mUrlService.addAll(urlList);
@@ -79,5 +79,13 @@ public class UrlServiceTest extends SpringTestCase {
     @Test
     public void testDeleteByUrlMd5(){
         mUrlService.deleteByUrlMd5("f30bd0a8a50aeb71");
+    }
+
+    @Test
+    public void testFindTop100() {
+        List<Url> urls = mUrlService.findTop100();
+        for (Url url : urls) {
+            System.out.println(url);
+        }
     }
 }

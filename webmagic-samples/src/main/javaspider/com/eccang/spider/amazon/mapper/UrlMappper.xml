@@ -116,7 +116,18 @@
         AND sau_type = #{0}
         AND sau_crawling = 0
         ORDER BY
-        sau_priority LIMIT 10;
+        sau_priority LIMIT 1;
+    </select>
+
+    <select id="findTop100" resultMap="UrlResultMap">
+        SELECT * FROM
+          spider_amazon_url
+        WHERE
+          sau_status != 200
+          AND sau_type in (6,7,8)
+          AND sau_crawling = 0
+        ORDER BY
+          sau_type DESC LIMIT 1;
     </select>
 
     <select id="find" resultMap="UrlResultMap">
@@ -161,6 +172,20 @@
         select * from spider_amazon_url
         WHERE
         bo_batch_num = #{0};
+    </select>
+
+    <select id="findByUrlMD5Count" resultType="java.lang.Integer">
+        SELECT count(*) FROM spider_amazon_url
+        WHERE sau_url_md5 = #{0}
+    </select>
+
+    <select id="findByBatchNumAndSite" resultMap="UrlResultMap">
+          SELECT
+            *
+          FROM
+            spider_amazon_url
+          WHERE
+            bo_batch_num = #{0} AND bas_code = #{1}
     </select>
 
     <!-- 设置URL的状态为未爬取 -->

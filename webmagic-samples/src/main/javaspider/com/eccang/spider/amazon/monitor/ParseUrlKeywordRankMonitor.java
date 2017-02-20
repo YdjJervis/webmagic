@@ -1,5 +1,6 @@
 package com.eccang.spider.amazon.monitor;
 
+import com.eccang.spider.amazon.R;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class ParseUrlKeywordRankMonitor extends ParseMonitor {
                 sLogger.info(e);
             }
             url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
-            url.type = batchRank.getType();
+            url.type = R.CrawlType.KEYWORD_RANK;
             url.asin = batchRank.getAsin();
             url.priority = batchRank.getPriority();
 

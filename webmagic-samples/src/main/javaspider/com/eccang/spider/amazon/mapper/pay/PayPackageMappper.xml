@@ -24,7 +24,7 @@
         )
     </insert>
 
-    <select id="findByCode" resultMap="PayPackageResultMap">
+    <select id="findByCode" resultMap="PayPackageResultMap" parameterType="java.lang.String">
         select * from base_pay_package
         WHERE
         bpp_code = #{0}

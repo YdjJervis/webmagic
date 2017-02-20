@@ -2,9 +2,17 @@ package com.eccang.amazon.processor;
 
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.Url;
+import com.eccang.spider.amazon.pojo.crawl.Department;
 import com.eccang.spider.base.util.UrlUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.htmlcleaner.CleanerProperties;
+import org.htmlcleaner.DomSerializer;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
@@ -12,6 +20,11 @@ import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Selectable;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +37,7 @@ public class Top100ProcessorTest implements PageProcessor {
 
     @Override
     public void process(Page page) {
-//        extractTop100ProductInfo(page);
-        System.out.println(page.getHtml().xpath("//li[@id='zg_tabTitle' and @class='active']/h3/text()").get());
+        extractDepartment(page);
     }
 
     @Override
@@ -75,6 +87,48 @@ public class Top100ProcessorTest implements PageProcessor {
         }
     }
 
+    /**
+     * 解析品类名称与url
+     */
+    private List<Department> extractDepartment(Page page) {
+        List<Department> departments = new ArrayList<>();
+//        List<Selectable> depNodes = page.getHtml().xpath("//*[@id='zg_browseRoot']//span[@class='zg_selected']/parent::li").nodes();
+
+        try {
+            TagNode tagNode = new HtmlCleaner().clean(page.getHtml().get());
+            Document document = new DomSerializer(new CleanerProperties()).createDOM(tagNode);
+            XPath xPath = XPathFactory.newInstance().newXPath();
+
+            NodeList nodeList = (NodeList) xPath.evaluate("//*[@id='zg_browseRoot']//*[@class='zg_selected']/parent::li/parent::ul/ul/li/a", document, XPathConstants.NODESET);
+
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                System.out.println(node.getTextContent() + ":" + xPath.evaluate("@href", node,
+                        XPathConstants.STRING));
+            }
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        }
+
+//        if (CollectionUtils.isNotEmpty(depNodes)) {
+//            Department department;
+//            String url;
+//            for (Selectable depNode : depNodes) {
+//                department = new Department();
+//                department.depName = depNode.xpath("/a/text()").get();
+//                url = depNode.xpath("/a/@href").get();
+//                department.depUrl = url;
+//                department.urlMD5 = UrlUtils.md5(url);
+//                departments.add(department);
+//            }
+//        }
+//
+        return departments;
+    }
+
     private List<Url> extractTop100ProductListing(Page page) {
         List<Url> urls = new ArrayList<>();
         List<Selectable> nodes = page.getHtml().xpath("//*[@id='zg_paginationWrapper']/ol/li").nodes();
@@ -108,4 +162,6 @@ public class Top100ProcessorTest implements PageProcessor {
                 .addRequest(request)
                 .start();
     }
+
+
 }

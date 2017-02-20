@@ -2,6 +2,7 @@ package com.eccang.spider.amazon.service.crawl;
 
 import com.eccang.spider.amazon.dao.crawl.DepartmentDao;
 import com.eccang.spider.amazon.pojo.crawl.Department;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,18 +50,24 @@ public class DepartmentService {
         return mDao.findByNameAndUrlMD5(depName, depUrl);
     }
 
-    /**
-     * 查询父品类下的子品类信息
-     */
-    public List<Department> findByParent(String pDepName, String urlMD5) {
-        return mDao.findByParent(pDepName, urlMD5);
+    public List<Department> findByParentUrl(String pDepUrl) {
+        return mDao.findByParentUrl(pDepUrl);
     }
 
     /**
      * 批量新增
      */
     public void addAll(List<Department> departments) {
-        mDao.addAll(departments);
+
+        if(CollectionUtils.isEmpty(departments) || departments.size() == 0) {
+            return;
+        }
+
+        for (Department department : departments) {
+            if(mDao.findChildDep(department.pDepUrl, department.depUrl) == 0) {
+                mDao.add(department);
+            }
+        }
     }
 
     /**

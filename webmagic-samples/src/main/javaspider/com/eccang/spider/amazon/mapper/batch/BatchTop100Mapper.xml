@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.batch.BatchTop100Dao">
+    <resultMap id="BatchTop100Map" type="BatchTop100">
+        <id column="bot_id" property="id"/>
+        <result column="bo_batch_num" property="batchNum"/>
+        <result column="bas_code" property="siteCode"/>
+        <result column="bot_type" property="type"/>
+        <result column="bot_status" property="status"/>
+        <result column="bot_progress" property="progress"/>
+        <result column="bot_extra" property="extra"/>
+        <result column="bot_create_time" property="createTime"/>
+        <result column="bot_update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="add" parameterType="com.eccang.spider.amazon.pojo.batch.BatchTop100">
+        INSERT INTO batch_order_top100(
+          bo_batch_num,
+          bas_code,
+          bot_type,
+          bot_status,
+          bot_progress,
+          bot_extra
+        ) VALUES (
+          #{batchNum},
+          #{siteCode},
+          #{type},
+          #{status},
+          #{progress},
+          #{extra}
+        )
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO batch_order_top100(
+          bo_batch_num,
+          bas_code,
+          bot_type,
+          bot_status,
+          bot_progress,
+          bot_extra
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+              #{item.batchNum},
+              #{item.siteCode},
+              #{item.type},
+              #{item.status},
+              #{item.progress},
+              #{item.extra}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.eccang.spider.amazon.pojo.batch.BatchTop100">
+      UPDATE
+        batch_order_top100
+      SET
+        bo_batch_num = #{batchNum},
+        bas_code = #{siteCode},
+        bot_type = #{type},
+        bot_status = #{status},
+        bot_progress = #{progress},
+        bot_extra = #{extra}
+      WHERE
+        bot_id = #{id}
+    </update>
+
+    <select id="findByBatchNum" parameterType="java.lang.String" resultMap="BatchTop100Map">
+      SELECT
+        *
+      FROM
+        batch_order_top100
+      WHERE
+        bo_batch_num = #{0}
+    </select>
+
+    <select id="findNotCrawl" resultMap="BatchTop100Map">
+        SELECT
+          *
+        FROM
+          batch_order_top100
+        WHERE
+          bot_status = 0
+    </select>
+
+    <select id="findByBatchNumAndSite" resultMap="BatchTop100Map" parameterType="java.lang.String">
+        SELECT
+          *
+        FROM
+          batch_order_top100
+        WHERE
+          bo_batch_num = #{0} AND bas_code = #{1}
+    </select>
+
+    <!-- 查询某个单号的平均进度 -->
+    <select id="findAverageProgress" resultType="float">
+        SELECT SUM(bot_progress)/COUNT(*) FROM batch_order_top100 WHERE bo_batch_num = #{0};
+    </select>
+</mapper>

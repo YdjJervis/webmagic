@@ -39,10 +39,6 @@ public class EbaySellerInfoProcessor extends EbayProcessor implements ScheduledT
             sLogger.info("产品url:" + getUrl(page).url + "中，不存在卖家信息.");
         }
         mEbayUrlService.update(ebayUrl);
-
-        /*删除成功的URL，入库到历史表中*/
-        mEbayUrlHistoryService.add(ebayUrl);
-        mEbayUrlService.deleteById(ebayUrl);
     }
 
     private SellerInfo extractSellerInfo(Page page, EbayUrl ebayUrl) {
@@ -89,54 +85,56 @@ public class EbaySellerInfoProcessor extends EbayProcessor implements ScheduledT
      */
     private void extractContact(SellerInfo sellerInfo, String contactName, String contactValue, String siteCode) {
         if (StringUtils.isNotEmpty(contactName) && StringUtils.isNotEmpty(contactValue)) {
-            if (siteCode.equalsIgnoreCase(R.SiteCode.US)) {
+            if (siteCode.equalsIgnoreCase(R.SiteCode.US) || siteCode.equalsIgnoreCase(R.SiteCode.CA)
+                    || siteCode.equalsIgnoreCase(R.SiteCode.AU) || siteCode.equalsIgnoreCase(R.SiteCode.SG)
+                    || siteCode.equalsIgnoreCase(R.SiteCode.IE) || siteCode.equalsIgnoreCase(R.SiteCode.MY)
+                    || siteCode.equalsIgnoreCase(R.SiteCode.PH)) {
                 if (contactName.toLowerCase().contains("phone")) {
                     sellerInfo.phone = contactValue;
                 } else if (contactName.toLowerCase().contains("email")) {
                     sellerInfo.email = contactValue;
-                } else if (contactName.toLowerCase().contains("fax")) {
-                    sellerInfo.fax = contactValue;
                 }
-            } else if (siteCode.equalsIgnoreCase(R.SiteCode.DE)) {
+            } else if (siteCode.equalsIgnoreCase(R.SiteCode.DE) || siteCode.equalsIgnoreCase(R.SiteCode.CH)
+                    || siteCode.equalsIgnoreCase(R.SiteCode.PL) || siteCode.equalsIgnoreCase(R.SiteCode.AT)) {
                 if (contactName.toLowerCase().contains("telefon")) {
                     sellerInfo.phone = contactValue;
                 } else if (contactName.toLowerCase().contains("e-mail")) {
                     sellerInfo.email = contactValue;
-                } else if (contactName.toLowerCase().contains("fax")) {
-                    sellerInfo.fax = contactValue;
                 }
             } else if (siteCode.equalsIgnoreCase(R.SiteCode.FR)) {
                 if (contactName.toLowerCase().contains("téléphone")) {
                     sellerInfo.phone = contactValue;
                 } else if (contactName.toLowerCase().contains("e-mail")) {
                     sellerInfo.email = contactValue;
-                } else if (contactName.toLowerCase().contains("fax")) {
-                    sellerInfo.fax = contactValue;
                 }
             } else if (siteCode.equalsIgnoreCase(R.SiteCode.IT)) {
                 if (contactName.toLowerCase().contains("telefono")) {
                     sellerInfo.phone = contactValue;
                 } else if (contactName.toLowerCase().contains("email")) {
                     sellerInfo.email = contactValue;
-                } else if (contactName.toLowerCase().contains("fax")) {
-                    sellerInfo.fax = contactValue;
                 }
             } else if (siteCode.equalsIgnoreCase(R.SiteCode.ES)) {
                 if (contactName.toLowerCase().contains("teléfono")) {
                     sellerInfo.phone = contactValue;
                 } else if (contactName.toLowerCase().contains("correo electrónico")) {
                     sellerInfo.email = contactValue;
-                } else if (contactName.toLowerCase().contains("fax")) {
-                    sellerInfo.fax = contactValue;
                 }
             } else if (siteCode.equalsIgnoreCase(R.SiteCode.CA)) {
-                if(contactName.toLowerCase().contains("phone")) {
+                if (contactName.toLowerCase().contains("phone")) {
                     sellerInfo.phone = contactValue;
-                } else if(contactName.toLowerCase().contains("email")) {
+                } else if (contactName.toLowerCase().contains("email")) {
                     sellerInfo.email = contactValue;
-                } else if(contactName.toLowerCase().contains("fax")) {
-                    sellerInfo.fax = contactValue;
                 }
+            } else if (siteCode.equalsIgnoreCase(R.SiteCode.NL)) {
+                if (contactName.toLowerCase().contains("telefoon")) {
+                    sellerInfo.phone = contactValue;
+                } else if (contactName.toLowerCase().contains("e-mail")) {
+                    sellerInfo.email = contactValue;
+                }
+            }
+
+            if (contactName.toLowerCase().contains("fax")) {
+                sellerInfo.fax = contactValue;
             }
         }
     }

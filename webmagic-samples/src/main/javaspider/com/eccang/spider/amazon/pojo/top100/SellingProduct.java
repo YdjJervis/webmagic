@@ -10,10 +10,12 @@ import com.eccang.spider.base.pojo.BasePojo;
  */
 public class SellingProduct extends BasePojo {
 
+    public String batchNum;
     public String url;
     public String urlMD5;
     public String siteCode;
     public String depName; /*品类名称*/
+    public String depUrl; /*品类url*/
     public String classify; /*商品分类*/
     public String asin;
     public int rankNum;
@@ -28,13 +30,15 @@ public class SellingProduct extends BasePojo {
     @Override
     public String toString() {
         return "SellingProduct{" +
+                "batchNum='" + batchNum + '\'' +
                 ", url='" + url + '\'' +
                 ", urlMD5='" + urlMD5 + '\'' +
                 ", siteCode='" + siteCode + '\'' +
                 ", depName='" + depName + '\'' +
+                ", depUrl='" + depUrl + '\'' +
                 ", classify='" + classify + '\'' +
                 ", asin='" + asin + '\'' +
-                "rankNum=" + rankNum +
+                ", rankNum=" + rankNum +
                 ", name='" + name + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
                 ", reviewStar='" + reviewStar + '\'' +

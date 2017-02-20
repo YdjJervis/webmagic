@@ -29,9 +29,9 @@ public class EbayUrlServiceTest extends SpringTestCase{
     public void addAll() {
         List<EbayUrl> ebayUrls = new ArrayList<>();
         EbayUrl ebayUrl = new EbayUrl();
-        ebayUrl.url = "http://www.ebay.fr/sch/ebayadvsearch";
+        ebayUrl.url = "http://www.ebay.ph/sch/ebayadvsearch";
         ebayUrl.urlMD5 = UrlUtils.md5(ebayUrl.url);
-        ebayUrl.siteCode = "FR";
+        ebayUrl.siteCode = "PH";
         ebayUrl.type = 0;
         ebayUrl.categoryName = "";
         ebayUrls.add(ebayUrl);

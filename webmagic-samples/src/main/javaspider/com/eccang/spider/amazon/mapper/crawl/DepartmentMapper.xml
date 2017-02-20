@@ -4,11 +4,13 @@
 
     <resultMap id="DepartmentMap" type="Department">
         <id column="sad_id" property="id" />
+        <result column="bo_batch_num" property="batchNum" />
         <result column="sad_name" property="depName" />
         <result column="sad_p_name" property="parentDepName" />
         <result column="sad_tab" property="depTab" />
         <result column="sad_url" property="depUrl" />
         <result column="sad_url_md5" property="urlMD5" />
+        <result column="sad_p_url" property="pDepUrl" />
         <result column="sad_level" property="depLevel" />
         <result column="sad_extra" property="extra" />
         <result column="sad_sync_time" property="syncTime" />
@@ -50,48 +52,92 @@
           sad_name = #{0} AND sad_url_md5 = #{1}
     </select>
 
-    <select id="findByParent" resultMap="DepartmentMap">
+    <select id="findChildDep" resultType="int">
+        SELECT
+          count(*)
+        FROM
+          spider_amazon_department
+        WHERE
+          sad_p_url = #{0} and sad_url_md5 = #{1}
+    </select>
+
+    <select id="findByParentUrl" resultMap="DepartmentMap">
         SELECT
           *
         FROM
           spider_amazon_department
         WHERE
-          sad_p_name = #{0} and sad_url_md5 = #{1}
+          sad_p_url = #{0}
     </select>
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO spider_amazon_department(
+          bo_batch_num,
           sad_name,
           sad_p_name,
           sad_tab,
           sad_url,
+          sad_url_md5,
+          sad_p_url,
           sad_level,
           sad_extra,
           sad_sync_time
         ) VALUES
         <foreach collection="list" index="index" item="item" separator=",">
             (
+              #{item.batchNum},
               #{item.depName},
               #{item.parentDepName},
               #{item.depTab},
               #{item.depUrl},
+              #{item.urlMD5},
+              #{item.pDepUrl}
               #{item.depLevel},
               #{item.extra},
               #{item.syncTime}
             )
         </foreach>
     </insert>
+    
+    <insert id="add" parameterType="Department">
+        INSERT INTO spider_amazon_department(
+         bo_batch_num,
+         sad_name,
+         sad_p_name,
+         sad_tab,
+         sad_url,
+         sad_url_md5,
+         sad_p_url,
+         sad_level,
+         sad_extra,
+         sad_sync_time
+        ) VALUES (
+          #{batchNum},
+          #{depName},
+          #{parentDepName},
+          #{depTab},
+          #{depUrl},
+          #{urlMD5},
+          #{pDepUrl},
+          #{depLevel},
+          #{extra},
+          #{syncTime}
+        )
+    </insert>
 
     <update id="update" parameterType="Department">
         UPDATE
           spider_amazon_department
         SET
+          sad_name = #{depName},
+          sad_p_name = #{parentDepName},
           sad_tab = #{depTab},
           sad_url = #{depUrl},
           sad_level = #{depLevel},
           sad_extra = #{extra},
-          sad_sync_time #{syncTime}
+          sad_sync_time = #{syncTime}
         WHERE
-          sad_name = #{depName} AND sad_p_name = #{parentDepName}
+           sad_id = #{id}
     </update>
+
 </mapper>

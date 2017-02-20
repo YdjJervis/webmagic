@@ -12,22 +12,26 @@ import java.util.Date;
  */
 public class Department extends BasePojo {
 
+    public String batchNum;
     public String depName;
     public String parentDepName;
     public String depTab;
     public String depUrl;
     public String urlMD5;
+    public String pDepUrl;
     public int depLevel;
     public Date syncTime;
 
     @Override
     public String toString() {
         return "Department{" +
-                "depName='" + depName + '\'' +
+                "batchNum='" + batchNum + '\'' +
+                ", depName='" + depName + '\'' +
                 ", parentDepName='" + parentDepName + '\'' +
                 ", depTab='" + depTab + '\'' +
                 ", depUrl='" + depUrl + '\'' +
                 ", urlMD5='" + urlMD5 + '\'' +
+                "，pDepUrl'" + pDepUrl + '\'' +
                 ", depLevel=" + depLevel + '\'' +
                 ", syncTime=" + syncTime +
                 '}';

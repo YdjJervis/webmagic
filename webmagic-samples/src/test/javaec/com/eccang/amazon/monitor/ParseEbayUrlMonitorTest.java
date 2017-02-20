@@ -3,7 +3,7 @@ package com.eccang.amazon.monitor;
 import com.eccang.base.SpringTestCase;
 import com.eccang.spider.amazon.monitor.ParseUrlFollowSellMonitor;
 import com.eccang.spider.amazon.monitor.ParseUrlKeywordRankMonitor;
-import com.eccang.spider.amazon.processor.Top100Processor;
+import com.eccang.spider.amazon.monitor.ParseUrlTop100BatchMonitor;
 import com.eccang.spider.ebay.processor.EbayUrlMonitorProcessor;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +20,9 @@ public class ParseEbayUrlMonitorTest extends SpringTestCase {
     @Autowired
     ParseUrlFollowSellMonitor mParseUrlFollowSellMonitor;
     @Autowired
-    Top100Processor mTop100Processor;
-    @Autowired
     EbayUrlMonitorProcessor mEbayUrlMonitorProcessor;
+    @Autowired
+    ParseUrlTop100BatchMonitor mParseUrlTop100BatchMonitor;
 
     @Test
     public void parseUrlKeywordRankMonitorTest() {
@@ -37,5 +37,10 @@ public class ParseEbayUrlMonitorTest extends SpringTestCase {
     @Test
     public void ebayUrlMonitorProcessorTest() {
         mEbayUrlMonitorProcessor.execute();
+    }
+
+    @Test
+    public void parseUrlTop100BatchMonitor() {
+        mParseUrlTop100BatchMonitor.execute();
     }
 }

@@ -1,5 +1,6 @@
 package com.eccang.spider.ebay.processor;
 
+import com.eccang.spider.amazon.R;
 import com.eccang.spider.base.monitor.ScheduledTask;
 import com.eccang.spider.base.util.UrlUtils;
 import com.eccang.spider.ebay.pojo.EbayUrl;
@@ -16,8 +17,7 @@ import java.util.List;
 /**
  * @author Hardy
  * @version V0.2
- * @Description:
- * @date 2017/1/17 9:47
+ * 2017/1/17 9:47
  */
 @Service
 public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledTask {
@@ -33,9 +33,8 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
     protected void dealOtherPage(Page page) {
         EbayUrl url = getUrl(page);
 
-        /*删除成功的URL，入库到历史表中*/
-        mEbayUrlHistoryService.add(url);
-        mEbayUrlService.deleteById(url);
+//        List<EbayUrl> ebayUrls = extractCategory(page);
+//        mEbayUrlService.addAll(ebayUrls);
 
         if (url.type == 0) {
             /*解析品类URL，并添加数据库*/
@@ -51,7 +50,7 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
                     extractProductsListing(page, index+1);
                 }
 
-                /*解析第个品类下第一页的产品url，并存入数据库中*/
+                /*解析品类下第一页的产品url，并存入数据库中*/
                 extractProductsUrl(page);
             }
         } else {
@@ -102,7 +101,16 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
      * 解析搜索到的产品数
      */
     private int extractProductsCount(Page page) {
-        String productsCounts = page.getHtml().xpath("//*[@id='bciw']/div/span[@class='listingscnt']/text()").get();
+        EbayUrl ebayUrl = getUrl(page);
+
+        String productsCounts;
+        if(ebayUrl.siteCode.equalsIgnoreCase(R.SiteCode.NL)) {
+            productsCounts = page.getHtml().xpath("//*[@id='cbelm']/div[@class='clt']/h1/span[@class='rcnt']/text()").get();
+        } else {
+            productsCounts = page.getHtml().xpath("//*[@id='bciw']/div/span[@class='listingscnt']/text()").get();
+        }
+
+
         int productsCount = 0;
         if (StringUtils.isNotEmpty(productsCounts)) {
             productsCounts = RegexUtil.reg(productsCounts, "([0-9]{1,}[,]?[0-9]*)");
@@ -187,7 +195,7 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
                     continue;
                 }
 
-                url.url = "http://www.ebay.fr/sch/i.html?_nkw=&_in_kw=1&_ex_kw=&_sacat="+url.url+"&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=15&_stpos=518000&_sargn=-1%26saslc%3D1&_fsradio2=%26LH_LocatedIn%3D1&_salic=45&LH_SubLocation=1&_sop=12&_dmd=1&_ipg=200";
+                url.url = "http://www.ebay.ph/sch/i.html?_nkw=&_in_kw=1&_ex_kw=&_sacat="+url.url+"&_udlo=&_udhi=&LH_BIN=1&LH_ItemCondition=3&_ftrt=901&_ftrv=1&_sabdlo=&_sabdhi=&_samilow=&_samihi=&_sadis=10&_fpos=&LH_SubLocation=1&_sargn=-1%26saslc%3D0&_fsradio2=%26LH_LocatedIn%3D1&_salic=45&_saact=162&LH_SALE_CURRENCY=0&_sop=12&_dmd=1&_ipg=200";
                 url.siteCode = getUrl(page).siteCode;
                 url.urlMD5 = UrlUtils.md5(url.url);
                 url.type = 0;

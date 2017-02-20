@@ -86,6 +86,7 @@
         WHERE
           bec_code = #{0}
     </select>
+
     <select id="findNeedGenerateBatch" resultMap="CustomerRankKeywordMap">
         SELECT
           *

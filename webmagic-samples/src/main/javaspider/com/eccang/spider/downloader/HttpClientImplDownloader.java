@@ -1,5 +1,6 @@
 package com.eccang.spider.downloader;
 
+import com.eccang.spider.amazon.service.batch.BatchService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ public class HttpClientImplDownloader extends HttpClientDownloader {
 
     @Autowired
     private UrlService mUrlService;
+    @Autowired
+    private BatchService mBatchService;
 
     Logger mLogger = Logger.getLogger(getClass());
 
@@ -30,5 +33,8 @@ public class HttpClientImplDownloader extends HttpClientDownloader {
         url.status = 0;
         mLogger.warn("HttpClient下载异常，更新URL状态：" + url);
         mUrlService.update(url);
+
+        mLogger.warn("HttpClient下载异常，更新总单(" + url.batchNum + ")解析url的总次数");
+        mBatchService.updateTimes(url.batchNum, true);
     }
 }

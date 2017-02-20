@@ -111,6 +111,10 @@ public class UrlService {
         return mUrlDao.findByType(type);
     }
 
+    public List<Url> findTop100() {
+        return mUrlDao.findTop100();
+    }
+
     public List<Url> find(String batchNum, String siteCode, String asin, int type) {
         return mUrlDao.find(batchNum, siteCode, asin, type);
     }
@@ -269,7 +273,7 @@ public class UrlService {
     }
 
     public boolean isExist(String urlMd5) {
-        return mUrlDao.find(urlMd5).size() > 0;
+        return mUrlDao.findByUrlMD5Count(urlMd5) > 0;
     }
 
     /**
@@ -296,5 +300,9 @@ public class UrlService {
 
     public List<Url> findByBatchNum(String batchNumber) {
         return mUrlDao.findByBatchNum(batchNumber);
+    }
+
+    public List<Url> findByBatchNumAndSite(String batchNum, String siteCode) {
+        return mUrlDao.findByBatchNumAndSite(batchNum, siteCode);
     }
 }
