@@ -4,6 +4,8 @@ import com.eccang.spider.amazon.pojo.top100.SellingProduct;
 import com.eccang.spider.base.dao.BaseDao;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author Hardy
  * @version V0.2
@@ -15,4 +17,9 @@ public interface SellingProductDao extends BaseDao<SellingProduct> {
 
     int count(String urlMD5);
 
+    void updateByObj(SellingProduct sellingProduct);
+
+    List<SellingProduct> findNeedParseStockProduct(int num);
+
+    void updateStock(SellingProduct sellingProduct);
 }

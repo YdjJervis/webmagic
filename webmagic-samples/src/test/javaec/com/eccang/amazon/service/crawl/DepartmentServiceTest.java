@@ -40,11 +40,12 @@ public class DepartmentServiceTest extends SpringTestCase {
     public void add() {
         List<Department> departments = new ArrayList<>();
         Department department = new Department();
-        department.batchNum = "EC2017021710253813";
-        department.depLevel = 2;
-        department.depName = "Movies & TV";
-        department.depTab = "Top 100 Paid";
-        department.depUrl = "https://www.amazon.com/Best-Sellers-Appstore-Android-Movies-TV/zgbs/mobile-apps/9408765011/ref=zg_bs_nav_mas_1_mas";
+        department.batchNum = "EC2017022009204588";
+        department.depLevel = 1;
+        department.depName = "Clothing, Shoes & Jewelry";
+        department.parentDepName = "Any Department";
+        department.depTab = "";
+        department.depUrl = "https://www.amazon.com/Best-Sellers/zgbs/fashion/ref=zg_bs_nav_0";
         department.urlMD5 = UrlUtils.md5(department.depUrl);
         departments.add(department);
         mService.addAll(departments);

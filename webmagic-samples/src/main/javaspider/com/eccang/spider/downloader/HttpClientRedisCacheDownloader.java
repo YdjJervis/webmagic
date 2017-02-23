@@ -1,11 +1,14 @@
 package com.eccang.spider.downloader;
 
+import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.Url;
+import com.eccang.spider.amazon.pojo.top100.StockUrl;
 import com.eccang.spider.amazon.processor.BasePageProcessor;
 import com.eccang.spider.amazon.service.UrlService;
-import com.eccang.spider.amazon.util.RedisUtils;
+import com.eccang.spider.amazon.service.top100.StockUrlService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -15,6 +18,8 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
@@ -40,6 +45,7 @@ import us.codecraft.webmagic.utils.WMCollections;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,6 +62,8 @@ public class HttpClientRedisCacheDownloader extends AbstractDownloader {
 
     @Autowired
     private UrlService mUrlService;
+    @Autowired
+    private StockUrlService mStockUrlService;
 
     private Logger mLogger = LoggerFactory.getLogger(getClass());
 
@@ -110,7 +118,7 @@ public class HttpClientRedisCacheDownloader extends AbstractDownloader {
                 proxyHost = site.getHttpProxy();
             }
 
-            String html = RedisUtils.hget("page", request.getUrl());
+            String html = null;//RedisUtils.hget("page", request.getUrl());
 
             if (StringUtils.isNotEmpty(html)) {
                 Page page = new Page();
@@ -126,6 +134,7 @@ public class HttpClientRedisCacheDownloader extends AbstractDownloader {
                 httpResponse = getHttpClient(site, proxy).execute(httpUriRequest);//getHttpClient�������˴�����֤
                 statusCode = httpResponse.getStatusLine().getStatusCode();
                 request.putExtra(Request.STATUS_CODE, statusCode);
+                Header[] allHeaders = httpResponse.getAllHeaders();
                 if (statusAccept(acceptStatCode, statusCode)) {
                     Page page = handleResponse(request, charset, httpResponse, task);
                     onSuccess(request);
@@ -277,10 +286,24 @@ public class HttpClientRedisCacheDownloader extends AbstractDownloader {
 
     @Override
     protected void onError(Request request) {
-        Url url = (Url) request.getExtra(BasePageProcessor.URL_EXTRA);
-        url.crawling = 0;
-        url.status = 0;
-        mLogger.warn("HttpClient下载异常，更新URL状态：" + url);
-        mUrlService.update(url);
+//        Url url = (Url) request.getExtra(BasePageProcessor.URL_EXTRA);
+//        url.crawling = 0;
+//        url.status = 0;
+//        mLogger.warn("HttpClient下载异常，更新URL状态：" + url);
+//        mUrlService.update(url);
+        StockUrl stockUrl = (StockUrl) request.getExtra(BasePageProcessor.URL_EXTRA);
+        mLogger.warn("HttpClient下载异常，更新URL状态：" + stockUrl);
+        if (stockUrl.type == R.StockCrawlUrlType.PRODUCT_URL) {
+            stockUrl.crawling = 0;
+            stockUrl.status = 0;
+            stockUrl.times++;
+            mStockUrlService.update(stockUrl);
+        } else {
+            StockUrl url = mStockUrlService.findByBatchNumAndUrlMD5(stockUrl.batchNum, com.eccang.spider.base.util.UrlUtils.md5(stockUrl.pUrl));
+            url.crawling = 0;
+            url.status = 0;
+            url.times++;
+            mStockUrlService.update(url);
+        }
     }
 }

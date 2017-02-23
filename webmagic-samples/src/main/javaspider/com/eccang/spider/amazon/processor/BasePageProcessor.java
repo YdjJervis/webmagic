@@ -54,7 +54,7 @@ public abstract class BasePageProcessor implements PageProcessor {
 
     public static final String URL_EXTRA = "url_extra";
 
-    private Set<Integer> mSet = Sets.newHashSet(0, 402, 403, 404, 407, 417, 429, 503);
+    protected Set<Integer> mSet = Sets.newHashSet(0, 402, 403, 404, 407, 417, 429, 503);
     private Set<Integer> mDealSet = Sets.newHashSet(0, 200, 402, 403, 404, 407, 417, 429, 503);
 
     @Autowired
@@ -95,7 +95,7 @@ public abstract class BasePageProcessor implements PageProcessor {
     @Autowired
     private IpsProxyHttpClientDownloader mIpsProxyHttpClientDownloader;
     @Autowired
-    private HttpClientRedisCacheDownloader mHttpClientRedisCacheDownloader;
+    protected HttpClientRedisCacheDownloader mHttpClientRedisCacheDownloader;
     @Autowired
     private NoSellService mNoSellService;
     @Autowired
@@ -191,7 +191,7 @@ public abstract class BasePageProcessor implements PageProcessor {
     /**
      * @param page 更新Url爬取状态,成功或失败
      */
-    private void updateUrlStatus(Page page, boolean needTimeAdd) {
+    void updateUrlStatus(Page page, boolean needTimeAdd) {
         Url url = getUrl(page);
 
         if (needUpdateStatus()) {
@@ -249,7 +249,7 @@ public abstract class BasePageProcessor implements PageProcessor {
     /**
      * 获取验证码表单请求URL
      */
-    private String getValidatedUrl(Page page) {
+    String getValidatedUrl(Page page) {
         String validateUrl = getValidateImgUrl(page);
         String validateCodeJson = getValidateCode(validateUrl, "review");
         ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
@@ -267,7 +267,7 @@ public abstract class BasePageProcessor implements PageProcessor {
     /**
      * @return 验证码图片地址
      */
-    private String getValidateImgUrl(Page page) {
+    String getValidateImgUrl(Page page) {
         return page.getHtml().xpath("//div[@class='a-row a-text-center']/img/@src").get();
     }
 
@@ -275,7 +275,7 @@ public abstract class BasePageProcessor implements PageProcessor {
      * 是否是验证码页面。因为需要输入验证码时，页面Url还是不变的，
      * 只有通过判断时候包好验证码图片元素来判断是否是验证码页面。
      */
-    private boolean isValidatePage(Page page) {
+    boolean isValidatePage(Page page) {
         return StringUtils.isNotEmpty(getValidateImgUrl(page)) || page.getUrl().get().contains("validateCaptcha");
     }
 
@@ -368,7 +368,7 @@ public abstract class BasePageProcessor implements PageProcessor {
     /**
      * 判断解析内容是不是为空，如果出现验证码则打码返回结果,更新page对应状态
      */
-    private Page IsNotNullAndProxyCaptcha(Page page) {
+    Page IsNotNullAndProxyCaptcha(Page page) {
         if (isNullHtml(page)) {
             /*通过代理解析url返回内容为空，则将状态码改为402，让其重新解析*/
             sLogger.info("parse " + page.getUrl().get() + " content is empty.");

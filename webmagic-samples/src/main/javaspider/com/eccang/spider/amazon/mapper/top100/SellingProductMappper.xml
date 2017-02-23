@@ -21,6 +21,7 @@
         <result column="satd_price" property="price"/>
         <result column="satd_amazon_delivery" property="amazonDelivery"/>
         <result column="satd_stock" property="stock"/>
+        <result column="satd_status" property="status"/>
         <result column="satd_extra" property="extra"/>
         <result column="satd_create_time" property="createTime"/>
         <result column="satd_update_time" property="updateTime"/>
@@ -114,4 +115,33 @@
         WHERE satd_url_md5 = #{0}
     </select>
 
+    <update id="updateByObj" parameterType="SellingProduct">
+        UPDATE
+          spider_amazon_top100_product
+        SET
+          satd_stock = #{stock},
+          satd_status = #{status}
+        WHERE
+          bas_code = #{siteCode} AND satd_asin = #{asin} AND bo_batch_num = #{batchNum}
+    </update>
+
+    <select id="findNeedParseStockProduct" parameterType="int" resultMap="SellingProductMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_top100_product
+        WHERE
+          satd_status = 0
+        LIMIT #{0}
+    </select>
+
+    <update id="updateStock" parameterType="SellingProduct">
+        UPDATE
+          spider_amazon_top100_product
+        SET
+          satd_stock = #{stock},
+          satd_status = #{status}
+        WHERE
+          bo_batch_num = #{batchNum} AND bas_code = #{siteCode} AND satd_asin = #{asin}
+    </update>
 </mapper>

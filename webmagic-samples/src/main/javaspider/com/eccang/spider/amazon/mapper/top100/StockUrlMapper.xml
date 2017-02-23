@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.top100.StockUrlDao">
+    <resultMap id="StockUrlMap" type="StockUrl">
+        <id column="sasu_id" property="id"/>
+        <result column="sasu_url_md5" property="urlMD5"/>
+        <result column="bo_batch_num" property="batchNum"/>
+        <result column="bas_code" property="siteCode"/>
+        <result column="sasu_type" property="type"/>
+        <result column="sasu_url" property="url"/>
+        <result column="sasu_parent_url" property="pUrl"/>
+        <result column="satd_asin" property="asin"/>
+        <result column="sasu_status" property="status"/>
+        <result column="sasu_crawling" property="crawling"/>
+        <result column="sasu_cookie" property="cookie"/>
+        <result column="sasu_times" property="times"/>
+        <result column="sasu_extra" property="extra"/>
+        <result column="sasu_create_time" property="createTime"/>
+        <result column="sasu_update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="add" parameterType="StockUrl">
+        INSERT INTO spider_amazon_stock_url (
+          sasu_url_md5,
+          bo_batch_num,
+          bas_code,
+          sasu_type,
+          sasu_url,
+          sasu_parent_url,
+          satd_asin,
+          sasu_status,
+          sasu_crawling,
+          sasu_cookie,
+          sasu_times,
+          sasu_extra
+        ) VALUES (
+          #{urlMD5},
+          #{batchNum},
+          #{siteCode},
+          #{type},
+          #{url},
+          #{pUrl},
+          #{asin},
+          #{status},
+          #{crawling},
+          #{cookie},
+          #{times},
+          #{extra}
+        )
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_amazon_stock_url (
+          sasu_url_md5,
+          bo_batch_num,
+          bas_code,
+          sasu_type,
+          sasu_url,
+          sasu_parent_url,
+          satd_asin,
+          sasu_status,
+          sasu_crawling,
+          sasu_cookie,
+          sasu_times,
+          sasu_extra
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+              #{item.urlMD5},
+              #{item.batchNum},
+              #{item.type},
+              #{item.url},
+              #{item.siteCode},
+              #{item.pUrl},
+              #{item.asin},
+              #{item.status},
+              #{item.crawling},
+              #{item.cookie},
+              #{item.times},
+              #{item.extra}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="StockUrl">
+        UPDATE
+          spider_amazon_stock_url
+        SET
+          sasu_url_md5 = #{urlMD5},
+          bo_batch_num = #{batchNum},
+          bas_code = #{siteCode},
+          sasu_type = #{type},
+          sasu_url = #{url},
+          sasu_parent_url = #{pUrl},
+          satd_asin = #{asin},
+          sasu_status = #{status},
+          sasu_crawling = #{crawling},
+          sasu_cookie = #{cookie},
+          sasu_times = #{times},
+          sasu_extra = #{extra}
+        WHERE
+          sasu_id = #{id}
+    </update>
+
+    <update id="updateById" parameterType="StockUrl">
+        UPDATE
+          spider_amazon_stock_url
+        SET
+          sasu_status = #{status},
+          sasu_crawling = #{crawling},
+          sasu_times = #{times}
+        WHERE
+          sasu_id = #{id}
+    </update>
+
+    <select id="findNeed2ParseUrl" resultMap="StockUrlMap" parameterType="int">
+        SELECT
+          *
+        FROM
+          spider_amazon_stock_url
+        WHERE
+          sasu_status != 200 AND sasu_crawling = 0
+        LIMIT #{0}
+    </select>
+
+    <select id="findByObjCount" resultType="int" parameterType="StockUrl">
+        SELECT
+          count(*)
+        FROM
+          spider_amazon_stock_url
+        WHERE
+          sasu_url_md5 = #{urlMD5} AND bo_batch_num = #{batchNum}
+    </select>
+
+    <select id="findByBatchNumAndUrlMD5" resultMap="StockUrlMap" parameterType="java.lang.String">
+        SELECT
+          *
+        FROM
+          spider_amazon_stock_url
+        WHERE
+          sasu_url_md5 = #{1} AND bo_batch_num = #{0}
+    </select>
+
+</mapper>

@@ -1,8 +1,8 @@
 package com.eccang.amazon.service;
 
-import org.junit.Test;
-import redis.clients.jedis.Jedis;
 import com.eccang.spider.amazon.util.DateUtils;
+import com.eccang.spider.base.util.UrlUtils;
+import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -37,10 +37,11 @@ public class TestMethod {
 //
 //        IpsSwitchManageDao mIpsSwitchManageDao = (IpsSwitchManageDao)applicationContext.getBean("ipsSwitchManageDao");
 //        System.out.println(mIpsSwitchManageDao);
-        Jedis jedis = new Jedis("127.0.0.1", 6379);
+//        Jedis jedis = new Jedis("127.0.0.1", 6379);
 //        Jedis jedis = new Jedis("0.0.0.0", 6379);
 //        Jedis jedis = new Jedis("192.168.0.121",6379);
-        System.out.println(jedis.get("liugang"));
+//        System.out.println(jedis.get("liugang"));
+        System.out.println(UrlUtils.md5("https://www.amazon.com/MISSALOE-Low-Rise-Seamless-Stretch-Panties/dp/B01CCEI7N8/ref=zg_bs_fashion_13?_encoding=UTF8&psc=1&refRID=H7H118C1E0YTN33ZYRB5"));
     }
     @Test
     public void urlEncodeTest() {

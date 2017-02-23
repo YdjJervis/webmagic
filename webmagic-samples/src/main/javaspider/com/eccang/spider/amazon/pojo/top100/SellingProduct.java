@@ -25,7 +25,8 @@ public class SellingProduct extends BasePojo {
     public int reviewNum;
     public String price;
     public int amazonDelivery;
-    public int stock; /**/
+    public int stock; /*库存*/
+    public int status; /*抓取库存状态（0-未开始；1-转换成url；2-加入购物车；3-统计库存；4-已完成）*/
 
     @Override
     public String toString() {
@@ -46,6 +47,7 @@ public class SellingProduct extends BasePojo {
                 ", price='" + price + '\'' +
                 ", amazonDelivery=" + amazonDelivery +
                 ", stock=" + stock +
+                ", status=" + status +
                 '}';
     }
 }

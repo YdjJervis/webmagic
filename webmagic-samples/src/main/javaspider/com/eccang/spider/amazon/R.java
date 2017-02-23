@@ -106,4 +106,23 @@ public final class R {
         public static final String FOLLOW_SELL = "FS"; /** 关键词排名搜索 */
     }
 
+    /** 库存爬取状态 */
+    public static final class StockCrawlStatus {
+        public static final int NO_START = 0; /*未开始*/
+        public static final int CONVERT_TO_URL = 1; /*转换成url*/
+        public static final int ADD_TO_CART = 2; /*加入购物车*/
+        public static final int COUNT_STOCK = 3; /*统计库存*/
+        public static final int FINISH = 4; /*已完成*/
+        public static final int OFF_SHELF = 5; /*下架*/
+    }
+
+    /** 爬取库存url类型 */
+    public static final class StockCrawlUrlType {
+        public static final int PRODUCT_URL = 0; /*产品url*/
+        public static final int ADD_TO_CART = 1; /*添加购物车url*/
+        public static final int CART_URL = 2; /*购物车url*/
+        public static final int COUNT_STOCK_URL = 3; /*统计库存url*/
+    }
+
+
 }

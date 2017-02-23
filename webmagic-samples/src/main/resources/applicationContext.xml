@@ -132,6 +132,17 @@
         <!--爬取-->
         <!--<task:scheduled ref="keywordRankProcessor" method="execute" cron="0/15 * * * * ?" />-->
 
+        <!--Top100商品信息爬取-->
+        <!--生成批次-->
+        <!--<task:scheduled ref="generateTop100BatchMonitor" method="execute" cron="0/15 * * * * ?" />-->
+        <!--详单转url-->
+        <!--<task:scheduled ref="parseUrlTop100BatchMonitor" method="execute" cron="0/15 * * * * ?" />-->
+        <!--Amazon Top100数据爬取-->
+        <!--<task:scheduled ref="top100Processor" method="execute" cron="0/30 * * * * ?" />-->
+
+        <!--<task:scheduled ref="parseUrlTop100StockMonitor" method="execute" cron="0/15 * * * * ?" />-->
+        <task:scheduled ref="top100StockProcessor" method="execute" cron="0 0/1 * * * ?" />
+
 
         <!--推送完成批次-->
         <!--<task:scheduled ref="pushMonitor" method="execute" cron="0/10 * * * * ?" />-->
@@ -143,7 +154,7 @@
         <!--<task:scheduled ref="loggerTestTask" method="execute" cron="0/5 * * * * ?" />-->
 
         <!--ebay品类URL监控-->
-        <task:scheduled ref="ebayUrlMonitorProcessor" method="execute" cron="0/10 * * * * ?" />
-        <task:scheduled ref="ebaySellerInfoProcessor" method="execute" cron="0/5 * * * * ?" />
+        <!--<task:scheduled ref="ebayUrlMonitorProcessor" method="execute" cron="0/30 * * * * ?" />-->
+        <!--<task:scheduled ref="ebaySellerInfoProcessor" method="execute" cron="0/5 * * * * ?" />-->
     </task:scheduled-tasks>
 </beans>

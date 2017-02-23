@@ -26,4 +26,26 @@ public class SellingProductService {
             mDao.add(product);
         }
     }
+
+    /**
+     * 更新top100产品的库存数或爬取库存的状态信息
+     */
+    public void updateByObj(SellingProduct sellingProduct) {
+        mDao.updateByObj(sellingProduct);
+    }
+
+    /**
+     * 查询还未开始爬取库存的top100商品信息
+     * @param num 查询数据条数
+     */
+    public List<SellingProduct> findNeedParseStockProduct(int num) {
+        return mDao.findNeedParseStockProduct(num);
+    }
+
+    /**
+     * 更新库存及库存抓取状态
+     */
+    public void updateStock(SellingProduct sellingProduct) {
+        mDao.updateStock(sellingProduct);
+    }
 }
