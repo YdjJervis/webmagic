@@ -67,8 +67,13 @@ public class PayPackageWSTest extends SpringTestCase {
         cusPayAddReq.platformCode = "ERP";
         cusPayAddReq.token = "123456789";
 
-        cusPayAddReq.data.payPackageCode = "f1b014";
-        System.out.println(new PayPackageWSService().getPayPackageWSPort().buy(new Gson().toJson(cusPayAddReq)));
+        cusPayAddReq.data.payPackageCode = null;
+
+        String json = new Gson().toJson(cusPayAddReq);
+        System.out.println(json);
+        json = "{\"data\":\"EC_001\",\"customerCode\":\"EC_001\",\"platformCode\":\"ERP\",\"token\":\"123456789\"}";
+
+        System.out.println(new PayPackageWSService().getPayPackageWSPort().buy(json));
     }
 
     @Test

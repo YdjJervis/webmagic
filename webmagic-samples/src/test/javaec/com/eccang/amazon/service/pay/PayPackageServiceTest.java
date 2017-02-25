@@ -38,5 +38,9 @@ public class PayPackageServiceTest extends SpringTestCase {
         System.out.println(mService.findBuildIn());
     }
 
+    @Test
+    public void isExist(){
+        System.out.println(mService.isExist("46479c"));
+    }
 
 }

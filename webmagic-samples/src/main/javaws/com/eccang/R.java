@@ -23,6 +23,8 @@ public final class R {
         public static final int SERVER_EXCEPTION = 500;
         /** 数量限制 */
         public static final int COUNT_LIMIT = 414;
+        /** 购买失败 */
+        public static final int BUY_ERROR = 414;
     }
 
     public static final class RequestMsg{
@@ -48,7 +50,7 @@ public final class R {
 
         public static final String PARAMETER_ASIN_PRIORITY_ERROR = "数据列表中,爬取优先级取值不正确,其范围应该为[0,4]";
 
-        public static final String PARAMETER_ASIN_FORMAT_ERROR = "数据列表格式不正确";
+        public static final String DATA_FORMAT_ERROR = "抱歉：data节点格式不正确";
 
         public static final String PARAMETER_DATA_NULL_ERROR = "数据列表内容为空";
 
@@ -98,6 +100,11 @@ public final class R {
 
         public static final String BUSSINESS_LIMIT = "数量超过该业务限制";
         public static final String PAY_PACKAGE_LIMIT = "数量超过套餐限制";
+        public static final String PAY_PACKAGE_BUIED = "抱歉，已购买过此套餐";
+        public static final String PAY_PACKAGE_MISSED = "抱歉，此套餐不存在";
+        public static final String PAY_PACKAGE_NULL = "抱歉，套餐码不能为空";
+
+
 
     }
 

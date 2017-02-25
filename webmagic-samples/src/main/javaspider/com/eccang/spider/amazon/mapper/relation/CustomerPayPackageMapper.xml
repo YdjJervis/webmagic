@@ -37,4 +37,12 @@
         rcpp_status = 1;
     </select>
 
+    <select id="find" resultMap="CustomerPayPackageMap">
+        SELECT * FROM relation_customer_pay_package
+        WHERE
+        bec_code = #{0}
+        and
+        bpp_code = #{1}
+    </select>
+
 </mapper>

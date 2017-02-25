@@ -227,7 +227,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             asinReq = new Gson().fromJson(json, AsinReq.class);
         } catch (Exception e) {
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_FORMAT_ERROR;
+            baseRspParam.msg = R.RequestMsg.DATA_FORMAT_ERROR;
             return baseRspParam.toJson();
         }
 

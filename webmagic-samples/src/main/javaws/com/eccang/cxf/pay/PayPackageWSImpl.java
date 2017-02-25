@@ -78,6 +78,18 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             CustomerPayPackage cusPayPackage = new CustomerPayPackage();
             cusPayPackage.customerCode = payPackageReq.customerCode;
             cusPayPackage.packageCode = payPackageReq.data.payPackageCode;
+
+            if (mCustomerPayPackageService.isExist(cusPayPackage.customerCode, cusPayPackage.packageCode)) {
+                payPackageRsp.status = R.HttpStatus.BUY_ERROR;
+                payPackageRsp.msg = R.RequestMsg.PAY_PACKAGE_BUIED;
+                return payPackageRsp.toJson();
+            }
+            if (!mPayPackageService.isExist(cusPayPackage.packageCode)) {
+                payPackageRsp.status = R.HttpStatus.BUY_ERROR;
+                payPackageRsp.msg = R.RequestMsg.PAY_PACKAGE_MISSED;
+                return payPackageRsp.toJson();
+            }
+
             mCustomerPayPackageService.add(cusPayPackage);
 
             /* 最后记录套餐操作日志 */
@@ -288,7 +300,7 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             CusPayAddReq payPackageReq = (CusPayAddReq) baseReqParam;
 
             if (StringUtils.isEmpty(payPackageReq.data.payPackageCode)) {
-                return getValidateMsg(false, R.RequestMsg.PARAMETER_DATA_NULL_ERROR);
+                return getValidateMsg(false, R.RequestMsg.PAY_PACKAGE_NULL);
             }
         }
 
