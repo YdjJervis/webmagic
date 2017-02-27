@@ -25,4 +25,9 @@ public class CustomerPayPackageServiceTest extends SpringTestCase {
         System.out.println(mService.findByCustomerCode("EC_001"));
     }
 
+    @Test
+    public void cancelAll(){
+        mService.cancelAll("EC_002");
+    }
+
 }

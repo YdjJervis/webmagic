@@ -38,4 +38,10 @@ public class CustomerPayPackageService {
     public boolean isExist(String customerCode, String payPackageCode) {
         return find(customerCode, payPackageCode) != null;
     }
+
+    public void cancelAll(String customerCode) {
+        mDao.cancelAll(customerCode);
+    }
+
+
 }

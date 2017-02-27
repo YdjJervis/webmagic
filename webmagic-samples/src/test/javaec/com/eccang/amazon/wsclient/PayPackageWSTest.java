@@ -56,7 +56,11 @@ public class PayPackageWSTest extends SpringTestCase {
         stub.day = 30;
         cusPayCustomAddReq.data.add(stub);
 
-        String json = new PayPackageWSService().getPayPackageWSPort().buyCustom(new Gson().toJson(cusPayCustomAddReq));
+        String reqJson = new Gson().toJson(cusPayCustomAddReq);
+        reqJson = "{\"data\":\"\",\"customerCode\":\"EC_002\",\"platformCode\":\"ERP\",\"token\":\"123456789\"}";
+        System.out.println(reqJson);
+
+        String json = new PayPackageWSService().getPayPackageWSPort().buyCustom(reqJson);
         System.out.println(json);
     }
 
@@ -77,23 +81,30 @@ public class PayPackageWSTest extends SpringTestCase {
     }
 
     @Test
-    public void getList(){
+    public void getList() {
         PayPackageQueryReq req = new PayPackageQueryReq();
         req.customerCode = "EC_002";
         req.platformCode = "ERP";
         req.token = "123456789";
 
-        System.out.println(new PayPackageWSService().getPayPackageWSPort().getList(new Gson().toJson(req)));
+        String reqJson = new Gson().toJson(req);
+        System.out.println(reqJson);
+        reqJson = "{\"customerCode\":\"EC_001\",\"platformCode\":\"ERP\",\"token\":\"123456789\"},\"data\":[]";
+
+        System.out.println(new PayPackageWSService().getPayPackageWSPort().getList(reqJson));
     }
 
     @Test
-    public void getPaied(){
+    public void getPaied() {
         PaiedQueryReq req = new PaiedQueryReq();
         req.customerCode = "EC_002";
         req.platformCode = "ERP";
         req.token = "123456789";
 
-        System.out.println(new PayPackageWSService().getPayPackageWSPort().getPaied(new Gson().toJson(req)));
+        String reqJson = new Gson().toJson(req);
+        System.out.println(reqJson);
+
+        System.out.println(new PayPackageWSService().getPayPackageWSPort().getPaied(reqJson));
     }
 
 }

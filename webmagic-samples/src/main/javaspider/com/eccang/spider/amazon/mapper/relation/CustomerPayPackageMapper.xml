@@ -23,6 +23,14 @@
         );
     </insert>
 
+    <delete id="cancelAll">
+        UPDATE relation_customer_pay_package
+        SET
+        rcpp_status = 0
+        WHERE
+        bec_code = #{0}
+    </delete>
+
     <select id="findByCustomerCode" resultMap="CustomerPayPackageMap">
         SELECT * FROM relation_customer_pay_package
         WHERE

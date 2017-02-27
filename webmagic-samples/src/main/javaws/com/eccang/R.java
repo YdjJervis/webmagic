@@ -42,6 +42,7 @@ public final class R {
 
         public static final String LIST_PARAM_WRONG = "数据列表参数不正确";
 
+        public static final String PARAMETER_POSITIVE_NUM_ERROR = "数据列表中,整型值应该为大于0";
         public static final String PARAMETER_FORMAT_ERROR = "参数格式不正确";
 
         public static final String PARAMETER_ASIN_SITECODE_ERROR = "数据列表中，没有传入正确的站点码";
@@ -65,8 +66,6 @@ public final class R {
         public static final String PARAMETER_BATCH_NUM_ERROR = "查询的批次对象中的批次号为空";
 
         public static final String PARAMETER_REVIEW_ASIN_ERROR = "请求的Review中存在空的Asin码";
-
-        public static final String PARAMETER_REVIEW_FREQUENCY_ERROR = "数据列表中,爬取频率取值不正确,其范围应该为大于0";
 
         public static final String PARAMETER_REVIEW_NULL_ERROR = "请求的Review中存在空的ReviewId";
 
@@ -104,7 +103,10 @@ public final class R {
         public static final String PAY_PACKAGE_MISSED = "抱歉，此套餐不存在";
         public static final String PAY_PACKAGE_NULL = "抱歉，套餐码不能为空";
 
-
+        public static final String BUSINESS_MISSED = "抱歉，业务码不存在";
+        public static final String DAY_LIMIT = "抱歉，天数超过限制";
+        public static final String COUNT_LIMIT = "抱歉，数量超过限制";
+        public static final String SAME_BUSINESS = "抱歉，导入有列表有相同业务";
 
     }
 

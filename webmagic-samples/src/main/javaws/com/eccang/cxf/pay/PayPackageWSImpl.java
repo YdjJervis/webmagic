@@ -6,24 +6,25 @@ import com.eccang.pojo.BaseReqParam;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.ValidateMsg;
 import com.eccang.pojo.pay.*;
+import com.eccang.spider.amazon.pojo.dict.PayProfile;
 import com.eccang.spider.amazon.pojo.pay.PayPackage;
 import com.eccang.spider.amazon.pojo.pay.PayPackageLog;
 import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
 import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
 import com.eccang.spider.amazon.pojo.relation.CustomerPayPackage;
+import com.eccang.spider.amazon.service.dict.PayProfileService;
 import com.eccang.spider.amazon.service.pay.PayCalculatorImpl;
 import com.eccang.spider.amazon.service.pay.PayPackageLogService;
 import com.eccang.spider.amazon.service.pay.PayPackageService;
 import com.eccang.spider.amazon.service.relation.CustomerBusinessService;
+import com.eccang.util.RegexUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Jervis
@@ -44,6 +45,8 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
     private CustomerBusinessService mCustomerBusinessService;
     @Autowired
     private PayPackageLogService mPayPackageLogService;
+    @Autowired
+    private PayProfileService mPayProfileService;
 
     @Override
     public String buy(String json) {
@@ -127,6 +130,50 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             return baseRspParam.toJson();
         }
 
+        try {
+            /* 数据有效性二次校验 */
+
+            /* 检查是否有不存在的业务 */
+            for (CusPayCustomAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
+                if (!mBusinessService.isExist(payPackageStub.businessCode)) {
+                    baseRspParam.status = R.HttpStatus.BUY_ERROR;
+                    baseRspParam.msg = R.RequestMsg.BUSINESS_MISSED;
+                    return baseRspParam.toJson();
+                }
+            }
+
+            /* 检查是否有相同的业务 */
+            int total = payPackageReq.data.size();
+            Set<String> businessCodeSet = new HashSet<>();
+            for (CusPayCustomAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
+                businessCodeSet.add(payPackageStub.businessCode);
+            }
+            if (total != businessCodeSet.size()) {
+                baseRspParam.status = R.HttpStatus.BUY_ERROR;
+                baseRspParam.msg = R.RequestMsg.SAME_BUSINESS;
+                return baseRspParam.toJson();
+            }
+
+            /* 检查购买数量限制 */
+            for (CusPayCustomAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
+                PayProfile payProfile = mPayProfileService.findByCode(payPackageStub.businessCode);
+                if (payPackageStub.day > payProfile.dayLimit) {
+                    baseRspParam.status = R.HttpStatus.BUY_ERROR;
+                    baseRspParam.msg = R.RequestMsg.DAY_LIMIT;
+                    return baseRspParam.toJson();
+                }
+                if (payPackageStub.count > payProfile.countLimit) {
+                    baseRspParam.status = R.HttpStatus.BUY_ERROR;
+                    baseRspParam.msg = R.RequestMsg.COUNT_LIMIT;
+                    return baseRspParam.toJson();
+                }
+            }
+
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+            return baseRspParam.toJson();
+        }
+
         /* 逻辑处理阶段 */
         CusPayCustomAddRsp payPackageRsp = new CusPayCustomAddRsp();
         payPackageRsp.customerCode = payPackageReq.customerCode;
@@ -165,6 +212,9 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             payPackage.code = payPackageCode;
             payPackage.custom = 1;
             mPayPackageService.add(payPackage);
+
+            /* 让该客户购买的所有套餐失效 */
+            mCustomerPayPackageService.cancelAll(payPackageReq.customerCode);
 
             /* 把客户和套餐的关系保存起来 */
             CustomerPayPackage cusPayPackage = new CustomerPayPackage();
@@ -225,6 +275,7 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
 
             PayPackageQueryRsp.PayPackage payPackage = payPackageRsp.new PayPackage();
             payPackage.payPackageCode = pay.code;
+            payPackage.status = pay.status;
 
             for (PayPackageStub packageStub : stubList) {
                 PayPackageQueryRsp.PayPackage.PayPackageStub payPackageStub = payPackage.new PayPackageStub();
@@ -270,7 +321,9 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
 
             List<PayPackage> payPackageList = new ArrayList<>();
             for (CustomerPayPackage customerPayPackage : customerPayPackageList) {
-                payPackageList.add(mPayPackageService.findByCode(customerPayPackage.packageCode));
+                PayPackage payPackage = mPayPackageService.findByCode(customerPayPackage.packageCode);
+                payPackage.status = customerPayPackage.status;
+                payPackageList.add(payPackage);
             }
 
             /* 查询内建的套餐 */
@@ -293,7 +346,18 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             }
 
             for (CusPayCustomAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
-                break;
+                if (!RegexUtil.isPriorityQualified(payPackageStub.priority)) {
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR);
+                }
+                if (!RegexUtil.isPositiveNumQualified(payPackageStub.frequency)) {
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_POSITIVE_NUM_ERROR);
+                }
+                if (!RegexUtil.isPositiveNumQualified(payPackageStub.day)) {
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_POSITIVE_NUM_ERROR);
+                }
+                if (!RegexUtil.isPositiveNumQualified(payPackageStub.count)) {
+                    return getValidateMsg(false, R.RequestMsg.PARAMETER_POSITIVE_NUM_ERROR);
+                }
             }
 
         } else if (baseReqParam instanceof CusPayAddReq) {
@@ -302,6 +366,7 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             if (StringUtils.isEmpty(payPackageReq.data.payPackageCode)) {
                 return getValidateMsg(false, R.RequestMsg.PAY_PACKAGE_NULL);
             }
+
         }
 
         return getValidateMsg(true, R.RequestMsg.SUCCESS);

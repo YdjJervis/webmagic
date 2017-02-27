@@ -18,6 +18,7 @@ public class PayPackageQueryRsp extends BaseRspParam {
     public class PayPackage {
         public String payPackageCode;
         public int price;
+        public int status;
 
         public List<PayPackageStub> stubs = new ArrayList<>();
 
