@@ -60,4 +60,8 @@ public class BusinessService {
     public Business findByCode(String businessCode) {
         return mBusinessDao.findByCode(businessCode);
     }
+
+    public boolean isExist(String businessCode) {
+        return findByCode(businessCode) != null;
+    }
 }

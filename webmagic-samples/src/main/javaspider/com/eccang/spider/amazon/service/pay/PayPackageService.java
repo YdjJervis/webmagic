@@ -31,10 +31,14 @@ public class PayPackageService {
         mDao.update(payPackage);
     }
 
+    public boolean isExist(String payPackageCode) {
+        return findByCode(payPackageCode) != null;
+    }
+
     /**
      * @return 内建的套餐列表
      */
-    public List<PayPackage> findBuildIn(){
+    public List<PayPackage> findBuildIn() {
         return mDao.findBuildIn();
     }
 

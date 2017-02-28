@@ -27,8 +27,20 @@ public class CustomerPayPackageService {
         return mDao.findByCustomerCode(customerCode);
     }
 
-    public CustomerPayPackage findActived(String customerCode){
+    public CustomerPayPackage findActived(String customerCode) {
         return mDao.findActived(customerCode);
+    }
+
+    public CustomerPayPackage find(String customerCode, String payPackageCode) {
+        return mDao.find(customerCode, payPackageCode);
+    }
+
+    public boolean isExist(String customerCode, String payPackageCode) {
+        return find(customerCode, payPackageCode) != null;
+    }
+
+    public void cancelAll(String customerCode) {
+        mDao.cancelAll(customerCode);
     }
 
 

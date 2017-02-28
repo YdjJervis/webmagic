@@ -14,6 +14,8 @@ public class PayProfile extends BasePojo {
     public float urlPrice;
     public float priorityMutiple;
     public float customMutiple;
+    public int dayLimit;
+    public int countLimit;
 
     @Override
     public String toString() {
@@ -22,7 +24,8 @@ public class PayProfile extends BasePojo {
                 ", urlPrice=" + urlPrice +
                 ", priorityMutiple=" + priorityMutiple +
                 ", customMutiple=" + customMutiple +
+                ", dayLimit=" + dayLimit +
+                ", countLimit=" + countLimit +
                 '}';
     }
-
 }

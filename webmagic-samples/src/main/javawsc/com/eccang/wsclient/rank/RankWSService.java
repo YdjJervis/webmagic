@@ -28,7 +28,8 @@ public class RankWSService
         WebServiceException e = null;
         try {
             String value = PropertyUtil.getValue("ws.properties", "spiderWSIPPort");
-            url = new URL(value + "/eccang/ws/rank?wsdl");
+            String productName = PropertyUtil.getValue("ws.properties", "productName");
+            url = new URL(value + "/" + productName + "/ws/rank?wsdl");
         } catch (Exception ex) {
             e = new WebServiceException(ex);
         }

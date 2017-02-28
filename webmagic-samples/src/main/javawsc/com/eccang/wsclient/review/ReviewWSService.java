@@ -28,7 +28,8 @@ public class ReviewWSService
         WebServiceException e = null;
         try {
             String value = PropertyUtil.getValue("ws.properties", "spiderWSIPPort");
-            url = new URL(value + "/eccang/ws/review?wsdl");
+            String productName = PropertyUtil.getValue("ws.properties", "productName");
+            url = new URL(value + "/" + productName + "/ws/review?wsdl");
         } catch (Exception ex) {
             e = new WebServiceException(ex);
         }

@@ -15,14 +15,19 @@ public class CustomerPayPackageServiceTest extends SpringTestCase {
     @Test
     public void add(){
         CustomerPayPackage payPackage = new CustomerPayPackage();
-        payPackage.customerCode = "Cus001";
-        payPackage.packageCode = "Pay001";
+        payPackage.customerCode = "EC_001";
+        payPackage.packageCode = "46479c";
         mService.add(payPackage);
     }
 
     @Test
     public void findByCustomerCode(){
         System.out.println(mService.findByCustomerCode("EC_001"));
+    }
+
+    @Test
+    public void cancelAll(){
+        mService.cancelAll("EC_002");
     }
 
 }

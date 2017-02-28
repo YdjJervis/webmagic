@@ -2,6 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.eccang.spider.amazon.dao.relation.CustomerPayPackageDao">
 
+    <cache eviction="LRU" type="com.eccang.spider.base.service.RedisCacheService"/>
+
     <resultMap id="CustomerPayPackageMap" type="CustomerPayPackage">
         <id column="rcpp_id" property="id"/>
         <result column="bec_code" property="customerCode"/>
@@ -23,6 +25,14 @@
         );
     </insert>
 
+    <delete id="cancelAll">
+        UPDATE relation_customer_pay_package
+        SET
+        rcpp_status = 0
+        WHERE
+        bec_code = #{0}
+    </delete>
+
     <select id="findByCustomerCode" resultMap="CustomerPayPackageMap">
         SELECT * FROM relation_customer_pay_package
         WHERE
@@ -35,6 +45,14 @@
         bec_code = #{0}
         and
         rcpp_status = 1;
+    </select>
+
+    <select id="find" resultMap="CustomerPayPackageMap">
+        SELECT * FROM relation_customer_pay_package
+        WHERE
+        bec_code = #{0}
+        and
+        bpp_code = #{1}
     </select>
 
 </mapper>

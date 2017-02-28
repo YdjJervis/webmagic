@@ -40,8 +40,11 @@ public class RegexUtil {
         return mStatusSet.contains(status);
     }
 
-    public static boolean isFrequencyQualified(int frequency) {
-        return frequency > 0;
+    /**
+     * 验证是否是大于零的整数
+     */
+    public static boolean isPositiveNumQualified(int number) {
+        return number > 0;
     }
 
     public static boolean isReviewIdQualified(String reviewId) {

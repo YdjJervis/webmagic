@@ -164,7 +164,7 @@ public abstract class AbstractSpiderWS implements SpiderWS {
         } catch (JsonSyntaxException e) {
             sLogger.error(e);
             baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_FORMAT_ERROR;
+            baseRspParam.msg = R.RequestMsg.DATA_FORMAT_ERROR;
         }
         return t;
     }
