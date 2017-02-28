@@ -11,6 +11,8 @@
         <result property="urlPrice" column="bppp_url_price"/>
         <result property="priorityMutiple" column="bppp_priority_mutiple"/>
         <result property="customMutiple" column="bppp_custom_mutiple"/>
+        <result property="dayLimit" column="bppp_day_limit"/>
+        <result property="countLimit" column="bppp_count_limit"/>
         <result property="createTime" column="bppp_create_time"/>
         <result property="updateTime" column="bppp_update_time"/>
     </resultMap>

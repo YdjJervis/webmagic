@@ -21,6 +21,17 @@ public class CusPayCustomAddReq extends BaseReqParam {
         public int priority;
         public int frequency;
         public int count;
+
+        @Override
+        public String toString() {
+            return "PayPackageStub{" +
+                    "businessCode='" + businessCode + '\'' +
+                    ", day=" + day +
+                    ", priority=" + priority +
+                    ", frequency=" + frequency +
+                    ", count=" + count +
+                    '}';
+        }
     }
 
 }

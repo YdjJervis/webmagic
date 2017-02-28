@@ -5,6 +5,8 @@ import org.apache.ibatis.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -83,17 +85,17 @@ public class RedisCacheService implements Cache {
     }
 
     protected static Jedis createRedis() {
-//        JedisPool pool = new JedisPool(new JedisPoolConfig(), "192.168.100.110");
-//        Jedis jedis = pool.getResource();
-        /**以下参数分别填写您的redis实例内网IP，端口号，实例id和密码*/
-        String host = "10.66.136.127";
-        int port = 6379;
-        String instanceid = "crs-0nl0zy8q";
-        String password = "Olwpocj*9";
-        //连接redis
-        Jedis jedis = new Jedis(host, port);
-        //鉴权
-        jedis.auth(instanceid + ":" + password);
+        JedisPool pool = new JedisPool(new JedisPoolConfig(), "192.168.100.110");
+        Jedis jedis = pool.getResource();
+//        /**以下参数分别填写您的redis实例内网IP，端口号，实例id和密码*/
+//        String host = "10.66.136.127";
+//        int port = 6379;
+//        String instanceid = "crs-0nl0zy8q";
+//        String password = "Olwpocj*9";
+//        //连接redis
+//        Jedis jedis = new Jedis(host, port);
+//        //鉴权
+//        jedis.auth(instanceid + ":" + password);
         return jedis;
     }
 }
