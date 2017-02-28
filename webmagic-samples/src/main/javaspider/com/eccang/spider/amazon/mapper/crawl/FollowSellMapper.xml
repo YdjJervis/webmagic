@@ -2,6 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.eccang.spider.amazon.dao.crawl.FollowSellDao">
 
+    <cache eviction="LRU" type="com.eccang.spider.base.service.RedisCacheService"/>
+
     <resultMap id="FollowSellResultMap" type="FollowSell">
         <result column="saf_id" property="id"/>
         <result column="bo_batch_num" property="batchNum"/>

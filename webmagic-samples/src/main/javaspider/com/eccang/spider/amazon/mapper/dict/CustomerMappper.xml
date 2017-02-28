@@ -3,6 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eccang.spider.amazon.dao.dict.CustomerDao">
 
+    <cache eviction="LRU" type="com.eccang.spider.base.service.RedisCacheService"/>
+
     <resultMap id="CustomerResultMap" type="Customer">
         <result property="id" column="bec_id"/>
         <result property="code" column="bec_code"/>

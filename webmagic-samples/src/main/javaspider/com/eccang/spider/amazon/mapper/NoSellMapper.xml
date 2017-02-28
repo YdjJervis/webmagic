@@ -2,6 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.eccang.spider.amazon.dao.NoSellDao">
 
+    <cache eviction="LRU" type="com.eccang.spider.base.service.RedisCacheService"/>
+
     <resultMap id="NoSellResultMap" type="Asin">
         <id column="sans_id" property="id"/>
         <result column="bas_code" property="siteCode"/>

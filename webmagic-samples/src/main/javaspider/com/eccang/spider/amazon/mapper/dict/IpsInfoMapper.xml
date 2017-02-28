@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eccang.spider.amazon.dao.dict.IpsInfoDao">
-    <!--<cache eviction="LRU" type="us.codecraft.webmagic.samples.base.service.RedisCacheService"/>-->
+    <cache eviction="LRU" type="com.eccang.spider.base.service.RedisCacheService"/>
 
     <resultMap id="IpsInfoResultMap" type="IpsInfo">
         <id property="id" column="bii_id" />
