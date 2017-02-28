@@ -83,7 +83,8 @@ public class RedisCacheService implements Cache {
     }
 
     protected static Jedis createRedis() {
-//        JedisPool pool = new JedisPool(new JedisPoolConfig(), "192.168.0.121");
+//        JedisPool pool = new JedisPool(new JedisPoolConfig(), "192.168.100.110");
+//        Jedis jedis = pool.getResource();
         /**以下参数分别填写您的redis实例内网IP，端口号，实例id和密码*/
         String host = "10.66.136.127";
         int port = 6379;
