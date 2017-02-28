@@ -28,7 +28,8 @@ public class BatchWSService
         WebServiceException e = null;
         try {
             String value = PropertyUtil.getValue("ws.properties", "spiderWSIPPort");
-            url = new URL(value + "/eccang/ws/batch?wsdl");
+            String productName = PropertyUtil.getValue("ws.properties", "productName");
+            url = new URL(value + "/" + productName + "/ws/batch?wsdl");
         } catch (Exception ex) {
             e = new WebServiceException(ex);
         }

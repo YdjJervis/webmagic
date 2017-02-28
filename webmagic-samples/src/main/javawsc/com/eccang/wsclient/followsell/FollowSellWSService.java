@@ -28,7 +28,8 @@ public class FollowSellWSService
         WebServiceException e = null;
         try {
             String value = PropertyUtil.getValue("ws.properties", "spiderWSIPPort");
-            url = new URL(value + "/eccang/ws/followSell?wsdl");
+            String productName = PropertyUtil.getValue("ws.properties", "productName");
+            url = new URL(value + "/" + productName + "/ws/followSell?wsdl");
         } catch (Exception ex) {
             e = new WebServiceException(ex);
         }
