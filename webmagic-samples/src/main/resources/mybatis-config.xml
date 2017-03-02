@@ -4,7 +4,7 @@
 <configuration>
     <settings>
         <!-- 这个配置使全局的映射器启用或禁用缓存 -->
-        <setting name="cacheEnabled" value="false" />
+        <setting name="cacheEnabled" value="true" />
         <!-- 对于未知的SQL查询，允许返回不同的结果集以达到通用的效果 -->
         <setting name="multipleResultSetsEnabled" value="true" />
         <!-- 配置默认的执行器。SIMPLE 执行器没有什么特别之处。REUSE 执行器重用预处理语句。BATCH 执行器重用语句和批量更新 -->

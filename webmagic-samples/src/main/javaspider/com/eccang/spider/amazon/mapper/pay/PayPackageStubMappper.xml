@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eccang.spider.amazon.dao.pay.PayPackageStubDao">
 
-    <cache eviction="LRU" type="com.eccang.spider.base.service.RedisCacheService"/>
+    <cache eviction="LRU" type="com.eccang.spider.base.rediscache.RedisCache"/>
 
     <resultMap id="PayPackageStubResultMap" type="PayPackageStub">
         <id property="id" column="bpps_id"/>

@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eccang.spider.amazon.dao.batch.BatchFollowSellDao">
 
-    <cache eviction="LRU" type="com.eccang.spider.base.service.RedisCacheService"/>
+    <cache eviction="LRU" type="com.eccang.spider.base.rediscache.RedisCache"/>
 
     <resultMap id="BatchFollowSellMap" type="BatchFollowSell">
         <id column="bof_id" property="id"/>
