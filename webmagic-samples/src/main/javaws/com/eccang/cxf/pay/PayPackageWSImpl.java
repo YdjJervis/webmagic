@@ -157,6 +157,8 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
             /* 检查购买数量限制 */
             for (CusPayCustomAddReq.PayPackageStub payPackageStub : payPackageReq.data) {
                 PayProfile payProfile = mPayProfileService.findByCode(payPackageStub.businessCode);
+                sLogger.info(payProfile);
+                sLogger.info(payPackageReq);
                 if (payPackageStub.day > payProfile.dayLimit) {
                     baseRspParam.status = R.HttpStatus.BUY_ERROR;
                     baseRspParam.msg = R.RequestMsg.DAY_LIMIT;
