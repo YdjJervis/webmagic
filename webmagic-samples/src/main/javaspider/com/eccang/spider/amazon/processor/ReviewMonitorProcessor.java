@@ -51,16 +51,30 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
             String content = page.getHtml().xpath("//tbody//div[@class='reviewText']/text()").get();
 
             boolean changed = false;
-            if (review.star != stars || !review.title.equals(title) || review.content.equals(content)) {
+
+            if (review == null) {
+                review = new Review();
+                review.reviewId = reviewId;
+                review.title = "";
+                review.content = "";
+                review.personId = "";
+                review.siteCode = extractSite(page).code;
+                mReviewService.add(review);
+
                 changed = true;
+            } else {
+
+                if (review.star != stars || !review.title.equals(title) || review.content.equals(content)) {
+                    changed = true;
+                }
+
+                review.star = stars;
+                review.title = title;
+                review.content = content;
+
+                sLogger.info(review);
+                mReviewService.update(review);
             }
-
-            review.star = stars;
-            review.title = title;
-            review.content = content;
-
-            sLogger.info(review);
-            mReviewService.update(review);
 
             updateBatchStatus(page, true, changed);
         }
