@@ -46,4 +46,9 @@ public class CustomerAsinServiceTest extends SpringTestCase {
         mService.addAll(list);
     }
 
+    @Test
+    public void findNeedGenerateBatch(){
+        System.out.println(mService.findNeedGenerateBatch());
+    }
+
 }

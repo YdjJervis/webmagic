@@ -1,14 +1,9 @@
 package com.eccang.spider.amazon.service;
 
-import com.google.gson.Gson;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.dao.UrlDao;
-import com.eccang.spider.amazon.pojo.*;
+import com.eccang.spider.amazon.pojo.Asin;
+import com.eccang.spider.amazon.pojo.Url;
 import com.eccang.spider.amazon.pojo.batch.Batch;
 import com.eccang.spider.amazon.pojo.batch.BatchAsin;
 import com.eccang.spider.amazon.pojo.batch.BatchAsinExtra;
@@ -19,6 +14,12 @@ import com.eccang.spider.amazon.service.crawl.ReviewService;
 import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerAsinService;
 import com.eccang.spider.base.util.UrlUtils;
+import com.google.gson.Gson;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 

@@ -1,5 +1,6 @@
 package com.eccang.spider.base.pojo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Date;
  * @Description: 基础实体类，所有有关数据表的类都必须继承这个
  * @date 2016/10/11
  */
-public class BasePojo {
+public class BasePojo implements Serializable{
 
     public Integer id;
     public Date createTime;

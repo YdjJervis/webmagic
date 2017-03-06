@@ -71,6 +71,30 @@ public class ReviewWSTest extends SpringTestCase {
     }
 
     @Test
+    public void addToMonitorMany(){
+        ReviewReq reviewReq = new ReviewReq();
+
+        reviewReq.customerCode = "EC_001";
+        reviewReq.platformCode = "ERP";
+        reviewReq.token = "123456789";
+
+        ReviewReq.Review review = reviewReq.new Review();
+        review.reviewId = "R1XILAPZ22PKDI";
+        review.siteCode = "UK";
+        review.asin = "B01G38UKDO";
+        reviewReq.data.add(review);
+
+        review = reviewReq.new Review();
+        review.reviewId = "R3N2ODIAYVFTAS";
+        review.siteCode = "US";
+        review.asin = "B01LY3AMY8";
+        reviewReq.data.add(review);
+
+        String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq));
+        System.out.println(json);
+    }
+
+    @Test
     public void setReviewMonitor() {
         CusReviewUpdateReq req = new CusReviewUpdateReq();
 
@@ -79,6 +103,11 @@ public class ReviewWSTest extends SpringTestCase {
         req.token = "123456789";
 
         CusReviewUpdateReq.CustomerReview review1 = req.new CustomerReview();
+        review1.reviewId = "Tx164I0R2U1QE4";
+        review1.crawl = 1;
+        req.data.add(review1);
+
+        req.new CustomerReview();
         review1.reviewId = "Tx164I0R2U1QE4";
         review1.crawl = 1;
         req.data.add(review1);

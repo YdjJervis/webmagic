@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eccang.spider.amazon.dao.dict.APIDao">
 
-    <cache eviction="LRU" type="com.eccang.spider.base.service.RedisCacheService"/>
+    <cache eviction="LRU" type="com.eccang.spider.base.rediscache.RedisCache"/>
 
     <resultMap id="APIResultMap" type="API">
         <result property="id" column="bea_id"/>
