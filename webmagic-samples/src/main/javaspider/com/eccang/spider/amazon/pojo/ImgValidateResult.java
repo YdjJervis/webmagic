@@ -1,12 +1,14 @@
 package com.eccang.spider.amazon.pojo;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 /**
  * @author Jervis
  * @version V0.1
  * @Description: 验证码识别结果
  * @date 2016/10/19 17:53
  */
-public class ImgValidateResult {
+public class ImgValidateResult extends BasePojo {
 
     private boolean RequestSuccess;
     private boolean Identification;

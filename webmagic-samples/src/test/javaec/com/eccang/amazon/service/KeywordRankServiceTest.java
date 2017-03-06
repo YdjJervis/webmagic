@@ -19,8 +19,8 @@ public class KeywordRankServiceTest extends SpringTestCase{
     @Test
     public void findByObj() {
         KeywordRank keywordRank = new KeywordRank();
-        keywordRank.setAsin("B01L7BDLL0");
-        keywordRank.setKeyword("watch");
+        keywordRank.setAsin("B01IJUJPVM");
+        keywordRank.setKeyword("tap");
         keywordRank.setSiteCode("US");
         keywordRank.setDepartmentCode("search-alias=aps");
         KeywordRank rank = mKeywordRankService.findByObj(keywordRank);

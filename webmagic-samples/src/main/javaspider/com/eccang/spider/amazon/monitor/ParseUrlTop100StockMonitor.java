@@ -2,7 +2,6 @@ package com.eccang.spider.amazon.monitor;
 
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.Url;
-import com.eccang.spider.amazon.pojo.dict.Site;
 import com.eccang.spider.amazon.pojo.top100.SellingProduct;
 import com.eccang.spider.amazon.pojo.top100.StockUrl;
 import com.eccang.spider.amazon.service.dict.SiteService;
@@ -10,6 +9,7 @@ import com.eccang.spider.amazon.service.top100.SellingProductService;
 import com.eccang.spider.amazon.service.top100.StockUrlService;
 import com.eccang.spider.base.monitor.ParseMonitor;
 import com.eccang.spider.base.util.UrlUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,13 +47,14 @@ public class ParseUrlTop100StockMonitor extends ParseMonitor {
         for (SellingProduct product : products) {
 
             stockUrl = new StockUrl();
-            Site site = mSiteService.find(product.siteCode);
-
             stockUrl.batchNum = product.batchNum;
             stockUrl.siteCode = product.siteCode;
             stockUrl.asin = product.asin;
             stockUrl.type = R.StockCrawlUrlType.PRODUCT_URL;
-            stockUrl.url = product.url;
+            String size = UrlUtils.getValue(product.url, "psc");
+            if(StringUtils.isEmpty(size)) {
+                stockUrl.url = UrlUtils.setValue(product.url, "psc", "1");
+            }
             stockUrl.urlMD5 = UrlUtils.md5(stockUrl.url);
             stockUrl.pUrl = product.url;
             stockUrls.add(stockUrl);

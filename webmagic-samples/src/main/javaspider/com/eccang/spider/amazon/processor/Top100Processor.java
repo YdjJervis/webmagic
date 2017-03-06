@@ -57,9 +57,6 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         Department department = findDepartment(page);
 
         if (url.type == R.CrawlType.TOP_100_DEPARTMENT) {
-            /*
-             *如果当前选中品类级数小于3，则解析子品类
-             */
             if (department != null) {
                 if (department.depLevel < 4) {
                     /*解析商品listing,并入库*/
@@ -67,7 +64,10 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                     /*解析商品页的第一页，并入库*/
                     extractTop100ProductInfo(page, url);
 
-                    if(department.depLevel < 3) {
+                    /*
+                     *如果当前选中品类级数小于3，则解析子品类
+                     */
+                    if (department.depLevel < 3) {
                         /*查询子品类*/
                         List<Department> childDepList = mDepartmentService.findByParentUrl(department.depUrl);
 
@@ -153,6 +153,13 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                 department.depUrl = url;
                 department.urlMD5 = UrlUtils.md5(url);
                 departments.add(department);
+
+                if (dep.depLevel == 0) {
+                    if (i == 2) {
+                        break;
+                    }
+                }
+
             }
 
         } catch (ParserConfigurationException | XPathExpressionException e) {
@@ -249,7 +256,13 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                 url.urlMD5 = UrlUtils.md5(urlStr);
                 url.batchNum = depUrl.batchNum;
                 url.siteCode = depUrl.siteCode;
-                url.parentUrl = depUrl.url;
+
+                if (depUrl.type == R.CrawlType.TOP_100_CLASSIFY) {
+                    url.parentUrl = depUrl.parentUrl;
+                } else {
+                    url.parentUrl = depUrl.url;
+                }
+
                 url.url = urlStr;
                 url.type = R.CrawlType.TOP_100_PRODUCT;
                 urls.add(url);
@@ -283,6 +296,14 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                 Selectable selectable = node.xpath("//div[@class='zg_itemWrapper']/div/a/@href");
                 product.batchNum = url.batchNum;
                 product.url = selectable.get();
+
+                /*
+                 * 品类下排名的商品，排名中间可能为空
+                 */
+                if (StringUtils.isEmpty(selectable.get())) {
+                    continue;
+                }
+
                 product.urlMD5 = UrlUtils.md5(selectable.get());
                 product.siteCode = url.siteCode;
                 product.asin = selectable.regex(".*/dp/([0-9A-Za-z]*)/").get();
@@ -324,6 +345,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                     product.amazonDelivery = 1;
                 }
 
+
                 products.add(product);
             }
         }
@@ -362,6 +384,12 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
             batchTop100.progress = progress;
             if (progress == 1) {
                 batchTop100.status = 2;
+
+                /*将url存入历史表中*/
+                addUrlHistory(urls);
+
+                /*删除url数据*/
+                mUrlService.deleteByBNSC(url.batchNum, url.siteCode);
             }
             mBatchTop100Service.update(batchTop100);
         }
@@ -388,6 +416,18 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         }
 
         mBatchService.update(batch);
+    }
+
+    /**
+     * 将上万数据分批插入数据库中
+     */
+    private void addUrlHistory(List<Url> urls) {
+        int addNum = 2000;
+        int index = urls.size() / addNum;
+        for (int i = 0; i < index; i++) {
+            mUrlHistoryService.addAll(urls.subList(i * addNum, (i + 1) * addNum - 1));
+        }
+        mUrlHistoryService.addAll(urls.subList(index*addNum, urls.size()));
     }
 
     @Override

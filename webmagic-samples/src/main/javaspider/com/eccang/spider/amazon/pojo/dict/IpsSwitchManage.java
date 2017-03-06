@@ -1,6 +1,7 @@
 package com.eccang.spider.amazon.pojo.dict;
 
-import java.io.Serializable;
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Date;
  * @Description:
  * @date 2016/10/31 10:09
  */
-public class IpsSwitchManage implements Serializable {
+public class IpsSwitchManage extends BasePojo {
 
     private int id;
     private String ipsType;

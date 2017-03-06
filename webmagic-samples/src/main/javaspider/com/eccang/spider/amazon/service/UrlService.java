@@ -306,4 +306,11 @@ public class UrlService {
     public List<Url> findByBatchNumAndSite(String batchNum, String siteCode) {
         return mUrlDao.findByBatchNumAndSite(batchNum, siteCode);
     }
+
+    /**
+     * 根据批次号与站点码删除url
+     */
+    public void deleteByBNSC(String batchNum, String siteCode) {
+        mUrlDao.deleteByBNSC(batchNum, siteCode);
+    }
 }

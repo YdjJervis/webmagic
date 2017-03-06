@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo.crawl;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  *  通过关键词搜索的商品排名前十信息
  *  2016/11/30 15:21
  */
-public class GoodsRankInfo {
+public class GoodsRankInfo extends BasePojo {
     private String id;
     private String batchNum;
     private String asin ;

@@ -341,8 +341,8 @@ public abstract class BasePageProcessor implements PageProcessor {
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
-                    .setDownloader(mHttpClientImplDownloader)
-                    .thread(1);
+                    .setDownloader(mIpsProxyHttpClientDownloader)
+                    .thread(10);
 
             for (Url url : urlList) {
                 Request request = new Request(url.url);

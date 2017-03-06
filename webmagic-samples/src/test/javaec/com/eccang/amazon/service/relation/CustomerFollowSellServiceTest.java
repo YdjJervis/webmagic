@@ -23,7 +23,7 @@ public class CustomerFollowSellServiceTest extends SpringTestCase {
         CustomerFollowSell customerFollowSell = new CustomerFollowSell();
         customerFollowSell.customerCode = "EC_001";
         customerFollowSell.siteCode = "US";
-        customerFollowSell.asin = "0071809252";
+        customerFollowSell.asin = "B00EQBOXHA";
         customerFollowSell.frequency = 2;
         mService.add(customerFollowSell);
     }

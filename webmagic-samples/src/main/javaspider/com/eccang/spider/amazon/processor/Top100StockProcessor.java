@@ -6,6 +6,7 @@ import com.eccang.spider.amazon.pojo.top100.StockUrl;
 import com.eccang.spider.amazon.service.top100.SellingProductService;
 import com.eccang.spider.amazon.service.top100.StockUrlService;
 import com.eccang.spider.base.monitor.ScheduledTask;
+import com.eccang.spider.base.util.PageUtil;
 import com.eccang.spider.base.util.UrlUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -61,7 +62,6 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
         } else {
             dealOtherPage(page);
         }
-
     }
 
     @Override
@@ -100,7 +100,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
             request.putExtra(URL_EXTRA, nextStepUrl);
             page.addTargetRequest(request);
 
-            sellingProduct.status = R.StockCrawlStatus.ADD_TO_CART;
+            sellingProduct.status = R.StockCrawlStatus.PRODUCT_INFO;
         } else if (stockUrl.type == R.StockCrawlUrlType.ADD_TO_CART) {
 
             //放入购物车完成，并将购物车url放入请求中
@@ -113,6 +113,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
 
             page.addTargetRequest(request);
 
+            sellingProduct.status = R.StockCrawlStatus.ADD_TO_CART;
         } else if (stockUrl.type == R.StockCrawlUrlType.CART_URL) {
 
             //统计库存
@@ -128,17 +129,39 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
             request.putExtra(URL_EXTRA, nextStepUrl);
 
             page.addTargetRequest(request);
-
             sellingProduct.status = R.StockCrawlStatus.COUNT_STOCK;
+
+            //删除购物车
+            NameValuePair[] nameValuePairs1 = extraReqDeleteCartParam1(page);
+            Request request1 = new Request("https://www.amazon.com/gp/cart/view.html/ref=ord_cart_shr?ie=UTF8&app-nav-type=none&dc=df");
+            stockUrl.type += 1;
+            StockUrl nextStepUrl1 = initStockUrl("https://www.amazon.com/gp/cart/view.html/ref=ord_cart_shr?ie=UTF8&app-nav-type=none&dc=df", stockUrl);
+            Map nameValuePair1 = new HashMap();
+            nameValuePair1.put("nameValuePair", nameValuePairs1);
+            request1.setExtras(nameValuePair1);
+            request1.setMethod(HttpConstant.Method.POST);
+            request1.putExtra(URL_EXTRA, nextStepUrl1);
+            page.addTargetRequest(request1);
+
+            sellingProduct.status = R.StockCrawlStatus.OPEN_CART;
         } else if (stockUrl.type == R.StockCrawlUrlType.COUNT_STOCK_URL) {
 
             //解析库存数
             String stockNum = page.getJson().jsonPath("$..nav-cart.cartQty").get();
             System.out.println(stockNum);
             sellingProduct.stock = Integer.valueOf(stockNum);
+
+            sellingProduct.status = R.StockCrawlStatus.COUNT_STOCK;
+        } else if (stockUrl.type == R.StockCrawlUrlType.DELETE_CART) {
+            sLogger.info("产品ASIN：" + stockUrl.asin + ",购物车信息删除成功.");
             sellingProduct.status = R.StockCrawlStatus.FINISH;
         }
-        mSellingProductService.updateStock(sellingProduct);
+
+        if(stockUrl.type == R.StockCrawlUrlType.COUNT_STOCK_URL) {
+            mSellingProductService.updateStock(sellingProduct);
+        } else {
+            mSellingProductService.updateState(sellingProduct);
+        }
     }
 
     /**
@@ -196,6 +219,76 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
         };
     }
 
+    /**
+     * 删除购物车中的产品所需要的参数
+     */
+    private NameValuePair[] extraReqDeleteCartParam(Page page) {
+        String timeStamp = page.getHtml().xpath("//form[@id='activeCartViewForm']/input[@name='timeStamp']/@value").get();
+        String token = page.getHtml().xpath("//form[@id='activeCartViewForm']/input[@name='token']/@value").get();
+        String requestID = page.getHtml().xpath("//form[@id='activeCartViewForm']/input[@name='requestID']/@value").get();
+
+
+        List<Selectable> selectables = page.getHtml().xpath("//div[@class='sc-list-body']/div").nodes();
+        String asin = "";
+        String actionItemID = "";
+        String encodedOffering = "";
+        if (CollectionUtils.isNotEmpty(selectables)) {
+
+            asin = selectables.get(0).xpath("/div/@data-asin").get();
+            actionItemID = selectables.get(0).xpath("/div/@data-itemid").get();
+            encodedOffering = selectables.get(0).xpath("/div/@data-itemid").get();
+        }
+
+        return new NameValuePair[]{
+                new BasicNameValuePair("hasMoreItems", "0"),
+                new BasicNameValuePair("timeStamp", timeStamp),
+                new BasicNameValuePair("token", token),
+                new BasicNameValuePair("requestID", requestID),
+                new BasicNameValuePair("addressId", "new"),
+                new BasicNameValuePair("addressZip", ""),
+                new BasicNameValuePair("closeAddonUpsell", "1"),
+                new BasicNameValuePair("flcExpanded", "0"),
+                new BasicNameValuePair("submit.delete." + actionItemID, "999"),
+                new BasicNameValuePair("pageAction", "delete-active"),
+                new BasicNameValuePair("submit.update-quantity." + actionItemID, "1"),
+                new BasicNameValuePair("actionItemID", actionItemID),
+                new BasicNameValuePair("asin", asin),
+                new BasicNameValuePair("encodedOffering", encodedOffering)
+        };
+    }
+
+    /**
+     * 删除购物车中的一个产品
+     */
+    private NameValuePair[] extraReqDeleteCartParam1(Page page) {
+        String timeStamp = page.getHtml().xpath("//form[@id='activeCartViewForm']/input[@name='timeStamp']/@value").get();
+        String token = page.getHtml().xpath("//form[@id='activeCartViewForm']/input[@name='token']/@value").get();
+        String requestID = page.getHtml().xpath("//form[@id='activeCartViewForm']/input[@name='requestID']/@value").get();
+
+
+        List<Selectable> selectables = page.getHtml().xpath("//div[@class='sc-list-body']/div").nodes();
+        String asin = "";
+        String actionItemID = "";
+        String encodedOffering = "";
+        if (CollectionUtils.isNotEmpty(selectables)) {
+
+            asin = selectables.get(0).xpath("/div/@data-asin").get();
+            actionItemID = selectables.get(0).xpath("/div/@data-itemid").get();
+            encodedOffering = selectables.get(0).xpath("/div/@data-itemid").get();
+        }
+
+        return new NameValuePair[]{
+                new BasicNameValuePair("fromAUI", "1"),
+                new BasicNameValuePair("timeStamp", timeStamp),
+                new BasicNameValuePair("token", token),
+                new BasicNameValuePair("requestID", requestID),
+                new BasicNameValuePair("activePage", "0"),
+                new BasicNameValuePair("submit.delete." + actionItemID, "Delete"),
+                new BasicNameValuePair("quantity", "1"),
+                new BasicNameValuePair("quantityBox", "")
+        };
+    }
+
     private StockUrl getStockUrl(Page page) {
         return (StockUrl) page.getRequest().getExtra(URL_EXTRA);
     }
@@ -211,7 +304,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
             stockUrl.status = statusCode;
         }
 
-        if(stockUrl.type == R.StockCrawlUrlType.COUNT_STOCK_URL) {
+        if (stockUrl.type == R.StockCrawlUrlType.COUNT_STOCK_URL) {
             stockUrl.crawling = 0;
         }
 
@@ -310,22 +403,22 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
 
     @Override
     public Site getSite() {
-        mSite.addHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+//        mSite.addHeader("Accept", "application/json, text/javascript, */*; q=0.01");
 //        mSite.addHeader("Accept-Encoding","gzip, deflate, sdch, br");
-        mSite.addHeader("Accept-Language", "zh-CN,zh;q=0.8");
-
-        mSite.addHeader("Connection", "keep-alive");
-        mSite.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8;");
-
-        mSite.addHeader("Cookie", "skin=noskin; JSESSIONID=DB05F4D8C96889AEC0B9719AD5FC156F; session-token=\"P/R/tKjAhzKIUN/+bKQY2mlv+EMNtdz6LCVxwYGfvU5fKryaFlakSEzm66a+wteWVcmaQ0XEPjmlmKBi02W5p15kI830CIKxUJ6b2ZE6r9Y5n5wqzCYR4PAFLFQlZydwsyBGkM3BYN20d57D3I8GLUnmguwl6Is7wBSu/GLlxBVFjdEyNQXPUFzkiKMfmUioxHb4ILBI/fGbadQgmymLWYZiPUnTLpqj6Di833sX0YiC1morDkZEQcNiK2Bf8hxc7XWt0H53owbVlwFUF8ze5w==\"; x-main=RDA19prtSRN2RewvMfr97vc44ABzZa2iq5d0dv9k24kLRTUqM4ur1jEBORgArAH7; at-main=Atza|IwEBIDKra_msTzik4A-4iZrZQ67YH7OMUHFrQlLquGRjTqe4perMQvzDatwk8ZFFlkCNgwq8F2hRaQM-3vgaCz3-DiDsZioqzWpuBF-OLK0stSI5vxiuWBpPdEIQMW07tKOS1w2SCK5wdbO17ax_hm7MmwSN7oRXTK7N-eh6Ufi7zCcyNLyFsKlwBhF2uJQp6PSTNNmb7ZXbFSxe3jKzvy337OzHykuDgFTfy508d06Cp4ACB-bh3K9SR59952CWXnL4DlNVQJEu5Ukd56d4m3dZx-YGXLirf5itmOUIEAP13IMhiuq93gxRDW65uCd2zbLF8_dqG6L9fm-bFmUQinI1rWUpATrjWQd9V3ggnW9v0X76FM9P9XZa5PNMG_1Qy8C05BRbDKpsr61aGa8s3IfKoqVTZ33wjXLulnj73zyfCh6aKQ; sess-at-main=\"NaGiOgG2TVI5pzlpfGI1z8+Wyy7jifJvC+O7iX3SvQQ=\"; lc-main=en_US; x-wl-uid=1A7mJEhIOz2Ii5UlfqXg27YDkS+2UBCkAxtvbn0GIiUZ2ooNZw+eBwGYqAXzvrqGBf4Idc217C8OXw8f844cug2uo2WgNzqxdE+Gs4o795yJGFl2lpYB4iKgYHfun47k+B00W7iAIWO4=; csm-hit=BFNHJNQF27DE58K31K7R+b-7QNMX335ET5B179K3PCX|1487643282453; ubid-main=162-5971175-8414817; session-id-time=2082787201l; session-id=167-8229845-7101626");
-
-        mSite.addHeader("Host", "www.amazon.com");
-        mSite.addHeader("Origin", "https://www.amazon.com");
-
-        mSite.addHeader("X-AUI-View", "Desktop");
-        mSite.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.59 Safari/537.36");
-
-        mSite.addHeader("X-Requested-With", "XMLHttpRequest");
+//        mSite.addHeader("Accept-Language", "zh-CN,zh;q=0.8");
+//
+//        mSite.addHeader("Connection", "keep-alive");
+//        mSite.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8;");
+//
+//        mSite.addHeader("Cookie", "skin=noskin; JSESSIONID=DB05F4D8C96889AEC0B9719AD5FC156F; session-token=\"P/R/tKjAhzKIUN/+bKQY2mlv+EMNtdz6LCVxwYGfvU5fKryaFlakSEzm66a+wteWVcmaQ0XEPjmlmKBi02W5p15kI830CIKxUJ6b2ZE6r9Y5n5wqzCYR4PAFLFQlZydwsyBGkM3BYN20d57D3I8GLUnmguwl6Is7wBSu/GLlxBVFjdEyNQXPUFzkiKMfmUioxHb4ILBI/fGbadQgmymLWYZiPUnTLpqj6Di833sX0YiC1morDkZEQcNiK2Bf8hxc7XWt0H53owbVlwFUF8ze5w==\"; x-main=RDA19prtSRN2RewvMfr97vc44ABzZa2iq5d0dv9k24kLRTUqM4ur1jEBORgArAH7; at-main=Atza|IwEBIDKra_msTzik4A-4iZrZQ67YH7OMUHFrQlLquGRjTqe4perMQvzDatwk8ZFFlkCNgwq8F2hRaQM-3vgaCz3-DiDsZioqzWpuBF-OLK0stSI5vxiuWBpPdEIQMW07tKOS1w2SCK5wdbO17ax_hm7MmwSN7oRXTK7N-eh6Ufi7zCcyNLyFsKlwBhF2uJQp6PSTNNmb7ZXbFSxe3jKzvy337OzHykuDgFTfy508d06Cp4ACB-bh3K9SR59952CWXnL4DlNVQJEu5Ukd56d4m3dZx-YGXLirf5itmOUIEAP13IMhiuq93gxRDW65uCd2zbLF8_dqG6L9fm-bFmUQinI1rWUpATrjWQd9V3ggnW9v0X76FM9P9XZa5PNMG_1Qy8C05BRbDKpsr61aGa8s3IfKoqVTZ33wjXLulnj73zyfCh6aKQ; sess-at-main=\"NaGiOgG2TVI5pzlpfGI1z8+Wyy7jifJvC+O7iX3SvQQ=\"; lc-main=en_US; x-wl-uid=1A7mJEhIOz2Ii5UlfqXg27YDkS+2UBCkAxtvbn0GIiUZ2ooNZw+eBwGYqAXzvrqGBf4Idc217C8OXw8f844cug2uo2WgNzqxdE+Gs4o795yJGFl2lpYB4iKgYHfun47k+B00W7iAIWO4=; csm-hit=BFNHJNQF27DE58K31K7R+b-7QNMX335ET5B179K3PCX|1487643282453; ubid-main=162-5971175-8414817; session-id-time=2082787201l; session-id=167-8229845-7101626");
+//
+//        mSite.addHeader("Host", "www.amazon.com");
+//        mSite.addHeader("Origin", "https://www.amazon.com");
+//
+//        mSite.addHeader("X-AUI-View", "Desktop");
+//        mSite.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.59 Safari/537.36");
+//
+//        mSite.addHeader("X-Requested-With", "XMLHttpRequest");
         return mSite;
     }
 

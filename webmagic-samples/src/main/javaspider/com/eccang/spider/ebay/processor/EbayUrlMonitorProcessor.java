@@ -104,7 +104,7 @@ public class EbayUrlMonitorProcessor extends EbayProcessor implements ScheduledT
         EbayUrl ebayUrl = getUrl(page);
 
         String productsCounts;
-        if(ebayUrl.siteCode.equalsIgnoreCase(R.SiteCode.NL)) {
+        if(ebayUrl.siteCode.equalsIgnoreCase(R.SiteCode.NL) || ebayUrl.siteCode.equalsIgnoreCase(R.SiteCode.PL)) {
             productsCounts = page.getHtml().xpath("//*[@id='cbelm']/div[@class='clt']/h1/span[@class='rcnt']/text()").get();
         } else {
             productsCounts = page.getHtml().xpath("//*[@id='bciw']/div/span[@class='listingscnt']/text()").get();

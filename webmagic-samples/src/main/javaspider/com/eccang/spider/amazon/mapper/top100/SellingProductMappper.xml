@@ -113,8 +113,12 @@
     </insert>
 
     <select id="count" resultType="int">
-        SELECT COUNT(*) FROM spider_amazon_top100_product
-        WHERE satd_url_md5 = #{0}
+        SELECT
+          COUNT(*)
+        FROM
+          spider_amazon_top100_product
+        WHERE
+          sad_url = #{0} and bo_batch_num = #{1} and satd_asin = #{2}
     </select>
 
     <update id="updateByObj" parameterType="SellingProduct">
@@ -142,6 +146,15 @@
           spider_amazon_top100_product
         SET
           satd_stock = #{stock},
+          satd_status = #{status}
+        WHERE
+          bo_batch_num = #{batchNum} AND bas_code = #{siteCode} AND satd_asin = #{asin}
+    </update>
+
+    <update id="updateState" parameterType="SellingProduct">
+        UPDATE
+          spider_amazon_top100_product
+        SET
           satd_status = #{status}
         WHERE
           bo_batch_num = #{batchNum} AND bas_code = #{siteCode} AND satd_asin = #{asin}

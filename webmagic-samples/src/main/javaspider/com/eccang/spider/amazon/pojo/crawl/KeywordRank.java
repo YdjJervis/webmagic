@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo.crawl;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  * @Description: 关键词搜索
  * @date 2016/12/27 11:11
  */
-public class KeywordRank {
+public class KeywordRank extends BasePojo {
     private int id;
     private String asin;
     private String keyword;

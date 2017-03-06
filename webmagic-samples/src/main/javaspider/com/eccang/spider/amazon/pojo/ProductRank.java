@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +11,7 @@ import java.util.List;
  * @Description: 商品排名
  * @date 2016/12/1 10:24
  */
-public class ProductRank {
+public class ProductRank extends BasePojo {
 
     public String rank;
     public List<Category> categoryList = new ArrayList<Category>();

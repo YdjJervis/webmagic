@@ -1,9 +1,11 @@
 package com.eccang.spider.amazon.pojo;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 /**
  * 国家对应码
  */
-public class Country {
+public class Country extends BasePojo {
 
     private String productUrl;
     private String discussUrl;

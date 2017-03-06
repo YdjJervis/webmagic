@@ -49,4 +49,6 @@ public interface UrlDao extends BaseDao<Url> {
     List<Url> findByBatchNum(String batchNumber);
 
     List<Url> findByBatchNumAndSite(String batchNum, String siteCode);
+
+    void deleteByBNSC(String batchNum, String siteCode);
 }

@@ -1,5 +1,7 @@
 package com.eccang.spider.downloader;
 
+import com.eccang.spider.amazon.service.UrlService;
+import com.eccang.spider.amazon.service.batch.BatchService;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,6 +64,10 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
 
     @Autowired
     IpsInfoManageService mIpsInfoManageService;
+    @Autowired
+    UrlService mUrlService;
+    @Autowired
+    BatchService mBatchService;
 
     private HttpClientGenerator httpClientGenerator = new HttpClientGenerator();
 
@@ -336,5 +342,17 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
         }
         logger.debug("Auto get charset: {}", charset);
         return charset;
+    }
+
+    @Override
+    protected void onError(Request request) {
+        Url url = (Url) request.getExtra(BasePageProcessor.URL_EXTRA);
+        url.crawling = 0;
+        url.status = 0;
+        logger.warn("HttpClient下载异常，更新URL状态：" + url);
+        mUrlService.update(url);
+
+        logger.warn("HttpClient下载异常，更新总单(" + url.batchNum + ")解析url的总次数");
+        mBatchService.updateTimes(url.batchNum, true);
     }
 }

@@ -68,7 +68,7 @@ public class UrlServiceTest extends SpringTestCase {
 
     @Test
     public void testFindByType() {
-        System.out.println(mUrlService.find(0));
+        System.out.println(mUrlService.find(3));
     }
 
     @Test

@@ -15,14 +15,15 @@
  */
 package com.eccang.spider.base.rediscache;
 
+import org.apache.ibatis.cache.CacheException;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.ibatis.cache.CacheException;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
  * Converter from the Config to a proper {@link RedisConfig}.
@@ -70,7 +71,7 @@ final class RedisConfigurationBuilder {
     /**
      * Parses the Config and builds a new {@link RedisConfig}.
      *
-     * @param the {@link ClassLoader} used to load the
+     * @param classLoader {@link ClassLoader} used to load the
      *            {@code memcached.properties} file in classpath.
      * @return the converted {@link RedisConfig}.
      */

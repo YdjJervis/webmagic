@@ -15,14 +15,12 @@ import java.util.List;
  */
 @Service
 public class SellingProductService {
+
     @Autowired
     SellingProductDao mDao;
 
     public void addAll(List<SellingProduct> products) {
         for (SellingProduct product : products) {
-            if(mDao.count(product.urlMD5) > 0) {
-                continue;
-            }
             mDao.add(product);
         }
     }
@@ -47,5 +45,12 @@ public class SellingProductService {
      */
     public void updateStock(SellingProduct sellingProduct) {
         mDao.updateStock(sellingProduct);
+    }
+
+    /**
+     * 更新top100产品表中，库存抓取状态
+     */
+    public void updateState(SellingProduct sellingProduct) {
+        mDao.updateState(sellingProduct);
     }
 }

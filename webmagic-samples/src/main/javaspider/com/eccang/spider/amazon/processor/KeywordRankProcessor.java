@@ -90,8 +90,8 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
                 /*解析商品ASIN*/
                 String goodsAsin = getGoodsAsin(goodsNode);
                 /*搜索到100名还没找到对应的客户商品，将停止搜索*/
-                if (rankNum > 100) {
-                    sLogger.info("搜索前100名，没有找到对应的商品.");
+                if (rankNum > 300) {
+                    sLogger.info("搜索前300名，没有找到对应的商品.");
                     break;
                 }
                 /*当前商品与客户监测的商品ASIN一致则找到其排名，停止搜索*/
@@ -115,7 +115,7 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
             mKeywordRankService.updateRankNum(keywordRank);
             /*更新详单已经完成*/
             updateBatchStatus(url, keywordRank, isChanged);
-        } else {
+        } else if (!isFind && rankNum < 301) {
             /*将下一页的URL放入到URL表中*/
             addNextPage2Url(url);
         }
@@ -428,7 +428,7 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
             return getDistributionModeDE(goodsNode);
         } else if (siteCode.equalsIgnoreCase(R.SiteCode.FR)) {
             return getDistributionModeFR(goodsNode);
-        } else if(siteCode.equalsIgnoreCase(R.SiteCode.JP)) {
+        } else if (siteCode.equalsIgnoreCase(R.SiteCode.JP)) {
             return getDistributionModeJP(goodsNode);
         }
         return false;

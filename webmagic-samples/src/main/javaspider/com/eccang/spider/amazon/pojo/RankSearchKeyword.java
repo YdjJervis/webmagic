@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  * 需要搜索排名的关键词信息
  * 2016/11/30 16:53
  */
-public class RankSearchKeyword {
+public class RankSearchKeyword extends BasePojo {
     private int id;
     private String keyword;
     private String customer; /*客户*/

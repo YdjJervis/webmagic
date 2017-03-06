@@ -41,7 +41,7 @@ public class TestMethod {
 //        Jedis jedis = new Jedis("0.0.0.0", 6379);
 //        Jedis jedis = new Jedis("192.168.0.121",6379);
 //        System.out.println(jedis.get("liugang"));
-        System.out.println(UrlUtils.md5("https://www.amazon.com/MISSALOE-Low-Rise-Seamless-Stretch-Panties/dp/B01CCEI7N8/ref=zg_bs_fashion_13?_encoding=UTF8&psc=1&refRID=H7H118C1E0YTN33ZYRB5"));
+        System.out.println(UrlUtils.md5("https://www.amazon.com/Womens-Casual-Hollowed-Shoulder-Quarter/dp/B01LYO4CRQ/ref=zg_bs_fashion_49?_encoding=UTF8&refRID=JPHPSZ0XHGKB4W5KGDD1"));
     }
     @Test
     public void urlEncodeTest() {

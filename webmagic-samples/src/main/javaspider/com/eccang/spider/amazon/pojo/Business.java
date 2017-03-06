@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  *          爬虫业务功能实体类
  *          2016/12/15 16:02
  */
-public class Business {
+public class Business extends BasePojo {
     private int id;
     private String businessCode;
     private String businessName;

@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo.dict;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  * @Description:
  * @date 2016/11/15 15:41
  */
-public class ProxyAgencyBaseInfo {
+public class ProxyAgencyBaseInfo extends BasePojo {
 
     private int id;
     private String proxyCode;

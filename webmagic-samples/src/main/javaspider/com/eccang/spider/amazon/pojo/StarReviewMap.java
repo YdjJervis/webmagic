@@ -1,12 +1,14 @@
 package com.eccang.spider.amazon.pojo;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 /**
  * @author Jervis
  * @version V0.2
  * @Description: 需要爬取的的星级和该星级最后的评论的ID
  * @date 2016/10/14 15:09
  */
-public class StarReviewMap {
+public class StarReviewMap extends BasePojo {
 
     /**
      * 需要爬取的星级。取值范围[1,5]

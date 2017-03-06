@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo.batch;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  * @Description:
  * @date 2016/12/26 16:49
  */
-public class BatchRank {
+public class BatchRank extends BasePojo {
     private int id;
     private String batchNum;
     private String keyword;

@@ -60,7 +60,7 @@
         FROM
           spider_amazon_department
         WHERE
-          sad_p_url = #{0} and sad_url_md5 = #{1}
+          sad_p_url = #{0} and sad_url_md5 = #{1} and bo_batch_num = #{2}
     </select>
 
     <select id="findByParentUrl" resultMap="DepartmentMap">

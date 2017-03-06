@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo.dict;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  * @Description:
  * @date 2016/10/27 10:16
  */
-public class IpsInfoManage {
+public class IpsInfoManage extends BasePojo {
     private int id;
     private int ipInfoId;
     private String ipDomain;

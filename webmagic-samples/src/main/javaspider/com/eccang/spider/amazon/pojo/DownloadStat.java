@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  * @Description:
  * @date 2016/11/4 15:24
  */
-public class DownloadStat {
+public class DownloadStat extends BasePojo {
     private Integer id;
     private String ipsType;
     private String urlMD5;

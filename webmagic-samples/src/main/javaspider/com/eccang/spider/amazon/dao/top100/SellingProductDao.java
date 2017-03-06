@@ -15,11 +15,13 @@ import java.util.List;
 @Repository
 public interface SellingProductDao extends BaseDao<SellingProduct> {
 
-    int count(String urlMD5);
+    int count(String depUrl, String batchNum, String asin);
 
     void updateByObj(SellingProduct sellingProduct);
 
     List<SellingProduct> findNeedParseStockProduct(int num);
 
     void updateStock(SellingProduct sellingProduct);
+
+    void updateState(SellingProduct sellingProduct);
 }

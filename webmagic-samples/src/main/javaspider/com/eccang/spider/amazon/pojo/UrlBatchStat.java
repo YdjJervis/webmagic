@@ -1,5 +1,7 @@
 package com.eccang.spider.amazon.pojo;
 
+import com.eccang.spider.base.pojo.BasePojo;
+
 import java.util.Date;
 
 /**
@@ -8,7 +10,7 @@ import java.util.Date;
  * 对每个批次下的URL请求状态监测实体类
  * 2016/11/16 16:53
  */
-public class UrlBatchStat {
+public class UrlBatchStat extends BasePojo {
 
     private int id;
     private String url;

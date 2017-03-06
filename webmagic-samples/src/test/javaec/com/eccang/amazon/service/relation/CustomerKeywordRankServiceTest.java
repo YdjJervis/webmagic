@@ -21,8 +21,8 @@ public class CustomerKeywordRankServiceTest extends SpringTestCase {
     @Test
     public void add() {
         CustomerKeywordRank customerKeywordRank = new CustomerKeywordRank();
-        customerKeywordRank.asin = "1338099132";
-        customerKeywordRank.keyword = URLEncoder.encode("book");
+        customerKeywordRank.asin = "B01NBMPJ3U";
+        customerKeywordRank.keyword = URLEncoder.encode("Television");
         customerKeywordRank.customerCode = "EC_001";
         customerKeywordRank.siteCode = "US";
         customerKeywordRank.departmentCode = "search-alias=aps";

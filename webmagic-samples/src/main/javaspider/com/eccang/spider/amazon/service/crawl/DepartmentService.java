@@ -64,9 +64,7 @@ public class DepartmentService {
         }
 
         for (Department department : departments) {
-            if(mDao.findChildDep(department.pDepUrl, department.depUrl) == 0) {
-                mDao.add(department);
-            }
+            mDao.add(department);
         }
     }
 

@@ -61,6 +61,6 @@ public class UrlUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(setValue("http://data.stats.gov.cn/easyquery.htm?page=3&id=2", "page", "haha"));
+        System.out.println(md5("https://www.amazon.com/Best-Sellers-Software-Utilities/zgbs/software/229672/ref=zg_bs_pg_5/162-7741740-8756707?_encoding=UTF8&pg=5"));
     }
 }

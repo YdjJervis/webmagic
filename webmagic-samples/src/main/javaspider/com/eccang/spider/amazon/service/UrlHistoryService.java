@@ -25,7 +25,7 @@ public class UrlHistoryService {
     Logger mLogger = Logger.getLogger(getClass());
 
     public void addAll(List<Url> urlList) {
-        List<Url> newList = new ArrayList<Url>();
+        List<Url> newList = new ArrayList<>();
         for (Url url : urlList) {
             if (!isExist(url.urlMD5)) {
                 newList.add(url);

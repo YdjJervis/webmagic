@@ -20,7 +20,7 @@ public class PayPackageWSTest extends SpringTestCase {
     @Test
     public void buyCustom() {
         CusPayCustomAddReq cusPayCustomAddReq = new CusPayCustomAddReq();
-        cusPayCustomAddReq.customerCode = "EC_002";
+        cusPayCustomAddReq.customerCode = "EC_001";
         cusPayCustomAddReq.platformCode = "ERP";
         cusPayCustomAddReq.token = "123456789";
 
@@ -57,7 +57,7 @@ public class PayPackageWSTest extends SpringTestCase {
         cusPayCustomAddReq.data.add(stub);
 
         String reqJson = new Gson().toJson(cusPayCustomAddReq);
-        reqJson = "{\"data\":\"\",\"customerCode\":\"EC_002\",\"platformCode\":\"ERP\",\"token\":\"123456789\"}";
+//        reqJson = "{\"data\":\"\",\"customerCode\":\"EC_001\",\"platformCode\":\"ERP\",\"token\":\"123456789\"}";
         System.out.println(reqJson);
 
         String json = new PayPackageWSService().getPayPackageWSPort().buyCustom(reqJson);
