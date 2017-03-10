@@ -84,6 +84,16 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             return baseRspParam.toJson();
         }
 
+        /* 数据去重 */
+        Map<String, AsinReq.Asin> asinMap = new HashMap<>();
+        for (AsinReq.Asin asin : asinReq.data) {
+            asinMap.put(asin.siteCode + asin.asin, asin);
+        }
+        asinReq.data.clear();
+        for (AsinReq.Asin asin : asinMap.values()) {
+            asinReq.data.add(asin);
+        }
+
         Map<String, String> checkResult = checkAsinData(asinReq, 1);
 
         if (checkResult.get(IS_SUCCESS).equalsIgnoreCase("0")) {
