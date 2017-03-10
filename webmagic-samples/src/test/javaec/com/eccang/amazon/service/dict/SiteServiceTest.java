@@ -18,7 +18,7 @@ public class SiteServiceTest extends SpringTestCase {
     public void findTest() {
         Site site = mSiteService.find("ES");
         site.crawl = 1;
-        mLogger.info(mSiteService.update(site));
+        mLogger.info(site);
     }
 
 

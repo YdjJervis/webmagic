@@ -74,4 +74,17 @@ public class Business extends BasePojo {
     public void setImportLimit(int importLimit) {
         this.importLimit = importLimit;
     }
+
+    @Override
+    public String toString() {
+        return "Business{" +
+                "id=" + id +
+                ", businessCode='" + businessCode + '\'' +
+                ", businessName='" + businessName + '\'' +
+                ", status=" + status +
+                ", importLimit=" + importLimit +
+                ", createDate=" + createDate +
+                ", updateDate=" + updateDate +
+                '}';
+    }
 }

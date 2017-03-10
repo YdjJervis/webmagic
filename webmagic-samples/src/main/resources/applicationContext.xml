@@ -94,43 +94,40 @@
         <!-- 首页爬取 -->
         <!--<task:scheduled ref="productProcessor" method="execute" cron="0/5 * * * * ?"/>-->
 
-
         <!--Review 全量爬&更新爬-->
-        <!--生成批次-->
+        <!--1，生成批次；2，详单转url；3，全量爬取asin下的review；4，解析review,更新爬取asin下的review-->
         <!--<task:scheduled ref="generateAsinBatchMonitor" method="execute" cron="0/5 * * * * ?"/>-->
-        <!--详单转url-->
         <!--<task:scheduled ref="parseUrlAsinBatchMonitor" method="execute" cron="0/10 * * * * ?"/>-->
-        <!--全量爬取asin下的review-->
         <!--<task:scheduled ref="reviewProcessor" method="execute" cron="0/15 * * * * ?"/>-->
-        <!--解析review,更新爬取asin下的review-->
         <!--<task:scheduled ref="reviewUpdateProcessor" method="execute" cron="0/5 * * * * ?"/>-->
 
-
         <!--Review 监听爬-->
-        <!--生成批次-->
+        <!--1，生成批次；2，详单转url；3，解析review,监听review变化-->
         <!--<task:scheduled ref="generateReviewBatchMonitor" method="execute" cron="0/5 * * * * ?"/>-->
-        <!--详单转url-->
         <!--<task:scheduled ref="parseUrlReviewBatchMonitor" method="execute" cron="0/10 * * * * ?"/>-->
-        <!--解析review,监听review变化-->
         <!--<task:scheduled ref="reviewMonitorProcessor" method="execute" cron="0/5 * * * * ?"/>-->
 
 
         <!--跟卖信息爬取-->
-        <!--生成批次-->
+        <!--1，生成批次；2，详单转url；3，解析跟卖信息-->
         <!--<task:scheduled ref="generateFollowSellBatchMonitor" method="execute" cron="0/5 * * * * ?"/>-->
-        <!--详单转url-->
         <!--<task:scheduled ref="parseUrlFollowSellMonitor" method="execute" cron="0/10 * * * * ?"/>-->
-        <!--解析跟卖信息-->
-        <!--<task:scheduled ref="followSellProcessor" method="execute" cron="0/10 * * * * ?"/>-->
+        <!--<task:scheduled ref="followSellProcessor" method="execute" cron="0/5 * * * * ?"/>-->
 
 
         <!--关键词排名搜索-->
-        <!--生成批次-->
-        <!--<task:scheduled ref="generateKeywordRankBatchMonitor" method="execute" cron="0/15 * * * * ?" />-->
-        <!--详单转url-->
-        <!--<task:scheduled ref="parseUrlKeywordRankMonitor" method="execute" cron="0/15 * * * * ?" />-->
-        <!--爬取-->
-        <!--<task:scheduled ref="keywordRankProcessor" method="execute" cron="0/15 * * * * ?" />-->
+        <!--1,生成批次；2,详单转url；3，爬取-->
+        <!--<task:scheduled ref="generateKeywordRankBatchMonitor" method="execute" cron="0/5 * * * * ?" />-->
+        <!--<task:scheduled ref="parseUrlKeywordRankMonitor" method="execute" cron="0/10 * * * * ?" />-->
+        <!--<task:scheduled ref="keywordRankProcessor" method="execute" cron="0/5 * * * * ?" />-->
+
+        <!--Top100商品信息爬取-->
+        <!--1，生成批次；2，详单转url，3，Amazon Top100数据爬取-->
+        <!--<task:scheduled ref="generateTop100BatchMonitor" method="execute" cron="0/15 * * * * ?" />-->
+        <!--<task:scheduled ref="parseUrlTop100BatchMonitor" method="execute" cron="0/15 * * * * ?" />-->
+        <!--<task:scheduled ref="top100Processor" method="execute" cron="0/30 * * * * ?" />-->
+        <!--<task:scheduled ref="parseUrlTop100StockMonitor" method="execute" cron="0/15 * * * * ?" />-->
+        <!--<task:scheduled ref="top100StockProcessor" method="execute" cron="0 0/1 * * * ?" />-->
 
 
         <!--推送完成批次-->
@@ -140,10 +137,11 @@
         <!--<task:scheduled ref="reviewStatProcessor" method="execute" cron="0/10 * * * * ?"/>-->
 
         <!-- 测试日志 -->
-        <!--<task:scheduled ref="loggerTestTask" method="execute" cron="0/5 * * * * ?" />-->
+        <task:scheduled ref="loggerTestTask" method="execute" cron="0/5 * * * * ?" />
 
         <!--ebay品类URL监控-->
-        <!--<task:scheduled ref="ebayUrlMonitorProcessor" method="execute" cron="0/30 * * * * ?" />-->
+        <!--<task:scheduled ref="ebayUrlMonitorProcessor" method="execute" cron="0/10 * * * * ?" />-->
         <!--<task:scheduled ref="ebaySellerInfoProcessor" method="execute" cron="0/5 * * * * ?" />-->
     </task:scheduled-tasks>
+
 </beans>
