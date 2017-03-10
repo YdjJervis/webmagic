@@ -1,5 +1,6 @@
 package com.eccang.spider.amazon.monitor;
 
+import com.eccang.spider.base.rediscache.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -27,5 +28,8 @@ public class StatusListener implements ApplicationListener<ContextRefreshedEvent
         /* 1，更新爬取的URL全部删除
          * 2，更新爬取的状态全部重置为未在更新爬取中 */
         mUrlService.deleteUpdating();
+
+        /* 清空Redis缓存 */
+        new RedisCache().flushDB();
     }
 }
