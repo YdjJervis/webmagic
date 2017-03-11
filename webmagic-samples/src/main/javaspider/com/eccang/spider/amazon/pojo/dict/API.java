@@ -15,6 +15,7 @@ public class API extends BasePojo {
     public String token;
 
     public Customer customer;
+    public String pushUrl;
 
     @Override
     public String toString() {
@@ -23,6 +24,7 @@ public class API extends BasePojo {
                 ", status=" + status +
                 ", token='" + token + '\'' +
                 ", customer=" + customer +
+                ", pushUrl='" + pushUrl + '\'' +
                 '}';
     }
 }

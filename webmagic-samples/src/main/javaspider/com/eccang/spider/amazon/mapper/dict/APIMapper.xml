@@ -10,6 +10,7 @@
         <result property="customerCode" column="bec_code"/>
         <result property="status" column="bea_status"/>
         <result property="token" column="bea_token"/>
+        <result property="pushUrl" column="bea_push_url"/>
         <result property="extra" column="bea_extra"/>
     </resultMap>
 
