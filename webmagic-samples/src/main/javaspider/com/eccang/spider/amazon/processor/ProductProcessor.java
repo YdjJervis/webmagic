@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -110,6 +111,9 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
         CustomerAsin customerAsin = getCustomerAsin(page);
         customerAsin.onSell = 0;
         mCustomerAsinService.update(customerAsin);
+
+        /* 有下架商品的时候也要同步进度 */
+        mUrlService.asycBatchProgress(getUrl(page), new Date());
     }
 
     /**

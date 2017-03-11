@@ -220,6 +220,16 @@ public class UrlService {
             batch.startTime = currentTime;
         }
 
+        asycBatchProgress(url, currentTime);
+
+    }
+
+    /**
+     * 同步总单进度，如果进度达到1了，放到推动队列里去
+     */
+    public void asycBatchProgress(Url url, Date currentTime) {
+
+        Batch batch = mBatchService.findByBatchNumber(url.batchNum);
         /*计算详单总进度的评价值，更新到总单上去 */
         batch.progress = mBatchAsinService.findAverageProgress(url.batchNum);
 
@@ -233,7 +243,6 @@ public class UrlService {
         }
 
         mBatchService.update(batch);
-
     }
 
     /**
