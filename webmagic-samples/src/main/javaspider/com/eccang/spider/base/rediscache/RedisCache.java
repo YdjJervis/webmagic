@@ -40,7 +40,6 @@ public final class RedisCache implements Cache {
     }
 
     public RedisCache(final String id) {
-        System.out.println("RedisCache(final String id)::" + id);
         if (id == null) {
             throw new IllegalArgumentException("Cache instances require an ID");
         }
@@ -51,7 +50,6 @@ public final class RedisCache implements Cache {
 
     // TODO Review this is UNUSED
     private Object execute(RedisCallback callback) {
-        System.out.println("execute(RedisCallback callback)::");
         Jedis jedis = pool.getResource();
         try {
             return callback.doWithRedis(jedis);
@@ -62,13 +60,11 @@ public final class RedisCache implements Cache {
 
     @Override
     public String getId() {
-        System.out.println("getId()::" + id);
         return this.id;
     }
 
     @Override
     public int getSize() {
-        System.out.println("getSize()::");
         return (Integer) execute(jedis -> {
             Map<byte[], byte[]> result = jedis.hgetAll(id.getBytes());
             return result.size();
@@ -77,7 +73,6 @@ public final class RedisCache implements Cache {
 
     @Override
     public void putObject(final Object key, final Object value) {
-        System.out.println("putObject(final Object key, final Object value)::key=" + key + " value=" + value);
         execute(jedis -> {
             jedis.hset(id.getBytes(), key.toString().getBytes(), SerializeUtil.serialize(value));
             return null;
@@ -86,19 +81,16 @@ public final class RedisCache implements Cache {
 
     @Override
     public Object getObject(final Object key) {
-        System.out.println("getObject(final Object key)::" + key);
         return execute(jedis -> SerializeUtil.unserialize(jedis.hget(id.getBytes(), key.toString().getBytes())));
     }
 
     @Override
     public Object removeObject(final Object key) {
-        System.out.println("removeObject(final Object key)::" + key);
         return execute(jedis -> jedis.hdel(id, key.toString()));
     }
 
     @Override
     public void clear() {
-        System.out.println("clear()::" + id);
         execute(jedis -> {
             jedis.del(id);
             return null;
@@ -108,13 +100,11 @@ public final class RedisCache implements Cache {
 
     @Override
     public ReadWriteLock getReadWriteLock() {
-        System.out.println("getReadWriteLock()::");
         return readWriteLock;
     }
 
     @Override
     public String toString() {
-        System.out.println("toString()::");
         return "Redis {" + id + "}";
     }
 
