@@ -5,6 +5,7 @@ import com.eccang.spider.base.util.PropertyUtil;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 
@@ -33,6 +34,10 @@ public class Ec_Service
         }
         EC_WSDL_LOCATION = url;
         EC_EXCEPTION = e;
+    }
+
+    public Ec_Service(String wsUrl) {
+        super(__getWsdlLocation1(wsUrl), EC_QNAME);
     }
 
     public Ec_Service() {
@@ -88,4 +93,12 @@ public class Ec_Service
         return EC_WSDL_LOCATION;
     }
 
+    private static URL __getWsdlLocation1(String wsUrl) {
+        try {
+            URL url = new URL(wsUrl);
+            return url;
+        } catch (MalformedURLException e) {
+            throw new WebServiceException(e);
+        }
+    }
 }

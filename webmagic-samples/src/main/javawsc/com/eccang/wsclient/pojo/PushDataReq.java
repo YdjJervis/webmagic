@@ -16,11 +16,19 @@ public class PushDataReq {
      * token : xxx
      * data : {"type":"update/add","batchNum":"EC20161208152146151","asins":[{"asin":"B0181YRLT4","rootAsin":"B0181YRLT4","reviews":[{"reviewId":"R2V7LL01LD8CLX","siteCode":"US","star":"5"},{"reviewId":"R2V7LL01LD8CDS","siteCode":"US","star":"5"}]},{"asin":"R2V7LL01LD6DSA","rootAsin":"B0181YRLT4","reviews":[{"reviewId":"R2V7LL01LD6DSA","siteCode":"US","star":"1"},{"reviewId":"R2V7LL01LD6DQA","siteCode":"US","star":"4"}]}]}
      */
-
+    private String wsUrl;
     private String customerCode;
     private String platformCode;
     private String token;
     private Data data;
+
+    public String getWsUrl() {
+        return wsUrl;
+    }
+
+    public void setWsUrl(String wsUrl) {
+        this.wsUrl = wsUrl;
+    }
 
     public String getCustomerCode() {
         return customerCode;

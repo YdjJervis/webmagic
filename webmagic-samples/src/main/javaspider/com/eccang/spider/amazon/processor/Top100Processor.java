@@ -139,6 +139,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
             Department department;
             String url;
             for (int i = 0; i < nodeList.getLength(); i++) {
+
                 Node node = nodeList.item(i);
                 System.out.println(node.getTextContent() + ":" + xPath.evaluate("@href", node, XPathConstants.STRING));
                 department = new Department();
@@ -153,13 +154,6 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                 department.depUrl = url;
                 department.urlMD5 = UrlUtils.md5(url);
                 departments.add(department);
-
-                if (dep.depLevel == 0) {
-                    if (i == 2) {
-                        break;
-                    }
-                }
-
             }
 
         } catch (ParserConfigurationException | XPathExpressionException e) {
