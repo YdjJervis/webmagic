@@ -41,7 +41,7 @@
           relation_customer_top100
         WHERE
           rct_crawl = 1 AND
-          CURRENT_TIMESTAMP - rct_sync_time > rct_frequency * 3600
+          TIMESTAMPDIFF(SECOND,rct_sync_time,CURRENT_TIMESTAMP) > rct_frequency * 3600
           OR rct_sync_time is null;
     </select>
 

@@ -39,7 +39,7 @@
 
     <select id="findNeedGenerateBatch" resultMap="CustomerReviewResultMap">
         SELECT * FROM relation_customer_review
-        WHERE rcr_crawl = 1 AND rcr_on_sell = 1 AND CURRENT_TIMESTAMP - rcr_finish_time > rcr_frequency * 3600 or rcr_finish_time IS NULL;
+        WHERE rcr_crawl = 1 AND rcr_on_sell = 1 AND TIMESTAMPDIFF(SECOND,rcr_finish_time,CURRENT_TIMESTAMP) > rcr_frequency * 3600 or rcr_finish_time IS NULL;
     </select>
 
     <select id="findUsedCount" resultType="int">

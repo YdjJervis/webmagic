@@ -97,7 +97,7 @@
           relation_customer_keyword_rank
         WHERE
           rcrk_crawl = 1 AND
-          CURRENT_TIMESTAMP - rcrk_sync_time > rcrk_frequency * 3600
+          TIMESTAMPDIFF(SECOND,rcrk_sync_time,CURRENT_TIMESTAMP) > rcrk_frequency * 3600
           OR rcrk_sync_time is null;
     </select>
 

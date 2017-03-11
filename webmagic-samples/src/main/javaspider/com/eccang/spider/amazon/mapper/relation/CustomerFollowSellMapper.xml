@@ -57,7 +57,7 @@
         AND
         rcf_on_sell = 1
         AND
-        CURRENT_TIMESTAMP - rcf_sync_time > rcf_frequency * 3600
+        TIMESTAMPDIFF(SECOND,rcf_sync_time,CURRENT_TIMESTAMP) > rcf_frequency * 3600
         or
         rcf_sync_time IS NULL;
     </select>

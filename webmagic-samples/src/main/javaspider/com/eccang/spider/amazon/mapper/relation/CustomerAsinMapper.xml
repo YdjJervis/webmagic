@@ -84,7 +84,7 @@
         AND
         rca_on_sell = 1
         AND
-        CURRENT_TIMESTAMP - rca_sync_time > rca_frequency * 3600;
+        TIMESTAMPDIFF(SECOND,rca_sync_time,CURRENT_TIMESTAMP) > rca_frequency * 3600;
     </select>
 
     <select id="findUsedCount" resultType="int">
