@@ -1,5 +1,17 @@
 package com.eccang.wsclient.push;
 
+import com.eccang.spider.amazon.pojo.PushQueue;
+import com.eccang.spider.amazon.pojo.batch.Batch;
+import com.eccang.spider.amazon.pojo.batch.BatchAsin;
+import com.eccang.spider.amazon.pojo.batch.BatchReview;
+import com.eccang.spider.amazon.pojo.dict.API;
+import com.eccang.spider.amazon.pojo.relation.CustomerReview;
+import com.eccang.spider.amazon.service.PushQueueService;
+import com.eccang.spider.amazon.service.batch.BatchAsinService;
+import com.eccang.spider.amazon.service.batch.BatchReviewService;
+import com.eccang.spider.amazon.service.batch.BatchService;
+import com.eccang.spider.amazon.service.dict.APIService;
+import com.eccang.spider.amazon.service.relation.CustomerReviewService;
 import com.eccang.wsclient.api.Ec_Service;
 import com.eccang.wsclient.asin.BaseRspParam;
 import com.eccang.wsclient.pojo.PushDataReq;
@@ -10,18 +22,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.eccang.spider.amazon.pojo.*;
-import com.eccang.spider.amazon.pojo.batch.Batch;
-import com.eccang.spider.amazon.pojo.batch.BatchAsin;
-import com.eccang.spider.amazon.pojo.batch.BatchReview;
-import com.eccang.spider.amazon.pojo.dict.API;
-import com.eccang.spider.amazon.pojo.relation.CustomerReview;
-import com.eccang.spider.amazon.service.*;
-import com.eccang.spider.amazon.service.batch.BatchAsinService;
-import com.eccang.spider.amazon.service.batch.BatchReviewService;
-import com.eccang.spider.amazon.service.batch.BatchService;
-import com.eccang.spider.amazon.service.dict.APIService;
-import com.eccang.spider.amazon.service.relation.CustomerReviewService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,11 +86,12 @@ public class PushTask {
     private boolean push(PushDataReq pushDataReq) {
         boolean pushResult = false;
         try {
-            /*通过客户码，判断调用推送接口的方式*/
-            sLogger.info("推送已经完成的批量信息.");
             String response = "";
             if (pushDataReq.getCustomerCode().equals("EC_001")) {
+                /*通过客户码，判断调用推送接口的方式*/
+                sLogger.info("开始推送已经完成的批量信息.");
                 response = new Ec_Service().getEcSOAP().pushMessage(pushDataReq.getCustomerCode(), pushDataReq.getPlatformCode(), pushDataReq.getToken(), new Gson().toJson(pushDataReq.getData()));
+                sLogger.info("推送响应信息：" + response);
             } else {
                 sLogger.info("客户（" + pushDataReq.getCustomerCode() + "）" + "没有对接推送接口.");
             }

@@ -1,7 +1,6 @@
 package com.eccang.amazon.service;
 
 import com.eccang.spider.amazon.util.DateUtils;
-import com.eccang.spider.base.util.UrlUtils;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
@@ -41,7 +40,7 @@ public class TestMethod {
 //        Jedis jedis = new Jedis("0.0.0.0", 6379);
 //        Jedis jedis = new Jedis("192.168.0.121",6379);
 //        System.out.println(jedis.get("liugang"));
-        System.out.println(UrlUtils.md5("https://www.amazon.com/Womens-Casual-Hollowed-Shoulder-Quarter/dp/B01LYO4CRQ/ref=zg_bs_fashion_49?_encoding=UTF8&refRID=JPHPSZ0XHGKB4W5KGDD1"));
+//        System.out.println(UrlUtils.md5("https://www.amazon.com/Womens-Casual-Hollowed-Shoulder-Quarter/dp/B01LYO4CRQ/ref=zg_bs_fashion_49?_encoding=UTF8&refRID=JPHPSZ0XHGKB4W5KGDD1"));
     }
     @Test
     public void urlEncodeTest() {

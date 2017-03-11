@@ -27,7 +27,7 @@ public class ImageOCRService
         URL url = null;
         WebServiceException e = null;
         try {
-            String value = PropertyUtil.getValue("ws.properties", "wsdlLocation");
+            String value = PropertyUtil.getValue("ws.properties", "verCodeWsdlLocation");
             url = new URL(value + "/ImageOCRService.svc?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);

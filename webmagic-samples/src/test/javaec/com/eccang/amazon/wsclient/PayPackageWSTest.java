@@ -26,7 +26,7 @@ public class PayPackageWSTest extends SpringTestCase {
 
         CusPayCustomAddReq.PayPackageStub stub = cusPayCustomAddReq.new PayPackageStub();
         stub.businessCode = "AS";
-        stub.count = 20;
+        stub.count = 500;
         stub.frequency = 24;
         stub.priority = 4;
         stub.day = 30;

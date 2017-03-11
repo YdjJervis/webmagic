@@ -365,19 +365,14 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         /*查询url所属的详单信息*/
         BatchTop100 batchTop100 = mBatchTop100Service.findByBatchNumAndSite(url.batchNum, url.siteCode);
 
-        /*查询详单下所有的Url*/
-        List<Url> urls = mUrlService.findByBatchNumAndSite(url.batchNum, url.siteCode);
+        /*查询详单下所有Url数量*/
+        int top100UrlTotal = mUrlService.findByBatchNumAndSiteCount(url.batchNum, url.siteCode);
 
-        /*统计已经解析成功的url*/
-        List<Url> hasCompletedUrls = new ArrayList<>();
-        for (Url url1 : urls) {
-            if (url1.status == 200) {
-                hasCompletedUrls.add(url1);
-            }
-        }
+        /*统计详单下已经解析成功的url*/
+        int top100FinishUrlTotal = mUrlService.findByBatchNumAndSiteFinishCount(url.batchNum, url.siteCode);
 
         /*计算当前详单完成进度*/
-        float progress = hasCompletedUrls.size() / (float) urls.size();
+        float progress = top100FinishUrlTotal / (float) top100UrlTotal;
 
         /*变化，则更新新的详单进度*/
         if (progress != batchTop100.progress) {
@@ -385,6 +380,8 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
             if (progress == 1) {
                 batchTop100.status = 2;
 
+                /*详单完成，则查询这个详单对应的所有url*/
+                List<Url> urls = mUrlService.findByBatchNumAndSite(url.batchNum, url.siteCode);
                 /*将url存入历史表中*/
                 addUrlHistory(urls);
 
@@ -416,6 +413,9 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         }
 
         mBatchService.update(batch);
+
+        Date endTime = new Date();
+        sLogger.info("update batch status time long : " + (endTime.getTime() - currentTime.getTime())/1000f);
     }
 
     /**

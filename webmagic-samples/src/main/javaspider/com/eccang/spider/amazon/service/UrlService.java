@@ -308,6 +308,20 @@ public class UrlService {
     }
 
     /**
+     * 统计对应站点、批次下的TOP100 URL总数
+     */
+    public int findByBatchNumAndSiteCount(String batchNum, String siteCode) {
+        return mUrlDao.findByBatchNumAndSiteCount(batchNum, siteCode);
+    }
+
+    /**
+     * 统计对应站点、批次下的TOP100 已经完成的URL总数
+     */
+    public int findByBatchNumAndSiteFinishCount(String batchNum, String siteCode) {
+        return mUrlDao.findByBatchNumAndSiteFinishCount(batchNum, siteCode);
+    }
+
+    /**
      * 根据批次号与站点码删除url
      */
     public void deleteByBNSC(String batchNum, String siteCode) {

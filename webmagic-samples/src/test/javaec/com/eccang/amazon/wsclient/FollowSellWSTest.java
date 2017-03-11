@@ -25,19 +25,19 @@ public class FollowSellWSTest extends SpringTestCase {
     @Test
     public void addToMonitor() {
         List<ImportData> importDataList = mImportDataService.find(null, 6);
-        importDataList = importDataList.subList(5, 6);
+//        importDataList = importDataList.subList(5, 6);
 
         CusFollowSellAddReq req = new CusFollowSellAddReq();
-        req.customerCode = "EC_002";
+        req.customerCode = "EC_001";
         req.platformCode = "ERP";
         req.token = "123456789";
 
-        for (ImportData importData : importDataList) {
+//        for (ImportData importData : importDataList) {
             CusFollowSellAddReq.FollowSell followSell = req.new FollowSell();
-            followSell.siteCode = importData.getSiteCode();
-            followSell.asin = importData.getAsin();
+            followSell.siteCode = "US";//importData.getSiteCode();
+            followSell.asin = "B01N3UN0QE";//importData.getAsin();
             req.data.add(followSell);
-        }
+//        }
 
         String params = new Gson().toJson(req);
         System.out.println(params);

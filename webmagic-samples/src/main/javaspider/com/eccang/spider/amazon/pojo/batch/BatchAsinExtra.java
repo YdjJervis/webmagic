@@ -8,7 +8,7 @@ import com.eccang.spider.base.pojo.BasePojo;
  * @Description: ASIN批次详单Extra字段内容
  * @date 2016/12/14 17:23
  */
-public class BatchAsinExtra extends BasePojo{
+public class BatchAsinExtra extends BasePojo {
 
     public String reviewID;
     public int star;

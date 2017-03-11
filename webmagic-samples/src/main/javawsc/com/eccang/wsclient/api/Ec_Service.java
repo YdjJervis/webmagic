@@ -1,14 +1,11 @@
 
 package com.eccang.wsclient.api;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.eccang.spider.base.util.PropertyUtil;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.WebEndpoint;
-import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceFeature;
+import javax.xml.ws.*;
+import java.net.URL;
 
 
 /**
@@ -17,7 +14,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "Ec", targetNamespace = "http://www.example.org/Ec/", wsdlLocation = "http://loc-eb.erp.com/default/svc-for-spider/web-service")
+@WebServiceClient(name = "Ec", targetNamespace = "http://www.example.org/Ec/", wsdlLocation = "http://btheb.ez-wms.com/default/svc-for-spider/wsdl")
 public class Ec_Service
     extends Service
 {
@@ -30,8 +27,8 @@ public class Ec_Service
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://loc-eb.erp.com/default/svc-for-spider/web-service");
-        } catch (MalformedURLException ex) {
+            url = new URL(PropertyUtil.getValue("ws.properties", "bthPushWsdlLocation"));
+        }  catch (Exception ex) {
             e = new WebServiceException(ex);
         }
         EC_WSDL_LOCATION = url;

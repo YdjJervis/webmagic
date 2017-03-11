@@ -1,8 +1,8 @@
 package com.eccang.spider.amazon.monitor;
 
+import com.eccang.spider.base.monitor.ScheduledTask;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
-import com.eccang.spider.base.monitor.ScheduledTask;
 
 /**
  * @author Jervis

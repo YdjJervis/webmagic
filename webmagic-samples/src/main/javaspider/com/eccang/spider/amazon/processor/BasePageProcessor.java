@@ -192,6 +192,7 @@ public abstract class BasePageProcessor implements PageProcessor {
      * @param page 更新Url爬取状态,成功或失败
      */
     void updateUrlStatus(Page page, boolean needTimeAdd) {
+        Date startTime = new Date();
         Url url = getUrl(page);
 
         if (needUpdateStatus()) {
@@ -214,6 +215,10 @@ public abstract class BasePageProcessor implements PageProcessor {
         sLogger.info("改变状态后的Url对象：" + url);
 
         mUrlService.update(url);
+
+        Date endTime = new Date();
+        sLogger.info("update url status time long : " + (endTime.getTime() - startTime.getTime())/1000f);
+
     }
 
     private void dealValidate(Page page) {
