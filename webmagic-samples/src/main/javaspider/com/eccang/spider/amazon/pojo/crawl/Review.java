@@ -48,6 +48,7 @@ public class Review extends BasePojo {
      * 评论ID
      */
     public String reviewId;
+    public int deleted;
     /**
      * 标记是否监控0-no;1-yes
      */
@@ -99,19 +100,22 @@ public class Review extends BasePojo {
                 "siteCode='" + siteCode + '\'' +
                 ", rootAsin='" + rootAsin + '\'' +
                 ", personId='" + personId + '\'' +
+                ", experience='" + experience + '\'' +
                 ", time='" + time + '\'' +
                 ", dealTime=" + dealTime +
                 ", person='" + person + '\'' +
                 ", reviewId='" + reviewId + '\'' +
+                ", deleted=" + deleted +
                 ", monitor=" + monitor +
                 ", buyStatus='" + buyStatus + '\'' +
                 ", star=" + star +
+                ", starList=" + starList +
                 ", version='" + version + '\'' +
                 ", content='" + content + '\'' +
                 ", votes='" + votes + '\'' +
                 ", title='" + title + '\'' +
-                ", pageNum='" + pageNum + '\'' +
-                ", pageSize='" + pageSize + '\'' +
+                ", pageNum=" + pageNum +
+                ", pageSize=" + pageSize +
                 ", priority=" + priority +
                 ", frequency=" + frequency +
                 ", marked=" + marked +

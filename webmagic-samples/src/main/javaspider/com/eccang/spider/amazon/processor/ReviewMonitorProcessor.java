@@ -1,5 +1,6 @@
 package com.eccang.spider.amazon.processor;
 
+import com.eccang.spider.amazon.pojo.Asin;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,17 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
         if (!NumberUtils.isNumber(star)) {
             sLogger.warn("抱歉，商品已经下架，没有成功解析颗星数：" + star);
             updateBatchStatus(page, false, false);
+
+            /* Review已经下架(被删除),对应Review表里面的状态标记为已经被删除状态 */
+            review.deleted = 1;
+            mReviewService.update(review);
+
+            /* 如果删除的评论恰好是Asin最后一条评论的话，会影响更新爬取，所以不管是不是最后一条，评论被删除，跟新一次Asin表的extra字段 */
+            Asin dbAsin = mAsinService.findByAsin(review.siteCode, review.rootAsin);
+            if (dbAsin != null) {
+                mAsinService.updateExtra(dbAsin);
+            }
+
         } else {
             int stars = Integer.valueOf(star);
             String title = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']/b/text()").all().get(0);
