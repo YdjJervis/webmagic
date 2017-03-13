@@ -3,8 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eccang.spider.amazon.dao.top100.SellingProductDao">
 
-    <cache eviction="LRU" type="com.eccang.spider.base.rediscache.RedisCache"/>
-
     <resultMap id="SellingProductMap" type="SellingProduct">
         <id column="" property="id"/>
         <result column="bo_batch_num" property="batchNum"/>

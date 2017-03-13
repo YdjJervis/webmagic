@@ -3,8 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eccang.spider.amazon.dao.ImportAsinDao">
 
-    <cache eviction="LRU" type="com.eccang.spider.base.rediscache.RedisCache"/>
-
     <select id="findAll" resultType="ImportAsin" parameterType="int">
         SELECT * FROM test_asin_source limit #{0};
     </select>

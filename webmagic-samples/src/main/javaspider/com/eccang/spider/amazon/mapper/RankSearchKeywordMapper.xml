@@ -2,8 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.eccang.spider.amazon.dao.RankSearchKeywordDao">
 
-    <cache eviction="LRU" type="com.eccang.spider.base.rediscache.RedisCache"/>
-
     <resultMap id="RankSearchKeywordMap" type="RankSearchKeyword">
         <id property="id" column="sars_id"/>
         <result property="asin" column="sars_asin"/>
