@@ -31,7 +31,7 @@ public class RankWSTest extends SpringTestCase {
         List<RankReq.KeywordRank> keywordRanks = new ArrayList<>();
         RankReq.KeywordRank keywordRank = rankReq.new KeywordRank();
 
-        rankReq.customerCode = "EC_002";
+        rankReq.customerCode = "EC_001";
         rankReq.platformCode = "ERP";
         rankReq.token = "123456789";
 
@@ -43,17 +43,17 @@ public class RankWSTest extends SpringTestCase {
         keywordRanks.add(keywordRank);
 
         /* 添加第二个数据 */
-        keywordRank = rankReq.new KeywordRank();
-
-        keywordRank.asin = "B01ARQ39CW";
-        keywordRank.siteCode = "US";
-        keywordRank.keyword = "water tap";
-        keywordRank.departmentCode = "search-alias=aps";
-        keywordRanks.add(keywordRank);
+//        keywordRank = rankReq.new KeywordRank();
+//
+//        keywordRank.asin = "B01ARQ39CW";
+//        keywordRank.siteCode = "US";
+//        keywordRank.keyword = "water tap";
+//        keywordRank.departmentCode = "search-alias=aps";
+//        keywordRanks.add(keywordRank);
 
         rankReq.setData(keywordRanks);
 
-        String json = new RankWSService().getRankWSPort().addToMonitor(new Gson().toJson(rankReq));
+        String json = new RankWSService().getRankWSPort().addToMonitor(new Gson().toJson(rankReq), true);
         System.out.println(json);
     }
 
@@ -76,7 +76,7 @@ public class RankWSTest extends SpringTestCase {
         }
         rankReq.setData(keywordRanks);
 
-        String json = new RankWSService().getRankWSPort().addToMonitor(new Gson().toJson(rankReq));
+        String json = new RankWSService().getRankWSPort().addToMonitor(new Gson().toJson(rankReq), false);
         System.out.println(json);
     }
 

@@ -100,5 +100,7 @@
         bec_code = #{0}
         AND
         rca_crawl = 1
+        AND
+        rca_immediate = 0
     </select>
 </mapper>

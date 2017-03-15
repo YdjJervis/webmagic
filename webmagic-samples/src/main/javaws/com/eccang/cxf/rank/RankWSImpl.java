@@ -48,7 +48,7 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
     private GoodsRankInfoService mGoodsRankInfoService;
 
     @Override
-    public String addToMonitor(String json) {
+    public String addToMonitor(String json, boolean immediate) {
         BaseRspParam baseRspParam = auth(json);
 
         if (!baseRspParam.isSuccess()) {
@@ -68,16 +68,20 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
             return baseRspParam.toJson();
         }
 
+        /* 存储当前业务码 */
+        String businessCode = immediate ? R.BusinessCode.IMMEDIATE_KEYWORD_RANK_SPIDER : R.BusinessCode.KEYWORD_RANK_SPIDER;
+
+        CustomerBusiness customerBusiness;
         try {
             /* 业务及套餐限制验证 */
-            Business business = mBusinessService.findByCode(R.BusinessCode.KEYWORD_RANK_SPIDER);
+            Business business = mBusinessService.findByCode(businessCode);
             if (rankReq.data.size() > business.getImportLimit()) {
                 baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
                 baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
                 return baseRspParam.toJson();
             }
 
-            CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(rankReq.customerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
+            customerBusiness = mCustomerBusinessService.findByCode(rankReq.customerCode, businessCode);
             if (rankReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
                 baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
                 baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
@@ -97,7 +101,7 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         try {
             /* 从套餐取出该客户该业务的一些默认配置 */
             CustomerPayPackage customerPayPackage = mCustomerPayPackageService.findActived(rankReq.customerCode);
-            PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
+            PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, businessCode);
 
             int crawledNum = 0;
             /* 把客户和keywordRank的关系保存起来 */
@@ -109,25 +113,42 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
                 customerKeywordRank.asin = keywordRank.asin;
                 customerKeywordRank.keyword = keywordRank.keyword;
                 customerKeywordRank.departmentCode = keywordRank.departmentCode;
+                customerKeywordRank.immediate = immediate ? 1 : 0;
                 customerKeywordRank.priority = payPackageStub.priority;
                 customerKeywordRank.frequency = payPackageStub.frequency;
-                if (mCustomerKeywordRankService.isExist(customerKeywordRank)) {
+
+                CustomerKeywordRank ckr = mCustomerKeywordRankService.findByObj(customerKeywordRank);
+                if (ckr != null) {
                     crawledNum++;
+                    if (immediate) {
+                        mCustomerKeywordRankService.deleteById(ckr.id);
+                    }
                 }
                 customerKeywordRanks.add(customerKeywordRank);
             }
             mCustomerKeywordRankService.addAll(customerKeywordRanks);
 
             rankRsp.data.totalCount = customerKeywordRanks.size();
-            rankRsp.data.newCount = customerKeywordRanks.size() - crawledNum;
-            rankRsp.data.oldCount = crawledNum;
+            rankRsp.data.newCount = immediate ? 0 : customerKeywordRanks.size() - crawledNum;
+            rankRsp.data.oldCount = immediate ? 0 : crawledNum;
+
+            if (immediate) {
+                rankRsp.data.hasUsedNum = customerBusiness.useData + customerKeywordRanks.size();
+                rankRsp.data.usableNum = customerBusiness.maxData - rankRsp.data.hasUsedNum;
+
+                /* 更新业务表 */
+                customerBusiness.useData = rankRsp.data.hasUsedNum;
+                mCustomerBusinessService.update(customerBusiness);
+            } else {
+                /*对应客户下，keywordRank监听业务的使用情况*/
+                Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(rankReq.customerCode, businessCode);
+                rankRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
+                rankRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
+            }
+
         } catch (Exception e) {
             serverException(rankRsp, e);
         }
-        /*对应客户下，keywordRank监听业务的使用情况*/
-        Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(rankReq.customerCode, R.BusinessCode.KEYWORD_RANK_SPIDER);
-        rankRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
-        rankRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
 
         return rankRsp.toJson();
     }

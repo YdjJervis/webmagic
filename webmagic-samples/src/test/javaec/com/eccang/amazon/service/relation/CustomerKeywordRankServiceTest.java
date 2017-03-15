@@ -30,4 +30,9 @@ public class CustomerKeywordRankServiceTest extends SpringTestCase {
         customerKeywordRank.priority = 0;
         mCustomerKeywordRankService.add(customerKeywordRank);
     }
+
+    @Test
+    public void deleteById() {
+        mCustomerKeywordRankService.deleteById(3);
+    }
 }

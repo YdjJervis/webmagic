@@ -59,6 +59,10 @@ public class CustomerKeywordRankService {
         return mCustomerKeywordRankDao.findByObj(customerKeywordRank);
     }
 
+    public void deleteById(int id) {
+        mCustomerKeywordRankDao.delete(id);
+    }
+
     public boolean isExist(CustomerKeywordRank customerKeywordRank) {
         return mCustomerKeywordRankDao.findByObj(customerKeywordRank) != null;
     }

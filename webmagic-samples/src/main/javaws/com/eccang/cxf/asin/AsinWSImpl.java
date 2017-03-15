@@ -227,7 +227,6 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
             }
             mCustomerAsinService.addAll(customerAsinList);
 
-            Map<String, Integer> businessInfo = mCustomerBusinessService.getBusinessInfo(asinReq.customerCode, businessCode);
             if (immediate) {
                 asinRsp.data.hasUsedNum = customerBusiness.useData + customerAsinList.size();
                 asinRsp.data.usableNum = customerBusiness.maxData - asinRsp.data.hasUsedNum;
@@ -236,6 +235,7 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                 customerBusiness.useData = asinRsp.data.hasUsedNum;
                 mCustomerBusinessService.update(customerBusiness);
             } else {
+                Map<String, Integer> businessInfo = mCustomerBusinessService.getBusinessInfo(asinReq.customerCode, businessCode);
                 asinRsp.data.hasUsedNum = businessInfo.get(R.BusinessInfo.HAS_USED_NUM);
                 asinRsp.data.usableNum = businessInfo.get(R.BusinessInfo.USABLE_NUM);
             }

@@ -9,6 +9,7 @@
         <result column="bec_code" property="customerCode" />
         <result column="bas_code" property="siteCode" />
         <result column="bad_code" property="departmentCode" />
+        <result column="rcrk_immediate" property="immediate" />
         <result column="rcrk_crawl" property="crawl" />
         <result column="rcrk_priority" property="priority" />
         <result column="rcrk_frequency" property="frequency" />
@@ -24,6 +25,7 @@
           bec_code,
           bas_code,
           bad_code,
+          rcrk_immediate,
           rcrk_crawl,
           rcrk_priority,
           rcrk_frequency
@@ -33,6 +35,7 @@
           #{customerCode},
           #{siteCode},
           #{departmentCode},
+          #{immediate},
           #{crawl},
           #{priority},
           #{frequency}
@@ -41,13 +44,14 @@
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO relation_customer_keyword_rank (
-          saa_asin,
-          rcrk_keyword,
-          bec_code,
-          bas_code,
-          bad_code,
-          rcrk_priority,
-          rcrk_frequency
+        saa_asin,
+        rcrk_keyword,
+        bec_code,
+        bas_code,
+        bad_code,
+        rcrk_immediate,
+        rcrk_priority,
+        rcrk_frequency
         ) VALUES
         <foreach collection="list" index="index" item="item" separator=",">
           (
@@ -56,6 +60,7 @@
             #{item.customerCode},
             #{item.siteCode},
             #{item.departmentCode},
+            #{item.immediate},
             #{item.priority},
             #{item.frequency}
           )
@@ -71,6 +76,7 @@
           bec_code = #{customerCode},
           bas_code = #{siteCode},
           bad_code = #{departmentCode},
+          rcrk_immediate = #{immediate},
           rcrk_crawl = #{crawl},
           rcrk_priority = #{priority},
           rcrk_frequency = #{frequency},
@@ -80,43 +86,57 @@
     </update>
 
     <select id="findByCustomer" resultMap="CustomerRankKeywordMap" parameterType="java.lang.String">
-        SELECT
-          *
-        FROM
-          relation_customer_keyword_rank
+        SELECT * FROM relation_customer_keyword_rank
         WHERE
-          bec_code = #{0}
+        bec_code = #{0}
+        AND
+        rcrk_immediate = 0
     </select>
 
     <select id="findNeedGenerateBatch" resultMap="CustomerRankKeywordMap">
-        SELECT
-          *
-        FROM
-          relation_customer_keyword_rank
+        SELECT * FROM relation_customer_keyword_rank
         WHERE
-          rcrk_crawl = 1 AND
-          TIMESTAMPDIFF(SECOND,rcrk_sync_time,CURRENT_TIMESTAMP) > rcrk_frequency * 3600
-          OR rcrk_sync_time is null;
+        rcrk_crawl = 1
+        AND
+        rcrk_immediate = 0
+        AND
+        TIMESTAMPDIFF(SECOND,rcrk_sync_time,CURRENT_TIMESTAMP) > rcrk_frequency * 3600
+        OR
+        rcrk_sync_time is null;
     </select>
 
     <select id="findUsedCount" resultType="int">
-        SELECT
-          count(*)
-        FROM
-          relation_customer_keyword_rank
+        SELECT count(*) FROM relation_customer_keyword_rank
         WHERE
-          rcrk_crawl = 1 AND bec_code = #{0}
+        rcrk_crawl = 1
+        AND
+        bec_code = #{0}
+        AND
+        rcrk_immediate = 0
     </select>
 
     <select id="findByObj" resultMap="CustomerRankKeywordMap">
-        SELECT
-          *
-        FROM
-          relation_customer_keyword_rank
+        SELECT * FROM relation_customer_keyword_rank
         WHERE
-          saa_asin = #{asin} AND rcrk_keyword = #{keyword} AND bec_code = #{customerCode} AND bas_code = #{siteCode} AND bad_code = #{departmentCode}
-          <if test="customerCode != null">
-              AND bec_code = #{customerCode}
-          </if>
+        saa_asin = #{asin}
+        AND
+        rcrk_keyword = #{keyword}
+        AND
+        bec_code = #{customerCode}
+        AND
+        bas_code = #{siteCode}
+        AND
+        bad_code = #{departmentCode}
+        and
+        rcrk_immediate = #{immediate}
+        <if test="customerCode != null">
+            AND bec_code = #{customerCode}
+        </if>
     </select>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM relation_customer_keyword_rank
+        WHERE
+        rcrk_id = #{0}
+    </delete>
 </mapper>
