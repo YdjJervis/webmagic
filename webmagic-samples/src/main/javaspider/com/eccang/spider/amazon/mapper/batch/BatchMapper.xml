@@ -8,6 +8,7 @@
         <result property="number" column="bo_batch_num"/>
         <result property="customerCode" column="bec_code"/>
         <result property="isImport" column="bo_import"/>
+        <result property="immediate" column="bo_immediate"/>
         <result property="type" column="bo_type"/>
         <result property="status" column="bo_status"/>
         <result property="timesTotal" column="bo_times_total"/>
@@ -25,6 +26,7 @@
         bo_batch_num,
         bec_code,
         bo_import,
+        bo_immediate,
         bo_type,
         bo_status,
         bo_times_total,
@@ -37,6 +39,7 @@
         #{number},
         #{customerCode},
         #{isImport},
+        #{immediate},
         #{type},
         #{status},
         #{timesTotal},
@@ -73,6 +76,7 @@
         UPDATE batch_order SET
         bec_code = #{customerCode},
         bo_import = #{isImport},
+        bo_immediate = #{immediate},
         bo_type = #{type},
         bo_status = #{status},
         bo_times_total = #{timesTotal},

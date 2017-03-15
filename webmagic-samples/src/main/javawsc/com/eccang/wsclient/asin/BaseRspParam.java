@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for baseRspParam complex type.
+ * <p>baseRspParam complex type的 Java 类。
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>以下模式片段指定包含在此类中的预期内容。
  * 
  * <pre>
  * &lt;complexType name="baseRspParam">
@@ -43,7 +43,7 @@ public class BaseRspParam {
     protected boolean success;
 
     /**
-     * Gets the value of the customerCode property.
+     * 获取customerCode属性的值。
      * 
      * @return
      *     possible object is
@@ -55,7 +55,7 @@ public class BaseRspParam {
     }
 
     /**
-     * Sets the value of the customerCode property.
+     * 设置customerCode属性的值。
      * 
      * @param value
      *     allowed object is
@@ -67,7 +67,7 @@ public class BaseRspParam {
     }
 
     /**
-     * Gets the value of the status property.
+     * 获取status属性的值。
      * 
      */
     public int getStatus() {
@@ -75,7 +75,7 @@ public class BaseRspParam {
     }
 
     /**
-     * Sets the value of the status property.
+     * 设置status属性的值。
      * 
      */
     public void setStatus(int value) {
@@ -83,7 +83,7 @@ public class BaseRspParam {
     }
 
     /**
-     * Gets the value of the msg property.
+     * 获取msg属性的值。
      * 
      * @return
      *     possible object is
@@ -95,7 +95,7 @@ public class BaseRspParam {
     }
 
     /**
-     * Sets the value of the msg property.
+     * 设置msg属性的值。
      * 
      * @param value
      *     allowed object is
@@ -107,7 +107,7 @@ public class BaseRspParam {
     }
 
     /**
-     * Gets the value of the success property.
+     * 获取success属性的值。
      * 
      */
     public boolean isSuccess() {
@@ -115,7 +115,7 @@ public class BaseRspParam {
     }
 
     /**
-     * Sets the value of the success property.
+     * 设置success属性的值。
      * 
      */
     public void setSuccess(boolean value) {

@@ -203,7 +203,7 @@ public class UrlService {
 
             /* 更新客户-Asin关系的同步时间 */
             mLogger.info("同步客户关系表记录时间：" + batch.customerCode + " " + dbBtchAsin.siteCode + " " + dbBtchAsin.asin);
-            CustomerAsin customerAsin = mCustomerAsinService.find(new CustomerAsin(batch.customerCode, dbBtchAsin.siteCode, dbBtchAsin.asin));
+            CustomerAsin customerAsin = mCustomerAsinService.find(new CustomerAsin(batch.customerCode, dbBtchAsin.siteCode, dbBtchAsin.asin, batch.immediate));
             customerAsin.syncTime = currentTime;
             mCustomerAsinService.update(customerAsin);
 
@@ -214,11 +214,6 @@ public class UrlService {
 
         /* 更新批次详单表 */
         mBatchAsinService.update(dbBtchAsin);
-
-        /*如果爬取开始，更新开始时间 */
-        if (batch.startTime == null) {
-            batch.startTime = currentTime;
-        }
 
         asycBatchProgress(url, currentTime);
 
@@ -232,6 +227,11 @@ public class UrlService {
         Batch batch = mBatchService.findByBatchNumber(url.batchNum);
         /*计算详单总进度的评价值，更新到总单上去 */
         batch.progress = mBatchAsinService.findAverageProgress(url.batchNum);
+
+        /*如果爬取开始，更新开始时间 */
+        if (batch.startTime == null) {
+            batch.startTime = currentTime;
+        }
 
         /*如果爬取完毕，更新完毕时间 */
         if (batch.progress == 1) {

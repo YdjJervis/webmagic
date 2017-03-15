@@ -204,7 +204,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 pageNum = 1;
             }
 
-            CustomerAsin customerAsin = new CustomerAsin(baseRspParam.customerCode, siteCode, asin);
+            CustomerAsin customerAsin = new CustomerAsin(baseRspParam.customerCode, siteCode, asin, 0);
             String rootAsin;
             customerAsin = mCustomerAsinService.find(customerAsin);
             if (customerAsin != null) {
@@ -304,7 +304,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
 
         try {
 
-            CustomerAsin customerAsin = new CustomerAsin(baseRspParam.customerCode, siteCode, asin);
+            CustomerAsin customerAsin = new CustomerAsin(baseRspParam.customerCode, siteCode, asin, 0);
             String rootAsin;
             customerAsin = mCustomerAsinService.find(customerAsin);
             if (customerAsin != null) {

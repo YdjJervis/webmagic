@@ -59,8 +59,6 @@ public final class R {
 
         public static final String PARAMETER_ASIN_LIST_ASIN_ERROR = "数据列表中存在空数据";
 
-//        public static final String PARAMETER_CRAWL_STATUS_ERROR = "爬取状态设置格式有误，爬取状态为\"open\"或\"close\"";
-
         public static final String PARAMETER_BATCH_NULL_ERROR = "查询的批次对象为空";
 
         public static final String PARAMETER_BATCH_NUM_ERROR = "查询的批次对象中的批次号为空";
@@ -116,6 +114,11 @@ public final class R {
         public static final String MONITOR_SPIDER = "MS"; /** 监听review */
         public static final String KEYWORD_RANK_SPIDER = "KRS"; /** 关键词排名搜索 */
         public static final String FOLLOW_SELL = "FS"; /** 关键词排名搜索 */
+
+        public static final String IMMEDIATE_ASIN_SPIDER = "IM_AS"; /** 爬取asin - 即时调用*/
+        public static final String IMMEDIATE_MONITOR_SPIDER = "IM_MS"; /** 监听review - 即时调用 */
+        public static final String IMMEDIATE_KEYWORD_RANK_SPIDER = "IM_KRS"; /** 关键词排名搜索 - 即时调用 */
+        public static final String IMMEDIATE_FOLLOW_SELL = "IM_FS"; /** 关键词排名搜索 - 即时调用 */
     }
 
     /** 业务统计 */

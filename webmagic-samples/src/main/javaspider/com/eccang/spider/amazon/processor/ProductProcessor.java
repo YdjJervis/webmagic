@@ -121,7 +121,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
      */
     private CustomerAsin getCustomerAsin(Page page) {
         Batch batch = mBatchService.findByBatchNumber(getUrl(page).batchNum);
-        return mCustomerAsinService.find(new CustomerAsin(batch.customerCode, extractSite(page).code, extractAsin(page)));
+        return mCustomerAsinService.find(new CustomerAsin(batch.customerCode, extractSite(page).code, extractAsin(page), batch.immediate));
     }
 
     @Override

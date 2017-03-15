@@ -7,6 +7,7 @@
         <id column="besb_id" property="id" />
         <result column="besb_code" property="businessCode" />
         <result column="besb_name" property="businessName" />
+        <result column="besb_describe" property="businessDescribe" />
         <result column="besb_status" property="status" />
         <result column="besb_import_limit" property="importLimit" />
         <result column="besb_create_date" property="createDate" />
@@ -17,11 +18,13 @@
         INSERT INTO base_eccang_spider_business (
           besb_code,
           besb_name,
+          besb_describe,
           besb_status,
           besb_import_limit
         ) VALUES (
           #{businessCode},
           #{businessName},
+          #{businessDescribe},
           #{status},
           #{importLimit}
         )
@@ -31,6 +34,7 @@
         INSERT INTO base_eccang_spider_business (
         besb_code,
         besb_name,
+        besb_describe,
         besb_status,
         besb_import_limit
         ) VALUES
@@ -38,6 +42,7 @@
           (
             #{item.businessCode},
             #{item.businessName},
+            #{item.businessDescribe},
             #{item.status},
             #{item.importLimit}
           )
@@ -49,6 +54,7 @@
           base_eccang_spider_business
         SET
           besb_name = #{businessName},
+          besb_describe = #{businessDescribe},
           besb_status = #{status},
           besb_import_limit = #{importLimit}
         WHERE

@@ -6,6 +6,7 @@
         <result column="rca_id" property="id"/>
         <result column="bec_code" property="customerCode"/>
         <result column="bas_code" property="siteCode"/>
+        <result column="rca_immediate" property="immediate"/>
         <result column="saa_asin" property="asin"/>
         <result column="rca_crawl" property="crawl"/>
         <result column="rca_on_sell" property="onSell"/>
@@ -34,6 +35,8 @@
         and
         bas_code = #{siteCode}
         and
+        rca_immediate = #{immediate}
+        and
         saa_asin = #{asin}
     </update>
 
@@ -41,6 +44,7 @@
         INSERT INTO relation_customer_asin(
         bec_code,
         bas_code,
+        rca_immediate,
         saa_asin,
         rca_crawl,
         rca_on_sell,
@@ -54,6 +58,7 @@
             (
             #{item.customerCode},
             #{item.siteCode},
+            #{item.immediate},
             #{item.asin},
             #{item.crawl},
             #{item.onSell},
@@ -72,12 +77,16 @@
         and
         bas_code = #{siteCode}
         and
-        saa_asin = #{asin};
+        rca_immediate = #{immediate}
+        and
+        saa_asin = #{asin}
     </select>
 
     <select id="findNeedGenerateBatch" resultMap="CustomerAsinMap">
         SELECT * FROM relation_customer_asin
         WHERE
+        rca_immediate = 0
+        AND
         rca_crawl = 1
         AND
         rca_on_sell = 1

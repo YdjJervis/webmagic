@@ -20,19 +20,7 @@ public interface AsinWS extends SpiderWS {
      * 添加ASIN爬取批次
      */
     @WebMethod
-    String addToCrawl(String json);
-
-    /**
-     * 查询ASIN列表
-     */
-    @WebMethod
-    String getAsins(String json);
-
-    /**
-     * 设置ASIN的优先级
-     */
-    @WebMethod
-    String setPriority(String jsonArray);
+    String addToCrawl(String json, boolean immediate);
 
     @WebMethod
     String getAsinsStatus(String json);

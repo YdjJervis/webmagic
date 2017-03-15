@@ -36,10 +36,11 @@ public class BatchService {
      *
      * @param type 0-Review全量爬取；1-监听爬取;2-Review更新爬取
      */
-    public Batch addBatch(String customerCode, List<BatchAsin> batchAsinList, int type, int isImport) {
+    public Batch addBatch(String customerCode, List<BatchAsin> batchAsinList, int type, int isImport, int immediate) {
 
         Batch batch = generate(customerCode, type);
         batch.isImport = isImport;
+        batch.immediate = immediate;
         for (BatchAsin batchAsin : batchAsinList) {
             batchAsin.batchNumber = batch.number;
         }
@@ -97,10 +98,11 @@ public class BatchService {
 
     /**
      * 更新总单有效请求数或请求总数
+     *
      * @param bo false:有效请求数，true:请求总数
      */
     public void updateTimes(String batchNum, boolean bo) {
-        if(!bo) {
+        if (!bo) {
             mBatchDao.updateTimesValid(batchNum);
         } else {
             mBatchDao.updateTimesTotal(batchNum);

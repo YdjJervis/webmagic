@@ -1,14 +1,15 @@
 package com.eccang.amazon.wsclient;
 
 import com.eccang.base.SpringTestCase;
-import com.eccang.pojo.asin.AsinPriorityReq;
-import com.eccang.pojo.asin.AsinQueryReq;
 import com.eccang.pojo.asin.AsinReq;
+import com.eccang.spider.amazon.pojo.ImportData;
 import com.eccang.spider.amazon.service.ImportDataService;
 import com.eccang.wsclient.asin.AsinWSService;
 import com.google.gson.Gson;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * @author Jervis
@@ -20,41 +21,6 @@ public class AsinWSTest extends SpringTestCase {
 
     @Autowired
     private ImportDataService mImportDataService;
-
-    @Test
-    public void testChangePriority() {
-        AsinPriorityReq priorityReq = new AsinPriorityReq();
-        priorityReq.customerCode = "EC_002";
-        priorityReq.platformCode = "ERP";
-        priorityReq.token = "123456789";
-
-        AsinPriorityReq.Asin asin = priorityReq.new Asin();
-        asin.priority = 1;
-        asin.asin = "B00HYAL84G";
-        asin.siteCode = "US";
-
-        priorityReq.data.add(asin);
-
-        String json = new AsinWSService().getAsinWSPort().setPriority(new Gson().toJson(priorityReq));
-        System.out.println(json);
-    }
-
-    @Test
-    public void testQueryAsin() {
-        AsinQueryReq queryReq = new AsinQueryReq();
-        queryReq.customerCode = "EC_002";
-        queryReq.platformCode = "ERP";
-        queryReq.token = "123456789";
-
-        AsinQueryReq.Asin asin = queryReq.new Asin();
-        asin.asin = "B00HYAL84G";
-        asin.siteCode = "US";
-
-        queryReq.data.add(asin);
-
-        String json = new AsinWSService().getAsinWSPort().getAsins(new Gson().toJson(queryReq));
-        System.out.println(json);
-    }
 
     @Test
     public void testAsinBatchImport() {
@@ -70,7 +36,7 @@ public class AsinWSTest extends SpringTestCase {
         asinReq.data.add(asin);
 
         System.out.println(new Gson().toJson(asinReq));
-        String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));
+        String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq), true);
         System.out.println(json);
 
     }
@@ -82,26 +48,20 @@ public class AsinWSTest extends SpringTestCase {
         asinReq.platformCode = "ERP";
         asinReq.token = "123456789";
 
-//        List<ImportData> importDataList = mImportDataService.find(null,1);
-//
-//        for (ImportData importData : importDataList) {
-//            AsinReq.Asin asin = asinReq.new Asin();
-//            asin.asin = importData.getAsin();
-//            asin.siteCode = importData.getSiteCode();
-//            asin.star = "0-0-1-1-1";
-//            asinReq.data.add(asin);
-//        }
+        List<ImportData> importDataList = mImportDataService.find(null,1);
 
-        AsinReq.Asin asin = asinReq.new Asin();
-        asin.asin = "B01N6C6UHA";
-        asin.siteCode = "US";
-        asin.star = "0-0-1-1-1";
-        asinReq.data.add(asin);
+        for (ImportData importData : importDataList) {
+            AsinReq.Asin asin = asinReq.new Asin();
+            asin.asin = importData.getAsin();
+            asin.siteCode = importData.getSiteCode();
+            asin.star = "0-0-1-1-1";
+            asinReq.data.add(asin);
+        }
 
         String param = new Gson().toJson(asinReq);
         System.out.println(param);
 
-        String json = new AsinWSService().getAsinWSPort().addToCrawl(param);
+        String json = new AsinWSService().getAsinWSPort().addToCrawl(param, true);
         System.out.println(json);
 
     }

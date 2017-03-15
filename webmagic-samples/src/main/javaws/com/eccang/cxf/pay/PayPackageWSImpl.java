@@ -351,7 +351,7 @@ public class PayPackageWSImpl extends AbstractSpiderWS implements PayPackageWS {
                 if (!RegexUtil.isPriorityQualified(payPackageStub.priority)) {
                     return getValidateMsg(false, R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR);
                 }
-                if (!RegexUtil.isPositiveNumQualified(payPackageStub.frequency)) {
+                if (!payPackageStub.businessCode.startsWith("IM_") && !RegexUtil.isPositiveNumQualified(payPackageStub.frequency)) {
                     return getValidateMsg(false, R.RequestMsg.PARAMETER_POSITIVE_NUM_ERROR);
                 }
                 if (!RegexUtil.isPositiveNumQualified(payPackageStub.day)) {

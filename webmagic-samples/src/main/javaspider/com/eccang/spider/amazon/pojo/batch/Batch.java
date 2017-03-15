@@ -15,6 +15,7 @@ public class Batch extends BasePojo {
     public String number;
     public String customerCode;
     public int isImport;
+    public int immediate;
     public int type;
     public int status;
     public int timesTotal;
@@ -29,6 +30,7 @@ public class Batch extends BasePojo {
                 "number='" + number + '\'' +
                 ", customerCode='" + customerCode + '\'' +
                 ", isImport=" + isImport +
+                ", immediate=" + immediate +
                 ", type=" + type +
                 ", status=" + status +
                 ", timesTotal=" + timesTotal +

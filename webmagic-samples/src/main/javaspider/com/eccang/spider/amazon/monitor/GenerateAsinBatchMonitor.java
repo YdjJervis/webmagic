@@ -69,7 +69,7 @@ public class GenerateAsinBatchMonitor extends GenerateBatchMonitor implements Sc
 
             mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
             /*添加创建详单信息*/
-            mBatchService.addBatch(customerCode, needAddList, R.BatchType.REVIEW_UPDATE, 0);
+            mBatchService.addBatch(customerCode, needAddList, R.BatchType.REVIEW_UPDATE, 0, 0);
 
             mLogger.info("生成Review更新爬取批次：成功");
         }

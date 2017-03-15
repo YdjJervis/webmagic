@@ -14,6 +14,7 @@ public class Business extends BasePojo {
     private int id;
     private String businessCode;
     private String businessName;
+    private String businessDescribe;
     private int status;
     private int importLimit;
     private Date createDate;
@@ -37,6 +38,14 @@ public class Business extends BasePojo {
 
     public String getBusinessName() {
         return businessName;
+    }
+
+    public String getBusinessDescribe() {
+        return businessDescribe;
+    }
+
+    public void setBusinessDescribe(String businessDescribe) {
+        this.businessDescribe = businessDescribe;
     }
 
     public void setBusinessName(String businessName) {
@@ -81,6 +90,7 @@ public class Business extends BasePojo {
                 "id=" + id +
                 ", businessCode='" + businessCode + '\'' +
                 ", businessName='" + businessName + '\'' +
+                ", businessDescribe='" + businessDescribe + '\'' +
                 ", status=" + status +
                 ", importLimit=" + importLimit +
                 ", createDate=" + createDate +

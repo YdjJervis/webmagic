@@ -14,6 +14,7 @@ public class CustomerAsin extends BasePojo {
 
     public String customerCode;
     public String siteCode;
+    public int immediate;
     public String asin;
     public int crawl = 1;
     public int onSell = 1;
@@ -25,10 +26,11 @@ public class CustomerAsin extends BasePojo {
     public CustomerAsin() {
     }
 
-    public CustomerAsin(String customerCode, String siteCode, String asin) {
+    public CustomerAsin(String customerCode, String siteCode, String asin, int immediate) {
         this.siteCode = siteCode;
         this.customerCode = customerCode;
         this.asin = asin;
+        this.immediate = immediate;
     }
 
     @Override
@@ -36,6 +38,7 @@ public class CustomerAsin extends BasePojo {
         return "CustomerAsin{" +
                 "customerCode='" + customerCode + '\'' +
                 ", siteCode='" + siteCode + '\'' +
+                ", immediate=" + immediate +
                 ", asin='" + asin + '\'' +
                 ", crawl=" + crawl +
                 ", onSell=" + onSell +

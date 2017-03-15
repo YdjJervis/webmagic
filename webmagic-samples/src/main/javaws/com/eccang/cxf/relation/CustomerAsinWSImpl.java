@@ -70,7 +70,7 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
             /* 业务及套餐限制验证 */
             int reopenCount = 0;//重新打开的量 = 关闭状态调为打开的 - 打开状态调为关闭的
             for (CusAsinReq.Asin asin : cusAsinReq.data) {
-                CustomerAsin customerAsin = new CustomerAsin(cusAsinReq.customerCode, asin.siteCode, asin.asin);
+                CustomerAsin customerAsin = new CustomerAsin(cusAsinReq.customerCode, asin.siteCode, asin.asin, 0);
                 customerAsin = mCustomerAsinService.find(customerAsin);
 
                 if (customerAsin.crawl != asin.crawl) {
@@ -109,7 +109,7 @@ public class CustomerAsinWSImpl extends AbstractSpiderWS implements CustomerAsin
 
         try {
             for (CusAsinReq.Asin asin : cusAsinReq.data) {
-                CustomerAsin customerAsin = new CustomerAsin(cusAsinRsp.customerCode, asin.siteCode, asin.asin);
+                CustomerAsin customerAsin = new CustomerAsin(cusAsinRsp.customerCode, asin.siteCode, asin.asin, 0);
                 customerAsin = mCustomerAsinService.find(customerAsin);
                 customerAsin.crawl = asin.crawl;
                 mCustomerAsinService.update(customerAsin);

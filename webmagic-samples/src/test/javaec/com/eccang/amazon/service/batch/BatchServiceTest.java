@@ -35,7 +35,7 @@ public class BatchServiceTest extends SpringTestCase {
             list.add(batchAsin);
         }
 
-        mService.addBatch("AA", list, 0, 0);
+        mService.addBatch("AA", list, 0, 0,0);
     }
 
     @Test
