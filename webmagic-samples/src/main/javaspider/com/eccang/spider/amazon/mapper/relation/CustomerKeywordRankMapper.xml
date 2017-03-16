@@ -9,7 +9,6 @@
         <result column="bec_code" property="customerCode" />
         <result column="bas_code" property="siteCode" />
         <result column="bad_code" property="departmentCode" />
-        <result column="rcrk_immediate" property="immediate" />
         <result column="rcrk_crawl" property="crawl" />
         <result column="rcrk_priority" property="priority" />
         <result column="rcrk_frequency" property="frequency" />
@@ -25,7 +24,6 @@
           bec_code,
           bas_code,
           bad_code,
-          rcrk_immediate,
           rcrk_crawl,
           rcrk_priority,
           rcrk_frequency
@@ -35,7 +33,6 @@
           #{customerCode},
           #{siteCode},
           #{departmentCode},
-          #{immediate},
           #{crawl},
           #{priority},
           #{frequency}
@@ -49,7 +46,6 @@
         bec_code,
         bas_code,
         bad_code,
-        rcrk_immediate,
         rcrk_priority,
         rcrk_frequency
         ) VALUES
@@ -60,7 +56,6 @@
             #{item.customerCode},
             #{item.siteCode},
             #{item.departmentCode},
-            #{item.immediate},
             #{item.priority},
             #{item.frequency}
           )
@@ -76,7 +71,6 @@
           bec_code = #{customerCode},
           bas_code = #{siteCode},
           bad_code = #{departmentCode},
-          rcrk_immediate = #{immediate},
           rcrk_crawl = #{crawl},
           rcrk_priority = #{priority},
           rcrk_frequency = #{frequency},
@@ -89,16 +83,12 @@
         SELECT * FROM relation_customer_keyword_rank
         WHERE
         bec_code = #{0}
-        AND
-        rcrk_immediate = 0
     </select>
 
     <select id="findNeedGenerateBatch" resultMap="CustomerRankKeywordMap">
         SELECT * FROM relation_customer_keyword_rank
         WHERE
         rcrk_crawl = 1
-        AND
-        rcrk_immediate = 0
         AND
         TIMESTAMPDIFF(SECOND,rcrk_sync_time,CURRENT_TIMESTAMP) > rcrk_frequency * 3600
         OR
@@ -111,8 +101,6 @@
         rcrk_crawl = 1
         AND
         bec_code = #{0}
-        AND
-        rcrk_immediate = 0
     </select>
 
     <select id="findByObj" resultMap="CustomerRankKeywordMap">
@@ -127,8 +115,6 @@
         bas_code = #{siteCode}
         AND
         bad_code = #{departmentCode}
-        and
-        rcrk_immediate = #{immediate}
         <if test="customerCode != null">
             AND bec_code = #{customerCode}
         </if>

@@ -68,7 +68,7 @@ public class PushTask {
         if (pushDataReq.getData().getAsins() != null && pushDataReq.getData().getAsins().size() > 0) {
             isSuccess = push(pushDataReq);
         } else {
-            if(!pushDataReq.getData().getType().equalsIgnoreCase("0")) {
+            if (!pushDataReq.getData().getType().equalsIgnoreCase("0")) {
                 sLogger.info("批次号为(" + pushQueue.batchNum + ")没有数据变化，无需推送数据.");
             } else {
                 isSuccess = push(pushDataReq);
@@ -158,7 +158,7 @@ public class PushTask {
      * 获取更新爬取的变化数据信息
      */
     private List<PushDataReq.Data.Asin> getPushAsinsUpdate(Batch batch) {
-        List<PushDataReq.Data.Asin> asins = new ArrayList<PushDataReq.Data.Asin>();
+        List<PushDataReq.Data.Asin> asins = new ArrayList<>();
         /*查询这个批次下的所有的asin*/
         List<BatchAsin> batchAsinList = mBatchAsinService.findAllByBatchNum(batch.number);
         PushDataReq.Data.Asin asin;
@@ -188,7 +188,7 @@ public class PushTask {
         List<BatchReview> batchReviewList = mBatchReviewService.findAllByBatchNum(batch.number);
 
         /*监听review中，发生变化的review集合*/
-        List<PushDataReq.Data.Asin.Review> reviewList = new ArrayList<PushDataReq.Data.Asin.Review>();
+        List<PushDataReq.Data.Asin.Review> reviewList = new ArrayList<>();
 
         PushDataReq.Data.Asin asin;
         for (BatchReview batchReview : batchReviewList) {

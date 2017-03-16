@@ -77,4 +77,8 @@ public class CustomerReviewService {
     public int findUsedCount(String customerCode) {
         return mCustomerReviewDao.findUsedCount(customerCode);
     }
+
+    public void deleteById(int id) {
+        mCustomerReviewDao.delete(id);
+    }
 }

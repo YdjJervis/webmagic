@@ -31,9 +31,16 @@ public class GenerateReviewBatchMonitor extends GenerateBatchMonitor implements 
 
     @Override
     public void execute() {
-        Date currentTime = new Date();
+
         /*查询已经完成的客户关系review数据*/
         List<CustomerReview> customerReviewList = mCustomerReviewService.findNeedGenerateBatch();
+
+        generate(customerReviewList, false);
+    }
+
+    public void generate(List<CustomerReview> customerReviewList, boolean immediate) {
+        Date currentTime = new Date();
+
         mLogger.info("需要生成新批次号的总量：" + customerReviewList.size());
 
         /*按客户码分组*/
@@ -45,10 +52,11 @@ public class GenerateReviewBatchMonitor extends GenerateBatchMonitor implements 
             List<CustomerReview> rmList = customerListMap.get(customerCode);
             /*生成总单并添加到数据库中*/
             Batch batch = mBatchService.generate(customerCode, R.BatchType.REVIEW_MONITOR);
+            batch.immediate = immediate ? 1 : 0;
             mBatchService.add(batch);
 
             /*将批次单号与review建立关系*/
-            List<BatchReview> needAddList = new ArrayList<BatchReview>();
+            List<BatchReview> needAddList = new ArrayList<>();
             for (CustomerReview customerReview : rmList) {
                 BatchReview batchReview = new BatchReview();
                 batchReview.reviewID = customerReview.reviewId;
@@ -57,8 +65,10 @@ public class GenerateReviewBatchMonitor extends GenerateBatchMonitor implements 
                 batchReview.type = R.CrawlType.REVIEW_MONITOR;
                 needAddList.add(batchReview);
 
-                customerReview.finishTime = currentTime;
-                mCustomerReviewService.update(customerReview);
+                if (!immediate) {
+                    customerReview.finishTime = currentTime;
+                    mCustomerReviewService.update(customerReview);
+                }
             }
             mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
             /*添加创建详单信息*/

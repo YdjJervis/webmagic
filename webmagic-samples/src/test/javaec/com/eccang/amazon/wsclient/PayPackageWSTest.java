@@ -48,6 +48,13 @@ public class PayPackageWSTest extends SpringTestCase {
         cusPayCustomAddReq.data.add(stub);
 
         stub = cusPayCustomAddReq.new PayPackageStub();
+        stub.businessCode = "IM_MS";
+        stub.count = 10;
+        stub.priority = 4;
+        stub.day = 30;
+        cusPayCustomAddReq.data.add(stub);
+
+        stub = cusPayCustomAddReq.new PayPackageStub();
         stub.businessCode = "KRS";
         stub.count = 5;
         stub.frequency = 24;
@@ -66,6 +73,13 @@ public class PayPackageWSTest extends SpringTestCase {
         stub.businessCode = "FS";
         stub.count = 5;
         stub.frequency = 12;
+        stub.priority = 4;
+        stub.day = 30;
+        cusPayCustomAddReq.data.add(stub);
+
+        stub = cusPayCustomAddReq.new PayPackageStub();
+        stub.businessCode = "IM_FS";
+        stub.count = 5;
         stub.priority = 4;
         stub.day = 30;
         cusPayCustomAddReq.data.add(stub);

@@ -17,25 +17,16 @@ import javax.jws.soap.SOAPBinding;
 public interface ReviewWS extends SpiderWS {
 
     @WebMethod
-    String addToMonitor(String json);
+    String addToMonitor(String json, boolean immediate);
+
+    @WebMethod
+    String setCrawl(String json);
 
     @WebMethod
     String getReviewsByAsin(String asinJson);
 
     @WebMethod
     String getReviewById(String json);
-
-    @WebMethod
-    String setPriority(String json);
-
-    @WebMethod
-    String setReviewMonitor(String json);
-
-    @WebMethod
-    String setFrequency(String json);
-
-    @WebMethod
-    String updateCustomerReview(String json);
 
     @WebMethod
     String getReviewsStatus(String json);

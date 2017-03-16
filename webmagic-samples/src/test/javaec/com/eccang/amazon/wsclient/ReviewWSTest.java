@@ -42,7 +42,7 @@ public class ReviewWSTest extends SpringTestCase {
     public void addToMonitor() {
         ReviewReq reviewReq = new ReviewReq();
 
-        reviewReq.customerCode = "EC_002";
+        reviewReq.customerCode = "EC_001";
         reviewReq.platformCode = "ERP";
         reviewReq.token = "123456789";
 
@@ -60,18 +60,18 @@ public class ReviewWSTest extends SpringTestCase {
 
 //        for (int i = 0; i < 10; i++) {
         ReviewReq.Review review = reviewReq.new Review();
-        review.reviewId = "Tx164I0R2U1QE" + 11;
+        review.reviewId = "Tx164I0R2U1QE";
         review.siteCode = "US";
         review.asin = "B00HYAL84G";
         reviewReq.data.add(review);
 //        }
 
-        String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq));
+        String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq), true);
         System.out.println(json);
     }
 
     @Test
-    public void addToMonitorMany(){
+    public void addToMonitorMany() {
         ReviewReq reviewReq = new ReviewReq();
 
         reviewReq.customerCode = "EC_001";
@@ -90,12 +90,12 @@ public class ReviewWSTest extends SpringTestCase {
         review.asin = "B01LY3AMY8";
         reviewReq.data.add(review);
 
-        String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq));
+        String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq),false);
         System.out.println(json);
     }
 
     @Test
-    public void setReviewMonitor() {
+    public void setCrawl() {
         CusReviewUpdateReq req = new CusReviewUpdateReq();
 
         req.customerCode = "EC_002";
@@ -112,7 +112,7 @@ public class ReviewWSTest extends SpringTestCase {
         review1.crawl = 1;
         req.data.add(review1);
 
-        String json = new ReviewWSService().getReviewWSPort().setReviewMonitor(new Gson().toJson(req));
+        String json = new ReviewWSService().getReviewWSPort().setCrawl(new Gson().toJson(req));
         System.out.println(json);
     }
 

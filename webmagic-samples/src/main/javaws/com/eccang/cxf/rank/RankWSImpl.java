@@ -4,6 +4,7 @@ import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.rank.*;
+import com.eccang.spider.amazon.monitor.GenerateKeywordRankBatchMonitor;
 import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.crawl.GoodsRankInfo;
 import com.eccang.spider.amazon.pojo.crawl.KeywordRank;
@@ -46,6 +47,8 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
     private KeywordRankService mKeywordRankService;
     @Autowired
     private GoodsRankInfoService mGoodsRankInfoService;
+    @Autowired
+    private GenerateKeywordRankBatchMonitor mGenerateKeywordRankBatchMonitor;
 
     @Override
     public String addToMonitor(String json, boolean immediate) {
@@ -113,20 +116,21 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
                 customerKeywordRank.asin = keywordRank.asin;
                 customerKeywordRank.keyword = keywordRank.keyword;
                 customerKeywordRank.departmentCode = keywordRank.departmentCode;
-                customerKeywordRank.immediate = immediate ? 1 : 0;
                 customerKeywordRank.priority = payPackageStub.priority;
                 customerKeywordRank.frequency = payPackageStub.frequency;
 
-                CustomerKeywordRank ckr = mCustomerKeywordRankService.findByObj(customerKeywordRank);
-                if (ckr != null) {
+                if(mCustomerKeywordRankService.isExist(customerKeywordRank)){
                     crawledNum++;
-                    if (immediate) {
-                        mCustomerKeywordRankService.deleteById(ckr.id);
-                    }
                 }
+
                 customerKeywordRanks.add(customerKeywordRank);
             }
-            mCustomerKeywordRankService.addAll(customerKeywordRanks);
+
+            if (immediate) {
+                mGenerateKeywordRankBatchMonitor.generate(customerKeywordRanks, true);
+            } else {
+                mCustomerKeywordRankService.addAll(customerKeywordRanks);
+            }
 
             rankRsp.data.totalCount = customerKeywordRanks.size();
             rankRsp.data.newCount = immediate ? 0 : customerKeywordRanks.size() - crawledNum;

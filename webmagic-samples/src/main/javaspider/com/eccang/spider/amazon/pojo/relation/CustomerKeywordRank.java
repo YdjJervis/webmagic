@@ -17,7 +17,6 @@ public class CustomerKeywordRank extends BasePojo{
     public String customerCode;
     public String siteCode; /*站点码*/
     public String departmentCode; /*品类码*/
-    public int immediate; /*品类码*/
     public int crawl; /*是否开启*/
     public int priority;
     public int frequency; /*执行频率*/
@@ -31,7 +30,6 @@ public class CustomerKeywordRank extends BasePojo{
                 ", customerCode='" + customerCode + '\'' +
                 ", siteCode='" + siteCode + '\'' +
                 ", departmentCode='" + departmentCode + '\'' +
-                ", immediate=" + immediate +
                 ", crawl=" + crawl +
                 ", priority=" + priority +
                 ", frequency=" + frequency +

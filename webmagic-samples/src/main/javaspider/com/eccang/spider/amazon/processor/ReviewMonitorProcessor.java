@@ -1,20 +1,20 @@
 package com.eccang.spider.amazon.processor;
 
+import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.Asin;
+import com.eccang.spider.amazon.pojo.Url;
+import com.eccang.spider.amazon.pojo.batch.Batch;
+import com.eccang.spider.amazon.pojo.batch.BatchReview;
+import com.eccang.spider.amazon.pojo.crawl.Review;
+import com.eccang.spider.amazon.pojo.relation.CustomerReview;
+import com.eccang.spider.amazon.service.batch.BatchReviewService;
+import com.eccang.spider.amazon.service.crawl.ReviewService;
+import com.eccang.spider.amazon.service.relation.CustomerReviewService;
+import com.eccang.spider.base.monitor.ScheduledTask;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import com.eccang.spider.amazon.R;
-import com.eccang.spider.amazon.pojo.crawl.Review;
-import com.eccang.spider.amazon.pojo.Url;
-import com.eccang.spider.amazon.pojo.batch.Batch;
-import com.eccang.spider.amazon.pojo.batch.BatchReview;
-import com.eccang.spider.amazon.pojo.relation.CustomerReview;
-import com.eccang.spider.amazon.service.crawl.ReviewService;
-import com.eccang.spider.amazon.service.batch.BatchReviewService;
-import com.eccang.spider.amazon.service.relation.CustomerReviewService;
-import com.eccang.spider.base.monitor.ScheduledTask;
 
 import java.util.Date;
 import java.util.List;
@@ -130,17 +130,19 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
         }
         mBatchService.update(batch);
 
-        /* 更新客户-Review关系记录状态 */
-        CustomerReview customerReview = mCustomerReviewService.findCustomerReview(batch.customerCode, reviewId);
-        customerReview.times++;
-        customerReview.finishTime = currentTime;
-        if (!isOnSell) {
-            customerReview.onSell = 0;
+        if (batch.immediate == 0) {
+            /* 更新客户-Review关系记录状态 */
+            CustomerReview customerReview = mCustomerReviewService.findCustomerReview(batch.customerCode, reviewId);
+            customerReview.times++;
+            customerReview.finishTime = currentTime;
+            if (!isOnSell) {
+                customerReview.onSell = 0;
+            }
+            if (changed) {
+                customerReview.crawl = 0;
+            }
+            mCustomerReviewService.update(customerReview);
         }
-        if (changed) {
-            customerReview.crawl = 0;
-        }
-        mCustomerReviewService.update(customerReview);
 
         archiveCurrentUrl(page);
     }

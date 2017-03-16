@@ -4,6 +4,7 @@ import com.eccang.R;
 import com.eccang.cxf.AbstractSpiderWS;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.review.*;
+import com.eccang.spider.amazon.monitor.GenerateReviewBatchMonitor;
 import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
@@ -50,7 +51,11 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
     @Autowired
     private CustomerBusinessService mCustomerBusinessService;
 
-    public String addToMonitor(String json) {
+    @Autowired
+    private GenerateReviewBatchMonitor mGenerateReviewBatchMonitor;
+
+    @Override
+    public String addToMonitor(String json, boolean immediate) {
         BaseRspParam baseRspParam = auth(json);
 
         if (!baseRspParam.isSuccess()) {
@@ -70,16 +75,20 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             return baseRspParam.toJson();
         }
 
+        /* 存储当前业务码 */
+        String businessCode = immediate ? R.BusinessCode.IMMEDIATE_MONITOR_SPIDER : R.BusinessCode.MONITOR_SPIDER;
+
+        CustomerBusiness customerBusiness;
         try {
             /* 业务及套餐限制验证 */
-            Business business = mBusinessService.findByCode(R.BusinessCode.MONITOR_SPIDER);
+            Business business = mBusinessService.findByCode(businessCode);
             if (reviewReq.data.size() > business.getImportLimit()) {
                 baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
                 baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
                 return baseRspParam.toJson();
             }
 
-            CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(reviewReq.customerCode, R.BusinessCode.MONITOR_SPIDER);
+            customerBusiness = mCustomerBusinessService.findByCode(reviewReq.customerCode, businessCode);
             if (reviewReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
                 baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
                 baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
@@ -99,7 +108,7 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         try {
             /* 从套餐取出该客户该业务的一些默认配置 */
             CustomerPayPackage customerPayPackage = mCustomerPayPackageService.findActived(reviewReq.customerCode);
-            PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, R.BusinessCode.MONITOR_SPIDER);
+            PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, businessCode);
 
             int crawledNum = 0;
             /* 把客户和Review的关系保存起来 */
@@ -112,23 +121,41 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
                 customerReview.reviewId = review.reviewId;
                 customerReview.priority = payPackageStub.priority;
                 customerReview.frequency = payPackageStub.frequency;
+
                 if (mCustomerReviewService.isExist(reviewReq.customerCode, review.reviewId)) {
                     crawledNum++;
                 }
+
                 customerReviewList.add(customerReview);
             }
-            mCustomerReviewService.addAll(customerReviewList);
+
+            if (immediate) {
+                mGenerateReviewBatchMonitor.generate(customerReviewList, true);
+            } else {
+                mCustomerReviewService.addAll(customerReviewList);
+            }
 
             reviewRsp.data.totalCount = customerReviewList.size();
-            reviewRsp.data.newCount = customerReviewList.size() - crawledNum;
-            reviewRsp.data.oldCount = crawledNum;
+            reviewRsp.data.newCount = immediate ? 0 : customerReviewList.size() - crawledNum;
+            reviewRsp.data.oldCount = immediate ? 0 : crawledNum;
+
+            if (immediate) {
+                reviewRsp.data.hasUsedNum = customerBusiness.useData + customerReviewList.size();
+                reviewRsp.data.usableNum = customerBusiness.maxData - reviewRsp.data.hasUsedNum;
+                
+                /* 更新业务表 */
+                customerBusiness.useData = reviewRsp.data.hasUsedNum;
+                mCustomerBusinessService.update(customerBusiness);
+            } else {
+                /*对应客户下，review监听业务的使用情况*/
+                Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(reviewReq.customerCode, businessCode);
+                reviewRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
+                reviewRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
+            }
+
         } catch (Exception e) {
             serverException(reviewRsp, e);
         }
-        /*对应客户下，review监听业务的使用情况*/
-        Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(reviewReq.customerCode, R.BusinessCode.MONITOR_SPIDER);
-        reviewRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
-        reviewRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
 
         return reviewRsp.toJson();
     }
@@ -361,76 +388,10 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
     }
 
     /**
-     * 设置监听review的优先级
-     */
-    @Deprecated
-    @Override
-    public String setPriority(String json) {
-        BaseRspParam baseRspParam = auth(json);
-
-        if (!baseRspParam.isSuccess()) {
-            return baseRspParam.toJson();
-        }
-
-        CusReviewUpdateReq cusReviewUpdateReq = parseRequestParam(json, baseRspParam, CusReviewUpdateReq.class);
-        if (cusReviewUpdateReq == null) {
-            return baseRspParam.toJson();
-        }
-
-        /* 参数验证阶段 */
-        if (CollectionUtils.isEmpty(cusReviewUpdateReq.data)) {
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
-            return baseRspParam.toJson();
-        }
-
-        for (CusReviewUpdateReq.CustomerReview customerReview : cusReviewUpdateReq.data) {
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-
-            if (customerReview == null) {
-                baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_LIST_ASIN_ERROR;
-                return baseRspParam.toJson();
-            }
-
-            if (!RegexUtil.isReviewIdQualified(customerReview.reviewId)) {
-                baseRspParam.msg = R.RequestMsg.PARAMETER_REVIEW_NULL_ERROR;
-                return baseRspParam.toJson();
-            }
-
-            /*if (!RegexUtil.isPriorityQualified(customerReview.priority)) {
-                baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_PRIORITY_ERROR;
-                return baseRspParam.toJson();
-            }*/
-            baseRspParam.status = R.HttpStatus.SUCCESS;
-        }
-
-        CusReviewUpdateRsp cusReviewUpdateRsp = new CusReviewUpdateRsp();
-        cusReviewUpdateRsp.customerCode = cusReviewUpdateReq.customerCode;
-        cusReviewUpdateRsp.status = baseRspParam.status;
-        cusReviewUpdateRsp.msg = baseRspParam.msg;
-
-        try {
-            for (CusReviewUpdateReq.CustomerReview customerReview : cusReviewUpdateReq.data) {
-                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.customerCode, customerReview.reviewId);
-                /*if (customerReview.priority == data.priority) {
-                    cusReviewUpdateRsp.data.noChange++;
-                } else {
-                    data.priority = customerReview.priority;
-                    mCustomerReviewService.update(data);
-                    cusReviewUpdateRsp.data.changed++;
-                }*/
-            }
-        } catch (Exception e) {
-            serverException(cusReviewUpdateRsp, e);
-        }
-        return cusReviewUpdateRsp.toJson();
-    }
-
-    /**
      * 设置监听review是否开启或关闭
      */
     @Override
-    public String setReviewMonitor(String json) {
+    public String setCrawl(String json) {
         BaseRspParam baseRspParam = auth(json);
 
         if (!baseRspParam.isSuccess()) {
@@ -538,135 +499,6 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         cusReviewUpdateRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
         cusReviewUpdateRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
 
-        return cusReviewUpdateRsp.toJson();
-    }
-
-    /**
-     * 更新监听Review的监听频率（h/次）
-     */
-    @Deprecated
-    @Override
-    public String setFrequency(String json) {
-        BaseRspParam baseRspParam = auth(json);
-
-        if (!baseRspParam.isSuccess()) {
-            return baseRspParam.toJson();
-        }
-
-        CusReviewUpdateReq cusReviewUpdateReq = parseRequestParam(json, baseRspParam, CusReviewUpdateReq.class);
-        if (cusReviewUpdateReq == null) {
-            return baseRspParam.toJson();
-        }
-
-        /* 参数验证阶段 */
-        if (CollectionUtils.isEmpty(cusReviewUpdateReq.data)) {
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.PARAMETER_DATA_NULL_ERROR;
-            return baseRspParam.toJson();
-        }
-
-        for (CusReviewUpdateReq.CustomerReview customerReview : cusReviewUpdateReq.data) {
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-
-            if (customerReview == null) {
-                baseRspParam.msg = R.RequestMsg.PARAMETER_ASIN_LIST_ASIN_ERROR;
-                return baseRspParam.toJson();
-            }
-
-            if (!RegexUtil.isReviewIdQualified(customerReview.reviewId)) {
-                baseRspParam.msg = R.RequestMsg.PARAMETER_REVIEW_NULL_ERROR;
-                return baseRspParam.toJson();
-            }
-
-            /*if (!RegexUtil.isFrequencyQualified(customerReview.frequency)) {
-                baseRspParam.msg = R.RequestMsg.PARAMETER_REVIEW_FREQUENCY_ERROR;
-                return baseRspParam.toJson();
-            }*/
-            baseRspParam.status = R.HttpStatus.SUCCESS;
-        }
-
-        CusReviewUpdateRsp cusReviewUpdateRsp = new CusReviewUpdateRsp();
-        cusReviewUpdateRsp.customerCode = cusReviewUpdateReq.customerCode;
-        cusReviewUpdateRsp.status = baseRspParam.status;
-        cusReviewUpdateRsp.msg = baseRspParam.msg;
-
-        try {
-            for (CusReviewUpdateReq.CustomerReview customerReview : cusReviewUpdateReq.data) {
-                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.customerCode, customerReview.reviewId);
-
-                if (data == null) {
-                    cusReviewUpdateRsp.msg = R.RequestMsg.PARAMETER_REVIEW_EMPTY__ERROR;
-                    return cusReviewUpdateRsp.toJson();
-                }
-
-                /*if (customerReview.frequency == data.frequency) {
-                    cusReviewUpdateRsp.data.noChange++;
-                } else {
-                    data.frequency = customerReview.frequency;
-                    mCustomerReviewService.update(data);
-                    cusReviewUpdateRsp.data.changed++;
-                }*/
-            }
-        } catch (Exception e) {
-            serverException(cusReviewUpdateRsp, e);
-        }
-        return cusReviewUpdateRsp.toJson();
-    }
-
-    /**
-     * 更新更新监听Review的状态
-     */
-    public String updateCustomerReview(String json) {
-        BaseRspParam baseRspParam = auth(json);
-
-        if (!baseRspParam.isSuccess()) {
-            return baseRspParam.toJson();
-        }
-
-        CusReviewUpdateReq cusReviewUpdateReq = parseRequestParam(json, baseRspParam, CusReviewUpdateReq.class);
-        if (cusReviewUpdateReq == null) {
-            return baseRspParam.toJson();
-        }
-        /* 参数验证阶段 */
-        boolean isParamQualified = true;
-        if (CollectionUtils.isEmpty(cusReviewUpdateReq.data)) {
-            isParamQualified = false;
-        }
-        for (CusReviewUpdateReq.CustomerReview customerReview : cusReviewUpdateReq.data) {
-            if (!RegexUtil.isReviewIdQualified(customerReview.reviewId)
-                    || !RegexUtil.isMonitorStatusQualified(customerReview.crawl)) {
-                isParamQualified = false;
-            }
-        }
-        if (!isParamQualified) {
-            baseRspParam.status = R.HttpStatus.PARAM_WRONG;
-            baseRspParam.msg = R.RequestMsg.LIST_PARAM_WRONG;
-            return baseRspParam.toJson();
-        }
-
-        CusReviewUpdateRsp cusReviewUpdateRsp = new CusReviewUpdateRsp();
-        cusReviewUpdateRsp.customerCode = cusReviewUpdateReq.customerCode;
-        cusReviewUpdateRsp.status = baseRspParam.status;
-        cusReviewUpdateRsp.msg = baseRspParam.msg;
-
-        try {
-            for (CusReviewUpdateReq.CustomerReview customerReview : cusReviewUpdateReq.data) {
-                CustomerReview data = mCustomerReviewService.findCustomerReview(baseRspParam.customerCode, customerReview.reviewId);
-                /*if (customerReview.frequency == data.frequency &&
-                        customerReview.priority == data.priority &&
-                        customerReview.crawl == data.crawl) {
-                    cusReviewUpdateRsp.data.noChange++;
-                } else {
-                    data.priority = customerReview.priority;
-                    data.frequency = customerReview.frequency;
-                    data.crawl = customerReview.crawl;
-                    mCustomerReviewService.update(data);
-                    cusReviewUpdateRsp.data.changed++;
-                }*/
-            }
-        } catch (Exception e) {
-            serverException(cusReviewUpdateRsp, e);
-        }
         return cusReviewUpdateRsp.toJson();
     }
 

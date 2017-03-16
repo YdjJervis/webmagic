@@ -31,18 +31,19 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
 
     @Override
     public void execute() {
-        generateKeywordRankBatch();
+
+        /*查询需要生成新的批次的客户关系关键词排名数据*/
+        List<CustomerKeywordRank> customerKeywordRanks = mCustomerKeywordRankService.findNeedGenerateBatch();
+        mLogger.info("需要生成新批次号的总量：" + customerKeywordRanks.size());
+
+        generate(customerKeywordRanks, false);
     }
 
     /**
      * 每个客户取一批满足条件的keywordRank生成批次单号
      */
-    private void generateKeywordRankBatch() {
+    public void generate(List<CustomerKeywordRank> customerKeywordRanks, boolean immediate) {
         Date currentTime = new Date();
-
-        /*查询需要生成新的批次的客户关系关键词排名数据*/
-        List<CustomerKeywordRank> customerKeywordRanks = mCustomerKeywordRankService.findNeedGenerateBatch();
-        mLogger.info("需要生成新批次号的总量：" + customerKeywordRanks.size());
 
         /*按客户码分组*/
         Map<String, List<CustomerKeywordRank>> customerListMap = initCustomerListMap(customerKeywordRanks);
@@ -52,6 +53,7 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
 
             /*生成总单并添加到数据库中*/
             Batch batch = mBatchService.generate(customerCode, R.BatchType.KEYWORD_RANK);
+            batch.immediate = immediate ? 1 : 0;
             mBatchService.add(batch);
 
             /*将批次单号与review建立关系*/
@@ -69,8 +71,10 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
 
                 needAddList.add(batchRank);
 
-                customerKeywordRank.syncTime = currentTime;
-                mCustomerKeywordRankService.update(customerKeywordRank);
+                if (!immediate) {
+                    customerKeywordRank.syncTime = currentTime;
+                    mCustomerKeywordRankService.update(customerKeywordRank);
+                }
             }
 
             mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
