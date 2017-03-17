@@ -17,7 +17,7 @@ import javax.jws.soap.SOAPBinding;
 public interface FollowSellWS extends SpiderWS {
 
     @WebMethod
-    String addToMonitor(String json);
+    String addToMonitor(String json, boolean immediate);
 
     @WebMethod
     String setStatus(String json);

@@ -35,9 +35,11 @@ public class CustomerFollowSellService {
     public void addAll(List<CustomerFollowSell> customerFollowSellList) {
         List<CustomerFollowSell> newList = new ArrayList<>();
         for (CustomerFollowSell customerFollowSell : customerFollowSellList) {
-            if (!isExist(customerFollowSell.customerCode, customerFollowSell.siteCode, customerFollowSell.asin)) {
+            CustomerFollowSell dbCFS = find(customerFollowSell.customerCode, customerFollowSell.siteCode, customerFollowSell.asin);
+            if (dbCFS == null) {
                 newList.add(customerFollowSell);
             } else {
+                customerFollowSell.times = dbCFS.times;
                 mDao.update(customerFollowSell);
             }
         }

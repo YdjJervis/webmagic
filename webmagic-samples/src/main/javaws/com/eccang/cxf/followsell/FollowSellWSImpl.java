@@ -6,6 +6,7 @@ import com.eccang.pojo.BaseReqParam;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.ValidateMsg;
 import com.eccang.pojo.followsell.*;
+import com.eccang.spider.amazon.monitor.GenerateFollowSellBatchMonitor;
 import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.crawl.FollowSell;
 import com.eccang.spider.amazon.pojo.pay.PayPackageStub;
@@ -40,9 +41,11 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
     private FollowSellService mFollowSellService;
     @Autowired
     private CustomerFollowSellService mCustomerFollowSellService;
+    @Autowired
+    private GenerateFollowSellBatchMonitor mGenerateFollowSellBatchMonitor;
 
     @Override
-    public String addToMonitor(String json) {
+    public String addToMonitor(String json, boolean immediate) {
 
         BaseRspParam baseRspParam = auth(json);
 
@@ -63,16 +66,20 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             return baseRspParam.toJson();
         }
 
+        /* 存储当前业务码 */
+        String businessCode = immediate ? R.BusinessCode.IMMEDIATE_FOLLOW_SELL : R.BusinessCode.FOLLOW_SELL;
+
+        CustomerBusiness customerBusiness;
         try {
             /* 业务及套餐限制验证 */
-            Business business = mBusinessService.findByCode(R.BusinessCode.FOLLOW_SELL);
+            Business business = mBusinessService.findByCode(businessCode);
             if (followSellReq.data.size() > business.getImportLimit()) {
                 baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
                 baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
                 return baseRspParam.toJson();
             }
 
-            CustomerBusiness customerBusiness = mCustomerBusinessService.findByCode(followSellReq.customerCode, R.BusinessCode.FOLLOW_SELL);
+            customerBusiness = mCustomerBusinessService.findByCode(followSellReq.customerCode, businessCode);
             if (followSellReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
                 baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
                 baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
@@ -95,33 +102,47 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
             List<CustomerFollowSell> cusFollowSellList = new ArrayList<>();
             for (CusFollowSellAddReq.FollowSell followSell : followSellReq.data) {
 
-                CustomerFollowSell cusFollowSell = getCustomerFollowSell(followSellReq, followSell);
+                CustomerFollowSell cusFollowSell = getCustomerFollowSell(followSellReq, followSell, businessCode);
                 if (mCustomerFollowSellService.isExist(cusFollowSell.customerCode, cusFollowSell.siteCode, cusFollowSell.asin)) {
                     ++crawledNum;
                 }
                 cusFollowSellList.add(cusFollowSell);
             }
 
-            mCustomerFollowSellService.addAll(cusFollowSellList);
+            if (immediate) {
+                mGenerateFollowSellBatchMonitor.generate(cusFollowSellList, true);
+            } else {
+                mCustomerFollowSellService.addAll(cusFollowSellList);
+            }
 
             followSellRsp.data.totalCount = cusFollowSellList.size();
-            followSellRsp.data.newCount = cusFollowSellList.size() - crawledNum;
-            followSellRsp.data.oldCount = crawledNum;
+            followSellRsp.data.newCount = immediate ? 0 : cusFollowSellList.size() - crawledNum;
+            followSellRsp.data.oldCount = immediate ? 0 : crawledNum;
 
-            /*对应客户下，keywordRank监听业务的使用情况*/
-            Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(followSellReq.customerCode, R.BusinessCode.FOLLOW_SELL);
-            followSellRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
-            followSellRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
+            if (immediate) {
+                followSellRsp.data.hasUsedNum = customerBusiness.useData + cusFollowSellList.size();
+                followSellRsp.data.usableNum = customerBusiness.maxData - followSellRsp.data.hasUsedNum;
+
+                /* 更新业务表 */
+                customerBusiness.useData = followSellRsp.data.hasUsedNum;
+                mCustomerBusinessService.update(customerBusiness);
+            } else {
+                /*对应客户下，跟卖监听业务的使用情况*/
+                Map<String, Integer> result = mCustomerBusinessService.getBusinessInfo(followSellReq.customerCode, R.BusinessCode.FOLLOW_SELL);
+                followSellRsp.data.usableNum = result.get(R.BusinessInfo.USABLE_NUM);
+                followSellRsp.data.hasUsedNum = result.get(R.BusinessInfo.HAS_USED_NUM);
+            }
+
         } catch (Exception e) {
             serverException(baseRspParam, e);
         }
         return followSellRsp.toJson();
     }
 
-    private CustomerFollowSell getCustomerFollowSell(CusFollowSellAddReq followSellReq, CusFollowSellAddReq.FollowSell followSell) {
+    private CustomerFollowSell getCustomerFollowSell(CusFollowSellAddReq followSellReq, CusFollowSellAddReq.FollowSell followSell, String businessCode) {
         /* 从套餐取出该客户该业务的一些默认配置 */
         CustomerPayPackage customerPayPackage = mCustomerPayPackageService.findActived(followSellReq.customerCode);
-        PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, R.BusinessCode.FOLLOW_SELL);
+        PayPackageStub payPackageStub = mPayPackageStubService.find(customerPayPackage.packageCode, businessCode);
 
         CustomerFollowSell cusFollowSell = new CustomerFollowSell();
         cusFollowSell.customerCode = followSellReq.customerCode;
@@ -198,7 +219,7 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
         try {
             for (CusFollowSellUpdateReq.FollowSell followSell : followSellUpdateReq.data) {
 
-                CustomerFollowSell customerFollowSell = getCustomerFollowSell(followSellUpdateReq, followSell);
+                CustomerFollowSell customerFollowSell = getCustomerFollowSell(followSellUpdateReq, followSell, R.BusinessCode.FOLLOW_SELL);
                 customerFollowSell.crawl = followSell.crawl;
 
                 CustomerFollowSell dbCusFollowSell = mCustomerFollowSellService.find(baseRspParam.customerCode, followSell.siteCode, followSell.asin);

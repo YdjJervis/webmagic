@@ -84,14 +84,6 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
             BatchFollowSell batchFollowSell = mBatchFollowSellService.find(getUrl(page).batchNum, getUrl(page).siteCode, getUrl(page).asin);
             batchFollowSell.status = 2;
 
-            batch.progress = mBatchFollowSellService.findAverageProgress(getUrl(page).batchNum);
-            if (batch.progress == 1) {
-                batch.finishTime = currentTime;
-                batch.status = 2;
-                /* 监控批次完成，把批次放进推送队列 */
-                mPushQueueService.add(batch.number);
-            }
-
             /* 关系表大字段保存最后爬取时当前ASIN所有的SellerID */
             Set<String> sellerSet = new HashSet<>();
             FollowSell followSell = new FollowSell();
@@ -117,6 +109,7 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
             batchFollowSell.isChanged = changed ? 1 : 0;
             mBatchFollowSellService.update(batchFollowSell);
 
+            asyncBatchAndPush(page, batch, false);
         }
         mBatchService.update(batch);
 
@@ -140,8 +133,30 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
         batchFollowSell.status = 2;
         mBatchFollowSellService.update(batchFollowSell);
 
-        /* 删除URL */
+        asyncBatchAndPush(page, batch, true);
+
+        /* 归档URL */
         mUrlService.deleteByUrlMd5(getUrl(page).urlMD5);
+        mUrlHistoryService.add(getUrl(page));
+    }
+
+
+    /**
+     * 1，同步总进度；
+     * 2，总进度为1时推送数据
+     */
+    private void asyncBatchAndPush(Page page, Batch batch, boolean update) {
+        batch.progress = mBatchFollowSellService.findAverageProgress(getUrl(page).batchNum);
+        if (batch.progress == 1) {
+            batch.finishTime = new Date();
+            batch.status = 2;
+                /* 监控批次完成，把批次放进推送队列 */
+            mPushQueueService.add(batch.number);
+        }
+        if (update) {
+            mBatchService.update(batch);
+        }
+
     }
 
     /**

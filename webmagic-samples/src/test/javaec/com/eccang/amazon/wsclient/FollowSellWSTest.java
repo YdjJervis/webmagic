@@ -32,17 +32,39 @@ public class FollowSellWSTest extends SpringTestCase {
         req.platformCode = "ERP";
         req.token = "123456789";
 
-//        for (ImportData importData : importDataList) {
-            CusFollowSellAddReq.FollowSell followSell = req.new FollowSell();
-            followSell.siteCode = "US";//importData.getSiteCode();
-            followSell.asin = "B01N3UN0QE";//importData.getAsin();
-            req.data.add(followSell);
-//        }
+        CusFollowSellAddReq.FollowSell followSell = req.new FollowSell();
+        followSell.siteCode = "US";
+        followSell.asin = "B01N3UN0QE";
+        req.data.add(followSell);
 
         String params = new Gson().toJson(req);
         System.out.println(params);
 
-        String result = new FollowSellWSService().getFollowSellWSPort().addToMonitor(params);
+        String result = new FollowSellWSService().getFollowSellWSPort().addToMonitor(params, true);
+        System.out.println(result);
+    }
+
+    @Test
+    public void addToMonitorMany() {
+        List<ImportData> importDataList = mImportDataService.find(null, 1);
+//        importDataList = importDataList.subList(5, 6);
+
+        CusFollowSellAddReq req = new CusFollowSellAddReq();
+        req.customerCode = "EC_001";
+        req.platformCode = "ERP";
+        req.token = "123456789";
+
+        for (ImportData importData : importDataList) {
+            CusFollowSellAddReq.FollowSell followSell = req.new FollowSell();
+            followSell.siteCode = importData.getSiteCode();
+            followSell.asin = importData.getAsin();
+            req.data.add(followSell);
+        }
+
+        String params = new Gson().toJson(req);
+        System.out.println(params);
+
+        String result = new FollowSellWSService().getFollowSellWSPort().addToMonitor(params, true);
         System.out.println(result);
     }
 

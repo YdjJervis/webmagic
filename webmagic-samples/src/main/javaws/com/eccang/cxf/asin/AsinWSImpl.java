@@ -168,8 +168,8 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
                     if (asinRootAsin != null) {
                         crawledNum++;
                         setCrawledStatus(batchAsin);
-                        Asin asin1 = mAsinService.findByAsin(asin.siteCode, asinRootAsin.rootAsin);
-                        batchAsin.extra = asin1.extra;
+                        Asin dbAsin = mAsinService.findByAsin(asin.siteCode, asinRootAsin.rootAsin);
+                        batchAsin.extra = dbAsin.extra;
                         batchAsin.rootAsin = asinRootAsin.rootAsin;
                     }
 

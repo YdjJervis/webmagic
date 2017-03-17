@@ -11,10 +11,7 @@ import com.eccang.spider.amazon.service.batch.BatchFollowSellService;
 import com.eccang.spider.amazon.service.relation.CustomerFollowSellService;
 import com.eccang.spider.base.monitor.ScheduledTask;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Jervis
@@ -32,17 +29,27 @@ public class GenerateFollowSellBatchMonitor extends GenerateBatchMonitor impleme
 
     @Override
     public void execute() {
-        Date currentTime = new Date();
 
         /*查询已经完成的客户关系review数据*/
         List<CustomerFollowSell> customerFollowSellList = mCustomerFollowSellService.findNeedGenerateBatch();
+        generate(customerFollowSellList, false);
+    }
+
+    public void generate(List<CustomerFollowSell> customerFollowSellList, boolean immediate) {
+        Date currentTime = new Date();
+
         /* 去掉已经下架的记录，不需要更新爬取 */
-        for (CustomerFollowSell customerFollowSell : customerFollowSellList) {
-            if (mNoSellService.isExist(new Asin(customerFollowSell.siteCode, customerFollowSell.asin))) {
-                customerFollowSellList.remove(customerFollowSell);
+        ListIterator<CustomerFollowSell> crsIterator = customerFollowSellList.listIterator();
+        while (crsIterator.hasNext()) {
+            CustomerFollowSell cfs = crsIterator.next();
+            if (mNoSellService.isExist(new Asin(cfs.siteCode, cfs.asin))) {
+                crsIterator.remove();
             }
-            customerFollowSell.syncTime = currentTime;
-            mCustomerFollowSellService.update(customerFollowSell);
+
+            if (!immediate) {
+                cfs.syncTime = currentTime;
+                mCustomerFollowSellService.update(cfs);
+            }
         }
 
         mLogger.info("需要生成新批次号的总量：" + customerFollowSellList.size());
@@ -57,6 +64,7 @@ public class GenerateFollowSellBatchMonitor extends GenerateBatchMonitor impleme
 
             /*生成总单并添加到数据库中*/
             Batch batch = mBatchService.generate(customerCode, R.BatchType.FOLLOW_SELL);
+            batch.immediate = immediate ? 1 : 0;
             mBatchService.add(batch);
 
             /*将批次单号与Asin建立关系*/
