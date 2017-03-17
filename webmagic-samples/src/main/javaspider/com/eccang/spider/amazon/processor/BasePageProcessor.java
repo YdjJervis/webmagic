@@ -25,7 +25,7 @@ import com.eccang.wsclient.validate.ImageOCRService;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -183,7 +183,7 @@ public abstract class BasePageProcessor implements PageProcessor {
         /*更新总单的总请求数*/
         mBatchService.updateTimes(url.batchNum, true);
 
-        if(page.getStatusCode() == R.HttpStatus.SUCCESS && !isValidatePage(page)) {
+        if (page.getStatusCode() == R.HttpStatus.SUCCESS && !isValidatePage(page)) {
             mBatchService.updateTimes(url.batchNum, false);
         }
     }
@@ -217,7 +217,7 @@ public abstract class BasePageProcessor implements PageProcessor {
         mUrlService.update(url);
 
         Date endTime = new Date();
-        sLogger.info("update url status time long : " + (endTime.getTime() - startTime.getTime())/1000f);
+        sLogger.info("update url status time long : " + (endTime.getTime() - startTime.getTime()) / 1000f);
 
     }
 
@@ -236,13 +236,13 @@ public abstract class BasePageProcessor implements PageProcessor {
         /*保存图片验证码*/
         //PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
 
-        Request request;
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
         /*
         * 请求表单的Url，调用验证码识别接口
         */
-        if (page.getRequest().getExtra("ipsType") == null) {
-            request = new Request(getValidatedUrl(page));
+        String validatedUrl = getValidatedUrl(page);
+        if (page.getRequest().getExtra("ipsType") == null || StringUtils.isNotEmpty(validatedUrl)) {
+            Request request = new Request(getValidatedUrl(page));
             request.putExtra(URL_EXTRA, url);
             page.addTargetRequest(request);
         }
@@ -259,12 +259,16 @@ public abstract class BasePageProcessor implements PageProcessor {
         String validateCodeJson = getValidateCode(validateUrl, "review");
         ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
         sLogger.info("验证码码结果：" + result);
-        /*获取表单参数*/
-        String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
-        String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
-        String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
-        String urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
-        sLogger.info("验证表单：" + urlStr);
+
+        String urlStr = null;
+        if (result != null) {
+            /*获取表单参数*/
+            String domain = page.getUrl().regex("(https://www.amazon.*?)/.*").get();
+            String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
+            String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
+            urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
+            sLogger.info("验证表单：" + urlStr);
+        }
 
         return urlStr;
     }
@@ -338,7 +342,14 @@ public abstract class BasePageProcessor implements PageProcessor {
      */
     private String getValidateCode(String imgUrl, String type) {
         ImageOCRService service = new ImageOCRService();
-        return service.getBasicHttpBindingIImageOCRService().getVerCodeFromUrl(imgUrl, type);
+        String code = null;
+        try {
+            code = service.getBasicHttpBindingIImageOCRService().getVerCodeFromUrl(imgUrl, type);
+        } catch (Exception e) {
+            sLogger.error(e.getMessage());
+            sLogger.error(e.toString());
+        }
+        return code;
     }
 
     void startToCrawl(List<Url> urlList) {
