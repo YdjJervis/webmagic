@@ -8,7 +8,6 @@ import com.eccang.pojo.asin.AsinRsp;
 import com.eccang.pojo.asin.CusAsinsRsp;
 import com.eccang.pojo.asin.ProductRsp;
 import com.eccang.spider.amazon.pojo.Asin;
-import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.batch.Batch;
 import com.eccang.spider.amazon.pojo.batch.BatchAsin;
 import com.eccang.spider.amazon.pojo.crawl.Product;
@@ -112,26 +111,9 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
         /* 存储当前业务码 */
         String businessCode = immediate ? R.BusinessCode.IMMEDIATE_ASIN_SPIDER : R.BusinessCode.ASIN_SPIDER;
 
-        CustomerBusiness customerBusiness;
-        try {
-            /* 业务及套餐限制验证 */
-            Business business = mBusinessService.findByCode(businessCode);
-
-            if (asinReq.data.size() > business.getImportLimit()) {
-                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
-                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
-                return baseRspParam.toJson();
-            }
-
-            customerBusiness = mCustomerBusinessService.findByCode(asinReq.customerCode, businessCode);
-
-            if (asinReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
-                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
-                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
-                return baseRspParam.toJson();
-            }
-        } catch (Exception e) {
-            serverException(baseRspParam, e);
+        /* 业务，套餐验证 */
+        CustomerBusiness customerBusiness = getCusBusAndValidate(baseRspParam, businessCode, asinReq.data.size());
+        if (!baseRspParam.isSuccess()) {
             return baseRspParam.toJson();
         }
 

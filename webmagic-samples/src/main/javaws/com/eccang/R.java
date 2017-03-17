@@ -100,6 +100,7 @@ public final class R {
         public static final String PAY_PACKAGE_BUIED = "抱歉，已购买过此套餐";
         public static final String PAY_PACKAGE_MISSED = "抱歉，此套餐不存在";
         public static final String PAY_PACKAGE_NULL = "抱歉，套餐码不能为空";
+        public static final String PAY_PACKAGE_NOT_BUY = "抱歉，您没有购买套餐";
 
         public static final String BUSINESS_MISSED = "抱歉，业务码不存在";
         public static final String DAY_LIMIT = "抱歉，天数超过限制";

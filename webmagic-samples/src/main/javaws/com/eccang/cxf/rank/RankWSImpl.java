@@ -74,24 +74,9 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
         /* 存储当前业务码 */
         String businessCode = immediate ? R.BusinessCode.IMMEDIATE_KEYWORD_RANK_SPIDER : R.BusinessCode.KEYWORD_RANK_SPIDER;
 
-        CustomerBusiness customerBusiness;
-        try {
-            /* 业务及套餐限制验证 */
-            Business business = mBusinessService.findByCode(businessCode);
-            if (rankReq.data.size() > business.getImportLimit()) {
-                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
-                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
-                return baseRspParam.toJson();
-            }
-
-            customerBusiness = mCustomerBusinessService.findByCode(rankReq.customerCode, businessCode);
-            if (rankReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
-                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
-                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
-                return baseRspParam.toJson();
-            }
-        } catch (Exception e) {
-            serverException(baseRspParam, e);
+        /* 业务，套餐验证 */
+        CustomerBusiness customerBusiness = getCusBusAndValidate(baseRspParam, businessCode, rankReq.data.size());
+        if (!baseRspParam.isSuccess()) {
             return baseRspParam.toJson();
         }
 
@@ -119,7 +104,7 @@ public class RankWSImpl extends AbstractSpiderWS implements RankWS {
                 customerKeywordRank.priority = payPackageStub.priority;
                 customerKeywordRank.frequency = payPackageStub.frequency;
 
-                if(mCustomerKeywordRankService.isExist(customerKeywordRank)){
+                if (mCustomerKeywordRankService.isExist(customerKeywordRank)) {
                     crawledNum++;
                 }
 

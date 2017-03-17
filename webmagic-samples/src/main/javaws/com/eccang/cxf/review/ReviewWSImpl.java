@@ -78,24 +78,9 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
         /* 存储当前业务码 */
         String businessCode = immediate ? R.BusinessCode.IMMEDIATE_MONITOR_SPIDER : R.BusinessCode.MONITOR_SPIDER;
 
-        CustomerBusiness customerBusiness;
-        try {
-            /* 业务及套餐限制验证 */
-            Business business = mBusinessService.findByCode(businessCode);
-            if (reviewReq.data.size() > business.getImportLimit()) {
-                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
-                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
-                return baseRspParam.toJson();
-            }
-
-            customerBusiness = mCustomerBusinessService.findByCode(reviewReq.customerCode, businessCode);
-            if (reviewReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
-                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
-                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
-                return baseRspParam.toJson();
-            }
-        } catch (Exception e) {
-            serverException(baseRspParam, e);
+        /* 业务，套餐验证 */
+        CustomerBusiness customerBusiness = getCusBusAndValidate(baseRspParam, businessCode, reviewReq.data.size());
+        if (!baseRspParam.isSuccess()) {
             return baseRspParam.toJson();
         }
 

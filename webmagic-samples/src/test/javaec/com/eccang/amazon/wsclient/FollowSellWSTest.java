@@ -24,11 +24,9 @@ public class FollowSellWSTest extends SpringTestCase {
 
     @Test
     public void addToMonitor() {
-        List<ImportData> importDataList = mImportDataService.find(null, 6);
-//        importDataList = importDataList.subList(5, 6);
 
         CusFollowSellAddReq req = new CusFollowSellAddReq();
-        req.customerCode = "EC_001";
+        req.customerCode = "EC_002";
         req.platformCode = "ERP";
         req.token = "123456789";
 
@@ -46,7 +44,7 @@ public class FollowSellWSTest extends SpringTestCase {
 
     @Test
     public void addToMonitorMany() {
-        List<ImportData> importDataList = mImportDataService.find(null, 1);
+        List<ImportData> importDataList = mImportDataService.find(null, 5);
 //        importDataList = importDataList.subList(5, 6);
 
         CusFollowSellAddReq req = new CusFollowSellAddReq();

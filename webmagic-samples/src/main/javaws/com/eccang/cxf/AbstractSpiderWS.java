@@ -4,9 +4,11 @@ import com.eccang.R;
 import com.eccang.pojo.BaseReqParam;
 import com.eccang.pojo.BaseRspParam;
 import com.eccang.pojo.ValidateMsg;
+import com.eccang.spider.amazon.pojo.Business;
 import com.eccang.spider.amazon.pojo.dict.API;
 import com.eccang.spider.amazon.pojo.dict.Customer;
 import com.eccang.spider.amazon.pojo.dict.Platform;
+import com.eccang.spider.amazon.pojo.relation.CustomerBusiness;
 import com.eccang.spider.amazon.service.BusinessService;
 import com.eccang.spider.amazon.service.dict.APIService;
 import com.eccang.spider.amazon.service.dict.CustomerService;
@@ -153,7 +155,7 @@ public abstract class AbstractSpiderWS implements SpiderWS {
 
     protected void serverException(BaseRspParam baseRspParam, Exception e) {
         sLogger.error(e.getMessage());
-        sLogger.error(e);
+        e.printStackTrace();
         baseRspParam.status = R.HttpStatus.SERVER_EXCEPTION;
         baseRspParam.msg = R.RequestMsg.SERVER_EXCEPTION;
     }
@@ -168,6 +170,35 @@ public abstract class AbstractSpiderWS implements SpiderWS {
             baseRspParam.msg = R.RequestMsg.DATA_FORMAT_ERROR;
         }
         return t;
+    }
+
+    protected CustomerBusiness getCusBusAndValidate(BaseRspParam baseRspParam, String businessCode, int listSize) {
+        CustomerBusiness customerBusiness = null;
+        try {
+            /* 业务及套餐限制验证 */
+            Business business = mBusinessService.findByCode(businessCode);
+            if (listSize > business.getImportLimit()) {
+                baseRspParam.setSuccess(false);
+                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
+            }
+
+            customerBusiness = mCustomerBusinessService.findByCode(baseRspParam.customerCode, businessCode);
+            if (customerBusiness == null) {
+                baseRspParam.setSuccess(false);
+                baseRspParam.status = R.HttpStatus.AUTH_FAILURE;
+                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_NOT_BUY;
+            } else {
+                if (listSize > customerBusiness.maxData - customerBusiness.useData) {
+                    baseRspParam.setSuccess(false);
+                    baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
+                    baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
+                }
+            }
+        } catch (Exception e) {
+            serverException(baseRspParam, e);
+        }
+        return customerBusiness;
     }
 
     protected ValidateMsg getValidateMsg(boolean isSuccess, String msg) {

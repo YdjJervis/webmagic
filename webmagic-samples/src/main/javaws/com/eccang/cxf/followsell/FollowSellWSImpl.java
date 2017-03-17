@@ -69,24 +69,9 @@ public class FollowSellWSImpl extends AbstractSpiderWS implements FollowSellWS {
         /* 存储当前业务码 */
         String businessCode = immediate ? R.BusinessCode.IMMEDIATE_FOLLOW_SELL : R.BusinessCode.FOLLOW_SELL;
 
-        CustomerBusiness customerBusiness;
-        try {
-            /* 业务及套餐限制验证 */
-            Business business = mBusinessService.findByCode(businessCode);
-            if (followSellReq.data.size() > business.getImportLimit()) {
-                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
-                baseRspParam.msg = R.RequestMsg.BUSSINESS_LIMIT;
-                return baseRspParam.toJson();
-            }
-
-            customerBusiness = mCustomerBusinessService.findByCode(followSellReq.customerCode, businessCode);
-            if (followSellReq.data.size() > customerBusiness.maxData - customerBusiness.useData) {
-                baseRspParam.status = R.HttpStatus.COUNT_LIMIT;
-                baseRspParam.msg = R.RequestMsg.PAY_PACKAGE_LIMIT;
-                return baseRspParam.toJson();
-            }
-        } catch (Exception e) {
-            serverException(baseRspParam, e);
+        /* 业务，套餐验证 */
+        CustomerBusiness customerBusiness = getCusBusAndValidate(baseRspParam, businessCode, followSellReq.data.size());
+        if (!baseRspParam.isSuccess()) {
             return baseRspParam.toJson();
         }
 
