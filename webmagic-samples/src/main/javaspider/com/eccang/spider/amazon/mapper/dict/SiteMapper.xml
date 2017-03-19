@@ -3,8 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eccang.spider.amazon.dao.dict.SiteDao">
 
-    <cache eviction="LRU" type="com.eccang.spider.base.rediscache.RedisCache"/>
-
     <resultMap id="SiteResultMap" type="Site">
         <result property="code" column="bas_code"/>
         <result property="site" column="bas_site"/>

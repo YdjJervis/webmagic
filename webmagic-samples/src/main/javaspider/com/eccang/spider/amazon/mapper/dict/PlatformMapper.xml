@@ -3,8 +3,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eccang.spider.amazon.dao.dict.PlatformDao">
 
-    <cache eviction="LRU" type="com.eccang.spider.base.rediscache.RedisCache"/>
-
     <resultMap id="PlatformResultMap" type="Platform">
         <result property="id" column="bp_id"/>
         <result property="code" column="bp_code"/>

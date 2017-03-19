@@ -29,7 +29,5 @@ public class StatusListener implements ApplicationListener<ContextRefreshedEvent
          * 2，更新爬取的状态全部重置为未在更新爬取中 */
         mUrlService.deleteUpdating();
 
-        /* 清空Redis缓存 */
-        new RedisCache().flushDB();
     }
 }
