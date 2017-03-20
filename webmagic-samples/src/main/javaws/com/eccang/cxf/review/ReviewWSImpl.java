@@ -55,7 +55,16 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
     private GenerateReviewBatchMonitor mGenerateReviewBatchMonitor;
 
     @Override
-    public String addToMonitor(String json, boolean immediate) {
+    public String addToMonitor(String json) {
+        return dispatchAddToCrawl(json, false);
+    }
+
+    @Override
+    public String addToMonitorImmediate(String json) {
+        return dispatchAddToCrawl(json, true);
+    }
+
+    private String dispatchAddToCrawl(String json, boolean immediate) {
         BaseRspParam baseRspParam = auth(json);
 
         if (!baseRspParam.isSuccess()) {

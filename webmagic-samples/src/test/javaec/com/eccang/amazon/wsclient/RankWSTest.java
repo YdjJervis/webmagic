@@ -53,7 +53,7 @@ public class RankWSTest extends SpringTestCase {
 
         rankReq.setData(keywordRanks);
 
-        String json = new RankWSService().getRankWSPort().addToMonitor(new Gson().toJson(rankReq), true);
+        String json = new RankWSService().getRankWSPort().addToMonitor(new Gson().toJson(rankReq));
         System.out.println(json);
     }
 
@@ -76,7 +76,7 @@ public class RankWSTest extends SpringTestCase {
         }
         rankReq.setData(keywordRanks);
 
-        String json = new RankWSService().getRankWSPort().addToMonitor(new Gson().toJson(rankReq), false);
+        String json = new RankWSService().getRankWSPort().addToMonitor(new Gson().toJson(rankReq));
         System.out.println(json);
     }
 

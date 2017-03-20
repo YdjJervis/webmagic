@@ -25,28 +25,13 @@ public interface FollowSellWS {
 
     /**
      * 
-     * @param arg1
      * @param arg0
      * @return
      *     returns java.lang.String
      */
     @WebMethod
     @WebResult(partName = "return")
-    public String addToMonitor(
-        @WebParam(name = "arg0", partName = "arg0")
-        String arg0,
-        @WebParam(name = "arg1", partName = "arg1")
-        boolean arg1);
-
-    /**
-     * 
-     * @param arg0
-     * @return
-     *     returns java.lang.String
-     */
-    @WebMethod
-    @WebResult(partName = "return")
-    public String getMonitorList(
+    public String addToMonitorImmediate(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 
@@ -71,6 +56,30 @@ public interface FollowSellWS {
     @WebMethod
     @WebResult(partName = "return")
     public String getFollowSellList(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String addToMonitor(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String getMonitorList(
         @WebParam(name = "arg0", partName = "arg0")
         String arg0);
 

@@ -27,6 +27,18 @@ public interface AsinWS {
      * 
      * @param arg0
      * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(partName = "return")
+    public String addToCrawlImmediate(
+        @WebParam(name = "arg0", partName = "arg0")
+        String arg0);
+
+    /**
+     * 
+     * @param arg0
+     * @return
      *     returns com.eccang.wsclient.asin.BaseRspParam
      */
     @WebMethod
@@ -49,7 +61,6 @@ public interface AsinWS {
 
     /**
      * 
-     * @param arg1
      * @param arg0
      * @return
      *     returns java.lang.String
@@ -58,9 +69,7 @@ public interface AsinWS {
     @WebResult(partName = "return")
     public String addToCrawl(
         @WebParam(name = "arg0", partName = "arg0")
-        String arg0,
-        @WebParam(name = "arg1", partName = "arg1")
-        boolean arg1);
+        String arg0);
 
     /**
      * 

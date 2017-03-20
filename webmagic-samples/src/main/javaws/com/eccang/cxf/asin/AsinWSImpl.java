@@ -70,7 +70,17 @@ public class AsinWSImpl extends AbstractSpiderWS implements AsinWS {
     @Autowired
     private PushQueueService mPushQueueService;
 
-    public String addToCrawl(String json, boolean immediate) {
+    @Override
+    public String addToCrawl(String json) {
+        return dispatchAddToCrawl(json, false);
+    }
+
+    @Override
+    public String addToCrawlImmediate(String json) {
+        return dispatchAddToCrawl(json, true);
+    }
+
+    private String dispatchAddToCrawl(String json, boolean immediate) {
         BaseRspParam baseRspParam = auth(json);
 
         if (!baseRspParam.isSuccess()) {

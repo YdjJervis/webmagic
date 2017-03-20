@@ -36,7 +36,7 @@ public class AsinWSTest extends SpringTestCase {
         asinReq.data.add(asin);
 
         System.out.println(new Gson().toJson(asinReq));
-        String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq), true);
+        String json = new AsinWSService().getAsinWSPort().addToCrawl(new Gson().toJson(asinReq));
         System.out.println(json);
 
     }
@@ -61,7 +61,7 @@ public class AsinWSTest extends SpringTestCase {
         String param = new Gson().toJson(asinReq);
         System.out.println(param);
 
-        String json = new AsinWSService().getAsinWSPort().addToCrawl(param, true);
+        String json = new AsinWSService().getAsinWSPort().addToCrawl(param);
         System.out.println(json);
 
     }

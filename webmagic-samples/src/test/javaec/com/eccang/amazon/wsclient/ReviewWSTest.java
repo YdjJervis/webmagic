@@ -66,7 +66,7 @@ public class ReviewWSTest extends SpringTestCase {
         reviewReq.data.add(review);
 //        }
 
-        String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq), true);
+        String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq));
         System.out.println(json);
     }
 
@@ -90,7 +90,7 @@ public class ReviewWSTest extends SpringTestCase {
         review.asin = "B01LY3AMY8";
         reviewReq.data.add(review);
 
-        String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq),false);
+        String json = new ReviewWSService().getReviewWSPort().addToMonitor(new Gson().toJson(reviewReq));
         System.out.println(json);
     }
 

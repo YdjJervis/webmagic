@@ -38,7 +38,7 @@ public class FollowSellWSTest extends SpringTestCase {
         String params = new Gson().toJson(req);
         System.out.println(params);
 
-        String result = new FollowSellWSService().getFollowSellWSPort().addToMonitor(params, true);
+        String result = new FollowSellWSService().getFollowSellWSPort().addToMonitor(params);
         System.out.println(result);
     }
 
@@ -62,7 +62,7 @@ public class FollowSellWSTest extends SpringTestCase {
         String params = new Gson().toJson(req);
         System.out.println(params);
 
-        String result = new FollowSellWSService().getFollowSellWSPort().addToMonitor(params, true);
+        String result = new FollowSellWSService().getFollowSellWSPort().addToMonitor(params);
         System.out.println(result);
     }
 
