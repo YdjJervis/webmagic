@@ -1,13 +1,12 @@
 package com.eccang.spider.amazon.monitor;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
 import com.eccang.spider.amazon.pojo.relation.CustomerFollowSell;
 import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
 import com.eccang.spider.amazon.pojo.relation.CustomerReview;
 import com.eccang.spider.amazon.service.NoSellService;
 import com.eccang.spider.amazon.service.batch.BatchService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +20,6 @@ import java.util.Map;
  * @date 2016/12/7 10:10
  */
 public class GenerateBatchMonitor {
-
-    protected Logger mLogger = Logger.getLogger(getClass());
 
     @Autowired
     protected BatchService mBatchService;

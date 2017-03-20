@@ -8,6 +8,8 @@ import com.eccang.spider.amazon.service.batch.BatchTop100Service;
 import com.eccang.spider.amazon.service.relation.CustomerTop100Service;
 import com.eccang.spider.base.monitor.ScheduledTask;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ import java.util.List;
 @Service
 public class GenerateTop100BatchMonitor extends GenerateBatchMonitor implements ScheduledTask {
 
+    private static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.TOP);
     @Autowired
     private BatchTop100Service mBatchTop100Service;
     @Autowired

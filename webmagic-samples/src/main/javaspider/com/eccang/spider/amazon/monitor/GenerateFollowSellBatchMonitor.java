@@ -1,7 +1,5 @@
 package com.eccang.spider.amazon.monitor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.Asin;
 import com.eccang.spider.amazon.pojo.batch.Batch;
@@ -10,6 +8,10 @@ import com.eccang.spider.amazon.pojo.relation.CustomerFollowSell;
 import com.eccang.spider.amazon.service.batch.BatchFollowSellService;
 import com.eccang.spider.amazon.service.relation.CustomerFollowSellService;
 import com.eccang.spider.base.monitor.ScheduledTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -22,6 +24,7 @@ import java.util.*;
 @Service
 public class GenerateFollowSellBatchMonitor extends GenerateBatchMonitor implements ScheduledTask {
 
+    private static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.FS);
     @Autowired
     private CustomerFollowSellService mCustomerFollowSellService;
     @Autowired

@@ -1,7 +1,5 @@
 package com.eccang.spider.amazon.monitor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.batch.Batch;
 import com.eccang.spider.amazon.pojo.batch.BatchReview;
@@ -9,6 +7,10 @@ import com.eccang.spider.amazon.pojo.relation.CustomerReview;
 import com.eccang.spider.amazon.service.batch.BatchReviewService;
 import com.eccang.spider.amazon.service.relation.CustomerReviewService;
 import com.eccang.spider.base.monitor.ScheduledTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +26,7 @@ import java.util.Map;
 @Service
 public class GenerateReviewBatchMonitor extends GenerateBatchMonitor implements ScheduledTask {
 
+    private static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.MS);
     @Autowired
     private BatchReviewService mBatchReviewService;
     @Autowired

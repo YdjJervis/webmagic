@@ -93,20 +93,34 @@ public final class R {
     }
 
     /**
-     *top100对应站点的热销商品排名url
+     * top100对应站点的热销商品排名url
      */
     public static final class Top100 {
         public static final String US = "https://www.amazon.com/bestsellers";
     }
-    /** 业务代码 */
+
+    /**
+     * 业务代码
+     */
     public static final class BusinessCode {
-        public static final String ASIN_SPIDER = "AS"; /** 爬取asin */
-        public static final String MONITOR_SPIDER = "MS"; /** 监听review */
-        public static final String KEYWORD_RANK_SPIDER = "KRS"; /** 关键词排名搜索 */
+        public static final String ASIN_SPIDER = "AS";
+        /**
+         * 爬取asin
+         */
+        public static final String MONITOR_SPIDER = "MS";
+        /**
+         * 监听review
+         */
+        public static final String KEYWORD_RANK_SPIDER = "KRS";
+        /**
+         * 关键词排名搜索
+         */
         public static final String FOLLOW_SELL = "FS"; /** 关键词排名搜索 */
     }
 
-    /** 库存爬取状态 */
+    /**
+     * 库存爬取状态
+     */
     public static final class StockCrawlStatus {
         public static final int CONVERT_TO_URL = 1; /*转换成url*/
         public static final int PRODUCT_INFO = 2; /*产品信息*/
@@ -117,7 +131,9 @@ public final class R {
         public static final int OFF_SHELF = 7; /*下架*/
     }
 
-    /** 爬取库存url类型 */
+    /**
+     * 爬取库存url类型
+     */
     public static final class StockCrawlUrlType {
         public static final int PRODUCT_URL = 0; /*产品url*/
         public static final int ADD_TO_CART = 1; /*添加购物车url*/
@@ -126,5 +142,17 @@ public final class R {
         public static final int DELETE_CART = 4; /*删除购物车*/
     }
 
+    public static final class BusinessLog {
+        public static final String AS = "AS";
+        public static final String MS = "MS";
+        public static final String KRS = "KRS";
+        public static final String FS = "FS";
+        public static final String IM_AS = "IM_AS";
+        public static final String IM_MS = "IM_MS";
+        public static final String IM_KRS = "IM_KRS";
+        public static final String IM_FS = "IM_FS";
+        public static final String TOP = "TOP";
+
+    }
 
 }
