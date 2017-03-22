@@ -28,7 +28,11 @@ public class ReviewServiceTest extends SpringTestCase {
         Review review = getReview();
         List<Review> list = new ArrayList<Review>();
         list.add(review);
-        mReviewService.addAll(list);
+        try {
+            mReviewService.addAll(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private Review getReview() {

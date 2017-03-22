@@ -6,12 +6,13 @@ import com.eccang.spider.amazon.pojo.top100.StockUrl;
 import com.eccang.spider.amazon.service.top100.SellingProductService;
 import com.eccang.spider.amazon.service.top100.StockUrlService;
 import com.eccang.spider.base.monitor.ScheduledTask;
-import com.eccang.spider.base.util.PageUtil;
 import com.eccang.spider.base.util.UrlUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -34,6 +35,7 @@ import java.util.Map;
 @Service
 public class Top100StockProcessor extends BasePageProcessor implements ScheduledTask {
 
+    private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.TOP);
     @Autowired
     private StockUrlService mStockUrlService;
     @Autowired
@@ -45,7 +47,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
     public void process(Page page) {
 
         StockUrl stockUrl = getStockUrl(page);
-        sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
+        mLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
         page = IsNotNullAndProxyCaptcha(page);
 
         updateUrlStatus(page, true);
@@ -56,7 +58,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
             Request request = page.getRequest();
             page.addTargetRequest(request);
         } else if (mSet.contains(page.getStatusCode())) {
-            sLogger.info("解析url,返回状态为异常码，不做任何操作.");
+            mLogger.info("解析url,返回状态为异常码，不做任何操作.");
         } else if (isValidatePage(page)) {
             dealValidate(page);
         } else {
@@ -79,7 +81,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
             String addToCartUrl = page.getHtml().xpath("//*[@id='addToCart']/@action").get();
 
             if (StringUtils.isEmpty(addToCartUrl)) {
-                sLogger.info("产品（" + stockUrl.pUrl + "),不存在购物车.");
+                mLogger.info("产品（" + stockUrl.pUrl + "),不存在购物车.");
                 /*更新产品库存抓取状态*/
                 sellingProduct.status = R.StockCrawlStatus.FINISH;
                 mSellingProductService.updateStock(sellingProduct);
@@ -153,7 +155,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
 
             sellingProduct.status = R.StockCrawlStatus.COUNT_STOCK;
         } else if (stockUrl.type == R.StockCrawlUrlType.DELETE_CART) {
-            sLogger.info("产品ASIN：" + stockUrl.asin + ",购物车信息删除成功.");
+            mLogger.info("产品ASIN：" + stockUrl.asin + ",购物车信息删除成功.");
             sellingProduct.status = R.StockCrawlStatus.FINISH;
         }
 
@@ -300,7 +302,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
         if (needUpdateStatus()) {
             int statusCode = page.getStatusCode();
 
-            sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
+            mLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
             stockUrl.status = statusCode;
         }
 
@@ -310,7 +312,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
 
         stockUrl.times++;
 
-        sLogger.info("改变状态后的Url对象：" + stockUrl);
+        mLogger.info("改变状态后的Url对象：" + stockUrl);
 
         mStockUrlService.updateById(stockUrl);
     }
@@ -325,7 +327,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
             }
         }
 
-        sLogger.warn("出现验证码：" + page.getUrl() + "  " + page.getStatusCode());
+        mLogger.warn("出现验证码：" + page.getUrl() + "  " + page.getStatusCode());
 
         /*保存图片验证码*/
         //PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
@@ -423,7 +425,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
     }
 
     private void startToTask(List<StockUrl> urlList) {
-        sLogger.info("找到状态码不为200的Url个数：" + urlList.size());
+        mLogger.info("找到状态码不为200的Url个数：" + urlList.size());
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
@@ -439,7 +441,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
                 mStockUrlService.update(stockUrl);
             }
 
-            sLogger.info("开始爬取库存...");
+            mLogger.info("开始爬取库存...");
             mSpider.start();
         }
     }

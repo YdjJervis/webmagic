@@ -1,7 +1,9 @@
 package com.eccang.spider.amazon.monitor;
 
+import com.eccang.spider.amazon.R;
 import com.eccang.spider.base.monitor.ScheduledTask;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoggerTestTask implements ScheduledTask {
 
-    private Logger mLogger = Logger.getLogger(getClass());
+    private static final Logger mLogger = LoggerFactory.getLogger(LoggerTestTask.class);
+    private static final Logger mLoggerBusiness = LoggerFactory.getLogger(R.BusinessLog.AS);
 
     @Override
     public void execute() {
@@ -21,6 +24,9 @@ public class LoggerTestTask implements ScheduledTask {
         mLogger.info("info level ...");
         mLogger.warn("warn level ...");
         mLogger.error("error level ...");
-        mLogger.fatal("fatal level ...");
+
+        mLoggerBusiness.debug("business debug...");
+        mLoggerBusiness.info("business info...");
+        mLoggerBusiness.warn("business warn...");
     }
 }

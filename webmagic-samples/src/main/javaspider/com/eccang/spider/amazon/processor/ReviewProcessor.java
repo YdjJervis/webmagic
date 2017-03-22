@@ -1,17 +1,19 @@
 package com.eccang.spider.amazon.processor;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.Page;
 import com.eccang.spider.amazon.R;
-import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.pojo.Url;
-import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
+import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.service.crawl.ReviewService;
+import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
 import com.eccang.spider.amazon.util.ReviewTimeUtil;
 import com.eccang.spider.base.monitor.ScheduledTask;
 import com.eccang.spider.base.util.UrlUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.util.List;
 @Service
 public class ReviewProcessor extends BasePageProcessor implements ScheduledTask {
 
+    private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.AS);
     @Autowired
     protected ReviewService mReviewService;
 
@@ -34,44 +37,45 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
 
     @Override
     protected void dealOtherPage(Page page) {
-
+        mLogger.info("开始处理页面回调...");
         String currentUrl = page.getUrl().get();
         Url urlExtra = getUrl(page);
 
         List<Selectable> reviewNodeList = extractReviewNodeList(page);
+        mLogger.info("抽取Review条数：" + reviewNodeList.size());
 
         String asin = extractAsin(page);
         String siteCode = extractSite(page).code;
 
-        sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
+        mLogger.info("解析 " + siteCode + " 站点下ASIN:" + asin);
 
-        List<Review> reviewList = new ArrayList<Review>();
+        List<Review> reviewList = new ArrayList<>();
         for (Selectable reviewNode : reviewNodeList) {
 
             Review review = extractReviewItem(siteCode, reviewNode);
             review.rootAsin = mAsinRootAsinService.findByAsin(asin, siteCode).rootAsin;
             String pageNum = UrlUtils.getValue(currentUrl, "pageNumber");
             review.pageNum = StringUtils.isEmpty(pageNum) ? 1 : Integer.valueOf(pageNum);
-            sLogger.info(review);
+            if (sProfile.debug) {
+                mLogger.debug("抽取的Review：" + review);
+            }
 
             reviewList.add(review);
         }
-        for (Review review : reviewList) {
-            try {
-                mReviewService.add(review);
-            } catch (Exception e) {
-                System.out.println("============================= insert review exception .");
-                System.out.println(review.toString());
-            }
+
+        try {
+            mReviewService.addAll(reviewList);
+        } catch (Exception e) {
+            mLogger.error("保存Review列表失败：" + reviewList);
         }
 
         /* 当前URL没有pageNumber属性的话 */
         if (StringUtils.isEmpty(UrlUtils.getValue(currentUrl, "pageNumber"))) {
 
-            List<Url> urlList = new ArrayList<Url>();
+            List<Url> urlList = new ArrayList<>();
 
             int totalPage = extractTotalPage(page);
-            sLogger.info(asin + " 评论的最大页码为 " + totalPage);
+            mLogger.info(asin + " 评论的最大页码为 " + totalPage);
             for (int i = 2; i <= totalPage; i++) {
                 Url url = new Url();
                 url.batchNum = urlExtra.batchNum;
@@ -82,6 +86,9 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
                 url.url = UrlUtils.setValue(currentUrl, "pageNumber", String.valueOf(i));
                 url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
 
+                if (sProfile.debug) {
+                    mLogger.debug("生成Reivew翻页Url：" + url);
+                }
                 urlList.add(url);
             }
 
@@ -89,6 +96,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         }
 
         upgradeCrawlStatus(page);
+        mLogger.info("结束处理页面回调。");
     }
 
     /**
@@ -153,14 +161,14 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
      * 2，更新ASIN表状态
      */
     private void upgradeCrawlStatus(Page page) {
-        sLogger.info("更新Url爬取状态...");
+        mLogger.info("更新Url爬取状态...");
         Url url = (Url) page.getRequest().getExtra(URL_EXTRA);
         mUrlService.updateAsinCrawledAll(url);
     }
 
     @Override
     public void execute() {
-        sLogger.info("开始执行Review爬取任务...");
+        mLogger.info("开始执行Review爬取任务...");
         List<Url> urlList = mUrlService.find(R.CrawlType.REVIEW_ALL);
         startToCrawl(urlList);
     }

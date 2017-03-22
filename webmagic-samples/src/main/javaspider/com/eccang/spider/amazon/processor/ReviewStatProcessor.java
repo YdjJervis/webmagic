@@ -1,13 +1,16 @@
 package com.eccang.spider.amazon.processor;
 
+import com.eccang.spider.amazon.R;
+import com.eccang.spider.amazon.pojo.ReviewStat;
+import com.eccang.spider.amazon.service.ReviewStatService;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
-import com.eccang.spider.amazon.pojo.ReviewStat;
-import com.eccang.spider.amazon.service.ReviewStatService;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import java.util.List;
 @Service
 public class ReviewStatProcessor extends ReviewProcessor {
 
+    private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.AS);
     @Autowired
     private ReviewStatService mService;
 
@@ -54,7 +58,7 @@ public class ReviewStatProcessor extends ReviewProcessor {
                 /*该星级没有评论，跳过*/
                 continue;
             }
-            sLogger.info("星级：" + starStr);
+            mLogger.info("星级：" + starStr);
             int star = Integer.valueOf(starStr);
             String prop = propNode.xpath("td[@class='a-text-right aok-nowrap']/a/text()").get();
             ReviewStat.StarProp starProp = new ReviewStat.StarProp();
@@ -71,7 +75,7 @@ public class ReviewStatProcessor extends ReviewProcessor {
         reviewStat.sarsAverageStar = starAverage;
         reviewStat.sarsTotalPage = totalPage;
 
-        sLogger.info(reviewStat);
+        mLogger.info(reviewStat.toString());
         mService.add(reviewStat);
     }
 

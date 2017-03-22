@@ -6,6 +6,7 @@ import com.eccang.spider.amazon.pojo.relation.CustomerKeywordRank;
 import com.eccang.spider.amazon.pojo.relation.CustomerReview;
 import com.eccang.spider.amazon.service.NoSellService;
 import com.eccang.spider.amazon.service.batch.BatchService;
+import com.eccang.spider.amazon.service.dict.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ public class GenerateBatchMonitor {
     @Autowired
     protected NoSellService mNoSellService;
 
+    @Autowired
+    protected CustomerService mCustomerService;
+
     <T> Map<String, List<T>> initCustomerListMap(List<T> srcList) {
         Map<String, List<T>> customerListMap = new HashMap<>();
 
@@ -39,7 +43,7 @@ public class GenerateBatchMonitor {
             } else if (item instanceof CustomerFollowSell) {
                 customerCode = ((CustomerFollowSell) item).customerCode;
             } else if (item instanceof CustomerKeywordRank) {
-                customerCode = ((CustomerKeywordRank)item).customerCode;
+                customerCode = ((CustomerKeywordRank) item).customerCode;
             }
 
             if (customerListMap.get(customerCode) == null) {

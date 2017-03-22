@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.dict.ProfileDao">
+
+    <resultMap id="ProfileMap" type="Profile">
+        <result property="id" column="bep_id"/>
+        <result property="debug" column="bep_debug"/>
+        <result property="createTime" column="bep_create_time"/>
+        <result property="updateTime" column="bep_udpate_time"/>
+    </resultMap>
+
+    <select id="find" resultMap="ProfileMap">
+        select * from base_eccang_profile;
+    </select>
+
+</mapper>

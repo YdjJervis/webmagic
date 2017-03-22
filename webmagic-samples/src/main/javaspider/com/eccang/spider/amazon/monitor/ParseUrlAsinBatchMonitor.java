@@ -1,18 +1,24 @@
 package com.eccang.spider.amazon.monitor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.eccang.spider.amazon.pojo.*;
+import com.eccang.spider.amazon.R;
+import com.eccang.spider.amazon.pojo.Url;
 import com.eccang.spider.amazon.pojo.batch.Batch;
 import com.eccang.spider.amazon.pojo.batch.BatchAsin;
 import com.eccang.spider.amazon.pojo.crawl.Review;
+import com.eccang.spider.amazon.pojo.dict.Customer;
 import com.eccang.spider.amazon.pojo.dict.Site;
-import com.eccang.spider.amazon.service.*;
+import com.eccang.spider.amazon.service.AsinService;
+import com.eccang.spider.amazon.service.UrlService;
 import com.eccang.spider.amazon.service.batch.BatchAsinService;
 import com.eccang.spider.amazon.service.batch.BatchService;
+import com.eccang.spider.amazon.service.dict.CustomerService;
 import com.eccang.spider.amazon.service.dict.SiteService;
 import com.eccang.spider.base.monitor.ParseMonitor;
 import com.eccang.spider.base.util.UrlUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +34,7 @@ import java.util.Map;
 @Service
 public class ParseUrlAsinBatchMonitor extends ParseMonitor {
 
+    private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.AS);
     @Autowired
     protected UrlService mUrlService;
     @Autowired
@@ -44,100 +51,130 @@ public class ParseUrlAsinBatchMonitor extends ParseMonitor {
 
     @Override
     public void execute() {
-        sLogger.info("批次转URL任务开始...");
+        mLogger.info("开始批次转URL...");
         List<Url> urlList = getUrl(true);
         mUrlService.addAll(urlList);
+        mLogger.info("结束批次转URL。");
     }
 
     @Override
     protected List<Url> getUrl(boolean isCrawlAll) {
-
+        mLogger.info("获取一批需要转URL的详单...");
         List<Url> urlList = new ArrayList<Url>();
 
-        Map<String, Site> siteMap = new HashMap<String, Site>();
-
+        mLogger.info("转换成首页爬取URL...");
         /* 把没有爬取首页的详单转换成爬取首页的URL，并改变爬取类型为爬取首页 */
         List<BatchAsin> batchAsinList = mBatchAsinService.findNotCrawledMainPage();
-        sLogger.info("没有爬取首页的个数：" + batchAsinList.size());
+        mLogger.info("没有爬取首页的个数：" + batchAsinList.size());
+
         for (BatchAsin batchAsin : batchAsinList) {
 
-            Site site = siteMap.get(batchAsin.siteCode);
-            if (site == null) {
-                site = mSiteService.find(batchAsin.siteCode);
-                siteMap.put(batchAsin.siteCode, site);
+            Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
+            Site site = mSiteService.find(batchAsin.siteCode);
+            Customer customer = mCustomerService.findByCode(batch.customerCode);
+
+            if (customer.debug) {
+                mLogger.debug("客户" + batch.customerCode + "批次详单:" + batchAsin);
             }
 
             Url url = new Url();
-            url.url = siteMap.get(batchAsin.siteCode).site + "/dp/" + batchAsin.asin;
+            url.url = site.site + "/dp/" + batchAsin.asin;
             initUrl(batchAsin, url);
+
+            if (customer.debug) {
+                mLogger.debug("客户" + batch.customerCode + "生成首页URL:" + url);
+            }
 
             /* 装换成URL列表后，把爬取的状态改成爬取当中 */
             batchAsin.status = 1;
             mBatchAsinService.update(batchAsin);
+            if (customer.debug) {
+                mLogger.debug("客户" + batch.customerCode + "更新详单状态:" + batchAsin);
+            }
 
-            Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
             batch.status = 1;
             mBatchService.update(batch);
+
+            if (customer.debug) {
+                mLogger.debug("客户" + batch.customerCode + "更新总单状态" + batch);
+            }
 
             urlList.add(url);
         }
 
+        mLogger.info("转换成全量爬取URL...");
         /* 把需要全量爬取的批次详单转换成全量爬取的URL，并改变爬取类型为全量爬取 */
         batchAsinList = mBatchAsinService.findNotCrawledReview();
-        sLogger.info("没有全量爬取的个数：" + batchAsinList.size());
+        mLogger.info("没有全量爬取的个数：" + batchAsinList.size());
         for (BatchAsin batchAsin : batchAsinList) {
 
-            Site site = siteMap.get(batchAsin.siteCode);
-            if (site == null) {
-                site = mSiteService.find(batchAsin.siteCode);
-                siteMap.put(batchAsin.siteCode, site);
-            }
+            Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
+            Site site = mSiteService.find(batchAsin.siteCode);
+            Customer customer = mCustomerService.findByCode(batch.customerCode);
 
             List<String> filterList = mAsinService.getUpdateFilters(batchAsin.star);
             for (String filter : filterList) {
                 Url url = new Url();
-                url.url = siteMap.get(batchAsin.siteCode).site + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
+                url.url = site.site + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
                 url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
                 initUrl(batchAsin, url);
+
+                if (customer.debug) {
+                    mLogger.debug("客户" + batch.customerCode + "生成Reivew全量爬取URL:" + url);
+                }
                 urlList.add(url);
             }
 
             /* 装换成URL列表后，把爬取的状态改成爬取当中 */
             batchAsin.status = 3;
             mBatchAsinService.update(batchAsin);
+            if(customer.debug){
+                mLogger.debug("客户" + batch.customerCode + "更新详单状态:" + batchAsin);
+            }
 
-            Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
             batch.status = 1;
             mBatchService.update(batch);
+            if (customer.debug) {
+                mLogger.debug("客户" + batch.customerCode + "更新总单状态" + batch);
+            }
         }
 
+        mLogger.info("转换成更新爬取URL...");
         /* 把需要更新爬取的爬取的批次详单转换更新爬取的URL，并改变爬取类型为更新爬取 */
         batchAsinList = mBatchAsinService.findNotUpdatedReview();
-        sLogger.info("没有更新爬取的个数：" + batchAsinList.size());
+        mLogger.info("没有更新爬取的个数：" + batchAsinList.size());
         for (BatchAsin batchAsin : batchAsinList) {
 
-            Site site = siteMap.get(batchAsin.siteCode);
-            if (site == null) {
-                site = mSiteService.find(batchAsin.siteCode);
-                siteMap.put(batchAsin.siteCode, site);
-            }
+            Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
+            Site site = mSiteService.find(batchAsin.siteCode);
+            Customer customer = mCustomerService.findByCode(batch.customerCode);
 
             List<String> filterList = mAsinService.getUpdateFilters(batchAsin.star);
             for (String filter : filterList) {
                 Url url = new Url();
-                url.url = siteMap.get(batchAsin.siteCode).site + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
+                url.url = site.site + "/" + Review.PRODUCT_REVIEWS + "/" + batchAsin.asin;
                 url.url = UrlUtils.setValue(url.url, "filterByStar", filter);
                 initUrl(batchAsin, url);
+
+                if (customer.debug) {
+                    mLogger.debug("客户" + batch.customerCode + "生成Reivew更新爬取URL:" + url);
+                }
                 urlList.add(url);
             }
             batchAsin.status = 5;
             mBatchAsinService.update(batchAsin);
+            if(customer.debug){
+                mLogger.debug("客户" + batch.customerCode + "更新详单状态:" + batchAsin);
+            }
 
-            Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
             batch.status = 1;
             mBatchService.update(batch);
+            if (customer.debug) {
+                mLogger.debug("客户" + batch.customerCode + "更新总单状态" + batch);
+            }
         }
 
+        mLogger.info("转换URL结束。");
         return urlList;
     }
 

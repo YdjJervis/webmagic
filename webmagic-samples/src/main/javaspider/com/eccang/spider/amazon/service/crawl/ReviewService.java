@@ -32,8 +32,8 @@ public class ReviewService {
         }
     }
 
-    public void addAll(List<Review> reviewList) {
-        List<Review> newList = new ArrayList<Review>();
+    public void addAll(List<Review> reviewList) throws Exception{
+        List<Review> newList = new ArrayList<>();
         for (Review review : reviewList) {
             if (!isExist(review.reviewId)) {
                 newList.add(review);

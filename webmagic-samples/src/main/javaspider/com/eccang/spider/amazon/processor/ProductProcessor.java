@@ -17,6 +17,8 @@ import com.eccang.spider.amazon.service.relation.CustomerAsinService;
 import com.eccang.spider.amazon.service.relation.CustomerProductInfoService;
 import com.eccang.spider.base.monitor.ScheduledTask;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -34,6 +36,7 @@ import java.util.List;
 @Service
 public class ProductProcessor extends BasePageProcessor implements ScheduledTask {
 
+    private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.AS);
     @Autowired
     private ProductService mProductService;
 
@@ -57,7 +60,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
         if (StringUtils.isEmpty(rootAsin)) {
             rootAsin = asinStr;
         }
-        sLogger.info("提取出来的Root Asin ：" + rootAsin);
+        mLogger.info("提取出来的Root Asin ：" + rootAsin);
 
         /* 把Asin和RootAsin的关系连接上 */
         AsinRootAsin asinRootAsin = new AsinRootAsin();
@@ -89,9 +92,9 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
         Product product = new ProductExtractorAdapter().extract(site.code, asinRootAsin.rootAsin, page);
         if (product != null) {
             mProductService.add(product);
-            sLogger.info(product);
+            mLogger.info(product.toString());
         } else {
-            sLogger.warn("当前站点未适配产品基本详细信息抓取：" + site.code);
+            mLogger.warn("当前站点未适配产品基本详细信息抓取：" + site.code);
         }
 
         /* 把客户和产品详细信息关系入库 */
@@ -131,7 +134,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
 
     @Override
     public void execute() {
-        sLogger.info("开始执行Root Asin爬取任务...");
+        mLogger.info("开始执行Root Asin爬取任务...");
         List<Url> urlList = mUrlService.find(R.CrawlType.REVIEW_MAIN_PAGE);
         startToCrawl(urlList);
     }

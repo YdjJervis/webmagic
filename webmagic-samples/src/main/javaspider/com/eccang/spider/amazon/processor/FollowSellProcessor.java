@@ -14,6 +14,8 @@ import com.eccang.spider.base.monitor.ScheduledTask;
 import com.eccang.spider.base.util.UrlUtils;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 @Service
 public class FollowSellProcessor extends BasePageProcessor implements ScheduledTask {
 
+    private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.FS);
     @Autowired
     private FollowSellService mFollowSellService;
     @Autowired
@@ -46,7 +49,7 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
             followSell.batchNum = getUrl(page).batchNum;
         }
 
-        sLogger.info(followSellList);
+        mLogger.info(followSellList.toString());
         mFollowSellService.addAll(followSellList);
 
         /* 更新批次总单的状态 */
@@ -166,7 +169,7 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
 
         int maxPageNum = extractMaxPageNum(page);
         if (extractIndex(page) == 0 && maxPageNum > 1) {
-            sLogger.info("当前ASIN的跟卖最大页码：" + maxPageNum);
+            mLogger.info("当前ASIN的跟卖最大页码：" + maxPageNum);
             List<Url> urlList = new ArrayList<>();
             for (int i = 2; i <= maxPageNum; i++) {
                 Url url = new Url();
@@ -213,7 +216,7 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
 
     @Override
     public void execute() {
-        sLogger.info("开始执行 跟卖 爬取任务...");
+        mLogger.info("开始执行 跟卖 爬取任务...");
         List<Url> urlList = mUrlService.find(R.CrawlType.FOLLOW_SELL);
         startToCrawl(urlList);
     }

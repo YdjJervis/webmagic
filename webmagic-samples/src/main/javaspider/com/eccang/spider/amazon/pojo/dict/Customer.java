@@ -21,6 +21,7 @@ public class Customer extends BasePojo {
     public String introduce;
 
     public Platform platform;
+    public boolean debug;
 
     @Override
     public String toString() {
@@ -35,6 +36,7 @@ public class Customer extends BasePojo {
                 ", legalPerson='" + legalPerson + '\'' +
                 ", introduce='" + introduce + '\'' +
                 ", platform=" + platform +
+                ", debug=" + debug +
                 '}';
     }
 }

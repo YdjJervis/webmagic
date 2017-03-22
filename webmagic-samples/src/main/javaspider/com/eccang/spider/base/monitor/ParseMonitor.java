@@ -1,8 +1,11 @@
 package com.eccang.spider.base.monitor;
 
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.pojo.Url;
+import com.eccang.spider.amazon.service.dict.CustomerService;
+import com.eccang.spider.amazon.service.dict.ProfileService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,6 +20,10 @@ public abstract class ParseMonitor implements ScheduledTask {
 
     protected Logger sLogger = Logger.getLogger(getClass());
 
+    @Autowired
+    protected ProfileService mProfileService;
+    @Autowired
+    protected CustomerService mCustomerService;
     /**
      * 把数据列表源转换成URL列表，数据来源不同，转换规则不同，所以需要
      * 子类单独处理

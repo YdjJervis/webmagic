@@ -1,25 +1,27 @@
 package com.eccang.spider.amazon.processor;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.Page;
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.Asin;
-import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.pojo.StarReviewMap;
 import com.eccang.spider.amazon.pojo.Url;
 import com.eccang.spider.amazon.pojo.batch.Batch;
 import com.eccang.spider.amazon.pojo.batch.BatchAsin;
+import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.pojo.relation.AsinRootAsin;
 import com.eccang.spider.amazon.service.AsinService;
 import com.eccang.spider.amazon.service.PushQueueService;
 import com.eccang.spider.amazon.service.batch.BatchAsinService;
 import com.eccang.spider.amazon.service.relation.AsinRootAsinService;
 import com.eccang.spider.base.util.UrlUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.*;
@@ -33,6 +35,7 @@ import java.util.*;
 @Service
 public class ReviewUpdateProcessor extends ReviewProcessor {
 
+    private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.AS);
     @Autowired
     private AsinService mAsinService;
     @Autowired
@@ -59,14 +62,14 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         String asin = extractAsin(page);
         String siteCode = extractSite(page).code;
 
-        sLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
+        mLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
 
         AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin, siteCode);
         Asin dbAsin = mAsinService.findByAsin(siteCode, asinRootAsin.rootAsin);
         List<StarReviewMap> starReviewMapList = new Gson().fromJson(dbAsin.extra, new TypeToken<List<StarReviewMap>>() {
         }.getType());
-        sLogger.info("全量爬取时候的星级对应的最后评论：");
-        sLogger.info(dbAsin.extra);
+        mLogger.info("全量爬取时候的星级对应的最后评论：");
+        mLogger.info(dbAsin.extra);
 
         /* 把最后一次爬取的所有星级和对应的最后一条评论的ID加入Set集合 */
         Set<String> lastReviewSet = new HashSet<String>();
@@ -79,7 +82,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         /* 是否需要爬取下一页，默认是需要的 */
         boolean needCrawlNextPage = true;
 
-        List<Review> reviewList = new ArrayList<Review>();
+        List<Review> reviewList = new ArrayList<>();
         for (Selectable reviewNode : reviewNodeList) {
 
             Review review = extractReviewItem(siteCode, reviewNode);
@@ -89,7 +92,11 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
             }
             reviewList.add(review);
         }
-        mReviewService.addAll(reviewList);
+        try {
+            mReviewService.addAll(reviewList);
+        } catch (Exception e) {
+            mLogger.error("保存Review列表失败：" + reviewList);
+        }
 
         /* 判断能否生成下一页URL并生成 */
         if (needCrawlNextPage) {
@@ -131,7 +138,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                     deleteList.add(url);
                 }
             }
-            sLogger.info("需要删除的URL数量：" + deleteList.size() + " 该批次该站点该ASIN对应的URL总量：" + updateCrawlList.size());
+            mLogger.info("需要删除的URL数量：" + deleteList.size() + " 该批次该站点该ASIN对应的URL总量：" + updateCrawlList.size());
             if (updateCrawlList.removeAll(deleteList) && updateCrawlList.size() == 0) {
                 BatchAsin dbBatchAsin = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, siteCode, asin);
                 dbBatchAsin.status = 6;
@@ -178,10 +185,10 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
 
     @Override
     public void execute() {
-        sLogger.info("开始执行更新爬取...");
+        mLogger.info("开始执行更新爬取...");
         List<Url> urlList = mUrlService.find(R.CrawlType.REVIEW_UPDATE);
 
-        BatchAsin batchAsin = null;
+        BatchAsin batchAsin;
         Date currentTime = new Date();
         for (Url url : urlList) {
             batchAsin = mBatchAsinService.findAllByAsin(url.batchNum, url.siteCode, url.asin);

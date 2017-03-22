@@ -6,14 +6,15 @@ import com.eccang.spider.amazon.pojo.ImgValidateResult;
 import com.eccang.spider.amazon.pojo.Url;
 import com.eccang.spider.amazon.pojo.UrlBatchStat;
 import com.eccang.spider.amazon.pojo.batch.BatchAsin;
-import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.pojo.dict.IpsInfoManage;
+import com.eccang.spider.amazon.pojo.dict.Profile;
 import com.eccang.spider.amazon.pojo.dict.Site;
 import com.eccang.spider.amazon.service.*;
 import com.eccang.spider.amazon.service.batch.BatchAsinService;
 import com.eccang.spider.amazon.service.batch.BatchService;
 import com.eccang.spider.amazon.service.dict.IpsInfoManageService;
 import com.eccang.spider.amazon.service.dict.IpsSwitchManageService;
+import com.eccang.spider.amazon.service.dict.ProfileService;
 import com.eccang.spider.amazon.service.dict.SiteService;
 import com.eccang.spider.amazon.util.ValidateProxyUtils;
 import com.eccang.spider.base.service.UserAgentService;
@@ -26,7 +27,8 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -49,7 +51,7 @@ import java.util.Set;
 @Service
 public abstract class BasePageProcessor implements PageProcessor {
 
-    Logger sLogger = Logger.getLogger(getClass());
+    private final static Logger sLogger = LoggerFactory.getLogger(BasePageProcessor.class);
     private us.codecraft.webmagic.Site mSite = us.codecraft.webmagic.Site.me().setRetryTimes(3).setSleepTime(10 * 1000).setTimeOut(10 * 1000);
 
     public static final String URL_EXTRA = "url_extra";
@@ -102,10 +104,14 @@ public abstract class BasePageProcessor implements PageProcessor {
     protected BatchService mBatchService;
     @Autowired
     protected PushQueueService mPushQueueService;
+    @Autowired
+    private ProfileService mProfileService;
+    protected Profile sProfile;
 
     @Override
     public synchronized void process(Page page) {
-        sLogger.info("process(Page page)::URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
+        sProfile = mProfileService.find();
+        sLogger.info("处理页面回调：URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
         page = IsNotNullAndProxyCaptcha(page);
 
         /*记录每一批次解析的URL的问题以及对应异常状态码出现的次数*/
@@ -118,14 +124,14 @@ public abstract class BasePageProcessor implements PageProcessor {
 
         updateBatchOrder(page);
 
+        sLogger.info("处理其它状态的页面...");
         if (isPage404(page)) {
             dealPageNotFound(page);
         } else if (mSet.contains(page.getStatusCode())) {
-            //包括mSet里的状态码，则不做处理
+            sLogger.warn("包含处理不了的页面：StatusCode=" + page.getStatusCode());
         } else if (isValidatePage(page)) {
             dealValidate(page);
         } else {
-//            RedisUtils.hset("page", page.getUrl().get(), page.getHtml().get());
             dealOtherPage(page);
         }
     }
@@ -222,7 +228,7 @@ public abstract class BasePageProcessor implements PageProcessor {
     }
 
     private void dealValidate(Page page) {
-
+        sLogger.warn("开始处理Amazon防爬表单验证...");
         String validateUrl = getValidateImgUrl(page);
 
         if (StringUtils.isNotEmpty(validateUrl)) {
@@ -231,7 +237,7 @@ public abstract class BasePageProcessor implements PageProcessor {
             }
         }
 
-        sLogger.warn("出现验证码：" + page.getUrl() + "  " + page.getStatusCode());
+        sLogger.warn("验证码：Url=" + page.getUrl() + "，StatusCode=" + page.getStatusCode());
 
         /*保存图片验证码*/
         //PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
@@ -241,7 +247,9 @@ public abstract class BasePageProcessor implements PageProcessor {
         * 请求表单的Url，调用验证码识别接口
         */
         String validatedUrl = getValidatedUrl(page);
+        sLogger.warn("图片验证请求URL：" + validatedUrl);
         if (page.getRequest().getExtra("ipsType") == null || StringUtils.isNotEmpty(validatedUrl)) {
+            sLogger.warn("代理为空把地址添加到爬虫队列继续爬取...");
             Request request = new Request(getValidatedUrl(page));
             request.putExtra(URL_EXTRA, url);
             page.addTargetRequest(request);
@@ -249,6 +257,7 @@ public abstract class BasePageProcessor implements PageProcessor {
         /* 当需要验证码时，page的状态码还是200，不符合我们的逻辑，所以修改一下 */
         page.setStatusCode(0);
         updateUrlStatus(page, false);
+        sLogger.warn("结束处理Amazon防爬表单验证...");
     }
 
     /**
@@ -300,13 +309,6 @@ public abstract class BasePageProcessor implements PageProcessor {
      */
     private boolean isNullHtml(Page page) {
         return StringUtils.isEmpty(page.getHtml().xpath("//body/html()").get());
-    }
-
-    /**
-     * @return 是否是评论页面
-     */
-    private boolean isReviewPage(Page page) {
-        return page.getUrl().get().contains(Review.PRODUCT_REVIEWS);
     }
 
     /**

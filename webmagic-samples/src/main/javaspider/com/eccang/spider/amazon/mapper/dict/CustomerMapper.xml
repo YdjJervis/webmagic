@@ -17,6 +17,7 @@
         <result property="legalPerson" column="bec_legal_person"/>
         <result property="introduce" column="bec_introduce"/>
         <result property="extra" column="bec_extra"/>
+        <result property="debug" column="bec_debug"/>
     </resultMap>
 
     <select id="findByCode" resultMap="CustomerResultMap">

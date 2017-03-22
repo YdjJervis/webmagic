@@ -12,6 +12,8 @@ import com.eccang.spider.amazon.service.crawl.ReviewService;
 import com.eccang.spider.amazon.service.relation.CustomerReviewService;
 import com.eccang.spider.base.monitor.ScheduledTask;
 import org.apache.commons.lang.math.NumberUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import us.codecraft.webmagic.Page;
@@ -28,6 +30,7 @@ import java.util.List;
 @Service
 public class ReviewMonitorProcessor extends BasePageProcessor implements ScheduledTask {
 
+    private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.MS);
     @Autowired
     private ReviewService mReviewService;
     @Autowired
@@ -44,7 +47,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
         String star = page.getHtml().xpath("//tbody//div[@style='margin-bottom:0.5em;']//img").regex(".*stars-([1-5]).*").get();
 
         if (!NumberUtils.isNumber(star)) {
-            sLogger.warn("抱歉，商品已经下架，没有成功解析颗星数：" + star);
+            mLogger.warn("抱歉，商品已经下架，没有成功解析颗星数：" + star);
             updateBatchStatus(page, false, false);
 
             /* Review已经下架(被删除),对应Review表里面的状态标记为已经被删除状态 */
@@ -84,7 +87,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
                 review.title = title;
                 review.content = content;
 
-                sLogger.info(review);
+                mLogger.info(review.toString());
                 mReviewService.update(review);
             }
 
@@ -155,7 +158,7 @@ public class ReviewMonitorProcessor extends BasePageProcessor implements Schedul
     @Override
     public void execute() {
         List<Url> urlList = mUrlService.find(R.CrawlType.REVIEW_MONITOR);
-        sLogger.info("开始爬取被监听的Review...数量为" + urlList.size());
+        mLogger.info("开始爬取被监听的Review...数量为" + urlList.size());
         startToCrawl(urlList);
     }
 

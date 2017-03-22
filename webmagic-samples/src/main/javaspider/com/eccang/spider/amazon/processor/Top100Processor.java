@@ -17,6 +17,8 @@ import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -42,6 +44,7 @@ import java.util.List;
 @Service
 public class Top100Processor extends BasePageProcessor implements ScheduledTask {
 
+    private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.TOP);
     @Autowired
     private DepartmentService mDepartmentService;
     @Autowired
@@ -157,7 +160,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
             }
 
         } catch (ParserConfigurationException | XPathExpressionException e) {
-            sLogger.warn(e);
+            mLogger.error(e.toString());
             return null;
         }
 
@@ -409,7 +412,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         mBatchService.update(batch);
 
         Date endTime = new Date();
-        sLogger.info("update batch status time long : " + (endTime.getTime() - currentTime.getTime())/1000f);
+        mLogger.info("update batch status time long : " + (endTime.getTime() - currentTime.getTime())/1000f);
     }
 
     /**
@@ -427,7 +430,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
     @Override
     public void execute() {
         /*查询需要监测的关键词信息*/
-        sLogger.info("开始执行Top100商品爬取任务...");
+        mLogger.info("开始执行Top100商品爬取任务...");
         List<Url> urls = mUrlService.findTop100();
         startToCrawl(urls);
     }
