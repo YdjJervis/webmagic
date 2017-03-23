@@ -58,7 +58,7 @@ public class LoggerDeleteMonitor implements ScheduledTask {
     private int dateDiff(String fileName, Date now) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH");
 
-        String dataStr = fileName.substring(fileName.indexOf("_") + 1, fileName.length() - 4);
+        String dataStr = fileName.substring(fileName.lastIndexOf("_") + 1, fileName.length() - 4);
         try {
             Date fileDate = sdf.parse(dataStr);
             return differentDays(fileDate, now);
