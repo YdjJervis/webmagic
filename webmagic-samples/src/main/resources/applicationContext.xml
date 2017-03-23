@@ -138,7 +138,7 @@
 
         <!-- 测试日志 -->
         <!--<task:scheduled ref="loggerTestTask" method="execute" cron="0/5 * * * * ?" />-->
-        <task:scheduled ref="loggerDeleteMonitor" method="execute" cron="0/5 * * * * ?" />
+        <task:scheduled ref="loggerDeleteMonitor" method="execute" cron="* * 0/1 * * ?" />
 
         <!--ebay品类URL监控-->
         <!--<task:scheduled ref="ebayUrlMonitorProcessor" method="execute" cron="0/10 * * * * ?" />-->

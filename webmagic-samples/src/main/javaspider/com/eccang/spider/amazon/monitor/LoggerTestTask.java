@@ -20,7 +20,7 @@ public class LoggerTestTask implements ScheduledTask {
 
     @Override
     public void execute() {
-//        print();
+        print();
     }
 
     private void print() {
