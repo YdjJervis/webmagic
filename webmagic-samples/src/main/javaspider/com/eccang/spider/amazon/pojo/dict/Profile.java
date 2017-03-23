@@ -11,11 +11,13 @@ import com.eccang.spider.base.pojo.BasePojo;
 public class Profile extends BasePojo {
 
     public boolean debug;
+    public int logSaveDay;
 
     @Override
     public String toString() {
         return "Profile{" +
                 "debug=" + debug +
+                ", logSaveDay=" + logSaveDay +
                 '}';
     }
 }

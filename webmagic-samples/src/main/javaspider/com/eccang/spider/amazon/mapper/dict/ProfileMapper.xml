@@ -5,6 +5,7 @@
     <resultMap id="ProfileMap" type="Profile">
         <result property="id" column="bep_id"/>
         <result property="debug" column="bep_debug"/>
+        <result property="logSaveDay" column="bep_log_save_day"/>
         <result property="createTime" column="bep_create_time"/>
         <result property="updateTime" column="bep_udpate_time"/>
     </resultMap>

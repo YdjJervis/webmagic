@@ -11,7 +11,9 @@ import com.eccang.wsclient.validate.ImageOCRService;
 public class ValidateWSClient {
 
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
         String code = new ImageOCRService().getBasicHttpBindingIImageOCRService().getVerCodeFromUrl("https://images-na.ssl-images-amazon.com/captcha/cdkxpfei/Captcha_uwrkcvuynu.jpg", "review");
         System.out.println(code);
+        System.out.println(System.currentTimeMillis() - startTime);
     }
 }

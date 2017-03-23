@@ -20,6 +20,10 @@ public class LoggerTestTask implements ScheduledTask {
 
     @Override
     public void execute() {
+//        print();
+    }
+
+    private void print() {
         mLogger.debug("debug level ...");
         mLogger.info("info level ...");
         mLogger.warn("warn level ...");
