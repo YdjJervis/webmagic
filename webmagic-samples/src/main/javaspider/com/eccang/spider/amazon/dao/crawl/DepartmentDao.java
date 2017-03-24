@@ -15,13 +15,11 @@ import java.util.List;
 @Repository
 public interface DepartmentDao extends BaseDao<Department> {
 
-    List<Department> findByName(String depName);
+    int findChildDepCount(String pId, String batchNum);
 
-    Department findByNameAndUrlMD5(String depName, String depUrl);
+    List<Department> findByPId(int pId);
 
-    Department findByNames(String depName, String pDepName);
+    Department findByBatchNumAndDepUrl(String batchNum, String depUrl);
 
-    int findChildDep(String pDepUrl, String urlMD5, String batchNum);
-
-    List<Department> findByParentUrl(String pDepUrl);
+    Department findByBatchNumAndDepCode(String batchNum, String depCode);
 }

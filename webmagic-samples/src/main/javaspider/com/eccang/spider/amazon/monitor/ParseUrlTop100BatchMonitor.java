@@ -48,8 +48,9 @@ public class ParseUrlTop100BatchMonitor extends ParseMonitor {
             url = new Url();
             url.batchNum = batchTop100.batchNum;
             url.siteCode = batchTop100.siteCode;
+            url.priority = 4;
             url.url = getTop100HomeUrl(batchTop100.siteCode);
-            url.urlMD5 = UrlUtils.md5(url.url);
+            url.urlMD5 = UrlUtils.md5(batchTop100.batchNum + url.url);
             url.type = R.CrawlType.TOP_100_DEPARTMENT;
 
             batchTop100.status = 1;
@@ -67,6 +68,12 @@ public class ParseUrlTop100BatchMonitor extends ParseMonitor {
         switch (siteCode) {
             case "US":
                 url = R.Top100.US;
+                break;
+            case "UK":
+                url = R.Top100.UK;
+                break;
+            case "DE":
+                url = R.Top100.DE;
                 break;
             default:
                 url = null;

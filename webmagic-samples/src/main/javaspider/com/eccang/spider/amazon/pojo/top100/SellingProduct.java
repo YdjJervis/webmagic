@@ -14,7 +14,7 @@ public class SellingProduct extends BasePojo {
     public String url;
     public String urlMD5;
     public String siteCode;
-    public String depName; /*品类名称*/
+    public String depCode;
     public String depUrl; /*品类url*/
     public String classify; /*商品分类*/
     public String asin;
@@ -35,7 +35,7 @@ public class SellingProduct extends BasePojo {
                 ", url='" + url + '\'' +
                 ", urlMD5='" + urlMD5 + '\'' +
                 ", siteCode='" + siteCode + '\'' +
-                ", depName='" + depName + '\'' +
+                ", depCode='" + depCode + '\'' +
                 ", depUrl='" + depUrl + '\'' +
                 ", classify='" + classify + '\'' +
                 ", asin='" + asin + '\'' +

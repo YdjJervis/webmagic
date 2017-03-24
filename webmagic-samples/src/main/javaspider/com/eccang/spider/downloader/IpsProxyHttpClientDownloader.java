@@ -111,7 +111,6 @@ public class IpsProxyHttpClientDownloader extends AbstractDownloader {
             Url url = (Url) request.getExtra(BasePageProcessor.URL_EXTRA);
             String basCode = url.siteCode;
             ipsInfoManage = getPoxyHost(urlHost, basCode);
-            logger.info("use proxy {}", ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort());
             if (ipsInfoManage.getIpVerifyUserName() != null && !"".equals(ipsInfoManage.getIpVerifyUserName())) {
                 site.setUsernamePasswordCredentials(new UsernamePasswordCredentials(ipsInfoManage.getIpVerifyUserName(), ipsInfoManage.getIpVerifyPassword()));
             }

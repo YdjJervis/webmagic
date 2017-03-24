@@ -9,7 +9,7 @@
         <result column="satd_url" property="url"/>
         <result column="satd_url_md5" property="urlMD5"/>
         <result column="bas_code" property="siteCode"/>
-        <result column="sad_dep_name" property="depName"/>
+        <result column="sad_code" property="depCode"/>
         <result column="sad_url" property="depUrl"/>
         <result column="satd_classify" property="classify"/>
         <result column="satd_asin" property="asin"/>
@@ -33,7 +33,7 @@
           satd_url,
           satd_url_md5,
           bas_code,
-          sad_dep_name,
+          sad_code,
           sad_url,
           satd_classify,
           satd_asin,
@@ -53,7 +53,7 @@
               #{item.url},
               #{item.urlMD5},
               #{item.siteCode},
-              #{item.depName},
+              #{item.depCode},
               #{item.depUrl},
               #{item.classify},
               #{item.asin},
@@ -76,7 +76,7 @@
           satd_url,
           satd_url_md5,
           bas_code,
-          sad_dep_name,
+          sad_code,
           sad_url,
           satd_classify,
           satd_asin,
@@ -94,7 +94,7 @@
           #{url},
           #{urlMD5},
           #{siteCode},
-          #{depName},
+          #{depCode},
           #{depUrl},
           #{classify},
           #{asin},

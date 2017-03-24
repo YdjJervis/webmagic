@@ -27,31 +27,8 @@ public class DepartmentService {
         return  mDao.findAll();
     }
 
-    /**
-     * 通过品类名查询
-     */
-    public List<Department> findByName(String depName) {
-        return mDao.findByName(depName);
-    }
-
-    /**
-     * 查询品类通过品类名称与父品类名称
-     * @param depName 品类名
-     * @param pDepName 父品类名
-     */
-    public Department findByNames(String depName, String pDepName) {
-        return mDao.findByNames(depName, pDepName);
-    }
-
-    /**
-     * 根据品类名与品类urlMD5查询品类信息
-     */
-    public Department findByNameAndUrlMD5(String depName, String depUrl) {
-        return mDao.findByNameAndUrlMD5(depName, depUrl);
-    }
-
-    public List<Department> findByParentUrl(String pDepUrl) {
-        return mDao.findByParentUrl(pDepUrl);
+    public List<Department> findByPId(int pid) {
+        return mDao.findByPId(pid);
     }
 
     /**
@@ -73,5 +50,19 @@ public class DepartmentService {
      */
     public void update(Department department) {
         mDao.update(department);
+    }
+
+    /**
+     * 通过批次号与品类url查询品类信息
+     */
+    public Department findByBatchNumAndDepUrl(String batchNum, String depUrl) {
+        return mDao.findByBatchNumAndDepUrl(batchNum, depUrl);
+    }
+
+    /**
+     * 通过批次号与品类码查询品类信息
+     */
+    public Department findByBatchNumAndDepCode(String batchNum, String depCode) {
+        return mDao.findByBatchNumAndDepCode(batchNum, depCode);
     }
 }

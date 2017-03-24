@@ -2,6 +2,7 @@ package com.eccang.spider.amazon.service.top100;
 
 import com.eccang.spider.amazon.dao.top100.SellingProductDao;
 import com.eccang.spider.amazon.pojo.top100.SellingProduct;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,10 @@ public class SellingProductService {
     SellingProductDao mDao;
 
     public void addAll(List<SellingProduct> products) {
-        for (SellingProduct product : products) {
-            mDao.add(product);
+        if(CollectionUtils.isNotEmpty(products)) {
+            for (SellingProduct product : products) {
+                mDao.add(product);
+            }
         }
     }
 

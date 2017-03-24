@@ -30,6 +30,10 @@ public class Url extends BasePojo {
      */
     public String reviewId;
     /**
+     * 品类码
+     */
+    public String depCode;
+    /**
      * 爬取URL返回的状态码
      */
     public int status;

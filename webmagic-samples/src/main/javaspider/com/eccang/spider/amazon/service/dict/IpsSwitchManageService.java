@@ -94,7 +94,7 @@ public class IpsSwitchManageService {
                 }
             } else {
                 /*监测记录的异常为空，则初始化为1*/
-                map = new HashMap<String, Integer>();
+                map = new HashMap<>();
                 map.put(statusCodeStr, 1);
             }
             /*将Map对象转化成String*/

@@ -18,6 +18,7 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.selector.Json;
 import us.codecraft.webmagic.selector.Selectable;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,7 +38,13 @@ public class Top100ProcessorTest implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        extractDepartment(page);
+        List<Selectable> nodes = page.getHtml().xpath("//*[@id='zg_centerListWrapper']/div[@class='zg_itemImmersion']").nodes();
+        for (Selectable node : nodes) {
+            String selectable = node.xpath("//div[@class='zg_itemWrapper']/div[contains(@class, 'p13n-asin')]/@data-p13n-asin-metadata").get();
+            String asin = new Json(selectable).jsonPath("$.asin").get();
+            System.out.println(asin);
+
+        }
     }
 
     @Override
@@ -65,9 +72,9 @@ public class Top100ProcessorTest implements PageProcessor {
                 if (StringUtils.isNotEmpty(rankNumStr)) {
                     rankNum = Integer.valueOf(rankNumStr.trim().replace(".", ""));
                 }
-                String productName = node.xpath("//div[@class='zg_itemWrapper']/div/a/text()").get();
+                String productName = node.xpath("//div[@class='zg_itemWrapper']/div/a/div[@class='p13n-sc-truncate']/@title").get();
                 if (StringUtils.isEmpty(productName)) {
-                    productName = node.xpath("//div[@class='zg_itemWrapper']/div/a/span/@title").get();
+                    productName = node.xpath("//div[@class='zg_itemWrapper']/div/a/div[@class='p13n-sc-truncate']/text()").get();
                 }
                 String productImgUrl = node.xpath("//div[@class='zg_itemWrapper']/div//img/@src").get();
                 String productUrl = node.xpath("//div[@class='zg_itemWrapper']/div/a/@href").get();
@@ -75,14 +82,18 @@ public class Top100ProcessorTest implements PageProcessor {
                 String reviewNum = node.xpath("//div[@class='zg_itemWrapper']/div/div[contains(@class,'a-icon-row')]/a[contains(@class,'a-size-small')]/text()").get();
                 String productPrice = node.xpath("//*[@class='p13n-sc-price']/text()").get();
                 String amazonDelivery = node.xpath("//*[@class='a-icon-prime']/span[@class='a-icon-alt']/text()").get();
-                System.out.println(rankNum);
-                System.out.println(productName);
-                System.out.println(productImgUrl);
-                System.out.println(productUrl);
-                System.out.println(reviewStar);
-                System.out.println(reviewNum);
-                System.out.println(productPrice);
-                System.out.println(amazonDelivery);
+                if (StringUtils.isEmpty(amazonDelivery)) {
+                    amazonDelivery = "no prime";
+                }
+
+                System.out.println("rankNum:" + rankNum);
+                System.out.println("productName:" + productName);
+                System.out.println("productImgUrl:" + productImgUrl);
+                System.out.println("productUrl:" + productUrl);
+                System.out.println("reviewStar:" + reviewStar);
+                System.out.println("reviewNum:" + reviewNum);
+                System.out.println("productPrice:" + productPrice);
+                System.out.println("amazonDelivery:" + amazonDelivery);
             }
         }
     }
@@ -134,12 +145,9 @@ public class Top100ProcessorTest implements PageProcessor {
         List<Selectable> nodes = page.getHtml().xpath("//*[@id='zg_paginationWrapper']/ol/li").nodes();
         if (CollectionUtils.isNotEmpty(nodes)) {
             Url url;
-            for (Selectable node : nodes) {
+            for (int i = 1; i < nodes.size(); i++) {
                 url = new Url();
-                String urlStr = node.xpath("/li/a/@href").get();
-                if (UrlUtils.getValue(urlStr, "pg").equalsIgnoreCase("1")) {
-                    continue;
-                }
+                String urlStr = nodes.get(i).xpath("/li/a/@href").get();
                 url.urlMD5 = UrlUtils.md5(urlStr);
                 url.url = urlStr;
                 url.type = R.CrawlType.TOP_100_PRODUCT;
@@ -156,7 +164,7 @@ public class Top100ProcessorTest implements PageProcessor {
 //        Request request = new Request("https://www.amazon.com/gp/product/handle-buy-box/ref=dp_start-bbf_1_glance");
 
 //        Request request = new Request("https://www.amazon.com/bestsellers");
-        Request request = new Request("https://www.amazon.com/Best-Sellers-Appstore-Android/zgbs/mobile-apps/ref=zg_bs_nav_0");
+        Request request = new Request("https://www.amazon.co.uk/Best-Sellers-Appstore-Android-Travel-Apps/zgbs/mobile-apps/1710384031/ref=zg_bs?_encoding=UTF8&tf=1#2");
         Spider.create(new Top100ProcessorTest())
                 .thread(1)
                 .addRequest(request)

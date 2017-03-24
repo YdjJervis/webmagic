@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.top100.DepartmentWhitelistDao">
+    <resultMap id="DepartmentWhitelistMap" type="DepartmentWhitelist">
+        <id column="sadw_id" property="id"/>
+        <result column="sad_name" property="depName"/>
+        <result column="bas_code" property="siteCode"/>
+        <result column="sad_code" property="depCode"/>
+        <result column="sadw_priority" property="priority"/>
+        <result column="sadw_enable" property="enable"/>
+        <result column="sadw_extra" property="extra"/>
+        <result column="sadw_create_time" property="createTime"/>
+        <result column="sadw_update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="add" parameterType="DepartmentWhitelist">
+        INSERT INTO spider_amazon_department_whitelist(
+          sad_name,
+          bas_code,
+          sad_code,
+          sadw_priority,
+          sadw_enable,
+          sadw_extra
+        ) VALUES (
+          #{depName},
+          #{siteCode},
+          #{depCode},
+          #{priority},
+          #{enable},
+          #{extra}
+        )
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_amazon_department_whitelist(
+          sad_name,
+          bas_code,
+          sad_code,
+          sadw_priority,
+          sadw_enable,
+          sadw_extra
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+          (
+            #{item.depName},
+            #{item.siteCode},
+            #{item.depCode},
+            #{item.priority},
+            #{item.enable},
+            #{item.extra}
+          )
+        </foreach>
+    </insert>
+
+    <select id="findAll" resultMap="DepartmentWhitelistMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_department_whitelist
+    </select>
+
+    <select id="findByDoubleCode" resultMap="DepartmentWhitelistMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_department_whitelist
+        WHERE
+          sad_code = #{0} AND bas_code = #{1}
+    </select>
+
+    <select id="findByCodeCount" resultType="java.lang.Integer">
+        SELECT
+          count(*)
+        FROM
+          spider_amazon_department_whitelist
+        WHERE
+          sad_code = #{0} AND bas_code = #{1}
+    </select>
+
+    <update id="update" parameterType="DepartmentWhitelist">
+        UPDATE
+          spider_amazon_department_whitelist
+        SET
+          sad_name = #{depName},
+          bas_code = #{siteCode},
+          sad_code = #{depCode},
+          sadw_priority = #{priority},
+          sadw_enable = #{enable},
+          sadw_extra = #{extra}
+        WHERE
+          sadw_id = #{id}
+    </update>
+
+    <update id="updateByCode" parameterType="DepartmentWhitelist">
+        UPDATE
+          spider_amazon_department_whitelist
+        SET
+          sad_name = #{depName},
+          sadw_priority = #{priority},
+          sadw_enable = #{enable},
+          sadw_extra = #{extra}
+        WHERE
+          sad_code = #{depCode} AND bas_code = #{siteCode}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM
+          spider_amazon_department_whitelist
+        WHERE
+          sadw_id = #{0}
+    </delete>
+
+    <delete id="deleteByCode" parameterType="java.lang.String">
+        DELETE FROM
+          spider_amazon_department_whitelist
+        WHERE
+          sad_code = #{0} AND bas_code = #{1}
+    </delete>
+
+</mapper>

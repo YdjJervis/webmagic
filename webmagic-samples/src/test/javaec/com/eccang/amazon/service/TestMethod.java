@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.util.Date;
 
 /**
  * @author Hardy
@@ -27,26 +27,24 @@ public class TestMethod {
     }
 
     public static void main(String[] args) {
-//        ApplicationContext applicationContext =new ClassPathXmlApplicationContext("applicationContext.xml");
-//        BeanDefinition bean = new GenericBeanDefinition();
-//        bean.setBeanClassName("us.codecraft.webmagic.samples.amazon.dao.IpsSwitchManageDao");
-//        DefaultListableBeanFactory fty = (DefaultListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
-//        //注册Bean
-//        fty.registerBeanDefinition("ipsSwitchManageDao", bean);
-//
-//        IpsSwitchManageDao mIpsSwitchManageDao = (IpsSwitchManageDao)applicationContext.getBean("ipsSwitchManageDao");
-//        System.out.println(mIpsSwitchManageDao);
-//        Jedis jedis = new Jedis("127.0.0.1", 6379);
-//        Jedis jedis = new Jedis("0.0.0.0", 6379);
-//        Jedis jedis = new Jedis("192.168.0.121",6379);
-//        System.out.println(jedis.get("liugang"));
-//        System.out.println(UrlUtils.md5("https://www.amazon.com/Womens-Casual-Hollowed-Shoulder-Quarter/dp/B01LYO4CRQ/ref=zg_bs_fashion_49?_encoding=UTF8&refRID=JPHPSZ0XHGKB4W5KGDD1"));
+        Date startTime = new Date();
+        int a = 1;
+        int b = 2;
+        int d = a*b;
+        int c;
+        for (int i = 0; i < 10000; i++) {
+            c = i*d;
+            System.out.println(c);
+        }
+        Date endTime = new Date();
+        System.out.println("循环内有多余操作耗时：" + (endTime.getTime() - startTime.getTime()));
     }
+
     @Test
     public void urlEncodeTest() {
-        String urlParam = "cars bettwäsche";
+        String urlParam = "Libros en espa&ntilde;ol";
         try {
-            urlParam = URLEncoder.encode(urlParam, "UTF-8");
+//            urlParam = URLEncoder.encode(urlParam, "UTF-8");
             System.out.println(urlParam);
             urlParam = URLDecoder.decode(urlParam, "UTF-8");
             System.out.println(urlParam);

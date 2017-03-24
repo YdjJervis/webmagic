@@ -6,11 +6,12 @@
         <id column="sad_id" property="id" />
         <result column="bo_batch_num" property="batchNum" />
         <result column="sad_name" property="depName" />
+        <result column="sad_p_id" property="pId" />
         <result column="sad_p_name" property="parentDepName" />
+        <result column="bas_code" property="siteCode" />
+        <result column="sad_code" property="depCode" />
         <result column="sad_tab" property="depTab" />
         <result column="sad_url" property="depUrl" />
-        <result column="sad_url_md5" property="urlMD5" />
-        <result column="sad_p_url" property="pDepUrl" />
         <result column="sad_level" property="depLevel" />
         <result column="sad_extra" property="extra" />
         <result column="sad_sync_time" property="syncTime" />
@@ -25,60 +26,52 @@
         spider_amazon_department
     </select>
 
-    <select id="findByName" resultMap="DepartmentMap">
-        SELECT
-        *
-        FROM
-        spider_amazon_department
-        WHERE
-        sad_name = #{0}
-    </select>
-
-    <select id="findByNames" resultMap="DepartmentMap">
-        SELECT
-          *
-        FROM
-          spider_amazon_department
-        WHERE
-          sad_name = #{0} AND sad_p_name = #{1}
-    </select>
-
-    <select id="findByNameAndUrlMD5" resultMap="DepartmentMap">
-        SELECT
-          *
-        FROM
-          spider_amazon_department
-        WHERE
-          sad_name = #{0} AND sad_url_md5 = #{1}
-    </select>
-
-    <select id="findChildDep" resultType="int">
+    <select id="findChildDepCount" resultType="int">
         SELECT
           count(*)
         FROM
           spider_amazon_department
         WHERE
-          sad_p_url = #{0} and sad_url_md5 = #{1} and bo_batch_num = #{2}
+          sad_p_id = #{0} and bo_batch_num = #{1}
     </select>
 
-    <select id="findByParentUrl" resultMap="DepartmentMap">
+    <select id="findByPId" resultMap="DepartmentMap">
         SELECT
           *
         FROM
           spider_amazon_department
         WHERE
-          sad_p_url = #{0}
+          sad_p_id = #{0}
+    </select>
+
+    <select id="findByBatchNumAndDepUrl" resultMap="DepartmentMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_department
+        WHERE
+          bo_batch_num = #{0} and sad_url = #{1}
+    </select>
+
+    <select id="findByBatchNumAndDepCode" resultMap="DepartmentMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_department
+        WHERE
+          bo_batch_num = #{0} and sad_code = #{1}
     </select>
 
     <insert id="addAll" parameterType="java.util.List">
         INSERT INTO spider_amazon_department(
           bo_batch_num,
           sad_name,
+          sad_p_id,
           sad_p_name,
+          bas_code,
+          sad_code,
           sad_tab,
           sad_url,
-          sad_url_md5,
-          sad_p_url,
           sad_level,
           sad_extra,
           sad_sync_time
@@ -87,11 +80,12 @@
             (
               #{item.batchNum},
               #{item.depName},
+              #{item.pId},
               #{item.parentDepName},
+              #{item.siteCode},
+              #{item.depCode},
               #{item.depTab},
               #{item.depUrl},
-              #{item.urlMD5},
-              #{item.pDepUrl}
               #{item.depLevel},
               #{item.extra},
               #{item.syncTime}
@@ -103,22 +97,24 @@
         INSERT INTO spider_amazon_department(
          bo_batch_num,
          sad_name,
+         sad_p_id,
          sad_p_name,
+         bas_code,
+         sad_code,
          sad_tab,
          sad_url,
-         sad_url_md5,
-         sad_p_url,
          sad_level,
          sad_extra,
          sad_sync_time
         ) VALUES (
           #{batchNum},
           #{depName},
+          #{pId},
           #{parentDepName},
+          #{siteCode},
+          #{depCode},
           #{depTab},
           #{depUrl},
-          #{urlMD5},
-          #{pDepUrl},
           #{depLevel},
           #{extra},
           #{syncTime}
@@ -130,7 +126,10 @@
           spider_amazon_department
         SET
           sad_name = #{depName},
+          sad_p_id = #{pId},
           sad_p_name = #{parentDepName},
+          bas_code = #{siteCode},
+          sad_code = #{depCode},
           sad_tab = #{depTab},
           sad_url = #{depUrl},
           sad_level = #{depLevel},

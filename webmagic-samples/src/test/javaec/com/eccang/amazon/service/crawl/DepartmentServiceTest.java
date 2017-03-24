@@ -3,7 +3,6 @@ package com.eccang.amazon.service.crawl;
 import com.eccang.base.SpringTestCase;
 import com.eccang.spider.amazon.pojo.crawl.Department;
 import com.eccang.spider.amazon.service.crawl.DepartmentService;
-import com.eccang.spider.base.util.UrlUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,7 +45,6 @@ public class DepartmentServiceTest extends SpringTestCase {
         department.parentDepName = "Any Department";
         department.depTab = "";
         department.depUrl = "https://www.amazon.com/Best-Sellers/zgbs/fashion/ref=zg_bs_nav_0";
-        department.urlMD5 = UrlUtils.md5(department.depUrl);
         departments.add(department);
         mService.addAll(departments);
     }

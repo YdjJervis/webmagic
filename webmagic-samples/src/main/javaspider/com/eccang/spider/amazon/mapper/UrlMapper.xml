@@ -11,6 +11,7 @@
         <result property="siteCode" column="bas_code"/>
         <result property="asin" column="saa_asin"/>
         <result property="reviewId" column="sau_review_id"/>
+        <result property="depCode" column="sad_code"/>
         <result property="status" column="sau_status"/>
         <result property="crawling" column="sau_crawling"/>
         <result property="priority" column="sau_priority"/>
@@ -31,6 +32,7 @@
         bas_code,
         saa_asin,
         sau_review_id,
+        sad_code,
         sau_status,
         sau_crawling,
         sau_priority,
@@ -45,6 +47,7 @@
 		#{siteCode},
 		#{asin},
 		#{reviewId},
+		#{depCode},
 		#{status},
 		#{crawling},
 		#{priority},
@@ -63,6 +66,7 @@
         bas_code,
         saa_asin,
         sau_review_id,
+        sad_code,
         sau_status,
         sau_crawling,
         sau_priority,
@@ -79,6 +83,7 @@
             #{item.siteCode},
             #{item.asin},
             #{item.reviewId},
+            #{item.depCode},
             #{item.status},
             #{item.crawling},
             #{item.priority},
@@ -127,7 +132,7 @@
           AND sau_type in (6,7,8)
           AND sau_crawling = 0
         ORDER BY
-          sau_type ASC LIMIT 10;
+          sau_type,sau_priority ASC LIMIT 10;
     </select>
 
     <select id="find" resultMap="UrlResultMap">

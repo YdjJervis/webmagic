@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eccang.spider.amazon.dao.top100.DepartmentBlacklistDao">
+    <resultMap id="DepartmentBlacklistMap" type="DepartmentBlacklist">
+        <id column="sadb_id" property="id"/>
+        <result column="sad_name" property="depName"/>
+        <result column="sad_code" property="depCode"/>
+        <result column="bas_code" property="siteCode"/>
+        <result column="sadb_enable" property="enable"/>
+        <result column="sadb_extra" property="extra"/>
+        <result column="sadb_create_time" property="createTime"/>
+        <result column="sadb_update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="add" parameterType="DepartmentBlacklist">
+        INSERT INTO spider_amazon_departemnt_blacklist (
+          sad_name,
+          bas_code,
+          sad_code,
+          sadb_enable,
+          sadb_extra
+        ) VALUES (
+          #{depName},
+          #{siteCode},
+          #{depCode},
+          #{enable},
+          #{extra}
+        )
+    </insert>
+
+    <insert id="addAll" parameterType="java.util.List">
+        INSERT INTO spider_amazon_departemnt_blacklist (
+          sad_name,
+          bas_code,
+          sad_code,
+          sadb_enable,
+          sadb_extra
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+              #{item.depName},
+              #{item.siteCode},
+              #{item.depCode},
+              #{item.enbale},
+              #{item.extra}
+            )
+        </foreach>
+    </insert>
+
+    <select id="findAll" resultMap="DepartmentBlacklistMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_departemnt_blacklist
+    </select>
+
+    <select id="findByDoubleCode" parameterType="java.lang.String" resultMap="DepartmentBlacklistMap">
+        SELECT
+          *
+        FROM
+          spider_amazon_departemnt_blacklist
+        WHERE
+          sad_code = #{0} AND bas_code = #{1}
+    </select>
+
+    <select id="findByDepCodeCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+          count(*)
+        FROM
+          spider_amazon_departemnt_blacklist
+        WHERE
+          sad_code = #{0} AND bas_code = #{1}
+    </select>
+
+    <update id="update" parameterType="DepartmentBlacklist">
+        UPDATE
+          spider_amazon_departemnt_blacklist
+        SET
+          sad_name = #{depName},
+          bas_code = #{siteCode},
+          sad_code = #{depCode},
+          sadb_enable = #{enable},
+          sadb_extra = #{extra}
+        WHERE
+          sadb_id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM
+          spider_amazon_departemnt_blacklist
+        WHERE
+          sadb_id = #{0}
+    </delete>
+
+    <delete id="deleteByCode" parameterType="java.lang.String">
+        DELETE FROM
+          spider_amazon_departemnt_blacklist
+        WHERE
+          sad_code = #{0} AND bas_code = #{1}
+    </delete>
+
+
+</mapper>

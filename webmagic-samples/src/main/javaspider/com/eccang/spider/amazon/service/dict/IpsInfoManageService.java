@@ -165,7 +165,7 @@ public class IpsInfoManageService {
             }
 
             /*判断当前使用的IP是否使用时间*/
-            if (ipsInfoManageList.size() > 0 && switchDate != null) {
+            if (ipsInfoManageList != null && ipsInfoManageList.size() > 0 && switchDate != null) {
                 double useTime = (double) (System.currentTimeMillis() - switchDate.getTime()) / (double) 1000;
                 if (statusCode == 407 && useTime < 20) {
                     mLogger.info("出现状态码407,IP没有使用到20s,无需切换IP.");

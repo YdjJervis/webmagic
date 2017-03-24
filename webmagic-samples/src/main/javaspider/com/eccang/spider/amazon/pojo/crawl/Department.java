@@ -14,11 +14,12 @@ public class Department extends BasePojo {
 
     public String batchNum;
     public String depName;
+    public Integer pId;
     public String parentDepName;
+    public String siteCode;
+    public String depCode;
     public String depTab;
     public String depUrl;
-    public String urlMD5;
-    public String pDepUrl;
     public int depLevel;
     public Date syncTime;
 
@@ -27,11 +28,12 @@ public class Department extends BasePojo {
         return "Department{" +
                 "batchNum='" + batchNum + '\'' +
                 ", depName='" + depName + '\'' +
+                ", pId =" + pId +
                 ", parentDepName='" + parentDepName + '\'' +
+                ", siteCode='" + siteCode + '\'' +
+                ", depCode='" + depCode + '\'' +
                 ", depTab='" + depTab + '\'' +
                 ", depUrl='" + depUrl + '\'' +
-                ", urlMD5='" + urlMD5 + '\'' +
-                "，pDepUrl'" + pDepUrl + '\'' +
                 ", depLevel=" + depLevel + '\'' +
                 ", syncTime=" + syncTime +
                 '}';
