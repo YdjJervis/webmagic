@@ -86,15 +86,10 @@ public class PushTask {
     private boolean push(PushDataReq pushDataReq) {
         boolean pushResult = false;
         try {
-//            String response = "";
-//            if (pushDataReq.getCustomerCode().equals("EC_001")) {
             /*通过客户码，判断调用推送接口的方式*/
             sLogger.info("开始推送已经完成的批量信息.");
             String response = new Ec_Service(pushDataReq.getWsUrl()).getEcSOAP().pushMessage(pushDataReq.getCustomerCode(), pushDataReq.getPlatformCode(), pushDataReq.getToken(), new Gson().toJson(pushDataReq.getData()));
             sLogger.info("推送响应信息：" + response);
-//            } else {
-//                sLogger.info("客户（" + pushDataReq.getCustomerCode() + "）" + "没有对接推送接口.");
-//            }
             BaseRspParam baseRspParam = new Gson().fromJson(response, BaseRspParam.class);
             if (baseRspParam.getStatus() == 200) {
                 pushResult = true;
