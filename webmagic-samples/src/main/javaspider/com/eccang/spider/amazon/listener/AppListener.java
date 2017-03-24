@@ -1,4 +1,4 @@
-package com.eccang.spider.amazon.monitor;
+package com.eccang.spider.amazon.listener;
 
 import com.eccang.spider.base.rediscache.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import com.eccang.spider.amazon.service.UrlService;
  * @date 2016/11/1 14:11
  */
 @Component
-public class StatusListener implements ApplicationListener<ContextRefreshedEvent> {
+public class AppListener implements ApplicationListener<ContextRefreshedEvent> {
 
     @Autowired
     private UrlService mUrlService;

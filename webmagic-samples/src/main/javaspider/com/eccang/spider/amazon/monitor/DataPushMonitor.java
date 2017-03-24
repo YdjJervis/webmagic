@@ -1,4 +1,4 @@
-package com.eccang.wsclient.push;
+package com.eccang.spider.amazon.monitor;
 
 import com.eccang.spider.amazon.pojo.PushQueue;
 import com.eccang.spider.amazon.pojo.batch.Batch;
@@ -12,29 +12,31 @@ import com.eccang.spider.amazon.service.batch.BatchReviewService;
 import com.eccang.spider.amazon.service.batch.BatchService;
 import com.eccang.spider.amazon.service.dict.APIService;
 import com.eccang.spider.amazon.service.relation.CustomerReviewService;
+import com.eccang.spider.base.monitor.ScheduledTask;
 import com.eccang.wsclient.api.Ec_Service;
 import com.eccang.wsclient.asin.BaseRspParam;
 import com.eccang.wsclient.pojo.PushDataReq;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Hardy
+ * @author Jervis
  * @version V0.1
  * @Description:
- * @date 2016/12/5 18:59
+ * @date 2016/10/21 9:37
  */
 @Service
-@Transactional
-public class PushTask {
+public class DataPushMonitor implements ScheduledTask {
+
+    private static final Logger mLogger = LoggerFactory.getLogger(DataPushMonitor.class);
 
     @Autowired
     private PushQueueService mPushQueueService;
@@ -54,9 +56,15 @@ public class PushTask {
     @Autowired
     private CustomerReviewService mCustomerReviewService;
 
-    private Logger sLogger = Logger.getLogger(getClass());
+    @Override
+    public void execute() {
+        List<PushQueue> pushQueueList = mPushQueueService.findNeed2Push();
+        for (PushQueue pushQueue : pushQueueList) {
+            startTask(pushQueue);
+        }
+    }
 
-    void startTask(PushQueue pushQueue) {
+    private void startTask(PushQueue pushQueue) {
         /*更新此推送状态为推送中*/
         pushQueue.status = 1;
         pushQueue.times += 1;
@@ -69,7 +77,7 @@ public class PushTask {
             isSuccess = push(pushDataReq);
         } else {
             if (!pushDataReq.getData().getType().equalsIgnoreCase("0")) {
-                sLogger.info("批次号为(" + pushQueue.batchNum + ")没有数据变化，无需推送数据.");
+                mLogger.info("批次号为(" + pushQueue.batchNum + ")没有数据变化，无需推送数据.");
             } else {
                 isSuccess = push(pushDataReq);
             }
@@ -87,15 +95,15 @@ public class PushTask {
         boolean pushResult = false;
         try {
             /*通过客户码，判断调用推送接口的方式*/
-            sLogger.info("开始推送已经完成的批量信息.");
+            mLogger.info("开始推送已经完成的批量信息.");
             String response = new Ec_Service(pushDataReq.getWsUrl()).getEcSOAP().pushMessage(pushDataReq.getCustomerCode(), pushDataReq.getPlatformCode(), pushDataReq.getToken(), new Gson().toJson(pushDataReq.getData()));
-            sLogger.info("推送响应信息：" + response);
+            mLogger.info("推送响应信息：" + response);
             BaseRspParam baseRspParam = new Gson().fromJson(response, BaseRspParam.class);
             if (baseRspParam.getStatus() == 200) {
                 pushResult = true;
             }
         } catch (Exception e) {
-            sLogger.info(e);
+            mLogger.info(e.toString());
         }
         return pushResult;
     }

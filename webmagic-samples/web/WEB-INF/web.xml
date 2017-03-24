@@ -29,7 +29,7 @@
     
     <!-- 自定义监听器 -->
     <listener>
-        <listener-class>com.eccang.spider.amazon.monitor.StatusListener</listener-class>
+        <listener-class>com.eccang.spider.amazon.listener.AppListener</listener-class>
     </listener>
 
     <!--配置CXF-->

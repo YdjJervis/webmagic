@@ -154,8 +154,7 @@ public abstract class AbstractSpiderWS implements SpiderWS {
     }
 
     protected void serverException(BaseRspParam baseRspParam, Exception e) {
-        sLogger.error(e.getMessage());
-        e.printStackTrace();
+        sLogger.error("服务器异常", e);
         baseRspParam.status = R.HttpStatus.SERVER_EXCEPTION;
         baseRspParam.msg = R.RequestMsg.SERVER_EXCEPTION;
     }
