@@ -13,10 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Jervis
@@ -44,7 +41,9 @@ public class GenerateAsinBatchMonitor extends GenerateBatchMonitor implements Sc
         mLogger.info("查询到的需要生成批次的总量：" + customerAsinList.size());
 
         /* 去掉已经下架的记录，不需要更新爬取 */
-        for (CustomerAsin customerAsin : customerAsinList) {
+        ListIterator<CustomerAsin> caIterator = customerAsinList.listIterator();
+        while (caIterator.hasNext()) {
+            CustomerAsin customerAsin = caIterator.next();
             if (mNoSellService.isExist(new Asin(customerAsin.siteCode, customerAsin.asin))) {
                 customerAsinList.remove(customerAsin);
             }
