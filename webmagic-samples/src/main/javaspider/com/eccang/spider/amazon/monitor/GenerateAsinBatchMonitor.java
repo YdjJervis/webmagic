@@ -45,7 +45,7 @@ public class GenerateAsinBatchMonitor extends GenerateBatchMonitor implements Sc
         while (caIterator.hasNext()) {
             CustomerAsin customerAsin = caIterator.next();
             if (mNoSellService.isExist(new Asin(customerAsin.siteCode, customerAsin.asin))) {
-                customerAsinList.remove(customerAsin);
+                caIterator.remove();
             }
             customerAsin.syncTime = currentTime;
             mCustomerAsinService.update(customerAsin);
