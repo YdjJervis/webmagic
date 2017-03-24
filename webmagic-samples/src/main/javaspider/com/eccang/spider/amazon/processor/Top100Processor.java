@@ -5,9 +5,12 @@ import com.eccang.spider.amazon.pojo.Url;
 import com.eccang.spider.amazon.pojo.batch.Batch;
 import com.eccang.spider.amazon.pojo.batch.BatchTop100;
 import com.eccang.spider.amazon.pojo.crawl.Department;
+import com.eccang.spider.amazon.pojo.top100.DepartmentWhitelist;
 import com.eccang.spider.amazon.pojo.top100.SellingProduct;
 import com.eccang.spider.amazon.service.batch.BatchTop100Service;
 import com.eccang.spider.amazon.service.crawl.DepartmentService;
+import com.eccang.spider.amazon.service.top100.DepartmentBlacklistService;
+import com.eccang.spider.amazon.service.top100.DepartmentWhitelistService;
 import com.eccang.spider.amazon.service.top100.SellingProductService;
 import com.eccang.spider.base.monitor.ScheduledTask;
 import com.eccang.spider.base.util.UrlUtils;
@@ -25,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.selector.Json;
 import us.codecraft.webmagic.selector.Selectable;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,43 +49,43 @@ import java.util.List;
 public class Top100Processor extends BasePageProcessor implements ScheduledTask {
 
     private final static Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.TOP);
+
     @Autowired
     private DepartmentService mDepartmentService;
     @Autowired
     private SellingProductService mSellingProductService;
     @Autowired
     private BatchTop100Service mBatchTop100Service;
+    @Autowired
+    private DepartmentBlacklistService mBlacklistService;
+    @Autowired
+    private DepartmentWhitelistService mWhitelistService;
 
     @Override
     protected void dealOtherPage(Page page) {
         Url url = getUrl(page);
 
-        /*解析当前选中品类名称*/
-        Department department = findDepartment(page);
-
         if (url.type == R.CrawlType.TOP_100_DEPARTMENT) {
-            if (department != null) {
-                if (department.depLevel < 4) {
-                    /*解析商品listing,并入库*/
-                    extractTop100ProductListing(page, url);
-                    /*解析商品页的第一页，并入库*/
-                    extractTop100ProductInfo(page, url);
 
-                    /*
-                     *如果当前选中品类级数小于3，则解析子品类
-                     */
-                    if (department.depLevel < 3) {
-                        /*查询子品类*/
-                        List<Department> childDepList = mDepartmentService.findByParentUrl(department.depUrl);
+            /*解析当前选中品类名称*/
+            Department department = findDepartment(page, url);
 
-                        if (CollectionUtils.isEmpty(childDepList)) {
-                            /*解析当前选中品类下的子品类*/
-                            List<Department> departments = extractDepartment(page, department);
-                            /*入库品类信息*/
-                            if (CollectionUtils.isNotEmpty(departments)) {
-                                storageDepartmentInfo(departments, department, url);
-                            }
-                        }
+            if (department.depLevel < 4) {
+
+                /*解析商品listing,并入库*/
+                extractTop100ProductListing(page, url);
+                /*解析商品页的第一页，并入库*/
+                extractTop100ProductInfo(page, url);
+
+                /*
+                 *如果当前选中品类级数小于3，则解析子品类
+                 */
+                if (department.depLevel < 3) {
+                    /*解析当前选中品类下的子品类*/
+                    List<Department> departments = extractDepartment(page, department);
+                    /*入库品类信息*/
+                    if (CollectionUtils.isNotEmpty(departments)) {
+                        storageDepartmentInfo(departments, department, url);
                     }
                 }
             }
@@ -99,23 +103,25 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
     /**
      * 解析或查询当前选中品类信息
      */
-    private Department findDepartment(Page page) {
-        /*解析当前选中品类名*/
-        String parentDepName = extractDepartmentName(page);
-
-        if (StringUtils.isNotEmpty(parentDepName)) {
-            parentDepName = parentDepName.trim();
-        }
+    private Department findDepartment(Page page, Url url) {
 
         Department parentDep;
         if (isRootDepartment(page)) {
+
+            /*解析当前选中品类名*/
+            String parentDepName = extractDepartmentName(page);
+
+            if (StringUtils.isNotEmpty(parentDepName)) {
+                parentDepName = parentDepName.trim();
+            }
+
             parentDep = new Department();
             parentDep.depName = parentDepName;
-            parentDep.depLevel = 0;
+            parentDep.siteCode = url.siteCode;
             /*解析一级导航*/
             parentDep.depTab = extractDepartmentTag(page);
         } else {
-            parentDep = mDepartmentService.findByNameAndUrlMD5(parentDepName, getUrl(page).urlMD5);
+            parentDep = mDepartmentService.findByBatchNumAndDepCode(url.batchNum, url.depCode);
         }
         return parentDep;
     }
@@ -141,21 +147,36 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
 
             Department department;
             String url;
-            for (int i = 0; i < nodeList.getLength(); i++) {
+            String batchNum = getUrl(page).batchNum;
+            int childDepNum = nodeList.getLength();
+
+            /*
+             * @param depCombin 解析到的品类的前两级的品类名组合
+             * @Note 当只爬取前三级品类的时候适用，如果要解析第四级或以下的品类则无法满足通过品类名称组合转md5来确定唯一的品类码
+             */
+            String depCombin = dep.depName + dep.parentDepName;
+
+            for (int i = 0; i < childDepNum; i++) {
 
                 Node node = nodeList.item(i);
                 System.out.println(node.getTextContent() + ":" + xPath.evaluate("@href", node, XPathConstants.STRING));
                 department = new Department();
-                department.batchNum = getUrl(page).batchNum;
-                department.depName = node.getTextContent();
+                department.batchNum = batchNum;
 
-                if (department.depName.contains("&amp;")) {
-                    department.depName = department.depName.replace("&amp;", "&");
+                department.depName = node.getTextContent();
+                department.depName = department.depName.replace("&amp;", "&");
+
+                department.depCode = UrlUtils.md5(department.depName + depCombin);
+                /*
+                 *判断当前选中的品类是否在黑名单中，存在，则不解析其子孙品类及产品信息
+                 */
+                if (mBlacklistService.findByDepCodeCount(department.depCode, dep.siteCode) > 0) {
+                    mLogger.info("当前选中的品类(" + department.depName + ")，已经被标识为黑名单，不需要爬取.");
+                    continue;
                 }
 
                 url = (String) xPath.evaluate("@href", node, XPathConstants.STRING);
                 department.depUrl = url;
-                department.urlMD5 = UrlUtils.md5(url);
                 departments.add(department);
             }
 
@@ -178,7 +199,11 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
      * 解析当前选中品类名
      */
     private String extractDepartmentName(Page page) {
-        return page.getHtml().xpath("//*[@id='zg_browseRoot']//span[@class='zg_selected']/text()").get();
+        String selectDep = page.getHtml().xpath("//*[@id='zg_browseRoot']//span[@class='zg_selected']/text()").get();
+        if (StringUtils.isEmpty(selectDep)) {
+            selectDep = page.getHtml().xpath("//*[@id='zg_listTitle']/span[@class='category']/text()").get();
+        }
+        return selectDep;
     }
 
     /**
@@ -196,7 +221,9 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         String classifyUrl = page.getHtml().xpath("//li[@id='zg_tabTitle']/h3/a/@href").get();
         proClassifyUrl.batchNum = url.batchNum;
         proClassifyUrl.url = classifyUrl;
-        proClassifyUrl.urlMD5 = UrlUtils.md5(classifyUrl);
+        proClassifyUrl.priority = url.priority;
+        proClassifyUrl.depCode = url.depCode;
+        proClassifyUrl.urlMD5 = UrlUtils.md5(url.batchNum + classifyUrl + url.depCode);
         proClassifyUrl.parentUrl = url.url;
         proClassifyUrl.type = R.CrawlType.TOP_100_CLASSIFY;
         proClassifyUrl.siteCode = url.siteCode;
@@ -216,19 +243,29 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
     private void storageDepartmentInfo(List<Department> departments, Department parentDep, Url url) {
         List<Url> urls = new ArrayList<>();
         Url depUrl;
+
+        int depLevel = parentDep.depLevel + 1;
+
         for (Department department : departments) {
             depUrl = new Url();
-            department.depLevel = parentDep.depLevel + 1;
+            department.depLevel = depLevel;
+            department.pId = parentDep.id;
             department.parentDepName = parentDep.depName;
-            department.urlMD5 = UrlUtils.md5(department.depUrl);
-            department.pDepUrl = parentDep.depUrl;
+            department.siteCode = url.siteCode;
             department.depTab = parentDep.depTab;
             department.syncTime = new Date();
 
+            /*
+             *判断当前选中的品类是否在白名单中，存在，则修改当前url解析的优先级与白名单中的一致
+             */
+            DepartmentWhitelist whitelist = mWhitelistService.findByDoubleCode(department.depCode, department.siteCode);
+
             /*品类URL入库到URL总表中*/
             depUrl.batchNum = url.batchNum;
+            depUrl.priority = whitelist != null ? whitelist.priority : url.priority;
             depUrl.url = department.depUrl;
-            depUrl.urlMD5 = UrlUtils.md5(department.depUrl);
+            depUrl.depCode = department.depCode;
+            depUrl.urlMD5 = UrlUtils.md5(url.batchNum + department.depUrl + url.depCode);
             depUrl.type = R.CrawlType.TOP_100_DEPARTMENT;
             depUrl.siteCode = url.siteCode;
             urls.add(depUrl);
@@ -246,11 +283,13 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         List<Selectable> nodes = page.getHtml().xpath("//*[@id='zg_paginationWrapper']/ol/li").nodes();
         if (CollectionUtils.isNotEmpty(nodes)) {
             Url url;
-            for (int i = 1; i < nodes.size(); i++) {
+            int size = nodes.size();
+            for (int i = 1; i < size; i++) {
                 url = new Url();
                 String urlStr = nodes.get(i).xpath("/li/a/@href").get();
                 url.batchNum = depUrl.batchNum;
-                url.urlMD5 = UrlUtils.md5(urlStr);
+                url.priority = depUrl.priority;
+                url.urlMD5 = UrlUtils.md5(depUrl.batchNum + urlStr + depUrl.depCode);
                 url.batchNum = depUrl.batchNum;
                 url.siteCode = depUrl.siteCode;
 
@@ -260,6 +299,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                     url.parentUrl = depUrl.url;
                 }
 
+                url.depCode = depUrl.depCode;
                 url.url = urlStr;
                 url.type = R.CrawlType.TOP_100_PRODUCT;
                 urls.add(url);
@@ -280,7 +320,6 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         List<Selectable> nodes = page.getHtml().xpath("//*[@id='zg_centerListWrapper']/div[@class='zg_itemImmersion']").nodes();
         if (CollectionUtils.isNotEmpty(nodes)) {
             SellingProduct product;
-            String departmentName = extractDepartmentName(page);
             String classify = extractProClassify(page);
 
             if (StringUtils.isNotEmpty(classify) && url.type == R.CrawlType.TOP_100_DEPARTMENT) {
@@ -303,9 +342,10 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
 
                 product.urlMD5 = UrlUtils.md5(selectable.get());
                 product.siteCode = url.siteCode;
-                product.asin = selectable.regex(".*/dp/([0-9A-Za-z]*)/").get();
 
-                product.depName = departmentName;
+                /*解析产品asin*/
+                String asinSelectable = node.xpath("//div[@class='zg_itemWrapper']/div[contains(@class, 'p13n-asin')]/@data-p13n-asin-metadata").get();
+                product.asin = new Json(asinSelectable).jsonPath("$.asin").get();
 
                 if (url.type == R.CrawlType.TOP_100_DEPARTMENT) {
                     product.depUrl = url.url;
@@ -313,11 +353,14 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                     product.depUrl = url.parentUrl;
                 }
 
+                product.depCode = url.depCode;
+
                 product.classify = classify;
                 String rankNumStr = node.xpath("//div[@class='zg_rankDiv']/span/text()").get();
                 int rankNum = 0;
                 if (StringUtils.isNotEmpty(rankNumStr)) {
-                    rankNum = Integer.valueOf(rankNumStr.trim().replace(".", ""));
+                    rankNumStr = rankNumStr.trim().replace(".", "");
+                    rankNum = Integer.valueOf(rankNumStr);
                 }
                 product.rankNum = rankNum;
                 product.name = node.xpath("//div[@class='zg_itemWrapper']/div/a/div[@class='p13n-sc-truncate']/@title").get();
@@ -330,9 +373,8 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                 product.reviewStar = node.xpath("//div[@class='zg_itemWrapper']/div/div[contains(@class,'a-icon-row')]//span[@class='a-icon-alt']/text()").get();
                 String reviewNum = node.xpath("//div[@class='zg_itemWrapper']/div/div[contains(@class,'a-icon-row')]/a[contains(@class,'a-size-small')]/text()").get();
                 if (StringUtils.isNotEmpty(reviewNum)) {
-                    if (reviewNum.contains(",")) {
-                        reviewNum = reviewNum.replace(",", "");
-                    }
+                    reviewNum = reviewNum.replace(",", "");
+                    reviewNum = reviewNum.replace(".", "");
                     product.reviewNum = Integer.valueOf(reviewNum);
                 }
 
@@ -342,14 +384,11 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                     product.amazonDelivery = 1;
                 }
 
-
                 products.add(product);
             }
         }
 
-        if (CollectionUtils.isNotEmpty(products)) {
-            mSellingProductService.addAll(products);
-        }
+        mSellingProductService.addAll(products);
     }
 
     /**
@@ -410,9 +449,6 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         }
 
         mBatchService.update(batch);
-
-        Date endTime = new Date();
-        mLogger.info("update batch status time long : " + (endTime.getTime() - currentTime.getTime())/1000f);
     }
 
     /**
@@ -424,7 +460,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         for (int i = 0; i < index; i++) {
             mUrlHistoryService.addAll(urls.subList(i * addNum, (i + 1) * addNum - 1));
         }
-        mUrlHistoryService.addAll(urls.subList(index*addNum, urls.size()));
+        mUrlHistoryService.addAll(urls.subList(index * addNum, urls.size()));
     }
 
     @Override
