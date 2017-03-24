@@ -109,6 +109,7 @@ public abstract class BasePageProcessor implements PageProcessor {
     protected Profile sProfile;
 
     int a;
+    int c;
     @Override
     public synchronized void process(Page page) {
         sProfile = mProfileService.find();
