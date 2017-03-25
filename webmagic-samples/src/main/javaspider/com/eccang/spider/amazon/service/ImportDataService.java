@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 public class ImportDataService {
     @Autowired
-    ImportDataDao mImportDataDao;
+    private ImportDataDao mImportDataDao;
 
     public List<ImportData> findBySite(String siteCode,int limit) {
         return mImportDataDao.findBySite(siteCode, limit);

@@ -61,7 +61,7 @@ public class ParseUrlReviewBatchMonitor extends ParseMonitor {
             mBatchReviewService.update(batchReview);
         }
 
-        sLogger.info("新添加的review的监听条数：" + urlList.size());
+        sLogger.info("新添加的review的监听条数：{}" + urlList.size());
         return urlList;
     }
 }

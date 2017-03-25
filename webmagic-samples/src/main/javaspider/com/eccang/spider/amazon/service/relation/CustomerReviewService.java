@@ -19,7 +19,7 @@ import java.util.List;
 public class CustomerReviewService {
 
     @Autowired
-    CustomerReviewDao mCustomerReviewDao;
+    private CustomerReviewDao mCustomerReviewDao;
 
     public void add(String reviewId) {
         CustomerReview customerReview = new CustomerReview(reviewId);

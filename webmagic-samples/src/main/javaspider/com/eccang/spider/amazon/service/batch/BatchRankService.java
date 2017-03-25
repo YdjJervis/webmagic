@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class BatchRankService {
     @Autowired
-    BatchRankDao mBatchRankDao;
+    private BatchRankDao mBatchRankDao;
 
     public void addAll(List<BatchRank> batchRanks) {
         mBatchRankDao.addAll(batchRanks);

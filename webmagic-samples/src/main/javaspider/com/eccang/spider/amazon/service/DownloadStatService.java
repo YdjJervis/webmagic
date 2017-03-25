@@ -17,7 +17,7 @@ import java.util.List;
 public class DownloadStatService {
 
     @Autowired
-    DownloadStatDao mDownloadStatDao;
+    private DownloadStatDao mDownloadStatDao;
 
     /**
      * 查询所有数据

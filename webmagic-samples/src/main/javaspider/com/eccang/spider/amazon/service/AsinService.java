@@ -1,15 +1,17 @@
 package com.eccang.spider.amazon.service;
 
-import com.google.gson.Gson;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.dao.AsinDao;
 import com.eccang.spider.amazon.pojo.Asin;
-import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.pojo.StarReviewCount;
 import com.eccang.spider.amazon.pojo.StarReviewMap;
+import com.eccang.spider.amazon.pojo.crawl.Review;
 import com.eccang.spider.amazon.service.crawl.ReviewService;
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +27,7 @@ import java.util.Map;
 @Service
 public class AsinService {
 
-    private Logger mLogger = Logger.getLogger(getClass());
+    private Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.PUBLIC);
 
     @Autowired
     private AsinDao mAsinDao;
@@ -86,7 +88,7 @@ public class AsinService {
     }
 
     public void updateAndDeleteUrl(String siteCode, String asinCode) {
-        mLogger.warn("该商品已经下架：" + asinCode);
+        mLogger.warn("该商品已经下架：{}", asinCode);
 
         /*标记此ASIN为下架产品*/
         Asin asin = findByAsin(siteCode, asinCode);

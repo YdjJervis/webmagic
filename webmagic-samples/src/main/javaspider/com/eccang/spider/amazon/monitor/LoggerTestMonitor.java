@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoggerTestMonitor implements ScheduledTask {
 
-    private static final Logger mLogger = LoggerFactory.getLogger(LoggerTestMonitor.class);
+    private static final Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.PUBLIC);
     private static final Logger mLoggerBusiness = LoggerFactory.getLogger(R.BusinessLog.AS);
 
     @Override

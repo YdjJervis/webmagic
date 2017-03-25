@@ -1,10 +1,9 @@
 package com.eccang.spider.amazon.service.dict;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.dao.dict.APIDao;
 import com.eccang.spider.amazon.pojo.dict.API;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Jervis
@@ -14,8 +13,6 @@ import com.eccang.spider.amazon.pojo.dict.API;
  */
 @Service
 public class APIService {
-
-    private Logger mLogger = Logger.getLogger(getClass());
 
     @Autowired
     private APIDao mAPIDao;

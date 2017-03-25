@@ -2,7 +2,6 @@ package com.eccang.spider.amazon.service.crawl;
 
 import com.eccang.spider.amazon.dao.crawl.ProductDao;
 import com.eccang.spider.amazon.pojo.crawl.Product;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ProductService {
-
-    private Logger mLogger = Logger.getLogger(getClass());
 
     @Autowired
     private ProductDao mDao;

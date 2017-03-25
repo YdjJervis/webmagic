@@ -1,7 +1,9 @@
 package com.eccang.spider.amazon.util;
 
+import com.eccang.spider.amazon.R;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.BinaryClient;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -20,7 +22,7 @@ import java.util.Set;
  */
 public class RedisUtils {
 
-    protected static Logger logger = Logger.getLogger(RedisUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(R.BusinessLog.PUBLIC);
     private static final String address_array = "127.0.0.1,192.168.0.1";
 
     //访问密码
@@ -88,12 +90,12 @@ public class RedisUtils {
         try {
             initJedisPool(port, address_array.split(",")[0]);
         } catch (Exception e) {
-            logger.error("First create JedisPool error : " + e);
+            logger.error("First create JedisPool error", e);
             try {
                 //如果第一个IP异常，则访问第二个IP
                 initJedisPool(port, address_array.split(",")[1]);
             } catch (Exception e2) {
-                logger.error("Second create JedisPool error : " + e2);
+                logger.error("Second create JedisPool error", e2);
             }
         }
     }
@@ -118,6 +120,7 @@ public class RedisUtils {
 
     /**
      * 同步获取Jedis实例
+     *
      * @return Jedis
      */
     private synchronized static Jedis getJedis() {
@@ -130,7 +133,7 @@ public class RedisUtils {
                 jedis = jedisPool.getResource();
             }
         } catch (Exception e) {
-            logger.error("Get jedis error : " + e);
+            logger.error("Get jedis error", e);
         }
         return jedis;
     }
@@ -155,7 +158,7 @@ public class RedisUtils {
             value = StringUtils.isEmpty(value) ? "" : value;
             getJedis().set(key, value);
         } catch (Exception e) {
-            logger.error("Set key error : " + e);
+            logger.error("Set key error", e);
         }
     }
 
@@ -167,7 +170,7 @@ public class RedisUtils {
             value = StringUtils.isEmpty(value) ? "" : value;
             getJedis().setex(key, seconds, value);
         } catch (Exception e) {
-            logger.error("Set keyex error : " + e);
+            logger.error("Set keyex error", e);
         }
     }
 
@@ -354,6 +357,7 @@ public class RedisUtils {
 
 
     //**************************** redis 列表List start***************************/
+
     /**
      * 将一个值插入到列表头部，value可以重复，返回列表的长度
      *

@@ -1,10 +1,9 @@
 package com.eccang.spider.amazon.service.dict;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.dao.dict.PlatformDao;
 import com.eccang.spider.amazon.pojo.dict.Platform;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Jervis
@@ -14,8 +13,6 @@ import com.eccang.spider.amazon.pojo.dict.Platform;
  */
 @Service
 public class PlatformService {
-
-    private Logger mLogger = Logger.getLogger(getClass());
 
     @Autowired
     private PlatformDao mPlatformDao;

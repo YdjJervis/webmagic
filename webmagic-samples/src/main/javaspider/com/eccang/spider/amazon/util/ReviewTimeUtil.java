@@ -1,6 +1,8 @@
 package com.eccang.spider.amazon.util;
 
-import org.apache.log4j.Logger;
+import com.eccang.spider.amazon.R;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -14,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class ReviewTimeUtil {
 
-    private static Logger logger = Logger.getLogger(ReviewTimeUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(R.BusinessLog.PUBLIC);
 
     public static Date parse(String time, String siteCode) {
 
@@ -95,7 +97,7 @@ public class ReviewTimeUtil {
                 }
             }
         } catch (Exception e) {
-            logger.equals("日期格式化失败，请检查并修正..." + time + " " + siteCode);
+            logger.error("日期格式化失败，请检查并修正...{} {}", time, siteCode);
         }
 
         return date;

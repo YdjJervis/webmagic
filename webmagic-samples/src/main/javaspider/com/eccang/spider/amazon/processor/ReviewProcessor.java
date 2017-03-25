@@ -42,12 +42,12 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         Url urlExtra = getUrl(page);
 
         List<Selectable> reviewNodeList = extractReviewNodeList(page);
-        mLogger.info("抽取Review条数：" + reviewNodeList.size());
+        mLogger.info("抽取Review条数：{}", reviewNodeList.size());
 
         String asin = extractAsin(page);
         String siteCode = extractSite(page).code;
 
-        mLogger.info("解析 " + siteCode + " 站点下ASIN:" + asin);
+        mLogger.info("解析 {} 站点下ASIN:{}", siteCode, asin);
 
         List<Review> reviewList = new ArrayList<>();
         for (Selectable reviewNode : reviewNodeList) {
@@ -57,7 +57,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
             String pageNum = UrlUtils.getValue(currentUrl, "pageNumber");
             review.pageNum = StringUtils.isEmpty(pageNum) ? 1 : Integer.valueOf(pageNum);
             if (sProfile.debug) {
-                mLogger.debug("抽取的Review：" + review);
+                mLogger.debug("抽取的Review：{}", review);
             }
 
             reviewList.add(review);
@@ -66,7 +66,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
         try {
             mReviewService.addAll(reviewList);
         } catch (Exception e) {
-            mLogger.error("保存Review列表失败：" + reviewList);
+            mLogger.error("保存Review列表失败：{}", reviewList);
         }
 
         /* 当前URL没有pageNumber属性的话 */
@@ -75,7 +75,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
             List<Url> urlList = new ArrayList<>();
 
             int totalPage = extractTotalPage(page);
-            mLogger.info(asin + " 评论的最大页码为 " + totalPage);
+            mLogger.info("{} 评论的最大页码为 {}", asin, totalPage);
             for (int i = 2; i <= totalPage; i++) {
                 Url url = new Url();
                 url.batchNum = urlExtra.batchNum;
@@ -87,7 +87,7 @@ public class ReviewProcessor extends BasePageProcessor implements ScheduledTask 
                 url.urlMD5 = UrlUtils.md5(url.batchNum + url.url);
 
                 if (sProfile.debug) {
-                    mLogger.debug("生成Reivew翻页Url：" + url);
+                    mLogger.debug("生成Reivew翻页Url：{}", url);
                 }
                 urlList.add(url);
             }

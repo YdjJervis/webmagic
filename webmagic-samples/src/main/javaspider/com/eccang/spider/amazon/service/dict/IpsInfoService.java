@@ -17,7 +17,7 @@ import java.util.List;
 public class IpsInfoService {
 
     @Autowired
-    IpsInfoDao mIpsInfoDao;
+    private IpsInfoDao mIpsInfoDao;
 
     /**
      * 查询所有IP信息

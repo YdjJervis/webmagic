@@ -16,7 +16,7 @@ import java.util.List;
 public class BatchTop100Service {
 
     @Autowired
-    BatchTop100Dao mDao;
+    private BatchTop100Dao mDao;
 
     public void add(BatchTop100 batchTop100) {
         mDao.add(batchTop100);

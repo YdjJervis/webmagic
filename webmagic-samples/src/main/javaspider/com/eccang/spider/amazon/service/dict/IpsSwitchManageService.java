@@ -23,7 +23,7 @@ import java.util.Map;
 public class IpsSwitchManageService {
 
     @Autowired
-    IpsSwitchManageDao mIpsSwitchManageDao;
+    private IpsSwitchManageDao mIpsSwitchManageDao;
 
     /**
      * 新增

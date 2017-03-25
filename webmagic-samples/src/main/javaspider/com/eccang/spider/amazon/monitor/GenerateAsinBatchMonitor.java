@@ -38,7 +38,7 @@ public class GenerateAsinBatchMonitor extends GenerateBatchMonitor implements Sc
 
         /*查询已经完成的客户关系review数据*/
         List<CustomerAsin> customerAsinList = mCustomerAsinService.findNeedGenerateBatch();
-        mLogger.info("查询到的需要生成批次的总量：" + customerAsinList.size());
+        mLogger.info("查询到的需要生成批次的总量：{}", customerAsinList.size());
 
         /* 去掉已经下架的记录，不需要更新爬取 */
         ListIterator<CustomerAsin> caIterator = customerAsinList.listIterator();
@@ -57,7 +57,7 @@ public class GenerateAsinBatchMonitor extends GenerateBatchMonitor implements Sc
         /*生成总单与详单*/
         for (String customerCode : customerListMap.keySet()) {
             Customer customer = mCustomerService.findByCode(customerCode);
-            mLogger.info("客户" + customerCode + "开始生成批次...");
+            mLogger.info("客户{}开始生成批次...", customerCode);
 
             List<CustomerAsin> rmList = customerListMap.get(customerCode);
             if (customer.debug) {
@@ -87,9 +87,9 @@ public class GenerateAsinBatchMonitor extends GenerateBatchMonitor implements Sc
                 mLogger.debug(needAddList.toString());
             }
 
-            mLogger.info("客户 " + customerCode + " 生成的批次单号/数量:" + batch.number + "/" + needAddList.size());
+            mLogger.info("客户 {} 生成的批次单号/数量:{}/{}", customerCode, batch.number, needAddList.size());
 
-            mLogger.info("客户 " + customerCode + "结束生成批次。");
+            mLogger.info("客户 {} 结束生成批次。", customerCode);
         }
 
         mLogger.info("结束生成批次。");

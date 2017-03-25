@@ -17,7 +17,7 @@ import java.util.List;
 public class BusinessService {
 
     @Autowired
-    BusinessDao mBusinessDao;
+    private BusinessDao mBusinessDao;
 
     /**
      * 新增一条数据

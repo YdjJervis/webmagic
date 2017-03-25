@@ -19,7 +19,7 @@ import java.util.List;
 public class CustomerKeywordRankService {
 
     @Autowired
-    CustomerKeywordRankDao mCustomerKeywordRankDao;
+    private CustomerKeywordRankDao mCustomerKeywordRankDao;
 
     public void add(CustomerKeywordRank customerKeywordRank) {
         mCustomerKeywordRankDao.add(customerKeywordRank);

@@ -1,10 +1,9 @@
 package com.eccang.spider.amazon.service.relation;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.dao.relation.CustomerProductInfoDao;
 import com.eccang.spider.amazon.pojo.relation.CustomerProductInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Jervis
@@ -14,8 +13,6 @@ import com.eccang.spider.amazon.pojo.relation.CustomerProductInfo;
  */
 @Service
 public class CustomerProductInfoService {
-
-    private Logger mLogger = Logger.getLogger(getClass());
 
     @Autowired
     private CustomerProductInfoDao mDao;

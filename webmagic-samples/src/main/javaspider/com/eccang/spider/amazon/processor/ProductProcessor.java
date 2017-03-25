@@ -60,7 +60,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
         if (StringUtils.isEmpty(rootAsin)) {
             rootAsin = asinStr;
         }
-        mLogger.info("提取出来的Root Asin ：" + rootAsin);
+        mLogger.info("提取出来的Root Asin ：{}", rootAsin);
 
         /* 把Asin和RootAsin的关系连接上 */
         AsinRootAsin asinRootAsin = new AsinRootAsin();
@@ -94,7 +94,7 @@ public class ProductProcessor extends BasePageProcessor implements ScheduledTask
             mProductService.add(product);
             mLogger.info(product.toString());
         } else {
-            mLogger.warn("当前站点未适配产品基本详细信息抓取：" + site.code);
+            mLogger.warn("当前站点未适配产品基本详细信息抓取：{}", site.code);
         }
 
         /* 把客户和产品详细信息关系入库 */

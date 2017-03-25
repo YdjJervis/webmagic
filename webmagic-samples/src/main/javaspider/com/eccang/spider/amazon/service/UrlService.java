@@ -17,7 +17,8 @@ import com.eccang.spider.base.util.UrlUtils;
 import com.google.gson.Gson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +59,7 @@ public class UrlService {
     @Autowired
     private ReviewService mReviewService;
 
-    private Logger mLogger = Logger.getLogger(getClass());
+    private static final Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.PUBLIC);
 
 
     /**
@@ -128,11 +129,11 @@ public class UrlService {
 
         List<Url> list = find(url.batchNum, url.siteCode, url.asin, R.CrawlType.REVIEW_ALL);
 
-        mLogger.info("ASIN:" + url.asin + " 对应的URL表记录数：" + list.size());
+        mLogger.info("ASIN:{} 对应的URL表记录数：{}", url.asin, list.size());
 
         /* 如果暂时不能计算总进度，就返回 */
         if (!canCalculateProgress(list)) {
-            mLogger.info(url.asin + " 暂时不能统计进度");
+            mLogger.info("{} 暂时不能统计进度", url.asin);
             return;
         }
 
@@ -154,7 +155,7 @@ public class UrlService {
             }
 
         }
-        mLogger.info("过滤器对应页码：" + maxPageMap);
+        mLogger.info("过滤器对应页码：{}", maxPageMap);
 
         /* 把状态码已经为200的加入到临时集合 */
         List<Url> crawledList = new ArrayList<Url>();
@@ -171,7 +172,7 @@ public class UrlService {
             maxPage += filterMaxPage;
         }
 
-        mLogger.info("最大页码总数：" + maxPage + " 已经爬取的页码：" + crawledList.size());
+        mLogger.info("最大页码总数：{} 已经爬取的页码：{}", maxPage, crawledList.size());
 
         /* 从数据库获取一些必要对象 */
         Asin asinObj = mAsinService.findByAsin(url.siteCode, mAsinRootAsinService.findByAsin(url.asin, url.siteCode).rootAsin);
@@ -202,7 +203,7 @@ public class UrlService {
             dbBtchAsin.status = 4;
 
             /* 更新客户-Asin关系的同步时间 */
-            mLogger.info("同步客户关系表记录时间：" + batch.customerCode + " " + dbBtchAsin.siteCode + " " + dbBtchAsin.asin);
+            mLogger.info("同步客户关系表记录时间：{} {} {}", batch.customerCode, dbBtchAsin.siteCode, dbBtchAsin.asin);
             CustomerAsin customerAsin = mCustomerAsinService.find(new CustomerAsin(batch.customerCode, dbBtchAsin.siteCode, dbBtchAsin.asin, batch.immediate));
             customerAsin.syncTime = currentTime;
             mCustomerAsinService.update(customerAsin);

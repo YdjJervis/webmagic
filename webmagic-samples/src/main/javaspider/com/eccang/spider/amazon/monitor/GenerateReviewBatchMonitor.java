@@ -44,7 +44,7 @@ public class GenerateReviewBatchMonitor extends GenerateBatchMonitor implements 
     public void generate(List<CustomerReview> customerReviewList, boolean immediate) {
         Date currentTime = new Date();
 
-        mLogger.info("需要生成新批次号的总量：" + customerReviewList.size());
+        mLogger.info("需要生成新批次号的总量：{}", customerReviewList.size());
 
         /*按客户码分组*/
         Map<String, List<CustomerReview>> customerListMap = initCustomerListMap(customerReviewList);
@@ -73,7 +73,7 @@ public class GenerateReviewBatchMonitor extends GenerateBatchMonitor implements 
                     mCustomerReviewService.update(customerReview);
                 }
             }
-            mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
+            mLogger.info("客户 {} 生成的批次量为：{}", customerCode, needAddList.size());
             /*添加创建详单信息*/
             mBatchReviewService.addAll(needAddList);
 

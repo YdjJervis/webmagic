@@ -1,12 +1,14 @@
 package com.eccang.spider.amazon.service.batch;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.dao.batch.BatchDao;
 import com.eccang.spider.amazon.pojo.batch.Batch;
 import com.eccang.spider.amazon.pojo.batch.BatchAsin;
 import com.eccang.spider.amazon.util.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +23,7 @@ import java.util.List;
 @Service
 public class BatchService {
 
-    private Logger mLogger = Logger.getLogger(getClass());
+    private static final Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.PUBLIC);
 
     @Autowired
     private BatchDao mBatchDao;
@@ -68,7 +70,7 @@ public class BatchService {
         batch.type = type;
         batch.status = 0;
 
-        mLogger.info("客户 " + customerCode + " 开始生成的批次号为 " + batch.number);
+        mLogger.info("客户 {} 开始生成的批次号为 {}", customerCode, batch.number);
         return batch;
     }
 

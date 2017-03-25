@@ -15,8 +15,9 @@ import java.util.List;
  */
 @Service
 public class StockUrlService {
+
     @Autowired
-    StockUrlDao mDao;
+    private StockUrlDao mDao;
 
     /**
      * 添加一条数据

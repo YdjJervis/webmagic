@@ -1,10 +1,9 @@
 package com.eccang.spider.amazon.service;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.dao.PushQueueDao;
 import com.eccang.spider.amazon.pojo.PushQueue;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -16,8 +15,6 @@ import java.util.List;
  */
 @Service
 public class PushQueueService {
-
-    private Logger mLogger = Logger.getLogger(getClass());
 
     @Autowired
     private PushQueueDao mDao;

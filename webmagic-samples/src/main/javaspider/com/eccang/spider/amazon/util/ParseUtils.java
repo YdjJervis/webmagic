@@ -1,5 +1,9 @@
 package com.eccang.spider.amazon.util;
 
+import com.eccang.spider.amazon.R;
+import com.eccang.spider.amazon.pojo.HtmlResponse;
+import com.eccang.spider.amazon.pojo.dict.IpsInfoManage;
+import com.eccang.spider.base.util.UserAgentUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -12,12 +16,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import com.eccang.spider.amazon.pojo.HtmlResponse;
-import com.eccang.spider.amazon.pojo.dict.IpsInfoManage;
-import com.eccang.spider.base.util.UserAgentUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,7 +34,7 @@ import java.net.*;
  */
 public class ParseUtils {
 
-    private Logger mLogger = Logger.getLogger(getClass());
+    private Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.PUBLIC);
 
     /*代理服务器*/
     private final static String PROXY_SERVER = "proxy.abuyun.com";
@@ -75,7 +77,7 @@ public class ParseUtils {
             /*返回状态码*/
             statusCode = connection.getResponseCode();
             htmlResponse.setStatusCode(statusCode);
-            mLogger.info("============== 阿布云解析 , url : " + urlStr + ", statusCode : " + statusCode);
+            mLogger.info("============== 阿布云解析 , url : {}, statusCode : {}", urlStr, statusCode);
 
             /*解析返回数据*/
             inputStream = connection.getInputStream();
@@ -84,9 +86,9 @@ public class ParseUtils {
             htmlResponse.setHtmlContent(new String(readStream(inputStream)));
 
         } catch (MalformedURLException e) {
-            mLogger.error(e);
+            mLogger.error("", e);
         } catch (IOException e) {
-            mLogger.error(e);
+            mLogger.error("", e);
             mLogger.info("===================== 阿布云代理异常 =====================");
             htmlResponse.setHtmlContent(null);
 
@@ -96,7 +98,7 @@ public class ParseUtils {
                 htmlResponse.setStatusCode(417);
             }
         } finally {
-            if(connection != null) {
+            if (connection != null) {
                 connection.disconnect();
             }
         }
@@ -123,13 +125,13 @@ public class ParseUtils {
         //设定目标站点
         HttpHost httpHost = new HttpHost(urlHost);
 
-        if(proxyHost != null && proxyPort != null) {
+        if (proxyHost != null && proxyPort != null) {
             //设置代理对象 ip/代理名称,端口
             httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(proxyHost, Integer.valueOf(proxyPort)));
 
             CredentialsProvider credentialsProvider = null;
             /*如果代理需要密码验证，这里设置用户名密码*/
-            if(null != domain && domain.equalsIgnoreCase("US")) {
+            if (null != domain && domain.equalsIgnoreCase("US")) {
                 credentialsProvider = new BasicCredentialsProvider();
                 credentialsProvider.setCredentials(new AuthScope(proxyHost, Integer.valueOf(proxyPort)), new UsernamePasswordCredentials(verifyUserName, verifyPassword));
                 ((DefaultHttpClient) httpClient).setCredentialsProvider(credentialsProvider);
@@ -154,11 +156,11 @@ public class ParseUtils {
             httpResponse = httpClient.execute(httpHost, httpGet);
             statusCode = httpResponse.getStatusLine().getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
-                mLogger.info("Method failed: " + httpResponse.getStatusLine());
+                mLogger.info("Method failed: {}", httpResponse.getStatusLine());
             }
             htmlContent = getContent("utf-8", httpResponse);
-        }  catch (IOException e) {
-            mLogger.error(e);
+        } catch (IOException e) {
+            mLogger.error("", e);
         } finally {
             htmlResponse.setHtmlContent(htmlContent);
             htmlResponse.setStatusCode(statusCode);
@@ -215,6 +217,7 @@ public class ParseUtils {
 
     /**
      * 获取url的域名
+     *
      * @param urlStr url字符串
      * @return url的域名
      */
@@ -225,7 +228,7 @@ public class ParseUtils {
 
     protected String getContent(String charset, HttpResponse httpResponse) throws IOException {
         byte[] contentBytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
-        mLogger.warn("Charset autodetect failed, use " + charset + " as charset. Please specify charset in Site.setCharset");
+        mLogger.warn("Charset autodetect failed, use {} as charset. Please specify charset in Site.setCharset", charset);
         return new String(contentBytes, charset);
     }
 
@@ -236,9 +239,9 @@ public class ParseUtils {
         Connection.Response response = Jsoup.connect(urlStr).execute();
         String proxyIp = null;
         HttpHost proxyHost = null;
-        if(response != null) {
+        if (response != null) {
             proxyIp = response.body();
-            if(proxyIp != null) {
+            if (proxyIp != null) {
                 proxyIp = proxyIp.trim();
                 proxyHost = new HttpHost(proxyIp.split(":")[0], Integer.valueOf(proxyIp.split(":")[1]));
             }
@@ -248,7 +251,7 @@ public class ParseUtils {
 
     public static void main(String[] args) throws MalformedURLException {
         ParseUtils parseUtils = new ParseUtils();
-        IpsInfoManage ipsInfoManage =new IpsInfoManage();
+        IpsInfoManage ipsInfoManage = new IpsInfoManage();
         ipsInfoManage.setIpHost("104.216.201.2");
         ipsInfoManage.setIpPort("8080");
         ipsInfoManage.setIpDomain("US");

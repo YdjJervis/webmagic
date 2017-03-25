@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class UrlBatchStatService {
     @Autowired
-    UrlBatchStatDao mUrlBatchStatDao;
+    private UrlBatchStatDao mUrlBatchStatDao;
 
     /**
      * 通过批次号查询

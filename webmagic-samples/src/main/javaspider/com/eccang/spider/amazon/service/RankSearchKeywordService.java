@@ -17,7 +17,7 @@ import java.util.List;
 public class RankSearchKeywordService {
 
     @Autowired
-    RankSearchKeywordDao mRankSearchKeywordDao;
+    private RankSearchKeywordDao mRankSearchKeywordDao;
 
     /**
      * 添加一条数据

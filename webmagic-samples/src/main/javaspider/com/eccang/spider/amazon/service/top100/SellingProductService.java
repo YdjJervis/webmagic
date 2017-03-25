@@ -18,7 +18,7 @@ import java.util.List;
 public class SellingProductService {
 
     @Autowired
-    SellingProductDao mDao;
+    private SellingProductDao mDao;
 
     public void addAll(List<SellingProduct> products) {
         if(CollectionUtils.isNotEmpty(products)) {

@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 @Service
 public class KeywordRankProcessor extends BasePageProcessor implements ScheduledTask {
 
-    Logger sLogger = Logger.getLogger(getClass());
+    private static final Logger mLogger = Logger.getLogger(R.BusinessLog.KRS);
 
     @Autowired
     private KeywordRankService mKeywordRankService;
@@ -91,7 +91,7 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
                 String goodsAsin = getGoodsAsin(goodsNode);
                 /*搜索到100名还没找到对应的客户商品，将停止搜索*/
                 if (rankNum > 300) {
-                    sLogger.info("搜索前300名，没有找到对应的商品.");
+                    mLogger.info("搜索前300名，没有找到对应的商品.");
                     break;
                 }
                 /*当前商品与客户监测的商品ASIN一致则找到其排名，停止搜索*/
@@ -512,7 +512,7 @@ public class KeywordRankProcessor extends BasePageProcessor implements Scheduled
     @Override
     public void execute() {
         /*查询需要监测的关键词信息*/
-        sLogger.info("开始执行关键词排名爬取任务...");
+        mLogger.info("开始执行关键词排名爬取任务...");
         List<Url> urls = mUrlService.find(R.CrawlType.KEYWORD_RANK);
         startToCrawl(urls);
     }

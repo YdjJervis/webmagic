@@ -21,7 +21,7 @@ import java.util.List;
 public class ReviewService {
 
     @Autowired
-    ReviewDao mReviewDao;
+    private ReviewDao mReviewDao;
 
     public void add(Review review) {
 

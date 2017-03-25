@@ -17,7 +17,7 @@ import java.util.List;
 public class KeywordRankStatService {
 
     @Autowired
-    KeywordRankStatDao mKeywordRankStatDao;
+    private KeywordRankStatDao mKeywordRankStatDao;
 
     public void add(KeywordRankStat keywordRankStat) {
         mKeywordRankStatDao.add(keywordRankStat);

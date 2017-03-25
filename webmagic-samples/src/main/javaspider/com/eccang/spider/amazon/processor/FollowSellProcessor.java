@@ -169,7 +169,7 @@ public class FollowSellProcessor extends BasePageProcessor implements ScheduledT
 
         int maxPageNum = extractMaxPageNum(page);
         if (extractIndex(page) == 0 && maxPageNum > 1) {
-            mLogger.info("当前ASIN的跟卖最大页码：" + maxPageNum);
+            mLogger.info("当前ASIN的跟卖最大页码：{}",maxPageNum);
             List<Url> urlList = new ArrayList<>();
             for (int i = 2; i <= maxPageNum; i++) {
                 Url url = new Url();

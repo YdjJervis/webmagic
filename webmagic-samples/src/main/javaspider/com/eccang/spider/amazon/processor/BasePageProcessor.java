@@ -111,7 +111,7 @@ public abstract class BasePageProcessor implements PageProcessor {
     @Override
     public synchronized void process(Page page) {
         sProfile = mProfileService.find();
-        sLogger.info("处理页面回调：URL=" + page.getUrl() + " StatusCode=" + page.getStatusCode());
+        sLogger.info("处理页面回调：URL={} StatusCode={}", page.getUrl(), page.getStatusCode());
         page = IsNotNullAndProxyCaptcha(page);
 
         /*记录每一批次解析的URL的问题以及对应异常状态码出现的次数*/
@@ -128,7 +128,7 @@ public abstract class BasePageProcessor implements PageProcessor {
         if (isPage404(page)) {
             dealPageNotFound(page);
         } else if (mSet.contains(page.getStatusCode())) {
-            sLogger.warn("包含处理不了的页面：StatusCode=" + page.getStatusCode());
+            sLogger.warn("包含处理不了的页面：StatusCode={}", page.getStatusCode());
         } else if (isValidatePage(page)) {
             dealValidate(page);
         } else {
@@ -203,7 +203,7 @@ public abstract class BasePageProcessor implements PageProcessor {
 
         if (needUpdateStatus()) {
             int statusCode = page.getStatusCode();
-            sLogger.info("当前页面:" + page.getUrl() + " 爬取状态：" + statusCode);
+            sLogger.info("当前页面:{} 爬取状态：{}", page.getUrl(), statusCode);
 
             if (statusCode == 407 || statusCode == 0 || statusCode == 402) {
                 if (page.getRequest() != null && page.getRequest().getExtra("ipsType") != null && page.getRequest().getExtra("host") != null) {
@@ -218,12 +218,12 @@ public abstract class BasePageProcessor implements PageProcessor {
         if (needTimeAdd) {
             url.times++;
         }
-        sLogger.info("改变状态后的Url对象：" + url);
+        sLogger.info("改变状态后的Url对象：{}", url);
 
         mUrlService.update(url);
 
         Date endTime = new Date();
-        sLogger.info("update url status time long : " + (endTime.getTime() - startTime.getTime()) / 1000f);
+        sLogger.info("update url status time long : {}", (endTime.getTime() - startTime.getTime()) / 1000f);
 
     }
 
@@ -237,7 +237,7 @@ public abstract class BasePageProcessor implements PageProcessor {
             }
         }
 
-        sLogger.warn("验证码：Url=" + page.getUrl() + "，StatusCode=" + page.getStatusCode());
+        sLogger.warn("验证码：Url={}，StatusCode={}", page.getUrl(), page.getStatusCode(), page.getUrl());
 
         /*保存图片验证码*/
         //PageUtil.saveImage(validateUrl, "C:\\Users\\Administrator\\Desktop\\爬虫\\amazon\\验证码");
@@ -247,7 +247,7 @@ public abstract class BasePageProcessor implements PageProcessor {
         * 请求表单的Url，调用验证码识别接口
         */
         String validatedUrl = getValidatedUrl(page);
-        sLogger.warn("图片验证请求URL：" + validatedUrl);
+        sLogger.warn("图片验证请求URL：{}", validatedUrl);
         if (page.getRequest().getExtra("ipsType") == null || StringUtils.isNotEmpty(validatedUrl)) {
             sLogger.warn("代理为空把地址添加到爬虫队列继续爬取...");
             Request request = new Request(getValidatedUrl(page));
@@ -267,7 +267,7 @@ public abstract class BasePageProcessor implements PageProcessor {
         String validateUrl = getValidateImgUrl(page);
         String validateCodeJson = getValidateCode(validateUrl, "review");
         ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
-        sLogger.info("验证码码结果：" + result);
+        sLogger.info("验证码码结果：{}", result);
 
         String urlStr = null;
         if (result != null) {
@@ -276,7 +276,7 @@ public abstract class BasePageProcessor implements PageProcessor {
             String amzn = page.getHtml().xpath("//input[@name='amzn']/@value").get();
             String amzn_r = page.getHtml().xpath("//input[@name='amzn-r']/@value").get();
             urlStr = domain + "/errors/validateCaptcha?amzn=" + amzn + "&amzn-r=" + amzn_r + "&field-keywords=" + result.getValue();
-            sLogger.info("验证表单：" + urlStr);
+            sLogger.info("验证表单：{}", urlStr);
         }
 
         return urlStr;
@@ -348,14 +348,13 @@ public abstract class BasePageProcessor implements PageProcessor {
         try {
             code = service.getBasicHttpBindingIImageOCRService().getVerCodeFromUrl(imgUrl, type);
         } catch (Exception e) {
-            sLogger.error(e.getMessage());
-            sLogger.error(e.toString());
+            sLogger.error("验证码WebService调用失败", e);
         }
         return code;
     }
 
     void startToCrawl(List<Url> urlList) {
-        sLogger.info("找到状态码不为200的Url个数：" + urlList.size());
+        sLogger.info("找到状态码不为200的Url个数：{}", urlList.size());
         if (CollectionUtils.isNotEmpty(urlList)) {
 
             Spider mSpider = Spider.create(this)
@@ -389,21 +388,21 @@ public abstract class BasePageProcessor implements PageProcessor {
     Page IsNotNullAndProxyCaptcha(Page page) {
         if (isNullHtml(page)) {
             /*通过代理解析url返回内容为空，则将状态码改为402，让其重新解析*/
-            sLogger.info("parse " + page.getUrl().get() + " content is empty.");
+            sLogger.info("parse {} content is empty.", page.getUrl().get());
             page.setStatusCode(402);
         } else {
             if (isValidatePage(page)) {
                 IpsInfoManage ipsInfoManage = (IpsInfoManage) page.getRequest().getExtra("proxyIpInfo");
                 if (ipsInfoManage != null) {
-                    sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，需要对代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码");
+                    sLogger.info("解析url({})出现验证码，需要对代理({}:{})打码", page.getRequest().getUrl(), ipsInfoManage.getIpHost(), ipsInfoManage.getIpPort());
                     String html = proxyCaptcha(page);
                     if (StringUtils.isNotEmpty(html)) {
                         page.setHtml(new Html(UrlUtils.fixAllRelativeHrefs(html, page.getRequest().getUrl())));
                         if (StringUtils.isNotEmpty(getValidateImgUrl(page))) {
-                            sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码失败.");
+                            sLogger.info("解析url({})出现验证码，代理({}:{})打码失败.", page.getRequest().getUrl(), ipsInfoManage.getIpHost(), ipsInfoManage.getIpPort());
                             page.setStatusCode(0);
                         } else {
-                            sLogger.info("解析url(" + page.getRequest().getUrl() + ")出现验证码，代理(" + ipsInfoManage.getIpHost() + ":" + ipsInfoManage.getIpPort() + ")打码成功.");
+                            sLogger.info("解析url({})出现验证码，代理({}:{})打码成功.", page.getRequest().getUrl(), ipsInfoManage.getIpHost(), ipsInfoManage.getIpPort());
                         }
                     }
                 }

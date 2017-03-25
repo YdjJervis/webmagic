@@ -55,7 +55,7 @@ public class GenerateFollowSellBatchMonitor extends GenerateBatchMonitor impleme
             }
         }
 
-        mLogger.info("需要生成新批次号的总量：" + customerFollowSellList.size());
+        mLogger.info("需要生成新批次号的总量：{}",customerFollowSellList.size());
 
         /*按客户码分组*/
         Map<String, List<CustomerFollowSell>> customerListMap = initCustomerListMap(customerFollowSellList);
@@ -86,7 +86,7 @@ public class GenerateFollowSellBatchMonitor extends GenerateBatchMonitor impleme
                 needAddList.add(batchFollowSell);
             }
 
-            mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
+            mLogger.info("客户 {} 生成的批次量为：",customerCode,needAddList.size());
             mBatchFollowSellService.addAll(needAddList);
             mLogger.info("生成Review更新爬取批次：成功");
         }

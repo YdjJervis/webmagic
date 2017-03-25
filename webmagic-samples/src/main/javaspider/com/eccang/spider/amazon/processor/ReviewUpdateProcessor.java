@@ -62,7 +62,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         String asin = extractAsin(page);
         String siteCode = extractSite(page).code;
 
-        mLogger.info("解析 " + siteCode + " 站点下ASIN码为 " + asin + " 的评论信息,当前URL=" + page.getUrl());
+        mLogger.info("解析 {} 站点下ASIN码为 " + asin + " 的评论信息,当前URL={}", siteCode, page.getUrl());
 
         AsinRootAsin asinRootAsin = mAsinRootAsinService.findByAsin(asin, siteCode);
         Asin dbAsin = mAsinService.findByAsin(siteCode, asinRootAsin.rootAsin);
@@ -95,7 +95,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         try {
             mReviewService.addAll(reviewList);
         } catch (Exception e) {
-            mLogger.error("保存Review列表失败：" + reviewList);
+            mLogger.error("保存Review列表失败：{}", reviewList);
         }
 
         /* 判断能否生成下一页URL并生成 */
@@ -138,7 +138,7 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
                     deleteList.add(url);
                 }
             }
-            mLogger.info("需要删除的URL数量：" + deleteList.size() + " 该批次该站点该ASIN对应的URL总量：" + updateCrawlList.size());
+            mLogger.info("需要删除的URL数量：{} 该批次该站点该ASIN对应的URL总量：{}", deleteList.size(), updateCrawlList.size());
             if (updateCrawlList.removeAll(deleteList) && updateCrawlList.size() == 0) {
                 BatchAsin dbBatchAsin = mBatchAsinService.findAllByAsin(getUrl(page).batchNum, siteCode, asin);
                 dbBatchAsin.status = 6;

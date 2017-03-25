@@ -65,7 +65,7 @@ public class ParseUrlAsinBatchMonitor extends ParseMonitor {
         mLogger.info("转换成首页爬取URL...");
         /* 把没有爬取首页的详单转换成爬取首页的URL，并改变爬取类型为爬取首页 */
         List<BatchAsin> batchAsinList = mBatchAsinService.findNotCrawledMainPage();
-        mLogger.info("没有爬取首页的个数：" + batchAsinList.size());
+        mLogger.info("没有爬取首页的个数：{}", batchAsinList.size());
 
         for (BatchAsin batchAsin : batchAsinList) {
 
@@ -74,7 +74,7 @@ public class ParseUrlAsinBatchMonitor extends ParseMonitor {
             Customer customer = mCustomerService.findByCode(batch.customerCode);
 
             if (customer.debug) {
-                mLogger.debug("客户" + batch.customerCode + "批次详单:" + batchAsin);
+                mLogger.debug("客户 {} 批次详单: {}", batch.customerCode, batchAsin);
             }
 
             Url url = new Url();
@@ -82,21 +82,21 @@ public class ParseUrlAsinBatchMonitor extends ParseMonitor {
             initUrl(batchAsin, url);
 
             if (customer.debug) {
-                mLogger.debug("客户" + batch.customerCode + "生成首页URL:" + url);
+                mLogger.debug("客户 {} 生成首页URL:{}", batch.customerCode, url);
             }
 
             /* 装换成URL列表后，把爬取的状态改成爬取当中 */
             batchAsin.status = 1;
             mBatchAsinService.update(batchAsin);
             if (customer.debug) {
-                mLogger.debug("客户" + batch.customerCode + "更新详单状态:" + batchAsin);
+                mLogger.debug("客户 {} 更新详单状态:{}", batch.customerCode, batchAsin);
             }
 
             batch.status = 1;
             mBatchService.update(batch);
 
             if (customer.debug) {
-                mLogger.debug("客户" + batch.customerCode + "更新总单状态" + batch);
+                mLogger.debug("客户 {} 更新总单状态:{}", batch.customerCode, batch);
             }
 
             urlList.add(url);
@@ -105,7 +105,7 @@ public class ParseUrlAsinBatchMonitor extends ParseMonitor {
         mLogger.info("转换成全量爬取URL...");
         /* 把需要全量爬取的批次详单转换成全量爬取的URL，并改变爬取类型为全量爬取 */
         batchAsinList = mBatchAsinService.findNotCrawledReview();
-        mLogger.info("没有全量爬取的个数：" + batchAsinList.size());
+        mLogger.info("没有全量爬取的个数：{}", batchAsinList.size());
         for (BatchAsin batchAsin : batchAsinList) {
 
             Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
@@ -120,7 +120,7 @@ public class ParseUrlAsinBatchMonitor extends ParseMonitor {
                 initUrl(batchAsin, url);
 
                 if (customer.debug) {
-                    mLogger.debug("客户" + batch.customerCode + "生成Reivew全量爬取URL:" + url);
+                    mLogger.debug("客户 {} 生成Reivew全量爬取URL:{}", batch.customerCode, url);
                 }
                 urlList.add(url);
             }
@@ -128,21 +128,21 @@ public class ParseUrlAsinBatchMonitor extends ParseMonitor {
             /* 装换成URL列表后，把爬取的状态改成爬取当中 */
             batchAsin.status = 3;
             mBatchAsinService.update(batchAsin);
-            if(customer.debug){
-                mLogger.debug("客户" + batch.customerCode + "更新详单状态:" + batchAsin);
+            if (customer.debug) {
+                mLogger.debug("客户 {} 更新详单状态:{}", batch.customerCode, batchAsin);
             }
 
             batch.status = 1;
             mBatchService.update(batch);
             if (customer.debug) {
-                mLogger.debug("客户" + batch.customerCode + "更新总单状态" + batch);
+                mLogger.debug("客户 {} 更新总单状态:{}", batch.customerCode, batch);
             }
         }
 
         mLogger.info("转换成更新爬取URL...");
         /* 把需要更新爬取的爬取的批次详单转换更新爬取的URL，并改变爬取类型为更新爬取 */
         batchAsinList = mBatchAsinService.findNotUpdatedReview();
-        mLogger.info("没有更新爬取的个数：" + batchAsinList.size());
+        mLogger.info("没有更新爬取的个数：{}", batchAsinList.size());
         for (BatchAsin batchAsin : batchAsinList) {
 
             Batch batch = mBatchService.findByBatchNumber(batchAsin.batchNumber);
@@ -157,20 +157,20 @@ public class ParseUrlAsinBatchMonitor extends ParseMonitor {
                 initUrl(batchAsin, url);
 
                 if (customer.debug) {
-                    mLogger.debug("客户" + batch.customerCode + "生成Reivew更新爬取URL:" + url);
+                    mLogger.debug("客户 {} 生成Reivew更新爬取URL:{}", batch.customerCode, url);
                 }
                 urlList.add(url);
             }
             batchAsin.status = 5;
             mBatchAsinService.update(batchAsin);
-            if(customer.debug){
-                mLogger.debug("客户" + batch.customerCode + "更新详单状态:" + batchAsin);
+            if (customer.debug) {
+                mLogger.debug("客户 {} 更新详单状态:{}", batch.customerCode, batchAsin);
             }
 
             batch.status = 1;
             mBatchService.update(batch);
             if (customer.debug) {
-                mLogger.debug("客户" + batch.customerCode + "更新总单状态" + batch);
+                mLogger.debug("客户 {} 更新总单状态:{}", batch.customerCode, batch);
             }
         }
 

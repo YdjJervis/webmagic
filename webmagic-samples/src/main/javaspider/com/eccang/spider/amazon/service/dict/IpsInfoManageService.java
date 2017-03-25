@@ -1,13 +1,15 @@
 package com.eccang.spider.amazon.service.dict;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.dao.dict.IpsInfoDao;
 import com.eccang.spider.amazon.dao.dict.IpsInfoManageDao;
 import com.eccang.spider.amazon.pojo.dict.IpsInfo;
 import com.eccang.spider.amazon.pojo.dict.IpsInfoManage;
 import com.eccang.spider.amazon.util.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,12 +24,12 @@ import java.util.List;
 @Service
 public class IpsInfoManageService {
 
-    private Logger mLogger = Logger.getLogger(getClass());
+    private static final Logger mLogger = LoggerFactory.getLogger(R.BusinessLog.PUBLIC);
 
     @Autowired
-    IpsInfoManageDao mIpsInfoManageDao;
+    private IpsInfoManageDao mIpsInfoManageDao;
     @Autowired
-    IpsInfoDao mIpsInfoDao;
+    private IpsInfoDao mIpsInfoDao;
 
     /**
      * 查询有效的IP信息
@@ -120,7 +122,7 @@ public class IpsInfoManageService {
         if (isValidIps != null && isValidIps.size() > 0) {
             ipsInfoManage = isValidIps.get(0);
             updateIpToIsUsing(ipsInfoManage);
-            mLogger.info("重新获取IP， date : " + DateUtils.getNow());
+            mLogger.info("重新获取IP， date : {}",DateUtils.getNow());
         }
         return ipsInfoManage;
     }
@@ -207,7 +209,7 @@ public class IpsInfoManageService {
         if (isValidIps != null && isValidIps.size() > 0) {
             ipsInfoManage = isValidIps.get(0);
             updateIpToIsUsing(ipsInfoManage);
-            mLogger.info("切换IP， date : " + DateUtils.getNow());
+            mLogger.info("切换IP， date : {}",DateUtils.getNow());
         } else {
             mLogger.info("固定代理IP池中，没有正在使用的IP了.");
         }

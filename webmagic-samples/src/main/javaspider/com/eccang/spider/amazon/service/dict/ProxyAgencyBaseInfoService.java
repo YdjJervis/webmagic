@@ -15,8 +15,9 @@ import java.util.List;
  */
 @Service
 public class ProxyAgencyBaseInfoService {
+
     @Autowired
-    ProxyAgencyBaseInfoDao mProxyAgencyBaseInfoDao;
+    private ProxyAgencyBaseInfoDao mProxyAgencyBaseInfoDao;
 
     /**
      * 添加

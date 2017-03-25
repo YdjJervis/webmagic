@@ -37,7 +37,7 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
 
         /*查询需要生成新的批次的客户关系关键词排名数据*/
         List<CustomerKeywordRank> customerKeywordRanks = mCustomerKeywordRankService.findNeedGenerateBatch();
-        mLogger.info("需要生成新批次号的总量：" + customerKeywordRanks.size());
+        mLogger.info("需要生成新批次号的总量：{}",customerKeywordRanks.size());
 
         generate(customerKeywordRanks, false);
     }
@@ -80,7 +80,7 @@ public class GenerateKeywordRankBatchMonitor extends GenerateBatchMonitor implem
                 }
             }
 
-            mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
+            mLogger.info("客户 {} 生成的批次量为：",customerCode,needAddList.size());
             /*添加创建详单信息*/
             mBatchRankService.addAll(needAddList);
 

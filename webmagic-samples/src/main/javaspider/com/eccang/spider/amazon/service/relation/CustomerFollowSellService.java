@@ -3,7 +3,6 @@ package com.eccang.spider.amazon.service.relation;
 import com.eccang.spider.amazon.dao.relation.CustomerFollowSellDao;
 import com.eccang.spider.amazon.pojo.relation.CustomerFollowSell;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +17,6 @@ import java.util.List;
  */
 @Service
 public class CustomerFollowSellService {
-
-    private Logger mLogger = Logger.getLogger(getClass());
 
     @Autowired
     private CustomerFollowSellDao mDao;

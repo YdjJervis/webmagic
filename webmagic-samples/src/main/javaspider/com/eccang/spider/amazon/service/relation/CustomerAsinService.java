@@ -1,11 +1,10 @@
 package com.eccang.spider.amazon.service.relation;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.dao.relation.CustomerAsinDao;
 import com.eccang.spider.amazon.pojo.relation.CustomerAsin;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +17,6 @@ import java.util.List;
  */
 @Service
 public class CustomerAsinService {
-
-    private Logger mLogger = Logger.getLogger(getClass());
 
     @Autowired
     private CustomerAsinDao mCustomerAsinDao;

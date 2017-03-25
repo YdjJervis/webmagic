@@ -154,6 +154,8 @@ public final class R {
         public static final String IM_KRS = "IM_KRS";
         public static final String IM_FS = "IM_FS";
         public static final String TOP = "TOP";
+        public static final String PUBLIC = "PUBLIC";
+
 
     }
 

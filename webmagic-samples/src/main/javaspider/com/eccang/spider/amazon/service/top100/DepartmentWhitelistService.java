@@ -17,7 +17,7 @@ import java.util.List;
 public class DepartmentWhitelistService {
 
     @Autowired
-    DepartmentWhitelistDao mDao;
+    private DepartmentWhitelistDao mDao;
 
     /**
      * 添加

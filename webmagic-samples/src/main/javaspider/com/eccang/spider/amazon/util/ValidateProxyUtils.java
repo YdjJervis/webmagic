@@ -1,5 +1,6 @@
 package com.eccang.spider.amazon.util;
 
+import com.eccang.spider.amazon.R;
 import com.eccang.wsclient.validate.ImageOCRService;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
@@ -44,7 +45,7 @@ import java.util.Map;
 @ThreadSafe
 public class ValidateProxyUtils {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(R.BusinessLog.PUBLIC);
 
     private HttpClientGenerator httpClientGenerator = new HttpClientGenerator();
 
@@ -67,18 +68,18 @@ public class ValidateProxyUtils {
         request.setUrl("https://www.amazon.com/product-reviews/B01KT1GYX6?filterByStar=all&pageNumber=101");
         Site site = new Site();
         /*设置请求参数*/
-        site.setTimeOut(20*1000);
+        site.setTimeOut(20 * 1000);
         site.setRetrySleepTime(1000);
-        logger.info("validating proxy {}", proxyHost + ":" + proxyIp);
+        logger.info("validating proxy {}:{}", proxyHost, proxyIp);
         CloseableHttpResponse httpResponse = null;
-        int statusCode=0;
+        int statusCode = 0;
         Proxy proxy = null;
         HttpHost httpHost = null;
         CloseableHttpClient closeableHttpClient = null;
         try {
             httpHost = new HttpHost(proxyHost, proxyIp);
             site.setHttpProxy(httpHost);
-            if(StringUtils.isNotEmpty(userName) && StringUtils.isNotEmpty(password)) {
+            if (StringUtils.isNotEmpty(userName) && StringUtils.isNotEmpty(password)) {
                 site.setUsernamePasswordCredentials(new UsernamePasswordCredentials(userName, password));
             }
 
@@ -90,14 +91,14 @@ public class ValidateProxyUtils {
             System.out.println(html);
             statusCode = httpResponse.getStatusLine().getStatusCode();
 
-            logger.info("parse Amazon url statusCode : " + statusCode);
-            if(statusCode == HttpStatus.SC_OK) {
+            logger.info("parse Amazon url statusCode : {}", statusCode);
+            if (statusCode == HttpStatus.SC_OK) {
                 return true;
             } else {
                 return false;
             }
         } catch (IOException e) {
-            logger.warn("validate proxy " + proxyHost + ":" + proxyIp + " fail", e);
+            logger.error("validate proxy " + proxyHost + ":" + proxyIp + " fail", e);
             return false;
         } finally {
             try {
@@ -106,7 +107,7 @@ public class ValidateProxyUtils {
                     EntityUtils.consume(httpResponse.getEntity());
                 }
             } catch (IOException e) {
-                logger.warn("close response fail", e);
+                logger.error("close response fail", e);
             }
         }
     }
@@ -120,11 +121,11 @@ public class ValidateProxyUtils {
         request.setUrl(url);
         Site site = new Site();
         /*设置请求参数*/
-        site.setTimeOut(10*1000);
+        site.setTimeOut(10 * 1000);
         site.setRetrySleepTime(1000);
-        logger.info("validating proxy {}", proxyHost + ":" + proxyIp);
+        logger.info("validating proxy {}:{}", proxyHost, proxyIp);
         CloseableHttpResponse httpResponse = null;
-        int statusCode=0;
+        int statusCode = 0;
         Proxy proxy = null;
         HttpHost httpHost = null;
         CloseableHttpClient closeableHttpClient = null;
@@ -132,7 +133,7 @@ public class ValidateProxyUtils {
         try {
             httpHost = new HttpHost(proxyHost, proxyIp);
             site.setHttpProxy(httpHost);
-            if(StringUtils.isNotEmpty(userName) && StringUtils.isNotEmpty(password)) {
+            if (StringUtils.isNotEmpty(userName) && StringUtils.isNotEmpty(password)) {
                 site.setUsernamePasswordCredentials(new UsernamePasswordCredentials(userName, password));
             }
 
@@ -143,9 +144,9 @@ public class ValidateProxyUtils {
             html = getContent("utf-8", httpResponse);
             statusCode = httpResponse.getStatusLine().getStatusCode();
 
-            logger.info("parse Amazon url statusCode : " + statusCode);
+            logger.info("parse Amazon url statusCode : {}", statusCode);
         } catch (IOException e) {
-            logger.warn("validate proxy " + proxyHost + ":" + proxyIp + " fail", e);
+            logger.error("validate proxy {}:{} fail", proxyHost, proxyIp, e);
         } finally {
             try {
                 if (httpResponse != null) {
@@ -153,13 +154,13 @@ public class ValidateProxyUtils {
                     EntityUtils.consume(httpResponse.getEntity());
                 }
             } catch (IOException e) {
-                logger.warn("close response fail", e);
+                logger.error("close response fail", e);
             }
         }
         return html;
     }
 
-    protected HttpUriRequest getHttpUriRequest(Request request, Site site, Map<String, String> headers,HttpHost proxy) {
+    protected HttpUriRequest getHttpUriRequest(Request request, Site site, Map<String, String> headers, HttpHost proxy) {
         RequestBuilder requestBuilder = selectRequestMethod(request).setUri(request.getUrl());
         if (headers != null) {
             for (Map.Entry<String, String> headerEntry : headers.entrySet()) {
@@ -171,10 +172,10 @@ public class ValidateProxyUtils {
                 .setSocketTimeout(site.getTimeOut())
                 .setConnectTimeout(site.getTimeOut())
                 .setCookieSpec(CookieSpecs.BEST_MATCH);
-        if (proxy !=null) {
-			requestConfigBuilder.setProxy(proxy);
-			request.putExtra(Request.PROXY, proxy);
-		}
+        if (proxy != null) {
+            requestConfigBuilder.setProxy(proxy);
+            request.putExtra(Request.PROXY, proxy);
+        }
         requestBuilder.setConfig(requestConfigBuilder.build());
         return requestBuilder.build();
     }
@@ -268,7 +269,7 @@ public class ValidateProxyUtils {
         String validateUrl = html.xpath("//div[@class='a-row a-text-center']/img/@src").get();
         String validateCodeJson = getValidateCode(validateUrl, "review");
         ImgValidateResult result = new Gson().fromJson(validateCodeJson, ImgValidateResult.class);
-        logger.info("验证码码结果：" + result);
+        logger.info("验证码码结果：{}", result);
 
             /*获取表单参数*/
         String domain = new PlainText(url).regex("(https://www.amazon.*?)/.*").get();

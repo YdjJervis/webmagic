@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 public class GoodsRankInfoService {
     @Autowired
-    GoodsRankInfoDao mGoodsRankInfoDao;
+    private GoodsRankInfoDao mGoodsRankInfoDao;
 
     public void addAll(List<GoodsRankInfo> goodsRankInfos) {
         mGoodsRankInfoDao.addAll(goodsRankInfos);

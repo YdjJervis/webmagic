@@ -1,11 +1,10 @@
 package com.eccang.spider.amazon.service;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.eccang.spider.amazon.dao.UrlHistoryDao;
 import com.eccang.spider.amazon.pojo.Url;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,6 @@ public class UrlHistoryService {
 
     @Autowired
     private UrlHistoryDao mDao;
-
-    Logger mLogger = Logger.getLogger(getClass());
 
     public void addAll(List<Url> urlList) {
         List<Url> newList = new ArrayList<>();
