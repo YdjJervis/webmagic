@@ -1,11 +1,15 @@
 package com.eccang.amazon.service;
 
+import com.eccang.base.SpringTestCase;
 import com.eccang.spider.amazon.util.DateUtils;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hardy
@@ -13,7 +17,9 @@ import java.util.Date;
  * @Description:
  * @date 2016/11/2 10:18
  */
-public class TestMethod {
+public class TestMethod extends SpringTestCase {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public static synchronized void Method(String threadName) {
         System.out.println(DateUtils.getNow() + "," + threadName);
@@ -27,17 +33,11 @@ public class TestMethod {
     }
 
     public static void main(String[] args) {
-        Date startTime = new Date();
-        int a = 1;
-        int b = 2;
-        int d = a*b;
-        int c;
-        for (int i = 0; i < 10000; i++) {
-            c = i*d;
-            System.out.println(c);
+
+        List<String> lists = new ArrayList<>();
+        for (String str : lists) {
+            System.out.println(str);
         }
-        Date endTime = new Date();
-        System.out.println("循环内有多余操作耗时：" + (endTime.getTime() - startTime.getTime()));
     }
 
     @Test
@@ -52,5 +52,16 @@ public class TestMethod {
             e.printStackTrace();
         }
 
+    }
+
+    @Test
+    public void test_rightWayGetInfoForThrowable(){
+        try {
+            String s = null;
+            s.toString();
+        } catch (Exception e) {
+            log.error("error" ,e);
+
+        }
     }
 }

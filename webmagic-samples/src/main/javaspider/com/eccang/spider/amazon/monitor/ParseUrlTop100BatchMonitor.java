@@ -75,6 +75,12 @@ public class ParseUrlTop100BatchMonitor extends ParseMonitor {
             case "DE":
                 url = R.Top100.DE;
                 break;
+            case "FR":
+                url = R.Top100.FR;
+                break;
+            case "JP":
+                url = R.Top100.JP;
+                break;
             default:
                 url = null;
         }

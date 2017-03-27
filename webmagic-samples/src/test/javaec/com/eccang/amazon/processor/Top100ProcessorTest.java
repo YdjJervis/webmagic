@@ -3,6 +3,7 @@ package com.eccang.amazon.processor;
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.Url;
 import com.eccang.spider.amazon.pojo.crawl.Department;
+import com.eccang.spider.amazon.pojo.top100.SellingProduct;
 import com.eccang.spider.base.util.UrlUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -38,13 +39,7 @@ public class Top100ProcessorTest implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        List<Selectable> nodes = page.getHtml().xpath("//*[@id='zg_centerListWrapper']/div[@class='zg_itemImmersion']").nodes();
-        for (Selectable node : nodes) {
-            String selectable = node.xpath("//div[@class='zg_itemWrapper']/div[contains(@class, 'p13n-asin')]/@data-p13n-asin-metadata").get();
-            String asin = new Json(selectable).jsonPath("$.asin").get();
-            System.out.println(asin);
-
-        }
+        extractTop100ProductInfoJP(page);
     }
 
     @Override
@@ -79,9 +74,14 @@ public class Top100ProcessorTest implements PageProcessor {
                 String productImgUrl = node.xpath("//div[@class='zg_itemWrapper']/div//img/@src").get();
                 String productUrl = node.xpath("//div[@class='zg_itemWrapper']/div/a/@href").get();
                 String reviewStar = node.xpath("//div[@class='zg_itemWrapper']/div/div[contains(@class,'a-icon-row')]//span[@class='a-icon-alt']/text()").get();
-                String reviewNum = node.xpath("//div[@class='zg_itemWrapper']/div/div[contains(@class,'a-icon-row')]/a[contains(@class,'a-size-small')]/text()").get();
+                String reviewNumStr = node.xpath("//div[@class='zg_itemWrapper']/div/div[contains(@class,'a-icon-row')]/a[contains(@class,'a-size-small')]/text()").get();
+                if (StringUtils.isNotEmpty(reviewNumStr)) {
+                    reviewNumStr = reviewNumStr.replace(" ", "");
+                    reviewNumStr = reviewNumStr.replace(",", "");
+                }
+                int reviewNum = Integer.valueOf(reviewNumStr == null ? "0" : reviewNumStr);
                 String productPrice = node.xpath("//*[@class='p13n-sc-price']/text()").get();
-                String amazonDelivery = node.xpath("//*[@class='a-icon-prime']/span[@class='a-icon-alt']/text()").get();
+                String amazonDelivery = node.xpath("//*[@class='a-icon-prime' or @class='a-icon-premium']/span[@class='a-icon-alt']/text()").get();
                 if (StringUtils.isEmpty(amazonDelivery)) {
                     amazonDelivery = "no prime";
                 }
@@ -97,6 +97,83 @@ public class Top100ProcessorTest implements PageProcessor {
             }
         }
     }
+
+    private void extractTop100ProductInfoJP(Page page) {
+
+        ArrayList<SellingProduct> products = new ArrayList<>();
+        /*
+         *解析产品分类
+         */
+        List<Selectable> productClassifyNodes = page.getHtml().xpath("//*[@id='zg_columnTitle']/div/h3/text()").nodes();
+        List<String> proClassifies = new ArrayList<>();
+        for (Selectable productClassifyNode : productClassifyNodes) {
+            String proClassify = productClassifyNode.get();
+            if (StringUtils.isNotEmpty(proClassify)) {
+                proClassifies.add(proClassify);
+            }
+        }
+
+        /*
+         *解析产品信息
+         */
+        List<Selectable> nodes = page.getHtml().xpath("//*[@id='zg_critical' or @id='zg_nonCritical']/div[@class='zg_itemRow']").nodes();
+        SellingProduct product;
+
+        for (Selectable node : nodes) {
+            List<Selectable> proInfos = node.xpath("//div[contains(@class,'p13n-asin')]").nodes();
+            int index = 0;
+            for (Selectable proInfo : proInfos) {
+                product = new SellingProduct();
+
+                //product url
+                product.url = proInfo.xpath("//div[contains(@class,'a-col-right')]/a/@href").get();
+                product.urlMD5 = UrlUtils.md5(product.url);
+
+                if (StringUtils.isEmpty(product.url)) {
+                    continue;
+                }
+
+
+                //asin
+                String asinStr = proInfo.xpath("/div/@data-p13n-asin-metadata").get();
+                product.asin = new Json(asinStr).jsonPath("$.asin").get();
+
+                //product img url
+                product.imgUrl = proInfo.xpath("//div[contains(@class,'a-col-left')]/a/img/@src").get();
+
+                //rank num
+                String rankNumStr = proInfo.xpath("//div[contains(@class,'a-col-right')]/div[@class='zg_rankLine']/span[@class='zg_rankNumber']/text()").get();
+                product.rankNum = Integer.valueOf(rankNumStr.trim().replace(".", ""));
+
+                //title
+                product.name = proInfo.xpath("//div[contains(@class,'a-col-right')]/a/div[contains(@class,'p13n-sc-truncated')]/@title").get();
+                if (StringUtils.isEmpty(product.name)) {
+                    product.name = proInfo.xpath("//div[contains(@class,'a-col-right')]/a/div[contains(@class,'p13n-sc-truncated')]/text()").get();
+                }
+
+                //review star
+                product.reviewStar = proInfo.xpath("//div[contains(@class,'a-col-right')]/div[contains(@class,'a-icon-row')]//span[@class='a-icon-alt']/text()").get();
+
+                //review num
+                String reviewNum = proInfo.xpath("//div[contains(@class,'a-col-right')]/div[contains(@class,'a-icon-row')]/a[contains(@class,'a-size-small')]/text()").get();
+                product.reviewNum = Integer.valueOf(reviewNum.replace(",", ""));
+                //price
+                product.price = proInfo.xpath("//div[contains(@class,'a-col-right')]/div[@class='a-row']//span[@class='p13n-sc-price']/text()").get();
+
+                String amazonDelivery = proInfo.xpath("//*[contains(@class,'a-icon-prime-jp')]/span[@class='a-icon-alt']/text()").get();
+                if(StringUtils.isNotEmpty(amazonDelivery)) {
+                    product.amazonDelivery = 1;
+                }
+
+                //product classify
+                product.classify = proClassifies.size() == 0 ? "" : proClassifies.get(index % proClassifies.size());
+                System.out.println(product.toString());
+                index++;
+            }
+        }
+
+    }
+
 
     /**
      * 解析品类名称与url
@@ -164,7 +241,7 @@ public class Top100ProcessorTest implements PageProcessor {
 //        Request request = new Request("https://www.amazon.com/gp/product/handle-buy-box/ref=dp_start-bbf_1_glance");
 
 //        Request request = new Request("https://www.amazon.com/bestsellers");
-        Request request = new Request("https://www.amazon.co.uk/Best-Sellers-Appstore-Android-Travel-Apps/zgbs/mobile-apps/1710384031/ref=zg_bs?_encoding=UTF8&tf=1#2");
+        Request request = new Request("https://www.amazon.co.jp/gp/bestsellers/mobile-apps/ref=zg_bs_nav_0#1");
         Spider.create(new Top100ProcessorTest())
                 .thread(1)
                 .addRequest(request)

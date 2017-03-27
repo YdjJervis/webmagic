@@ -75,7 +75,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                 /*解析商品listing,并入库*/
                 extractTop100ProductListing(page, url);
                 /*解析商品页的第一页，并入库*/
-                extractTop100ProductInfo(page, url);
+                extractTop100Product(page, url);
 
                 /*
                  *如果当前选中品类级数小于3，则解析子品类
@@ -91,9 +91,9 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
             }
         } else if (url.type == R.CrawlType.TOP_100_CLASSIFY) {
             extractTop100ProductListing(page, url);
-            extractTop100ProductInfo(page, url);
+            extractTop100Product(page, url);
         } else if (url.type == R.CrawlType.TOP_100_PRODUCT) {
-            extractTop100ProductInfo(page, url);
+            extractTop100Product(page, url);
         }
 
         /*更新详单总单信息*/
@@ -164,6 +164,10 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                 department.batchNum = batchNum;
 
                 department.depName = node.getTextContent();
+                if (StringUtils.isEmpty(department.depName)) {
+                    continue;
+                }
+
                 department.depName = department.depName.replace("&amp;", "&");
 
                 department.depCode = UrlUtils.md5(department.depName + depCombin);
@@ -311,6 +315,14 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
         }
     }
 
+    private void extractTop100Product(Page page, Url url) {
+        if (url.siteCode.equals(R.SiteCode.JP)) {
+            extractTop100ProductInfoJP(page, url);
+        } else {
+            extractTop100ProductInfo(page, url);
+        }
+    }
+
     /**
      * 解析top100热销商品信息,并商品信息入库
      */
@@ -375,16 +387,104 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                 if (StringUtils.isNotEmpty(reviewNum)) {
                     reviewNum = reviewNum.replace(",", "");
                     reviewNum = reviewNum.replace(".", "");
+                    reviewNum = reviewNum.replace(" ", "");
                     product.reviewNum = Integer.valueOf(reviewNum);
                 }
 
                 product.price = node.xpath("//*[@class='p13n-sc-price']/text()").get();
-                String amazonDelivery = node.xpath("//*[@class='a-icon-prime']/span[@class='a-icon-alt']/text()").get();
+                String amazonDelivery = node.xpath("//*[@class='a-icon-prime' or @class='a-icon-premium']/span[@class='a-icon-alt']/text()").get();
                 if (StringUtils.isNotEmpty(amazonDelivery)) {
                     product.amazonDelivery = 1;
                 }
 
                 products.add(product);
+            }
+        }
+
+        mSellingProductService.addAll(products);
+    }
+
+
+    /**
+     * 日本站,解析top100热销商品信息,并商品信息入库
+     */
+    private void extractTop100ProductInfoJP(Page page, Url url) {
+        ArrayList<SellingProduct> products = new ArrayList<>();
+        /*
+         *解析产品分类
+         */
+        List<Selectable> productClassifyNodes = page.getHtml().xpath("//*[@id='zg_columnTitle']/div/h3/text()").nodes();
+        List<String> proClassifies = new ArrayList<>();
+        for (Selectable productClassifyNode : productClassifyNodes) {
+            String proClassify = productClassifyNode.get();
+            if (StringUtils.isNotEmpty(proClassify)) {
+                proClassifies.add(proClassify);
+            }
+        }
+
+        /*
+         *解析产品信息
+         */
+        List<Selectable> nodes = page.getHtml().xpath("//*[@id='zg_critical' or @id='zg_nonCritical']/div[@class='zg_itemRow']").nodes();
+        SellingProduct product;
+
+        for (Selectable node : nodes) {
+            List<Selectable> proInfos = node.xpath("//div[contains(@class,'p13n-asin')]").nodes();
+            int index = 0;
+            for (Selectable proInfo : proInfos) {
+                product = new SellingProduct();
+                product.batchNum = url.batchNum;
+                //product url
+                product.url = proInfo.xpath("//div[contains(@class,'a-col-right')]/a/@href").get();
+                product.urlMD5 = UrlUtils.md5(product.url);
+                product.siteCode = url.siteCode;
+                if (StringUtils.isEmpty(product.url)) {
+                    continue;
+                }
+
+                if (url.type == R.CrawlType.TOP_100_DEPARTMENT) {
+                    product.depUrl = url.url;
+                } else {
+                    product.depUrl = url.parentUrl;
+                }
+
+                product.depCode = url.depCode;
+                //asin
+                String asinStr = proInfo.xpath("/div/@data-p13n-asin-metadata").get();
+                product.asin = new Json(asinStr).jsonPath("$.asin").get();
+                //product img url
+                product.imgUrl = proInfo.xpath("//div[contains(@class,'a-col-left')]/a/img/@src").get();
+                //rank num
+                String rankNumStr = proInfo.xpath("//div[contains(@class,'a-col-right')]/div[@class='zg_rankLine']/span[@class='zg_rankNumber']/text()").get();
+                if(StringUtils.isNotEmpty(rankNumStr)) {
+                    product.rankNum = Integer.valueOf(rankNumStr.trim().replace(".", ""));
+                }
+                //title
+                product.name = proInfo.xpath("//div[contains(@class,'a-col-right')]/a/div[contains(@class,'p13n-sc-truncated')]/@title").get();
+                if (StringUtils.isEmpty(product.name)) {
+                    product.name = proInfo.xpath("//div[contains(@class,'a-col-right')]/a/div[contains(@class,'p13n-sc-truncated')]/text()").get();
+                }
+                //review star
+                product.reviewStar = proInfo.xpath("//div[contains(@class,'a-col-right')]/div[contains(@class,'a-icon-row')]//span[@class='a-icon-alt']/text()").get();
+                //review num
+                String reviewNum = proInfo.xpath("//div[contains(@class,'a-col-right')]/div[contains(@class,'a-icon-row')]/a[contains(@class,'a-size-small')]/text()").get();
+                if(StringUtils.isNotEmpty(reviewNum)) {
+                    product.reviewNum = Integer.valueOf(reviewNum.replace(",", ""));
+                }
+                //price
+                product.price = proInfo.xpath("//div[contains(@class,'a-col-right')]/div[@class='a-row']//span[@class='p13n-sc-price']/text()").get();
+                if(StringUtils.isEmpty(product.price)) {
+                    product.price = proInfo.xpath("//div[contains(@class,'a-col-right')]/div[@class='a-row']/span[contains(@class,'a-color-price')]/text()").get();
+                }
+
+                String amazonDelivery = proInfo.xpath("//*[contains(@class,'a-icon-prime-jp')]/span[@class='a-icon-alt']/text()").get();
+                if (StringUtils.isNotEmpty(amazonDelivery)) {
+                    product.amazonDelivery = 1;
+                }
+                //product classify
+                product.classify = proClassifies.size() == 0 ? "" : proClassifies.get(index % proClassifies.size());
+                products.add(product);
+                index++;
             }
         }
 

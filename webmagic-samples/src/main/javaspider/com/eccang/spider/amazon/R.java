@@ -99,6 +99,8 @@ public final class R {
         public static final String US = "https://www.amazon.com/bestsellers";
         public static final String UK = "https://www.amazon.co.uk/bestsellers";
         public static final String DE = "https://www.amazon.de/bestsellers";
+        public static final String FR = "https://www.amazon.fr/bestsellers";
+        public static final String JP = "https://www.amazon.co.jp/bestsellers";
     }
 
     /**
