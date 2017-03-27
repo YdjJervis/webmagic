@@ -103,7 +103,7 @@ public class DataPushMonitor implements ScheduledTask {
                 pushResult = true;
             }
         } catch (Exception e) {
-            mLogger.info(e.toString());
+            mLogger.error("数据推送失败", e);
         }
         return pushResult;
     }
