@@ -77,8 +77,6 @@
         and
         bas_code = #{siteCode}
         and
-        rca_immediate = #{immediate}
-        and
         saa_asin = #{asin}
     </select>
 

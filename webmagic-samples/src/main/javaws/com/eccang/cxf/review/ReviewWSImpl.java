@@ -208,10 +208,6 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             int pageNum = reviewQueryReq.data.pageNum;
             int pageSize = reviewQueryReq.data.pageSize;
 
-            /* 默认查询差评的 */
-            if (StringUtils.isEmpty(reviewQueryReq.data.level)) {
-                reviewQueryReq.data.level = "0-0-1-1-1";
-            }
             /* 传的参数不包含三个类型的，就默认为全部的 */
             if (!Sets.newHashSet("yes", "no").contains(reviewQueryReq.data.experience)) {
                 reviewQueryReq.data.experience = null;
@@ -235,6 +231,11 @@ public class ReviewWSImpl extends AbstractSpiderWS implements ReviewWS {
             } else {
                 reviewQueryRsp.msg = "客户下,asin不存在.";
                 return reviewQueryRsp.toJson();
+            }
+
+            /* 默认查询差评的 */
+            if (StringUtils.isEmpty(reviewQueryReq.data.level)) {
+                reviewQueryReq.data.level = customerAsin.star;
             }
 
             if (StringUtils.isEmpty(rootAsin)) {
