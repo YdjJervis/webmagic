@@ -7,6 +7,8 @@ import com.eccang.spider.amazon.service.UrlService;
 import com.eccang.spider.amazon.service.batch.BatchTop100Service;
 import com.eccang.spider.base.monitor.ParseMonitor;
 import com.eccang.spider.base.util.UrlUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import java.util.List;
  */
 @Service
 public class ParseUrlTop100BatchMonitor extends ParseMonitor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(R.BusinessLog.TOP);
 
     @Autowired
     UrlService mUrlService;
@@ -58,7 +62,7 @@ public class ParseUrlTop100BatchMonitor extends ParseMonitor {
             urls.add(url);
         }
 
-        sLogger.info("新添加的Top100商品信息爬取的监听条数：" + urls.size());
+        LOGGER.info("新添加的Top100商品信息爬取的监听条数：{}", urls.size());
 
         return urls;
     }

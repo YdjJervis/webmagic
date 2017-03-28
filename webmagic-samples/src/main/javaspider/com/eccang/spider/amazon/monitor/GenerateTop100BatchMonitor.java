@@ -44,7 +44,7 @@ public class GenerateTop100BatchMonitor extends GenerateBatchMonitor implements 
 
         /*查询需要生成新的批次的客户关系关键词排名数据*/
         List<CustomerTop100> customerTop100s = mCustomerTop100Service.findNeedGenerateBatch();
-        mLogger.info("需要生成新批次号的总量：" + customerTop100s.size());
+        mLogger.info("需要生成新批次号的总量：{}", customerTop100s.size());
 
         if (customerTop100s.size() == 0) {
             return;
@@ -74,7 +74,7 @@ public class GenerateTop100BatchMonitor extends GenerateBatchMonitor implements 
             mCustomerTop100Service.update(customerTop100);
         }
 
-        mLogger.info("客户 " + customerCode + " 生成的批次量为：" + needAddList.size());
+        mLogger.info("客户{}生成的批次量为：{}",customerCode, needAddList.size());
 
         /*添加创建详单信息*/
         mBatchTop100Service.addAll(needAddList);

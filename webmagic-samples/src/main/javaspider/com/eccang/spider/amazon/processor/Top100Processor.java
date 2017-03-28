@@ -175,7 +175,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
                  *判断当前选中的品类是否在黑名单中，存在，则不解析其子孙品类及产品信息
                  */
                 if (mBlacklistService.findByDepCodeCount(department.depCode, dep.siteCode) > 0) {
-                    mLogger.info("当前选中的品类(" + department.depName + ")，已经被标识为黑名单，不需要爬取.");
+                    mLogger.info("当前选中的品类({})，已经被标识为黑名单，不需要爬取.", department.depName);
                     continue;
                 }
 
@@ -185,7 +185,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
             }
 
         } catch (ParserConfigurationException | XPathExpressionException e) {
-            mLogger.error(e.toString());
+            mLogger.error("parse department info exception.", e);
             return null;
         }
 
