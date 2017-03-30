@@ -159,7 +159,7 @@ public class Top100Processor extends BasePageProcessor implements ScheduledTask 
             for (int i = 0; i < childDepNum; i++) {
 
                 Node node = nodeList.item(i);
-                System.out.println(node.getTextContent() + ":" + xPath.evaluate("@href", node, XPathConstants.STRING));
+                mLogger.info("{}:{}",node.getTextContent(),xPath.evaluate("@href", node, XPathConstants.STRING));
                 department = new Department();
                 department.batchNum = batchNum;
 

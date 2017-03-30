@@ -150,7 +150,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
 
             //解析库存数
             String stockNum = page.getJson().jsonPath("$..nav-cart.cartQty").get();
-            System.out.println(stockNum);
+            mLogger.info(stockNum);
             sellingProduct.stock = Integer.valueOf(stockNum);
 
             sellingProduct.status = R.StockCrawlStatus.COUNT_STOCK;
@@ -177,7 +177,7 @@ public class Top100StockProcessor extends BasePageProcessor implements Scheduled
         for (int i = 0; i < selectables.size(); i++) {
             paramName = selectables.get(i).xpath("//input[@type='hidden']/@name").get();
             paramValue = selectables.get(i).xpath("//input[@type='hidden']/@value").get();
-            System.out.println(paramName + ":" + paramValue);
+            mLogger.info("{}:{}",paramName,paramValue);
             values[i] = new BasicNameValuePair(paramName, paramValue);
         }
         return values;

@@ -191,7 +191,17 @@ public class ReviewUpdateProcessor extends ReviewProcessor {
         BatchAsin batchAsin;
         Date currentTime = new Date();
         for (Url url : urlList) {
+
+            if (sProfile.debug) {
+                mLogger.info("当前爬取Url的batchNum={}，siteCode={}，asin={}",url.batchNum, url.siteCode, url.asin);
+            }
+
             batchAsin = mBatchAsinService.findAllByAsin(url.batchNum, url.siteCode, url.asin);
+
+            if (sProfile.debug) {
+                mLogger.info("根據Url反查的批次详单记录：{}",batchAsin);
+            }
+
             if (batchAsin.startTime == null) {
                 batchAsin.startTime = currentTime;
                 mBatchAsinService.update(batchAsin);

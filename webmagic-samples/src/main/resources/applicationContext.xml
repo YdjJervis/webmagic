@@ -83,8 +83,8 @@
         </tx:attributes>
     </tx:advice>
     <aop:config>
-        <aop:pointcut id="pc"
-                      expression="execution(* com.eccang.spider.*.service.*.*(..))"/> <!--把事务控制在Service层 -->
+        <!--把事务控制在Service层 -->
+        <aop:pointcut id="pc" expression="execution(* com.eccang.spider.*.service.*.*(..))"/>
         <aop:advisor pointcut-ref="pc" advice-ref="txAdvice"/>
     </aop:config>
     <!--配置事务-->
