@@ -3,10 +3,13 @@ package com.eccang.spider.amazon.monitor;
 import com.eccang.spider.amazon.R;
 import com.eccang.spider.amazon.pojo.Url;
 import com.eccang.spider.amazon.pojo.batch.BatchTop100;
+import com.eccang.spider.amazon.pojo.dict.Site;
 import com.eccang.spider.amazon.service.UrlService;
 import com.eccang.spider.amazon.service.batch.BatchTop100Service;
+import com.eccang.spider.amazon.service.dict.SiteService;
 import com.eccang.spider.base.monitor.ParseMonitor;
 import com.eccang.spider.base.util.UrlUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,8 @@ public class ParseUrlTop100BatchMonitor extends ParseMonitor {
     UrlService mUrlService;
     @Autowired
     BatchTop100Service mBatchTop100Service;
+    @Autowired
+    SiteService mSiteService;
 
     @Override
     public void execute() {
@@ -68,25 +73,14 @@ public class ParseUrlTop100BatchMonitor extends ParseMonitor {
     }
 
     private String getTop100HomeUrl(String siteCode) {
-        String url;
-        switch (siteCode) {
-            case "US":
-                url = R.Top100.US;
-                break;
-            case "UK":
-                url = R.Top100.UK;
-                break;
-            case "DE":
-                url = R.Top100.DE;
-                break;
-            case "FR":
-                url = R.Top100.FR;
-                break;
-            case "JP":
-                url = R.Top100.JP;
-                break;
-            default:
-                url = null;
+
+        String url = null;
+        Site site = mSiteService.find(siteCode);
+        StringBuilder sb = new StringBuilder(site.site);
+        if(StringUtils.isNotEmpty(site.site)) {
+            url = sb.append(R.Top100.TOP100_BEST_SELLERS).toString();
+        } else {
+            LOGGER.info("站点码{}在基础表中不存在.", siteCode);
         }
         return url;
     }

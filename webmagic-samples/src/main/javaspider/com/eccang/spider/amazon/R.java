@@ -96,11 +96,7 @@ public final class R {
      * top100对应站点的热销商品排名url
      */
     public static final class Top100 {
-        public static final String US = "https://www.amazon.com/bestsellers";
-        public static final String UK = "https://www.amazon.co.uk/bestsellers";
-        public static final String DE = "https://www.amazon.de/bestsellers";
-        public static final String FR = "https://www.amazon.fr/bestsellers";
-        public static final String JP = "https://www.amazon.co.jp/bestsellers";
+        public static final String TOP100_BEST_SELLERS = "/bestsellers";
     }
 
     /**
